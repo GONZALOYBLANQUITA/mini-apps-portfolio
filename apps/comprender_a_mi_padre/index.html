@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comprender a mi padre y cuidarme</title>
+  <style>
+    :root{
+      /* Paleta inspirada en tu captura */
+      --bg:#f2f5ff;
+      --bg2:#eef2ff;
+
+      --card:#ffffff;
+      --text:#1f2a44;
+      --muted:#5f6e8a;
+
+      --pill:#e6ecff;
+      --pillBd:#d7def7;
+
+      --active:#4f63c8;
+      --active2:#6b7eea;
+
+      --chipBg:#eaf3ff;
+      --chipBd:#cfe2ff;
+
+      --warnBg:#fff2dd;
+      --warnBd:#ffd59b;
+      --warnText:#6b3b00;
+
+      --blueBoxBg:#eaf5ff;
+      --blueBoxBd:#b9dbff;
+
+      --shadow: 0 16px 34px rgba(0,0,0,0.10);
+      --radius: 18px;
+      --radius2: 16px;
+
+      --focus: 0 0 0 4px rgba(107,126,234,0.18);
+
+      --fontScale: 1;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(circle at top left, #fbfcff 0%, var(--bg) 48%, var(--bg2) 100%);
+      color: var(--text);
+      font-size: calc(16px * var(--fontScale));
+    }
+
+    .wrap{
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 22px 14px 30px;
+    }
+
+    .header{
+      display:flex;
+      align-items:flex-start;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .badge{
+      width:44px;height:44px;
+      border-radius: 16px;
+      display:grid;place-items:center;
+      background: linear-gradient(135deg, #5a73ff, #8aa0ff);
+      color:#fff;
+      font-size: 22px;
+      box-shadow: 0 14px 24px rgba(90,115,255,0.20);
+      user-select:none;
+    }
+
+    h1{
+      margin:0;
+      font-size: 30px;
+      font-weight: 950;
+      letter-spacing: -0.3px;
+      color:#23305a;
+    }
+
+    .sub{
+      margin: 6px 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 920px;
+    }
+
+    .topRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+
+    .pillInfo{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: var(--pill);
+      border: 1px solid var(--pillBd);
+      font-weight: 950;
+      color:#2b3a67;
+      user-select:none;
+    }
+
+    .rightBtn{
+      margin-left:auto;
+      border-radius: 999px;
+      padding: 10px 14px;
+      border: 1px solid rgba(79,99,200,0.35);
+      background:#fff;
+      font-weight: 950;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      color:#1f2a44;
+      user-select:none;
+    }
+    .rightBtn:focus{ outline:none; box-shadow: var(--focus); }
+
+    .tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top: 14px;
+    }
+
+    .tab{
+      border: 1px solid var(--pillBd);
+      background: var(--pill);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 950;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      color:#2b3a67;
+      user-select:none;
+      transition: transform .06s ease, filter .12s ease, background .12s ease;
+    }
+    .tab:hover{ filter: brightness(0.99); }
+    .tab:active{ transform: scale(0.985); }
+    .tab.active{
+      background: linear-gradient(135deg, var(--active), var(--active2));
+      color:#fff;
+      border-color: rgba(255,255,255,0.25);
+      box-shadow: 0 14px 26px rgba(79,99,200,0.22);
+    }
+
+    .tabWide{
+      flex: 1 1 260px;
+      justify-content:center;
+      opacity:0.95;
+    }
+
+    .panel{
+      margin-top: 14px;
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.06);
+      padding: 18px;
+    }
+
+    .panelTop{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+
+    .titleRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .h2{
+      margin:0;
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing:-0.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .chip{
+      border-radius: 999px;
+      padding: 7px 12px;
+      font-weight: 950;
+      font-size: 13px;
+      background: var(--chipBg);
+      border: 1px solid var(--chipBd);
+      color:#2156b7;
+      white-space:nowrap;
+      user-select:none;
+    }
+
+    .p{
+      margin: 10px 0 0;
+      color:#27324a;
+      line-height: 1.6;
+    }
+
+    .box{
+      margin-top: 14px;
+      border-radius: var(--radius);
+      padding: 14px;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: #f7f9ff;
+    }
+    .box h3{
+      margin:0 0 8px 0;
+      font-size: 17px;
+      font-weight: 950;
+      color:#23305a;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .box ul{
+      margin:0;
+      padding-left: 18px;
+      line-height: 1.55;
+    }
+    .box li{ margin: 7px 0; }
+
+    .warn{
+      margin-top: 14px;
+      border-radius: var(--radius);
+      padding: 14px;
+      background: var(--warnBg);
+      border: 1px solid var(--warnBd);
+      color: var(--warnText);
+      line-height: 1.5;
+    }
+    .warn b{ font-weight: 950; }
+
+    .blueBox{
+      margin-top: 14px;
+      border-radius: var(--radius);
+      padding: 14px;
+      background: var(--blueBoxBg);
+      border: 1px solid var(--blueBoxBd);
+      color:#0b3a66;
+      line-height: 1.5;
+    }
+    .blueBox b{ font-weight: 950; }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 920px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+
+    .miniCard{
+      background:#fff;
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: var(--radius);
+      padding: 14px;
+    }
+    .miniCard h4{
+      margin:0 0 8px 0;
+      font-size: 16px;
+      font-weight: 950;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:#22315a;
+    }
+    .miniCard p, .miniCard li{
+      margin:0;
+      color:#2a3550;
+      line-height:1.55;
+    }
+    .miniCard ul{
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.55;
+    }
+    .miniCard li{ margin: 6px 0; }
+
+    .form{
+      margin-top: 12px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 820px){
+      .form{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      font-weight: 950;
+      color:#23305a;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size: 14px;
+    }
+
+    input, textarea, select{
+      width:100%;
+      margin-top: 6px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.12);
+      padding: 12px 12px;
+      font-size: 15px;
+      outline:none;
+      background:#fff;
+      color:#1f2a44;
+    }
+    textarea{ min-height: 92px; resize: vertical; }
+    input:focus, textarea:focus, select:focus{ box-shadow: var(--focus); border-color: rgba(107,126,234,0.6); }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .btn{
+      border:none;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight: 950;
+      cursor:pointer;
+      font-size: 15px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+      transition: transform .06s ease, filter .15s ease, opacity .15s ease;
+    }
+    .btn:active{ transform: scale(0.985); }
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--active), var(--active2));
+      color:#fff;
+      box-shadow: 0 12px 22px rgba(79,99,200,0.18);
+    }
+    .btnSoft{
+      background:#fff;
+      border: 1px solid rgba(0,0,0,0.12);
+      color:#1f2a44;
+    }
+    .btnDanger{
+      background: linear-gradient(135deg, #ff5a6d, #ff9aa5);
+      color:#fff;
+    }
+
+    .copyBox{
+      margin-top: 12px;
+      border-radius: var(--radius);
+      background:#f8fbff;
+      border:1px solid #dbe7ff;
+      padding: 12px;
+      display:none;
+    }
+    .copyBox pre{
+      margin:0;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13.5px;
+      line-height:1.4;
+      color:#1f2a44;
+    }
+
+    .footer{
+      margin-top: 14px;
+      text-align:center;
+      color:#46506a;
+      opacity:0.85;
+      font-size: 13.5px;
+      line-height:1.45;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="badge">🧩</div>
+      <div style="flex:1 1 520px;">
+        <h1>Comprender a mi padre y cuidarme</h1>
+        <div class="sub">
+          Miniapp de reflexión emocional. No es un juicio, es una lupa para entender dinámicas difíciles
+          y cuidar tu propio valor.
+        </div>
+
+        <div class="topRow">
+          <div class="pillInfo">🧠 Psicoeducación + Autocuidado</div>
+          <button class="rightBtn" id="btnText">🔎 Texto más grande</button>
+        </div>
+
+        <div class="tabs" id="tabs"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panelTop">
+        <div class="titleRow">
+          <div class="h2" id="panelTitle">🏠 Punto de partida</div>
+          <span class="chip" id="panelChip">Espacio seguro</span>
+        </div>
+      </div>
+
+      <div id="panelBody"></div>
+
+      <div class="footer">
+        Desarrollado por <b>Lic. Gonzalo Buendía – Psicólogo</b> y <b>Blanquita – Co-terapeuta</b> 🐾
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    //   DATA / CONFIG
+    // =========================
+    const KEY = "miniapp_comprender_padre_v1";
+
+    const SECTIONS = [
+      { id:"inicio",    label:"Inicio",        icon:"🏠", chip:"Espacio seguro" },
+      { id:"narc",      label:"Narcisismo",    icon:"🧠", chip:"Comprender" },
+      { id:"rac",       label:"Racismo",       icon:"🧩", chip:"Nombrar" },
+      { id:"combo",     label:"Combinación",   icon:"⚡", chip:"Patrones" },
+      { id:"impacto",   label:"Impacto en mí", icon:"💔", chip:"Cuidarme" },
+      { id:"detras",    label:"Lo que hay detrás", icon:"☁️", chip:"Profundidad", wide:true }
+    ];
+
+    const CONTENT = {
+      inicio: {
+        title:"🏠 Punto de partida",
+        chip:"Espacio seguro",
+        body: () => `
+          <p class="p">
+            Esta miniapp está diseñada para ayudarte a <b>comprender actitudes narcisistas y racistas en un padre</b>,
+            y al mismo tiempo conectar con algo muy importante:
+            <b>no es tu culpa que él sea así</b>, pero sí puedes cuidar lo que esto dejó en ti.
+          </p>
+
+          <div class="box">
+            <h3>🔎 ¿Qué encontrarás aquí?</h3>
+            <ul>
+              <li>Una explicación clara sobre <b>narcisismo parental</b> y <b>racismo</b>.</li>
+              <li>Cómo ambas actitudes se combinan y afectan a la familia.</li>
+              <li>El impacto emocional que dejan en los hijos.</li>
+              <li>Una mirada más profunda a lo que puede haber detrás de ese padre.</li>
+            </ul>
+          </div>
+
+          <div class="warn">
+            <b>Idea central:</b> Entender no significa justificar. Esta app no le quita responsabilidad a tu padre;
+            solo te da lenguaje para que puedas nombrar lo que viviste y empezar a tomar
+            <b>distancia emocional sana</b>.
+          </div>
+
+          <div class="blueBox">
+            <b>Si te escuchas por dentro ahora mismo…</b><br/>
+            ¿Qué emoción es la más fuerte cuando piensas en tu padre: rabia, tristeza, miedo, decepción, confusión…?
+            <div class="form" style="margin-top:12px;">
+              <div>
+                <label>💬 Emoción principal</label>
+                <input id="emoMain" type="text" placeholder="Escribe aquí..." />
+              </div>
+              <div>
+                <label>📝 Nota breve (opcional)</label>
+                <input id="emoNote" type="text" placeholder="Puedes anotar lo que venga..." />
+              </div>
+              <div style="grid-column:1/-1;">
+                <label>🧭 ¿Qué necesitarías hoy para cuidarte un poco?</label>
+                <textarea id="needToday" placeholder="Ej.: descanso, límites, hablar con alguien, claridad..."></textarea>
+              </div>
+            </div>
+            <div class="btnRow">
+              <button class="btn btnPrimary" id="btnSaveStart">💾 Guardar</button>
+              <button class="btn btnSoft" id="btnCopyStart">📋 Copiar</button>
+            </div>
+            <div class="copyBox" id="startBox"><pre id="startText"></pre></div>
+          </div>
+        `
+      },
+
+      narc: {
+        title:"🧠 Narcisismo parental (marco práctico)",
+        chip:"Comprender",
+        body: () => `
+          <p class="p">
+            “Narcisismo” aquí no es un diagnóstico. Es un <b>patrón de relación</b> donde el padre prioriza su imagen,
+            su control o su superioridad por encima del vínculo.
+          </p>
+
+          <div class="grid2">
+            <div class="miniCard">
+              <h4>🎭 Señales típicas</h4>
+              <ul>
+                <li><b>Descalificación</b> o burlas cuando te expresas.</li>
+                <li><b>Competencia</b> con tus logros (en vez de alegría).</li>
+                <li><b>Control</b>: “yo sé más”, “tú exageras”.</li>
+                <li><b>Gaslighting</b>: te hace dudar de tu percepción (“eso nunca pasó”).</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h4>🧩 Efecto en los hijos</h4>
+              <ul>
+                <li>Hipervigilancia (leer el humor del padre).</li>
+                <li>Culpa automática o vergüenza.</li>
+                <li>Dificultad para poner límites.</li>
+                <li>Necesidad de aprobación / miedo a decepcionar.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="warn">
+            <b>Clave:</b> No necesitas convencerlo. El foco es <b>reconocer el patrón</b> para protegerte mejor.
+          </div>
+        `
+      },
+
+      rac: {
+        title:"🧩 Racismo (cuando viene de alguien cercano)",
+        chip:"Nombrar",
+        body: () => `
+          <p class="p">
+            El racismo puede aparecer como insulto directo o como “bromas”, desprecio, comparaciones,
+            estereotipos o superioridad moral. Cuando viene de un padre, duele doble: por el contenido y por la fuente.
+          </p>
+
+          <div class="grid2">
+            <div class="miniCard">
+              <h4>🧷 Formas comunes</h4>
+              <ul>
+                <li>“Eso es de gente…” (desprecio por origen, color, clase o cultura).</li>
+                <li>“Solo estaba bromeando” (normaliza el daño).</li>
+                <li>Comparaciones humillantes / apodos.</li>
+                <li>Deshumanización (tratar al otro como inferior).</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h4>🛡️ Cómo te afecta</h4>
+              <ul>
+                <li>Herida identitaria (“algo en mí está mal”).</li>
+                <li>Rabia + vergüenza mezcladas.</li>
+                <li>Lealtad dividida (quererlo y rechazar lo que dice).</li>
+                <li>Confusión: “¿lo ignoro o lo enfrento?”</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="blueBox">
+            <b>Frase útil (límite breve):</b> “Eso es ofensivo. No lo voy a conversar en ese tono.”
+          </div>
+        `
+      },
+
+      combo: {
+        title:"⚡ Cuando narcisismo + racismo se combinan",
+        chip:"Patrones",
+        body: () => `
+          <p class="p">
+            La combinación suele potenciar el daño: el racismo se usa como herramienta de control,
+            superioridad y humillación. No es solo “opinión”, es una forma de <b>dominar el vínculo</b>.
+          </p>
+
+          <div class="grid2">
+            <div class="miniCard">
+              <h4>🔁 Ciclo típico</h4>
+              <ul>
+                <li>Provocación (comentario racista/descalificador).</li>
+                <li>Reacción tuya (rabia, defensa, tristeza).</li>
+                <li>Invalidación (“estás sensible”, “no entiendes”).</li>
+                <li>Control / castigo emocional (silencio, burla, amenaza).</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h4>🎯 Objetivo oculto</h4>
+              <ul>
+                <li>Que dudes de ti.</li>
+                <li>Que te sometas para evitar conflicto.</li>
+                <li>Que su “verdad” domine la conversación.</li>
+                <li>Que el vínculo gire alrededor de él.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="warn">
+            <b>Idea práctica:</b> Tu paz no depende de ganarle una discusión. Depende de <b>tus límites</b> y tu red de apoyo.
+          </div>
+        `
+      },
+
+      impacto: {
+        title:"💔 Impacto en mí (y cómo cuidarme)",
+        chip:"Cuidarme",
+        body: () => `
+          <p class="p">
+            Crecer con un padre así puede dejar huellas: no porque seas débil, sino porque tu sistema aprendió a sobrevivir.
+            La buena noticia: esas huellas se pueden trabajar.
+          </p>
+
+          <div class="grid2">
+            <div class="miniCard">
+              <h4>🧠 Huellas posibles</h4>
+              <ul>
+                <li>Autoexigencia y miedo al error.</li>
+                <li>Hiperalerta (leer señales todo el tiempo).</li>
+                <li>Disminución de autoestima / valor propio.</li>
+                <li>Problemas con límites (ceder o explotar).</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h4>🛠️ Micro-acciones (hoy)</h4>
+              <ul>
+                <li>Elegir una conversación que no darás.</li>
+                <li>Preparar una frase límite.</li>
+                <li>Hacer una pausa corporal (respirar, caminar).</li>
+                <li>Hablar con alguien seguro (1 mensaje basta).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="blueBox">
+            <b>Recordatorio:</b> Si hoy no puedes con todo, al menos cuida una cosa: tu <b>autorespeto</b>.
+          </div>
+
+          <div class="box">
+            <h3>🧾 Plan breve de límites</h3>
+            <ul>
+              <li><b>Señal de salida:</b> ¿Qué frase usarás para terminar?</li>
+              <li><b>Regla:</b> no discutirás bajo burla/insulto.</li>
+              <li><b>Recuperación:</b> ¿qué harás después para volver a ti?</li>
+            </ul>
+          </div>
+        `
+      },
+
+      detras: {
+        title:"☁️ Lo que puede haber detrás (sin justificar)",
+        chip:"Profundidad",
+        body: () => `
+          <p class="p">
+            A veces hay historia personal, inseguridad, trauma, vergüenza o aprendizaje cultural rígido.
+            Entender esto <b>no elimina la responsabilidad</b>. Solo te ayuda a no cargar con lo que no es tuyo.
+          </p>
+
+          <div class="grid2">
+            <div class="miniCard">
+              <h4>🧭 Comprender sin justificar</h4>
+              <ul>
+                <li>Puedo entender de dónde viene <b>y</b> poner límites.</li>
+                <li>Puedo quererlo <b>y</b> cuidar mi salud mental.</li>
+                <li>No necesito convencerlo para validar mi historia.</li>
+              </ul>
+            </div>
+            <div class="miniCard">
+              <h4>🌿 Reencuadre</h4>
+              <p>
+                “Lo que él dice habla de él. Lo que yo elijo hoy habla de mi cuidado y mi futuro.”
+              </p>
+            </div>
+          </div>
+
+          <div class="blueBox">
+            <b>Ejercicio rápido:</b> Escribe 1 frase que te hubiera gustado escuchar de un padre seguro
+            (ej.: “Estoy orgulloso de ti”, “te creo”, “te respeto”).
+            <div class="form" style="margin-top:12px;">
+              <div style="grid-column:1/-1;">
+                <label>✍️ Tu frase</label>
+                <input id="wish" type="text" placeholder="Escribe aquí..." />
+              </div>
+            </div>
+            <div class="btnRow">
+              <button class="btn btnPrimary" id="btnSaveWish">💾 Guardar</button>
+              <button class="btn btnSoft" id="btnCopyAll">📋 Copiar resumen</button>
+              <button class="btn btnDanger" id="btnClearAll">🧼 Borrar todo</button>
+            </div>
+            <div class="copyBox" id="allBox"><pre id="allText"></pre></div>
+          </div>
+        `
+      }
+    };
+
+    // =========================
+    //   UI
+    // =========================
+    const tabsEl = document.getElementById("tabs");
+    const panelTitleEl = document.getElementById("panelTitle");
+    const panelChipEl = document.getElementById("panelChip");
+    const panelBodyEl = document.getElementById("panelBody");
+    const btnText = document.getElementById("btnText");
+
+    let current = "inicio";
+    let bigText = false;
+
+    buildTabs();
+    btnText.addEventListener("click", ()=>{
+      bigText = !bigText;
+      document.documentElement.style.setProperty("--fontScale", bigText ? "1.12" : "1");
+      btnText.textContent = bigText ? "🔎 Texto normal" : "🔎 Texto más grande";
+    });
+
+    setTab("inicio");
+
+    function buildTabs(){
+      tabsEl.innerHTML = "";
+      SECTIONS.forEach(s=>{
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "tab" + (s.wide ? " tabWide" : "");
+        b.dataset.id = s.id;
+        b.innerHTML = `<span>${s.icon}</span><span>${escapeHtml(s.label)}</span>`;
+        b.addEventListener("click", ()=> setTab(s.id));
+        tabsEl.appendChild(b);
+      });
+    }
+
+    function setTab(id){
+      current = id;
+      document.querySelectorAll(".tab").forEach(t=>{
+        t.classList.toggle("active", t.dataset.id === id);
+      });
+      render();
+      panelTitleEl.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function render(){
+      document.querySelectorAll(".tab").forEach(t=>{
+        t.classList.toggle("active", t.dataset.id === current);
+      });
+
+      const c = CONTENT[current];
+      panelTitleEl.textContent = c.title;
+      panelChipEl.textContent = (SECTIONS.find(x=>x.id===current)?.chip) || c.chip || "Espacio seguro";
+      panelBodyEl.innerHTML = c.body();
+
+      if(current === "inicio") bindInicio();
+      if(current === "detras") bindDetras();
+
+      hydrate();
+    }
+
+    // =========================
+    //   STORAGE
+    // =========================
+    function loadData(){
+      const raw = localStorage.getItem(KEY);
+      if(!raw) return {};
+      try{ return JSON.parse(raw) || {}; }catch(e){ return {}; }
+    }
+    function saveData(d){
+      localStorage.setItem(KEY, JSON.stringify(d));
+    }
+
+    function hydrate(){
+      const d = loadData();
+
+      const emoMain = document.getElementById("emoMain");
+      const emoNote = document.getElementById("emoNote");
+      const needToday = document.getElementById("needToday");
+
+      if(emoMain && d.emoMain) emoMain.value = d.emoMain;
+      if(emoNote && d.emoNote) emoNote.value = d.emoNote;
+      if(needToday && d.needToday) needToday.value = d.needToday;
+
+      const wish = document.getElementById("wish");
+      if(wish && d.wish) wish.value = d.wish;
+    }
+
+    // =========================
+    //   BINDS
+    // =========================
+    function bindInicio(){
+      const btnSaveStart = document.getElementById("btnSaveStart");
+      const btnCopyStart = document.getElementById("btnCopyStart");
+
+      btnSaveStart.addEventListener("click", ()=>{
+        const d = loadData();
+        d.emoMain = (document.getElementById("emoMain").value || "").trim();
+        d.emoNote = (document.getElementById("emoNote").value || "").trim();
+        d.needToday = (document.getElementById("needToday").value || "").trim();
+        d.updatedISO = new Date().toISOString();
+        saveData(d);
+        showStartBox(d);
+        alert("Guardado ✅");
+      });
+
+      btnCopyStart.addEventListener("click", async ()=>{
+        const emo = (document.getElementById("emoMain").value || "").trim();
+        const note = (document.getElementById("emoNote").value || "").trim();
+        const need = (document.getElementById("needToday").value || "").trim();
+
+        const text =
+`Comprender a mi padre y cuidarme — Check-in
+Emoción principal: ${emo || "—"}
+Nota: ${note || "—"}
+Necesidad hoy: ${need || "—"}`;
+
+        await safeCopy(text, "startBox", "startText");
+      });
+    }
+
+    function bindDetras(){
+      const btnSaveWish = document.getElementById("btnSaveWish");
+      const btnCopyAll = document.getElementById("btnCopyAll");
+      const btnClearAll = document.getElementById("btnClearAll");
+
+      btnSaveWish.addEventListener("click", ()=>{
+        const d = loadData();
+        d.wish = (document.getElementById("wish").value || "").trim();
+        d.updatedISO = new Date().toISOString();
+        saveData(d);
+        showAllBox(d);
+        alert("Guardado ✅");
+      });
+
+      btnCopyAll.addEventListener("click", async ()=>{
+        const d = loadData();
+        const text =
+`Comprender a mi padre y cuidarme — Resumen
+Emoción principal: ${d.emoMain || "—"}
+Nota: ${d.emoNote || "—"}
+Necesidad hoy: ${d.needToday || "—"}
+Frase que me hubiera gustado escuchar: ${d.wish || "—"}`;
+
+        await safeCopy(text, "allBox", "allText");
+      });
+
+      btnClearAll.addEventListener("click", ()=>{
+        const ok = confirm("¿Borrar todo lo guardado en esta miniapp? (no se puede deshacer)");
+        if(!ok) return;
+        localStorage.removeItem(KEY);
+        render();
+      });
+    }
+
+    // =========================
+    //   UI HELPERS
+    // =========================
+    function showStartBox(d){
+      const box = document.getElementById("startBox");
+      const pre = document.getElementById("startText");
+      if(!box || !pre) return;
+
+      pre.textContent =
+`Check-in
+Emoción principal: ${d.emoMain || "—"}
+Nota: ${d.emoNote || "—"}
+Necesidad hoy: ${d.needToday || "—"}`;
+
+      box.style.display = "block";
+    }
+
+    function showAllBox(d){
+      const box = document.getElementById("allBox");
+      const pre = document.getElementById("allText");
+      if(!box || !pre) return;
+
+      pre.textContent =
+`Resumen
+Emoción principal: ${d.emoMain || "—"}
+Nota: ${d.emoNote || "—"}
+Necesidad hoy: ${d.needToday || "—"}
+Frase deseada: ${d.wish || "—"}`;
+
+      box.style.display = "block";
+    }
+
+    async function safeCopy(text, boxId, preId){
+      try{
+        await navigator.clipboard.writeText(text);
+        alert("Copiado ✅");
+      }catch(e){
+        const box = document.getElementById(boxId);
+        const pre = document.getElementById(preId);
+        if(box && pre){
+          pre.textContent = text;
+          box.style.display = "block";
+        }
+        alert("No pude copiar automáticamente. Copia manualmente del recuadro que apareció.");
+      }
+    }
+
+    function escapeHtml(str){
+      return String(str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+  </script>
+</body>
+</html>

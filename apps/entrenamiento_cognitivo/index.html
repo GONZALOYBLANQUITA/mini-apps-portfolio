@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NEURAXTRAIN · Nivel Avanzado</title>
+  <style>
+    :root{
+      /* Paleta inspirada en tu captura */
+      --gradA:#79b7c8;
+      --gradB:#d78686;
+      --gradC:#f3c36f;
+
+      --bg:#f4f6f9;
+      --card:#ffffff;
+      --muted:#6b7280;
+      --text:#1f2937;
+
+      --blue:#2b6cb0;
+      --blue2:#3b82f6;
+
+      --coral:#ff7e7e;
+      --coral2:#ff9c9c;
+
+      --line:#e5e7eb;
+      --shadow: 0 14px 30px rgba(0,0,0,0.12);
+
+      --radius:18px;
+      --radius2:16px;
+
+      --focus: 0 0 0 4px rgba(59,130,246,0.18);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: var(--bg);
+      color:var(--text);
+    }
+
+    .topbar{
+      background: linear-gradient(90deg, var(--gradA), var(--gradB), var(--gradC));
+      color:#fff;
+      text-align:center;
+      padding: 28px 12px 20px;
+    }
+    .topbar h1{
+      margin:0;
+      font-size: 34px;
+      letter-spacing: 0.5px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+    .topbar p{
+      margin:8px 0 0;
+      opacity:0.95;
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .wrap{
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 14px 26px;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
+      align-items:start;
+    }
+
+    @media (max-width: 980px){
+      .layout{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background: var(--card);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.06);
+      overflow:hidden;
+    }
+
+    /* Sidebar */
+    .side{
+      padding: 18px;
+    }
+    .side h2{
+      margin:0 0 12px 0;
+      font-size: 20px;
+      font-weight: 900;
+      color: #175b88;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .tiles{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .tile{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px 12px;
+      background: #fff;
+      cursor:pointer;
+      user-select:none;
+      transition: transform .06s ease, box-shadow .12s ease, border-color .12s ease;
+      min-height: 92px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .tile:hover{ box-shadow: 0 12px 20px rgba(0,0,0,0.06); }
+    .tile:active{ transform: scale(0.99); }
+    .tile.active{
+      border-color: rgba(59,130,246,0.55);
+      box-shadow: 0 12px 24px rgba(59,130,246,0.12);
+    }
+
+    .ic{
+      width:36px;height:36px;
+      border-radius: 12px;
+      display:grid;place-items:center;
+      font-size: 20px;
+      background: #edf5ff;
+      border: 1px solid #d8e9ff;
+      flex: 0 0 36px;
+    }
+    .tTitle{
+      font-weight: 900;
+      margin:0;
+      font-size: 16px;
+    }
+    .tSub{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size: 13px;
+      line-height: 1.3;
+    }
+
+    .noteBox{
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 16px;
+      background: #fff7f7;
+      border: 1px solid #ffe0e0;
+    }
+    .noteBox .hd{
+      font-weight: 950;
+      color: #ff6b6b;
+      margin:0 0 6px 0;
+    }
+    .noteBox p{
+      margin:0;
+      color:#374151;
+      line-height:1.45;
+      font-size: 13.8px;
+    }
+
+    /* Main */
+    .main{
+      padding: 18px;
+      position:relative;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
+        repeating-linear-gradient(
+          45deg,
+          rgba(111, 183, 220, 0.18) 0px,
+          rgba(111, 183, 220, 0.18) 14px,
+          rgba(255, 209, 170, 0.18) 14px,
+          rgba(255, 209, 170, 0.18) 28px
+        );
+    }
+
+    .mainHeader{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      flex-wrap:wrap;
+    }
+
+    .mainHeader h2{
+      margin:0;
+      font-size: 24px;
+      font-weight: 950;
+      color:#25607b;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .pill{
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 950;
+      font-size: 13px;
+      background: linear-gradient(135deg, var(--coral), var(--coral2));
+      color:#fff;
+      align-self:flex-start;
+      white-space:nowrap;
+    }
+
+    .tagline{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height:1.35;
+    }
+
+    .obj{
+      margin-top: 12px;
+      display:inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #e8f7ea;
+      border: 1px solid #c9e9ce;
+      color:#1f6a2a;
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .hr{
+      height:1px;
+      background: rgba(0,0,0,0.08);
+      margin: 14px 0;
+    }
+
+    .h3{
+      margin:0;
+      font-size: 18px;
+      font-weight: 950;
+      color:#ff6b6b;
+    }
+
+    ul{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      line-height: 1.55;
+      font-size: 15.5px;
+    }
+    li{ margin: 6px 0; }
+
+    .formRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    @media (max-width: 640px){
+      .tiles{ grid-template-columns: 1fr 1fr; }
+      .formRow{ grid-template-columns: 1fr; }
+    }
+
+    label{
+      font-weight: 900;
+      color:#374151;
+      font-size: 14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    input, textarea, select{
+      width:100%;
+      margin-top: 6px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.12);
+      padding: 12px 12px;
+      font-size: 15px;
+      outline:none;
+      background:#fff;
+    }
+    textarea{ min-height: 90px; resize: vertical; }
+    input:focus, textarea:focus, select:focus{
+      box-shadow: var(--focus);
+      border-color: rgba(59,130,246,0.6);
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+    .btn{
+      border:none;
+      border-radius: 999px;
+      padding: 11px 14px;
+      font-weight: 950;
+      cursor:pointer;
+      font-size: 15px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+      transition: transform .06s ease, filter .15s ease, opacity .15s ease;
+    }
+    .btn:active{ transform: scale(0.985); }
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color:#fff;
+      box-shadow: 0 10px 18px rgba(59,130,246,0.18);
+    }
+    .btnSoft{
+      background:#fff;
+      border: 1px solid rgba(0,0,0,0.12);
+      color:#111827;
+    }
+    .btnDanger{
+      background: linear-gradient(135deg, #ff5a6d, #ff9aa5);
+      color:#fff;
+    }
+    .btn[disabled]{opacity:0.55; cursor:default}
+
+    .box{
+      margin-top: 12px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(0,0,0,0.10);
+      padding: 12px;
+    }
+
+    .scoreRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight: 900;
+      color:#1f2a44;
+    }
+    .scoreBadge{
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      background:#ecfeff;
+      border:1px solid #bde8ff;
+      white-space:nowrap;
+    }
+
+    .qa{
+      margin-top: 10px;
+      display:grid;
+      gap: 10px;
+    }
+
+    .qCard{
+      border: 1px solid rgba(0,0,0,0.10);
+      background: #fff;
+      border-radius: 16px;
+      padding: 12px;
+    }
+    .qHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight: 950;
+      color:#1f2a44;
+    }
+    .qText{
+      margin-top: 8px;
+      line-height: 1.45;
+      color:#27324a;
+      font-size: 15.5px;
+    }
+    .answerRow{
+      margin-top: 10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .answerRow input{
+      margin-top:0;
+      flex: 1 1 220px;
+    }
+    .smallHint{
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height:1.45;
+    }
+
+    .history{
+      margin-top: 12px;
+      display:grid;
+      gap:10px;
+    }
+    .histItem{
+      border: 1px solid rgba(0,0,0,0.10);
+      border-radius: 16px;
+      background:#fff;
+      padding: 10px 12px;
+    }
+    .histTop{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      font-weight: 950;
+    }
+    .histTop span{
+      color:#1f2a44;
+    }
+    .histMeta{
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height:1.4;
+      white-space: pre-wrap;
+    }
+
+    .credits{
+      margin-top: 14px;
+      text-align:center;
+      color:#334155;
+      opacity:0.85;
+      font-size: 13.5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <h1>NEURAXTRAIN · Nivel Avanzado</h1>
+    <p>Mini app de estimulación cognitiva para adultos mayores · Nivel avanzado</p>
+  </div>
+
+  <div class="wrap">
+    <div class="layout">
+
+      <!-- SIDEBAR -->
+      <div class="panel side">
+        <h2>🧠 Elige un módulo de trabajo</h2>
+
+        <div class="tiles" id="tiles"></div>
+
+        <div class="noteBox">
+          <div class="hd">Recomendación Nivel Avanzado:</div>
+          <p>
+            Ideal para personas mayores con buena escolarización previa. Se sugiere supervisión amable,
+            ejercicios cortos y frecuentes, y adaptar la dificultad según el cansancio o la motivación.
+          </p>
+        </div>
+      </div>
+
+      <!-- MAIN -->
+      <div class="panel main">
+        <div class="mainHeader">
+          <div>
+            <h2 id="mainTitle">🏠 Bienvenido/a a Neuraxtrain — Nivel Avanzado</h2>
+            <div class="tagline" id="mainSubtitle">Basado en el cuadernillo de Memoria y Atención · Nivel Avanzado.</div>
+            <div class="obj" id="objective">Objetivo: estimulación cognitiva global en adultos mayores</div>
+          </div>
+          <div class="pill">Nivel Avanzado</div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div id="mainBody"></div>
+
+        <div class="credits">
+          Desarrollado por <b>Lic. Gonzalo Buendía – Psicólogo</b> y <b>Blanquita – Co terapeuta</b> 🐾
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    //   CONFIG / DATA
+    // =========================
+    const KEY_SESSION = "neuraxtrain_adv_session_v1";
+    const KEY_HISTORY = "neuraxtrain_adv_history_v1";
+
+    const MODULES = [
+      { id:"inicio", icon:"🏠", title:"Inicio", sub:"Pautas generales" },
+      { id:"atencion1", icon:"🔎", title:"Atención", sub:"Letras V · W · U" },
+      { id:"calculo1", icon:"🧾", title:"Cálculo", sub:"Compras 1" },
+      { id:"calculo2", icon:"🧮", title:"Cálculo", sub:"Compras 2" },
+      { id:"lenguaje1", icon:"🧩", title:"Lenguaje", sub:"Categorías" },
+      { id:"lenguaje2", icon:"🍽️", title:"Lenguaje", sub:"Objetos de cocina" },
+      { id:"gnosis", icon:"🗺️", title:"Gnosis", sub:"Mapa y provincias" }
+    ];
+
+    // Banco de ejercicios (simple, pero funcional)
+    const BANK = {
+      atencion1: [
+        { q:"Escribe la secuencia alternando: V – W – U (10 letras).", a:"VWUVWUVWUV" },
+        { q:"Escribe al revés: V W U V W U", a:"UWVUWV" },
+        { q:"Cuenta cuántas letras hay: VVWUUVWWUV", a:"10" }
+      ],
+      calculo1: [
+        { q:"Compra: pan S/ 3 + leche S/ 5 + fruta S/ 6. Total = ?", a:"14" },
+        { q:"Si pagas con S/ 20, ¿vuelto?", a:"6" },
+        { q:"2 compras iguales de S/ 14. Total = ?", a:"28" }
+      ],
+      calculo2: [
+        { q:"Compra: arroz S/ 8 + pollo S/ 17 + verduras S/ 6. Total = ?", a:"31" },
+        { q:"Si tienes S/ 50, ¿cuánto te queda?", a:"19" },
+        { q:"Si el pollo sube S/ 3, nuevo total = ?", a:"34" }
+      ],
+      lenguaje1: [
+        { q:"Di 6 animales en 20 segundos (escribe 6).", a:"(abierto)" },
+        { q:"Di 6 frutas (escribe 6).", a:"(abierto)" },
+        { q:"Di 6 profesiones (escribe 6).", a:"(abierto)" }
+      ],
+      lenguaje2: [
+        { q:"Escribe 8 objetos de cocina.", a:"(abierto)" },
+        { q:"Escribe 5 utensilios que corten o piquen.", a:"(abierto)" },
+        { q:"Escribe 5 cosas que se usen para cocinar al fuego.", a:"(abierto)" }
+      ],
+      gnosis: [
+        { q:"Escribe 5 departamentos/provincias de tu país (según corresponda).", a:"(abierto)" },
+        { q:"Escribe 3 puntos cardinales + 1 intercardinal.", a:"N, S, E, O, NE/NO/SE/SO" },
+        { q:"¿Qué está al norte del sur? (responde con una palabra)", a:"norte" }
+      ]
+    };
+
+    // =========================
+    //   STATE
+    // =========================
+    let current = "inicio";
+    let score = { done:0, correct:0 };
+    let activeExerciseIndex = 0;
+
+    // =========================
+    //   INIT UI
+    // =========================
+    const tilesEl = document.getElementById("tiles");
+    const mainTitleEl = document.getElementById("mainTitle");
+    const mainSubtitleEl = document.getElementById("mainSubtitle");
+    const mainBodyEl = document.getElementById("mainBody");
+
+    buildTiles();
+    setModule("inicio");
+
+    function buildTiles(){
+      tilesEl.innerHTML = "";
+      MODULES.forEach(m=>{
+        const div = document.createElement("div");
+        div.className = "tile";
+        div.dataset.id = m.id;
+        div.innerHTML = `
+          <div class="ic">${m.icon}</div>
+          <div>
+            <div class="tTitle">${escapeHtml(m.title)}</div>
+            <div class="tSub">${escapeHtml(m.sub)}</div>
+          </div>
+        `;
+        div.onclick = () => setModule(m.id);
+        tilesEl.appendChild(div);
+      });
+    }
+
+    function setActiveTile(id){
+      document.querySelectorAll(".tile").forEach(t=>{
+        t.classList.toggle("active", t.dataset.id === id);
+      });
+    }
+
+    function setModule(id){
+      current = id;
+      setActiveTile(id);
+      score = { done:0, correct:0 };
+      activeExerciseIndex = 0;
+
+      const mod = MODULES.find(x=>x.id===id);
+      mainTitleEl.textContent = `${mod.icon} ${mod.title} — ${mod.sub}`;
+      mainSubtitleEl.textContent = subtitleFor(id);
+
+      renderModule();
+      // guardar módulo actual (mejora continuidad)
+      saveSessionState();
+    }
+
+    function subtitleFor(id){
+      if(id==="inicio") return "Basado en pautas de estimulación cognitiva amable y estructurada.";
+      if(id.startsWith("atencion")) return "Entrena foco, secuenciación y control atencional.";
+      if(id.startsWith("calculo")) return "Entrena cálculo funcional y razonamiento.";
+      if(id.startsWith("lenguaje")) return "Entrena fluencia verbal, categorías y evocación.";
+      if(id==="gnosis") return "Entrena orientación y conocimiento general.";
+      return "";
+    }
+
+    // =========================
+    //   RENDER MODULES
+    // =========================
+    function renderModule(){
+      if(current === "inicio"){
+        mainBodyEl.innerHTML = renderHome();
+        bindHome();
+        restoreSessionForm();
+        renderHistory();
+        return;
+      }
+      mainBodyEl.innerHTML = renderExerciseUI(current);
+      bindExercise(current);
+    }
+
+    function renderHome(){
+      return `
+        <h3 class="h3">Cómo usar esta mini app</h3>
+        <ul>
+          <li>Elija un módulo (Atención, Cálculo, Lenguaje, Gnosis) desde el menú de la izquierda.</li>
+          <li>Lea la consigna lentamente y, si hace falta, repítala.</li>
+          <li>Respete los silencios y permita que la persona piense con calma.</li>
+          <li>Si aparece cansancio o frustración, es mejor detenerse y continuar otro día.</li>
+        </ul>
+
+        <div class="hr"></div>
+
+        <h3 class="h3" style="color:#25607b;">Registro opcional de la sesión</h3>
+        <div class="formRow">
+          <div>
+            <label>📅 Fecha</label>
+            <input id="s_date" type="text" placeholder="Ej.: 10/12/2025" />
+          </div>
+          <div>
+            <label>🙂 Estado de ánimo al finalizar</label>
+            <input id="s_mood" type="text" placeholder="Ej.: tranquilo, animado, cansado..." />
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <label>📝 Nota breve (opcional)</label>
+          <textarea id="s_note" placeholder="Ej.: hoy se cansó en el ejercicio 2, mejor con pausas..."></textarea>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn btnPrimary" id="btnSaveSession">💾 Guardar sesión</button>
+          <button class="btn btnSoft" id="btnCopySession">📋 Copiar registro</button>
+          <button class="btn btnDanger" id="btnClearHistory">🧼 Limpiar historial</button>
+        </div>
+
+        <div class="box">
+          <div class="scoreRow">
+            <div><b>📌 Historial de sesiones</b></div>
+            <div class="scoreBadge">Se guardan localmente (este dispositivo)</div>
+          </div>
+          <div id="history" class="history"></div>
+        </div>
+      `;
+    }
+
+    function renderExerciseUI(id){
+      const list = BANK[id] || [];
+      const ex = list[activeExerciseIndex] || null;
+
+      return `
+        <div class="box">
+          <div class="scoreRow">
+            <div><b>📍 Progreso del módulo</b></div>
+            <div class="scoreBadge">Resueltas: ${score.done} · Correctas: ${score.correct}</div>
+          </div>
+          <div class="smallHint">Tip: si es difícil, permite pausas. En nivel avanzado, <b>calidad > velocidad</b>.</div>
+        </div>
+
+        <div class="qa">
+          ${ex ? `
+            <div class="qCard">
+              <div class="qHead">
+                <span>🧩 Ejercicio ${activeExerciseIndex + 1} de ${list.length}</span>
+                <span style="color:#6b7280; font-weight:900;">${hintFor(id)}</span>
+              </div>
+              <div class="qText">${escapeHtml(ex.q)}</div>
+
+              <div class="answerRow">
+                <input id="ans" type="text" placeholder="Escribe tu respuesta aquí..." />
+                <button class="btn btnPrimary" id="btnCheck">✅ Verificar</button>
+              </div>
+
+              <div class="btnRow">
+                <button class="btn btnSoft" id="btnShow">👀 Ver respuesta</button>
+                <button class="btn btnSoft" id="btnNext">➡ Siguiente</button>
+                <button class="btn btnSoft" id="btnReset">🔄 Reiniciar módulo</button>
+              </div>
+
+              <div id="feedback" class="smallHint"></div>
+            </div>
+          ` : `
+            <div class="qCard">
+              <div class="qHead">
+                <span>🎉 Módulo finalizado</span>
+                <span style="color:#6b7280; font-weight:900;">Buen trabajo</span>
+              </div>
+              <div class="qText">Has completado este módulo. Puedes repetirlo o elegir otro en el menú.</div>
+              <div class="btnRow">
+                <button class="btn btnPrimary" id="btnReset">🔄 Repetir módulo</button>
+                <button class="btn btnSoft" onclick="setModule('inicio')">🏠 Volver a Inicio</button>
+              </div>
+            </div>
+          `}
+        </div>
+      `;
+    }
+
+    function hintFor(id){
+      if(id.startsWith("atencion")) return "Secuencia / control";
+      if(id.startsWith("calculo")) return "Cálculo funcional";
+      if(id.startsWith("lenguaje")) return "Evocación";
+      if(id==="gnosis") return "Orientación";
+      return "";
+    }
+
+    // =========================
+    //   EXERCISE LOGIC
+    // =========================
+    function bindExercise(id){
+      const list = BANK[id] || [];
+      const ex = list[activeExerciseIndex];
+      const ansEl = document.getElementById("ans");
+      const feedbackEl = document.getElementById("feedback");
+      const btnCheck = document.getElementById("btnCheck");
+      const btnShow  = document.getElementById("btnShow");
+      const btnNext  = document.getElementById("btnNext");
+      const btnReset = document.getElementById("btnReset");
+
+      if(!ex){
+        btnReset?.addEventListener("click", ()=>{
+          score = {done:0, correct:0};
+          activeExerciseIndex = 0;
+          renderModule();
+        });
+        return;
+      }
+
+      btnCheck.addEventListener("click", ()=>{
+        const user = (ansEl.value || "").trim();
+        if(!user){
+          feedbackEl.textContent = "Escribe una respuesta (aunque sea aproximada).";
+          return;
+        }
+
+        const isOpen = ex.a === "(abierto)";
+        const ok = isOpen ? true : normalize(user) === normalize(ex.a);
+
+        score.done += 1;
+        if(ok) score.correct += 1;
+
+        feedbackEl.innerHTML = ok
+          ? "✅ Registrado. (En ejercicios abiertos, lo importante es <b>cantidad y esfuerzo</b>.)"
+          : `❌ No coincide. Puedes ver la respuesta y repetir con calma.`;
+
+        saveSessionState();
+      });
+
+      btnShow.addEventListener("click", ()=>{
+        if(ex.a === "(abierto)"){
+          feedbackEl.innerHTML = "👀 Ejercicio abierto: no hay una única respuesta. Busca <b>cantidad</b> y <b>variedad</b>.";
+        }else{
+          feedbackEl.innerHTML = `👀 Respuesta sugerida: <b>${escapeHtml(ex.a)}</b>`;
+        }
+      });
+
+      btnNext.addEventListener("click", ()=>{
+        activeExerciseIndex += 1;
+        renderModule();
+        saveSessionState();
+      });
+
+      btnReset.addEventListener("click", ()=>{
+        const ok = confirm("¿Reiniciar el módulo? (se reinicia el progreso del módulo actual)");
+        if(!ok) return;
+        score = {done:0, correct:0};
+        activeExerciseIndex = 0;
+        renderModule();
+        saveSessionState();
+      });
+
+      // Enter = verificar
+      ansEl.addEventListener("keydown", (e)=>{
+        if(e.key === "Enter"){
+          e.preventDefault();
+          btnCheck.click();
+        }
+      });
+    }
+
+    function normalize(s){
+      return String(s || "")
+        .trim()
+        .toLowerCase()
+        .replaceAll(" ", "")
+        .replaceAll("á","a").replaceAll("é","e").replaceAll("í","i").replaceAll("ó","o").replaceAll("ú","u");
+    }
+
+    // =========================
+    //   SESSION REGISTER (HOME)
+    // =========================
+    function bindHome(){
+      const btnSave = document.getElementById("btnSaveSession");
+      const btnCopy = document.getElementById("btnCopySession");
+      const btnClear = document.getElementById("btnClearHistory");
+
+      btnSave.addEventListener("click", ()=>{
+        const data = readSessionForm();
+        if(!data.date && !data.mood && !data.note){
+          alert("Completa al menos un campo para guardar.");
+          return;
+        }
+        addToHistory(data);
+        saveCurrentSessionForm(data);
+        renderHistory();
+        alert("Sesión guardada ✅");
+      });
+
+      btnCopy.addEventListener("click", async ()=>{
+        const data = readSessionForm();
+        const text =
+`NEURAXTRAIN — Registro de sesión
+Fecha: ${data.date || "—"}
+Estado de ánimo: ${data.mood || "—"}
+Nota: ${data.note || "—"}`;
+
+        try{
+          await navigator.clipboard.writeText(text);
+          alert("Copiado ✅");
+        }catch(e){
+          alert("No se pudo copiar automáticamente. Puedes copiar manualmente desde los campos.");
+        }
+      });
+
+      btnClear.addEventListener("click", ()=>{
+        const ok = confirm("¿Borrar historial de sesiones? (no se puede deshacer)");
+        if(!ok) return;
+        localStorage.removeItem(KEY_HISTORY);
+        renderHistory();
+      });
+    }
+
+    function readSessionForm(){
+      return {
+        date: (document.getElementById("s_date").value || "").trim(),
+        mood: (document.getElementById("s_mood").value || "").trim(),
+        note: (document.getElementById("s_note").value || "").trim(),
+        iso: new Date().toISOString()
+      };
+    }
+
+    function saveCurrentSessionForm(data){
+      localStorage.setItem(KEY_SESSION, JSON.stringify(data));
+    }
+
+    function restoreSessionForm(){
+      const raw = localStorage.getItem(KEY_SESSION);
+      if(!raw) return;
+      try{
+        const d = JSON.parse(raw);
+        document.getElementById("s_date").value = d.date || "";
+        document.getElementById("s_mood").value = d.mood || "";
+        document.getElementById("s_note").value = d.note || "";
+      }catch(e){}
+    }
+
+    // =========================
+    //   HISTORY
+    // =========================
+    function loadHistory(){
+      const raw = localStorage.getItem(KEY_HISTORY);
+      if(!raw) return [];
+      try{
+        const arr = JSON.parse(raw);
+        return Array.isArray(arr) ? arr : [];
+      }catch(e){ return []; }
+    }
+
+    function saveHistory(list){
+      localStorage.setItem(KEY_HISTORY, JSON.stringify(list));
+    }
+
+    function addToHistory(item){
+      const list = loadHistory();
+      list.push(item);
+      // mantener últimos 10
+      const trimmed = list.slice(-10);
+      saveHistory(trimmed);
+    }
+
+    function renderHistory(){
+      const wrap = document.getElementById("history");
+      if(!wrap) return;
+      const list = loadHistory().slice().reverse();
+
+      if(list.length === 0){
+        wrap.innerHTML = `<div class="smallHint">Aún no hay sesiones guardadas.</div>`;
+        return;
+      }
+
+      wrap.innerHTML = "";
+      list.forEach(x=>{
+        const div = document.createElement("div");
+        div.className = "histItem";
+        div.innerHTML = `
+          <div class="histTop">
+            <span>📅 ${escapeHtml(x.date || "(sin fecha)")}</span>
+            <span>🙂 ${escapeHtml(x.mood || "(sin estado)")}</span>
+          </div>
+          <div class="histMeta">${escapeHtml(x.note || "")}</div>
+        `;
+        wrap.appendChild(div);
+      });
+    }
+
+    // =========================
+    //   SAVE/RESTORE MODULE STATE
+    // =========================
+    function saveSessionState(){
+      // guardamos módulo actual + progreso (solo para continuidad)
+      const s = {
+        current,
+        score,
+        activeExerciseIndex
+      };
+      localStorage.setItem("neuraxtrain_adv_state_v1", JSON.stringify(s));
+    }
+
+    // Recuperar al cargar (opcional)
+    (function restoreState(){
+      const raw = localStorage.getItem("neuraxtrain_adv_state_v1");
+      if(!raw) return;
+      try{
+        const s = JSON.parse(raw);
+        if(s?.current){
+          current = s.current;
+          score = s.score || {done:0, correct:0};
+          activeExerciseIndex = s.activeExerciseIndex || 0;
+          setActiveTile(current);
+          const mod = MODULES.find(x=>x.id===current) || MODULES[0];
+          mainTitleEl.textContent = `${mod.icon} ${mod.title} — ${mod.sub}`;
+          mainSubtitleEl.textContent = subtitleFor(current);
+          renderModule();
+        }
+      }catch(e){}
+    })();
+
+    // =========================
+    //   HELPERS
+    // =========================
+    function escapeHtml(str){
+      return String(str || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+  </script>
+</body>
+</html>

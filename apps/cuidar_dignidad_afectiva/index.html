@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuidar Dignidad Afectiva</title>
+  <style>
+    :root{
+      /* 🌞 Paleta cálida */
+      --bg1:#fff1e6;   /* crema melocotón */
+      --bg2:#fffaf5;   /* crema suave */
+      --bg3:#ffe7d6;   /* durazno */
+      --card:#ffffff;
+
+      --text:#2b2b2b;
+      --muted:#6b5b52;
+
+      --primary:#d15a3a;   /* terracota */
+      --primary2:#f08c5a;  /* coral cálido */
+      --accent:#f2b44b;    /* dorado */
+      --mint:#3aa38f;      /* verde cálido (equilibrio) */
+
+      --danger:#e65a5a;    /* rojo suave */
+      --warn:#f59e0b;
+
+      --border:#f2e2d8;
+      --shadow:0 10px 26px rgba(0,0,0,0.08);
+      --radius:20px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(circle at top left, var(--bg1) 0, var(--bg2) 42%, var(--bg3) 100%);
+      display:flex;
+      justify-content:center;
+      min-height:100vh;
+    }
+
+    .app{
+      width:100%;
+      max-width:640px;
+      padding:16px;
+    }
+
+    header{
+      text-align:center;
+      margin:10px 0 14px;
+    }
+
+    .brand{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.75);
+      border:1px solid var(--border);
+      box-shadow:0 6px 14px rgba(0,0,0,0.05);
+    }
+
+    .brand .logo{
+      width:34px;height:34px;border-radius:12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      display:grid; place-items:center;
+      color:#fff;
+      font-weight:900;
+      box-shadow:0 8px 16px rgba(209,90,58,0.25);
+    }
+
+    header h1{
+      margin:0;
+      font-size:1.7rem;
+      letter-spacing:-0.2px;
+    }
+
+    header p{
+      margin:10px auto 0;
+      max-width:520px;
+      color:var(--muted);
+      font-size:0.95rem;
+      line-height:1.45;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      box-shadow:var(--shadow);
+      padding:18px 16px;
+      margin-bottom:14px;
+    }
+
+    .section{display:none; animation:fade .2s ease-in-out}
+    .section.active{display:block}
+    @keyframes fade{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:translateY(0)}}
+
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+      font-size:0.88rem;
+    }
+    .nav .where{
+      font-weight:900;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      color:#3a2f2a;
+      opacity:0.92;
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:0.78rem;
+      font-weight:900;
+      background:#fff6ee;
+      border:1px solid var(--border);
+      color:#5a4035;
+      white-space:nowrap;
+    }
+
+    .label{
+      font-weight:900;
+      margin:10px 0 4px;
+      font-size:1rem;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .sub{
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:0.9rem;
+      line-height:1.45;
+    }
+
+    .btn{
+      width:100%;
+      border:none;
+      border-radius:999px;
+      padding:12px 16px;
+      font-weight:900;
+      font-size:1rem;
+      cursor:pointer;
+      margin-top:10px;
+      transition:transform .05s ease, filter .15s ease, opacity .15s ease;
+    }
+    .btn:active{transform:scale(0.98)}
+    .btn[disabled]{opacity:0.5; cursor:default}
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--primary), var(--primary2));
+      color:#fff;
+      box-shadow:0 8px 18px rgba(209,90,58,0.22);
+    }
+    .btn-secondary{
+      background:#fff;
+      border:1px solid var(--border);
+      color:#5a4035;
+    }
+    .btn-ghost{
+      background:transparent;
+      border:1px dashed #d5c2b8;
+      color:#5a4035;
+    }
+    .btn-danger{
+      background:linear-gradient(135deg, var(--danger), #ff8b8b);
+      color:#fff;
+    }
+    .btn-small{
+      width:auto;
+      padding:8px 12px;
+      font-size:0.86rem;
+      margin:0;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:12px;
+    }
+    @media (max-width:560px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .tile{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 12px;
+      background:#fffaf5;
+      cursor:pointer;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      transition:transform .06s ease, box-shadow .12s ease;
+    }
+    .tile:active{transform:scale(0.99)}
+    .tile:hover{box-shadow:0 12px 22px rgba(0,0,0,0.06)}
+    .tile .ic{
+      width:38px;height:38px;border-radius:14px;
+      display:grid;place-items:center;
+      background:rgba(240,140,90,0.16);
+      border:1px solid rgba(240,140,90,0.28);
+      font-size:1.15rem;
+      flex:0 0 38px;
+    }
+    .tile .t-title{
+      font-weight:900;
+      margin:0;
+      font-size:0.98rem;
+    }
+    .tile .t-sub{
+      margin:3px 0 0;
+      color:var(--muted);
+      font-size:0.86rem;
+      line-height:1.3;
+    }
+
+    textarea, input[type="text"]{
+      width:100%;
+      border-radius:14px;
+      border:1px solid var(--border);
+      padding:11px 12px;
+      font-size:0.95rem;
+      font-family:inherit;
+      background:#fff;
+      outline:none;
+    }
+    textarea{min-height:96px; resize:vertical}
+
+    .pill-row{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      flex:1 1 32%;
+      min-width:140px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      padding:10px 12px;
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+      text-align:center;
+      user-select:none;
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      align-items:center;
+    }
+    .pill.active{
+      background:#fff1e6;
+      border-color:#f2c5b4;
+      color:#5a4035;
+    }
+
+    .callout{
+      border-radius:16px;
+      padding:12px;
+      background:#fff6ee;
+      border:1px solid var(--border);
+      margin-top:10px;
+      font-size:0.92rem;
+      line-height:1.45;
+      color:#4a3a33;
+    }
+
+    .tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+    .tag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:0.84rem;
+      font-weight:900;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tag.on{
+      background:#fff1e6;
+      border-color:#f2c5b4;
+      color:#5a4035;
+    }
+
+    .entry{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+      background:#fffaf5;
+      margin-top:10px;
+    }
+    .entry-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      font-size:0.92rem;
+      margin-bottom:6px;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      font-size:0.78rem;
+      font-weight:900;
+      border:1px solid var(--border);
+      background:#fff;
+      white-space:nowrap;
+    }
+    .badge.good{background:#eefaf4; border-color:#cdeedd; color:#195b4f}
+    .badge.mid{background:#fff7ed; border-color:#fed7aa; color:#92400e}
+    .badge.bad{background:#fff1f2; border-color:#fecdd3; color:#9f1239}
+
+    .entry-body{
+      font-size:0.9rem;
+      line-height:1.4;
+      color:#3b2f2a;
+    }
+    .entry-body div{margin:4px 0}
+
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+    }
+
+    footer{
+      text-align:center;
+      font-size:0.78rem;
+      opacity:0.72;
+      margin:10px 0 6px;
+      color:#4a3a33;
+    }
+
+    .tiny{
+      font-size:0.82rem;
+      color:var(--muted);
+      margin-top:8px;
+      line-height:1.4;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <header>
+      <div class="brand">
+        <div class="logo">❤</div>
+        <div>
+          <h1 style="margin:0;">Cuidar Dignidad Afectiva</h1>
+          <div style="font-size:0.85rem; color:var(--muted); font-weight:800;">Una guía cálida para volver a ti</div>
+        </div>
+      </div>
+      <p>
+        Cuando te sientas confundid@, ansios@ o en “espera”, vuelve aquí.
+        <strong>Tu dignidad no se negocia</strong>: se cuida con límites, claridad y autocuidado.
+      </p>
+    </header>
+
+    <!-- HOME -->
+    <section id="sec-home" class="section active">
+      <div class="card">
+        <div class="nav">
+          <div class="where">🏡 Inicio</div>
+          <div class="chip">🌤️ Suave pero firme</div>
+        </div>
+
+        <div class="label">✨ ¿Qué quieres hacer ahora?</div>
+        <div class="sub">Elige una tarjeta. Puedes volver cuando quieras.</div>
+
+        <div class="grid">
+          <div class="tile" onclick="go('sec-check')">
+            <div class="ic">🧭</div>
+            <div>
+              <div class="t-title">Evaluación rápida</div>
+              <div class="t-sub">Ubicarme: cómo estoy y qué necesito proteger.</div>
+            </div>
+          </div>
+
+          <div class="tile" onclick="go('sec-signs')">
+            <div class="ic">🚦</div>
+            <div>
+              <div class="t-title">Señales rojas / verdes</div>
+              <div class="t-sub">Diferenciar hechos saludables vs patrones dañinos.</div>
+            </div>
+          </div>
+
+          <div class="tile" onclick="go('sec-limits')">
+            <div class="ic">🧱</div>
+            <div>
+              <div class="t-title">Mis límites</div>
+              <div class="t-sub">Definir “si pasa X, yo haré Y” (sin culpa).</div>
+            </div>
+          </div>
+
+          <div class="tile" onclick="go('sec-plan')">
+            <div class="ic">🗺️</div>
+            <div>
+              <div class="t-title">Plan 24–72h</div>
+              <div class="t-sub">Acciones cortas para volver al centro.</div>
+            </div>
+          </div>
+
+          <div class="tile" onclick="go('sec-journal')">
+            <div class="ic">📓</div>
+            <div>
+              <div class="t-title">Registro diario</div>
+              <div class="t-sub">Hechos, emociones, autocuidado y puntaje.</div>
+            </div>
+          </div>
+
+          <div class="tile" onclick="go('sec-card')">
+            <div class="ic">💳</div>
+            <div>
+              <div class="t-title">Tarjeta de dignidad</div>
+              <div class="t-sub">Resumen claro para sostener decisiones.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          🌿 <strong>Idea central:</strong> si tu paz se rompe para sostener un vínculo, el vínculo necesita límites (o cambios reales).
+        </div>
+      </div>
+    </section>
+
+    <!-- CHECK -->
+    <section id="sec-check" class="section">
+      <div class="card">
+        <div class="nav">
+          <div class="where">🧭 Evaluación rápida</div>
+          <button class="btn btn-ghost btn-small" onclick="go('sec-home')">⬅ Volver</button>
+        </div>
+
+        <div class="label">1) ¿Cómo estás hoy?</div>
+        <div class="sub">Elige una opción (no hay “bien o mal”, solo ubicación).</div>
+
+        <div class="pill-row" id="mood-row">
+          <div class="pill" data-m="bien" onclick="pickMood('bien')">🌼 Estoy bien</div>
+          <div class="pill" data-m="confuso" onclick="pickMood('confuso')">🌫️ Estoy confus@</div>
+          <div class="pill" data-m="mal" onclick="pickMood('mal')">🧊 Me estoy perdiendo</div>
+        </div>
+
+        <div class="label">2) ¿Qué pasó (en 2–4 líneas)?</div>
+        <textarea id="check-note" placeholder="Hechos concretos: ¿qué ocurrió? ¿qué te dolió?"></textarea>
+
+        <div class="label">3) ¿Qué necesitas proteger hoy?</div>
+        <div class="sub">Toca para activar. (Máximo recomendado: 3)</div>
+
+        <div class="tags" id="need-tags">
+          <div class="tag" data-k="respeto" onclick="toggleNeed('respeto')">🧡 Respeto</div>
+          <div class="tag" data-k="claridad" onclick="toggleNeed('claridad')">🔎 Claridad</div>
+          <div class="tag" data-k="paz" onclick="toggleNeed('paz')">🕊️ Paz</div>
+          <div class="tag" data-k="reciprocidad" onclick="toggleNeed('reciprocidad')">🔁 Reciprocidad</div>
+          <div class="tag" data-k="cuidado" onclick="toggleNeed('cuidado')">🫶 Cuidado</div>
+          <div class="tag" data-k="tiempo" onclick="toggleNeed('tiempo')">⏳ Tiempo</div>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveQuick()">💾 Guardar evaluación</button>
+        <button class="btn btn-secondary" onclick="go('sec-card')">➡ Ver tarjeta de dignidad</button>
+
+        <div class="tiny">Tip: si estás en “me estoy perdiendo”, prioriza <strong>calma</strong> primero. Decidir bajo ansiedad suele doler más.</div>
+      </div>
+    </section>
+
+    <!-- SIGNS -->
+    <section id="sec-signs" class="section">
+      <div class="card">
+        <div class="nav">
+          <div class="where">🚦 Señales rojas / verdes</div>
+          <button class="btn btn-ghost btn-small" onclick="go('sec-home')">⬅ Volver</button>
+        </div>
+
+        <div class="label">🚩 Señales rojas (patrones que desgastan)</div>
+        <div class="sub">Si son repetidas, no son “un día malo”: son una dinámica.</div>
+        <div id="redBox" class="callout"></div>
+
+        <div class="label" style="margin-top:14px;">✅ Señales verdes (patrones que nutren)</div>
+        <div class="sub">No perfectas, pero consistentes.</div>
+        <div id="greenBox" class="callout"></div>
+
+        <div class="callout" style="background:#fffaf5;">
+          🧠 <strong>Regla práctica:</strong> una señal roja aislada se conversa; un patrón se regula con límites y decisiones.
+        </div>
+      </div>
+    </section>
+
+    <!-- LIMITS -->
+    <section id="sec-limits" class="section">
+      <div class="card">
+        <div class="nav">
+          <div class="where">🧱 Mis límites</div>
+          <button class="btn btn-ghost btn-small" onclick="go('sec-home')">⬅ Volver</button>
+        </div>
+
+        <div class="label">1) Mi límite principal</div>
+        <div class="sub">Formato sugerido: “Si pasa X, yo haré Y”.</div>
+        <input id="limit-main" type="text" placeholder="Ej.: Si hay indiferencia repetida, me retiro y pido claridad concreta." />
+
+        <div class="label">2) Mi frase breve (para sostenerme)</div>
+        <input id="limit-phrase" type="text" placeholder="Ej.: Yo no suplico amor. Yo elijo respeto." />
+
+        <div class="label">3) Mi acción concreta (hoy)</div>
+        <textarea id="limit-action" placeholder="Ej.: No discuto por chat. Respiro. Me enfoco en mí. Pido conversación con fecha/hora."></textarea>
+
+        <button class="btn btn-primary" onclick="saveLimits()">💾 Guardar límites</button>
+        <button class="btn btn-secondary" onclick="go('sec-plan')">➡ Ir al plan 24–72h</button>
+
+        <div class="tiny">🌱 Límite no es castigo: es una forma de decir “yo importo”.</div>
+      </div>
+    </section>
+
+    <!-- PLAN -->
+    <section id="sec-plan" class="section">
+      <div class="card">
+        <div class="nav">
+          <div class="where">🗺️ Plan 24–72h</div>
+          <button class="btn btn-ghost btn-small" onclick="go('sec-home')">⬅ Volver</button>
+        </div>
+
+        <div class="label">Elige tu foco</div>
+        <div class="sub">Un plan breve te quita la sensación de “caos”.</div>
+
+        <div class="pill-row" id="plan-row">
+          <div class="pill" data-p="calma" onclick="pickPlan('calma')">🕯️ Calma</div>
+          <div class="pill" data-p="claridad" onclick="pickPlan('claridad')">🧩 Claridad</div>
+          <div class="pill" data-p="distancia" onclick="pickPlan('distancia')">🌿 Distancia</div>
+        </div>
+
+        <div id="plan-out" class="callout">Elige un foco para ver un plan claro y cálido.</div>
+
+        <div class="label">Mi compromiso de hoy (1 acción)</div>
+        <input id="plan-commit" type="text" placeholder="Ej.: Hoy no escribo impulsivamente; camino 20 min y registro." />
+
+        <button class="btn btn-primary" onclick="savePlan()">💾 Guardar plan</button>
+        <button class="btn btn-secondary" onclick="go('sec-card')">➡ Ver tarjeta de dignidad</button>
+      </div>
+    </section>
+
+    <!-- JOURNAL -->
+    <section id="sec-journal" class="section">
+      <div class="card">
+        <div class="nav">
+          <div class="where">📓 Registro diario</div>
+          <button class="btn btn-ghost btn-small" onclick="go('sec-home')">⬅ Volver</button>
+        </div>
+
+        <div class="label">1) ¿Qué pasó hoy?</div>
+        <textarea id="j-what" placeholder="Hechos concretos (sin suposiciones)."></textarea>
+
+        <div class="label">2) ¿Qué sentí?</div>
+        <textarea id="j-feel" placeholder="Emociones reales: tristeza, rabia, ansiedad, vergüenza, alivio..."></textarea>
+
+        <div class="label">3) ¿Cómo me cuidé?</div>
+        <textarea id="j-care" placeholder="Qué hice para proteger mi dignidad (aunque sea pequeño)."></textarea>
+
+        <div class="label">4) Puntaje de dignidad (0–10)</div>
+        <div class="sub">0 = me abandoné; 10 = me cuidé con respeto.</div>
+        <div class="pill-row" id="score-row"></div>
+
+        <button class="btn btn-primary" onclick="saveJournal()">💾 Guardar registro</button>
+
+        <div class="label" style="margin-top:14px;">Mis últimos registros</div>
+        <div id="journal-list"></div>
+
+        <button class="btn btn-ghost" onclick="clearAll()">🧹 Borrar todo</button>
+      </div>
+    </section>
+
+    <!-- CARD -->
+    <section id="sec-card" class="section">
+      <div class="card">
+        <div class="nav">
+          <div class="where">💳 Tarjeta de dignidad</div>
+          <button class="btn btn-ghost btn-small" onclick="go('sec-home')">⬅ Volver</button>
+        </div>
+
+        <div class="label">Mi estado actual</div>
+        <div id="card-mood" class="row"></div>
+
+        <div class="label" style="margin-top:12px;">Necesidades protegidas</div>
+        <div id="card-needs" class="row"></div>
+
+        <div class="label" style="margin-top:12px;">Mi límite principal</div>
+        <div id="card-limit" class="callout"></div>
+
+        <div class="label" style="margin-top:12px;">Mi frase breve</div>
+        <div id="card-phrase" class="callout"></div>
+
+        <div class="label" style="margin-top:12px;">Mi plan 24–72h</div>
+        <div id="card-plan" class="callout"></div>
+
+        <button class="btn btn-secondary" onclick="copyCard()">📋 Copiar tarjeta (texto)</button>
+        <button class="btn btn-primary" onclick="go('sec-journal')">➡ Ir a registro</button>
+      </div>
+    </section>
+
+    <footer>
+      Desarrollado por: Lic. Gonzalo Buendía – Psicólogo y Blanquita – Co terapeuta.
+    </footer>
+  </div>
+
+  <script>
+    // =========================
+    //      DATOS / STORAGE
+    // =========================
+    const KEY_DATA = "cuidar_dignidad_afectiva_data_v2";
+    const KEY_JOURNAL = "cuidar_dignidad_afectiva_journal_v2";
+
+    const state = {
+      quick: { mood:null, note:"", needs:[] },
+      limits: { main:"", phrase:"", action:"" },
+      plan: { focus:null, commit:"", html:"" }
+    };
+
+    let scoreSel = null;
+
+    function saveAll(){ localStorage.setItem(KEY_DATA, JSON.stringify(state)); }
+
+    function loadAll(){
+      const raw = localStorage.getItem(KEY_DATA);
+      if(!raw) return;
+      try{
+        const parsed = JSON.parse(raw);
+        if(parsed?.quick) state.quick = parsed.quick;
+        if(parsed?.limits) state.limits = parsed.limits;
+        if(parsed?.plan) state.plan = parsed.plan;
+      }catch(e){}
+    }
+
+    function loadJournal(){
+      const raw = localStorage.getItem(KEY_JOURNAL);
+      if(!raw) return [];
+      try{
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      }catch(e){ return []; }
+    }
+
+    function saveJournalList(list){
+      localStorage.setItem(KEY_JOURNAL, JSON.stringify(list));
+    }
+
+    // =========================
+    //        NAV
+    // =========================
+    function go(id){
+      document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id)?.classList.add("active");
+
+      if(id === "sec-signs") renderSigns();
+      if(id === "sec-plan") { applyPlanUI(); updatePlanText(); }
+      if(id === "sec-journal") { renderJournal(); resetJournalForm(); }
+      if(id === "sec-card") renderCard();
+    }
+
+    // =========================
+    //      QUICK CHECK
+    // =========================
+    function pickMood(m){
+      state.quick.mood = m;
+      document.querySelectorAll("#mood-row .pill").forEach(p=>{
+        p.classList.toggle("active", p.dataset.m === m);
+      });
+      saveAll();
+    }
+
+    function toggleNeed(k){
+      const list = state.quick.needs;
+      const i = list.indexOf(k);
+      if(i>=0) list.splice(i,1);
+      else{
+        // recomendado max 3, pero no lo bloqueamos; solo avisamos si pasa
+        list.push(k);
+        if(list.length > 3){
+          // suave, sin castigo
+          alert("Tip: elige 1–3 necesidades principales para enfocarte mejor 🌿");
+        }
+      }
+      document.querySelectorAll("#need-tags .tag").forEach(t=>{
+        t.classList.toggle("on", list.includes(t.dataset.k));
+      });
+      saveAll();
+    }
+
+    function saveQuick(){
+      state.quick.note = (document.getElementById("check-note").value || "").trim();
+      saveAll();
+      alert("Guardado ✅  (Volver a ti ya es un acto de dignidad.)");
+    }
+
+    // =========================
+    //         LIMITS
+    // =========================
+    function saveLimits(){
+      state.limits.main = (document.getElementById("limit-main").value || "").trim();
+      state.limits.phrase = (document.getElementById("limit-phrase").value || "").trim();
+      state.limits.action = (document.getElementById("limit-action").value || "").trim();
+      saveAll();
+      alert("Límites guardados ✅  (Suave pero firme.)");
+    }
+
+    // =========================
+    //          PLAN
+    // =========================
+    function pickPlan(p){
+      state.plan.focus = p;
+      document.querySelectorAll("#plan-row .pill").forEach(x=>{
+        x.classList.toggle("active", x.dataset.p === p);
+      });
+      updatePlanText();
+      saveAll();
+    }
+
+    function applyPlanUI(){
+      document.getElementById("plan-commit").value = state.plan.commit || "";
+      document.querySelectorAll("#plan-row .pill").forEach(x=>{
+        x.classList.toggle("active", x.dataset.p === state.plan.focus);
+      });
+    }
+
+    function updatePlanText(){
+      const out = document.getElementById("plan-out");
+      const p = state.plan.focus;
+
+      let html = "";
+      if(p === "calma"){
+        html =
+          "🕯️ <strong>Foco: Calma primero</strong><br/>" +
+          "• <strong>24h:</strong> pausa de impulsos (no perseguir / no discutir).<br/>" +
+          "• <strong>48h:</strong> volver a rutina (sueño, comida, movimiento).<br/>" +
+          "• <strong>72h:</strong> decidir desde calma (qué acepto y qué no).<br/>" +
+          "🌿 <em>Regla:</em> si hay ansiedad, primero me cuido, luego decido.";
+      }else if(p === "claridad"){
+        html =
+          "🧩 <strong>Foco: Claridad (sin mendigar)</strong><br/>" +
+          "• Preparar 2 preguntas concretas (sin reproches).<br/>" +
+          "• Pedir conversación con fecha/hora (no ambigua).<br/>" +
+          "• Si hay evasión repetida: activar límite y distancia.<br/>" +
+          "🌿 <em>Regla:</em> claridad = propuesta + consecuencia.";
+      }else if(p === "distancia"){
+        html =
+          "🌿 <strong>Foco: Distancia para protegerme</strong><br/>" +
+          "• Reducir contacto 24–72h para recuperar centro.<br/>" +
+          "• No revisar redes/indicios (protección emocional).<br/>" +
+          "• Reforzar red de apoyo y proyectos propios.<br/>" +
+          "🌿 <em>Regla:</em> distancia no es castigo: es cuidado.";
+      }else{
+        html = "Elige un foco para ver un plan cálido y claro.";
+      }
+
+      state.plan.html = html;
+      out.innerHTML = html;
+    }
+
+    function savePlan(){
+      state.plan.commit = (document.getElementById("plan-commit").value || "").trim();
+      updatePlanText();
+      saveAll();
+      alert("Plan guardado ✅  (Una acción hoy, sostenida.)");
+    }
+
+    // =========================
+    //         SIGNS
+    // =========================
+    function renderSigns(){
+      const reds = [
+        "⛔ Te ignora y luego aparece como si nada (intermitencia).",
+        "🌀 Te confunde o invalida tu percepción (minimiza, niega, cambia versión).",
+        "📉 Promete cambios pero no hay hechos sostenidos.",
+        "⏳ Te quedas esperando y tu vida se frena.",
+        "🎯 Te busca solo cuando le conviene (asimetría).",
+        "🗣️ Falta de respeto (burla, desprecio, humillación)."
+      ];
+
+      const greens = [
+        "✅ Coherencia entre palabras y hechos.",
+        "🧠 Respeto incluso en conflicto (escucha, cuida el tono).",
+        "🔁 Reciprocidad: interés real por ti y tu bienestar.",
+        "🔎 Claridad: define lo que quiere y lo sostiene.",
+        "🧩 Reparación: reconoce errores y compensa.",
+        "🕊️ Tu paz aumenta, no se rompe."
+      ];
+
+      document.getElementById("redBox").innerHTML =
+        "<div style='font-weight:900; margin-bottom:6px;'>Si se repite, no lo minimices:</div>" +
+        "<ul style='margin:0; padding-left:18px; line-height:1.45;'>" +
+        reds.map(r=>`<li>${escapeHtml(r)}</li>`).join("") +
+        "</ul>";
+
+      document.getElementById("greenBox").innerHTML =
+        "<div style='font-weight:900; margin-bottom:6px;'>Busca consistencia, no perfección:</div>" +
+        "<ul style='margin:0; padding-left:18px; line-height:1.45;'>" +
+        greenssafe(greens);
+    }
+
+    function RerenderGreenList(greens){
+      return "<ul style='margin:0; padding-left:18px; line-height:1.45;'>" +
+             greens.map(g=>`<li>${escapeHtml(g)}</li>`).join("") +
+             "</ul>";
+    }
+
+    function RerenderRedList(reds){
+      return "<ul style='margin:0; padding-left:18px; line-height:1.45;'>" +
+             reds.map(r=>`<li>${escapeHtml(r)}</li>`).join("") +
+             "</ul>";
+    }
+
+    function renderSigns(){
+      const reds = [
+        "⛔ Te ignora y luego aparece como si nada (intermitencia).",
+        "🌀 Te confunde o invalida tu percepción (minimiza, niega, cambia versión).",
+        "📉 Promete cambios pero no hay hechos sostenidos.",
+        "⏳ Te quedas esperando y tu vida se frena.",
+        "🎯 Te busca solo cuando le conviene (asimetría).",
+        "🗣️ Falta de respeto (burla, desprecio, humillación)."
+      ];
+
+      const greens = [
+        "✅ Coherencia entre palabras y hechos.",
+        "🧠 Respeto incluso en conflicto (escucha, cuida el tono).",
+        "🔁 Reciprocidad: interés real por ti y tu bienestar.",
+        "🔎 Claridad: define lo que quiere y lo sostiene.",
+        "🧩 Reparación: reconoce errores y compensa.",
+        "🕊️ Tu paz aumenta, no se rompe."
+      ];
+
+      document.getElementById("redBox").innerHTML =
+        "<div style='font-weight:900; margin-bottom:6px;'>Si se repite, no lo minimices:</div>" +
+        RerenderRedList(reds);
+
+      document.getElementById("greenBox").innerHTML =
+        "<div style='font-weight:900; margin-bottom:6px;'>Busca consistencia, no perfección:</div>" +
+        RerenderGreenList(greens);
+    }
+
+    // =========================
+    //         JOURNAL
+    // =========================
+    function buildScorePills(){
+      const row = document.getElementById("score-row");
+      row.innerHTML = "";
+      const options = [
+        {k:"0-3", label:"😣 0–3"},
+        {k:"4-6", label:"😐 4–6"},
+        {k:"7-8", label:"🙂 7–8"},
+        {k:"9-10", label:"🌟 9–10"}
+      ];
+      options.forEach(o=>{
+        const el = document.createElement("div");
+        el.className = "pill";
+        el.dataset.s = o.k;
+        el.textContent = o.label;
+        el.onclick = () => {
+          scoreSel = o.k;
+          document.querySelectorAll("#score-row .pill").forEach(p=>p.classList.toggle("active", p.dataset.s === o.k));
+        };
+        row.appendChild(el);
+      });
+    }
+
+    function resetJournalForm(){
+      document.getElementById("j-what").value = "";
+      document.getElementById("j-feel").value = "";
+      document.getElementById("j-care").value = "";
+      scoreSel = null;
+      document.querySelectorAll("#score-row .pill").forEach(p=>p.classList.remove("active"));
+    }
+
+    function saveJournal(){
+      const what = (document.getElementById("j-what").value || "").trim();
+      const feel = (document.getElementById("j-feel").value || "").trim();
+      const care = (document.getElementById("j-care").value || "").trim();
+
+      if(!what && !feel && !care){
+        alert("Escribe al menos una parte del registro (aunque sea breve).");
+        return;
+      }
+
+      const entry = {
+        iso: new Date().toISOString(),
+        what, feel, care,
+        score: scoreSel
+      };
+
+      const list = loadJournal();
+      list.push(entry);
+      saveJournalList(list);
+
+      alert("Registro guardado ✅  (Volver a ti también es progreso.)");
+      renderJournal();
+      resetJournalForm();
+    }
+
+    function formatDate(iso){
+      const d = new Date(iso);
+      if(isNaN(d.getTime())) return "Fecha desconocida";
+      return d.toLocaleString("es-PE", {
+        weekday:"short", year:"numeric", month:"short", day:"numeric",
+        hour:"2-digit", minute:"2-digit"
+      });
+    }
+
+    function badgeFor(score){
+      if(!score) return `<span class="badge mid">🟠 Sin puntaje</span>`;
+      if(score === "0-3") return `<span class="badge bad">🔴 0–3</span>`;
+      if(score === "4-6") return `<span class="badge mid">🟠 4–6</span>`;
+      if(score === "7-8") return `<span class="badge good">🟢 7–8</span>`;
+      return `<span class="badge good">🌟 9–10</span>`;
+    }
+
+    function renderJournal(){
+      const wrap = document.getElementById("journal-list");
+      const list = loadJournal().sort((a,b)=> new Date(b.iso) - new Date(a.iso));
+
+      if(list.length === 0){
+        wrap.innerHTML = `<p class="sub">Aún no hay registros. Empieza con 3–5 líneas.</p>`;
+        return;
+      }
+
+      wrap.innerHTML = "";
+      list.slice(0, 12).forEach(e=>{
+        const div = document.createElement("div");
+        div.className = "entry";
+        div.innerHTML =
+          `<div class="entry-head">
+             <div>📅 ${escapeHtml(formatDate(e.iso))}</div>
+             <div>${badgeFor(e.score)}</div>
+           </div>
+           <div class="entry-body">
+             ${e.what ? `<div><strong>Hechos:</strong> ${escapeHtml(e.what)}</div>` : ""}
+             ${e.feel ? `<div><strong>Sentí:</strong> ${escapeHtml(e.feel)}</div>` : ""}
+             ${e.care ? `<div><strong>Me cuidé:</strong> ${escapeHtml(e.care)}</div>` : ""}
+           </div>`;
+        wrap.appendChild(div);
+      });
+
+      if(list.length > 12){
+        const p = document.createElement("p");
+        p.className = "sub";
+        p.textContent = `Mostrando los últimos 12 de ${list.length}.`;
+        wrap.appendChild(p);
+      }
+    }
+
+    function clearAll(){
+      const ok = confirm("¿Borrar TODO (datos y registros)? Esta acción no se puede deshacer.");
+      if(!ok) return;
+
+      localStorage.removeItem(KEY_DATA);
+      localStorage.removeItem(KEY_JOURNAL);
+
+      state.quick = { mood:null, note:"", needs:[] };
+      state.limits = { main:"", phrase:"", action:"" };
+      state.plan = { focus:null, commit:"", html:"" };
+
+      applyStateToUI();
+      renderJournal();
+      alert("Listo. Todo fue borrado.");
+    }
+
+    // =========================
+    //          CARD
+    // =========================
+    function renderCard(){
+      const moodEl = document.getElementById("card-mood");
+      const needsEl = document.getElementById("card-needs");
+      const limitEl = document.getElementById("card-limit");
+      const phraseEl = document.getElementById("card-phrase");
+      const planEl = document.getElementById("card-plan");
+
+      moodEl.innerHTML = "";
+      needsEl.innerHTML = "";
+
+      const mood = state.quick.mood;
+      const moodBadge =
+        mood === "bien" ? `<span class="badge good">🌼 Estoy bien</span>` :
+        mood === "confuso" ? `<span class="badge mid">🌫️ Estoy confus@</span>` :
+        mood === "mal" ? `<span class="badge bad">🧊 Me estoy perdiendo</span>` :
+        `<span class="badge mid">🟠 Sin evaluar</span>`;
+
+      moodEl.insertAdjacentHTML("beforeend", moodBadge);
+
+      if(state.quick.note){
+        moodEl.insertAdjacentHTML("beforeend", `<span class="badge mid">📝 ${escapeHtml(shorten(state.quick.note, 26))}</span>`);
+      }
+
+      if(state.quick.needs.length === 0){
+        needsEl.innerHTML = `<span class="badge mid">🟠 Sin necesidades marcadas</span>`;
+      }else{
+        state.quick.needs.forEach(k=>{
+          needsEl.insertAdjacentHTML("beforeend", `<span class="badge good">🧡 ${capitalize(k)}</span>`);
+        });
+      }
+
+      limitEl.innerHTML = state.limits.main ? escapeHtml(state.limits.main) : "Aún no has guardado un límite principal.";
+      phraseEl.innerHTML = state.limits.phrase ? escapeHtml(state.limits.phrase) : "Aún no has guardado una frase breve.";
+
+      if(state.plan.commit || state.plan.html){
+        planEl.innerHTML =
+          `<div><strong>Compromiso:</strong> ${state.plan.commit ? escapeHtml(state.plan.commit) : "—"}</div>
+           <div style="margin-top:8px;">${state.plan.html || "—"}</div>`;
+      }else{
+        planEl.innerHTML = "Aún no has guardado tu plan 24–72h.";
+      }
+    }
+
+    function copyCard(){
+      const mood =
+        state.quick.mood === "bien" ? "Estoy bien" :
+        state.quick.mood === "confuso" ? "Estoy confus@" :
+        state.quick.mood === "mal" ? "Me estoy perdiendo" :
+        "Sin evaluar";
+
+      const needs = state.quick.needs.length ? state.quick.needs.map(capitalize).join(", ") : "—";
+
+      const text =
+`TARJETA DE DIGNIDAD AFECTIVA
+Estado: ${mood}
+Necesidades protegidas: ${needs}
+
+Límite principal:
+${state.limits.main || "—"}
+
+Frase breve:
+${state.limits.phrase || "—"}
+
+Plan 24–72h (compromiso):
+${state.plan.commit || "—"}
+`;
+
+      navigator.clipboard.writeText(text).then(()=>{
+        alert("Tarjeta copiada ✅");
+      }).catch(()=>{
+        alert("No se pudo copiar automáticamente. Puedes copiar manualmente.");
+      });
+    }
+
+    // =========================
+    //        APPLY UI
+    // =========================
+    function applyStateToUI(){
+      // Quick
+      document.getElementById("check-note").value = state.quick.note || "";
+      document.querySelectorAll("#mood-row .pill").forEach(p=>{
+        p.classList.toggle("active", p.dataset.m === state.quick.mood);
+      });
+      document.querySelectorAll("#need-tags .tag").forEach(t=>{
+        t.classList.toggle("on", state.quick.needs.includes(t.dataset.k));
+      });
+
+      // Limits
+      document.getElementById("limit-main").value = state.limits.main || "";
+      document.getElementById("limit-phrase").value = state.limits.phrase || "";
+      document.getElementById("limit-action").value = state.limits.action || "";
+
+      // Plan
+      document.getElementById("plan-commit").value = state.plan.commit || "";
+      document.querySelectorAll("#plan-row .pill").forEach(x=>{
+        x.classList.toggle("active", x.dataset.p === state.plan.focus);
+      });
+      updatePlanText();
+    }
+
+    // =========================
+    //          HELPERS
+    // =========================
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function capitalize(s){
+      const t = String(s || "");
+      return t.charAt(0).toUpperCase() + t.slice(1);
+    }
+
+    function shorten(s, n){
+      const t = String(s || "");
+      return t.length > n ? t.slice(0, n) + "…" : t;
+    }
+
+    // =========================
+    //          INIT
+    // =========================
+    document.addEventListener("DOMContentLoaded", ()=>{
+      buildScorePills();
+      loadAll();
+      applyStateToUI();
+      renderJournal();
+      renderSigns();
+    });
+  </script>
+</body>
+</html>

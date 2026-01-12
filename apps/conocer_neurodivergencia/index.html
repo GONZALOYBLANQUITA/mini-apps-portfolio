@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neurodivergencia — Mini App</title>
+  <style>
+    :root{
+      /* Paleta pastel tipo tu ejemplo */
+      --bgTop: #f6cfe3;      /* rosado */
+      --bgMid: #eadcf3;      /* lila */
+      --bgBot: #cfe9ff;      /* celeste */
+
+      --card: #ffffff;
+      --card2: rgba(255,255,255,0.86);
+
+      --text: #2a2a2a;
+      --muted: #6b6b78;
+
+      --brand: #a7005c;      /* magenta/vino */
+      --brand2:#d44f98;      /* fucsia suave */
+
+      --pillBg: #ece7f5;
+      --pillBd: #dad2ef;
+
+      --softBlue:#dfeeff;
+      --softBlueBd:#b9d3ff;
+
+      --softLilac:#efe9ff;
+      --softLilacBd:#d8cdfa;
+
+      --softPink:#fff0f7;
+      --softPinkBd:#f3c7de;
+
+      --shadow: 0 16px 34px rgba(0,0,0,0.12);
+      --radius: 22px;
+      --radius2: 18px;
+
+      --focus: 0 0 0 4px rgba(185,211,255,0.55);
+    }
+
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background: radial-gradient(circle at top left, var(--bgTop) 0%, var(--bgMid) 42%, var(--bgBot) 100%);
+      display:flex;
+      justify-content:center;
+      padding:18px 10px;
+    }
+
+    .app{
+      width:100%;
+      max-width: 1120px;
+    }
+
+    .hero{
+      background: var(--card2);
+      border: 1px solid rgba(255,255,255,0.55);
+      border-radius: 26px;
+      box-shadow: var(--shadow);
+      padding: 18px 18px 14px;
+      backdrop-filter: blur(6px);
+    }
+
+    .heroTop{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .titleWrap{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      min-width: 260px;
+      flex:1 1 520px;
+    }
+
+    .brandBadge{
+      width:44px;height:44px;
+      border-radius:16px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      display:grid;
+      place-items:center;
+      color:#fff;
+      box-shadow: 0 12px 22px rgba(167,0,92,0.22);
+      font-size: 22px;
+      user-select:none;
+    }
+
+    h1{
+      margin:0;
+      font-size: 28px;
+      letter-spacing: -0.2px;
+      color: var(--brand);
+      line-height: 1.05;
+    }
+    .subtitle{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .tabs{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+      padding-top: 12px;
+    }
+
+    .tab{
+      border:1px solid var(--pillBd);
+      background: var(--pillBg);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      font-size: 15px;
+      color:#2e2e34;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      user-select:none;
+      transition: transform .06s ease, filter .15s ease, background .15s ease;
+    }
+    .tab:active{ transform: scale(0.985); }
+    .tab:hover{ filter: brightness(0.99); }
+    .tab[aria-selected="true"]{
+      background: #ffffff;
+      border-color: rgba(167,0,92,0.22);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+    .tab .ic{ font-size: 16px; }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .card{
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      border: 1px solid rgba(255,255,255,0.65);
+    }
+
+    .cardTitleRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+
+    .cardTitle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight: 900;
+      font-size: 22px;
+      letter-spacing: -0.2px;
+      margin:0;
+    }
+
+    .chip{
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-weight: 900;
+      font-size: 13px;
+      border: 1px solid var(--pillBd);
+      background: var(--pillBg);
+      color:#2e2e34;
+      user-select:none;
+    }
+
+    .content p{
+      margin: 10px 0 0;
+      color:#33343a;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+
+    .bullets{
+      margin: 12px 0 0;
+      padding-left: 18px;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+    .bullets li{ margin: 8px 0; }
+    .bullets b{ color:#1f1f25; }
+
+    .ideaBox{
+      margin-top: 14px;
+      border-radius: var(--radius2);
+      padding: 14px 14px;
+      background: var(--softBlue);
+      border: 1px dashed var(--softBlueBd);
+    }
+    .ideaBox .ideaTitle{
+      font-weight: 950;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:0 0 6px 0;
+      font-size: 16px;
+    }
+    .ideaBox p{
+      margin:0;
+      font-size: 15px;
+      color:#2b2f39;
+      line-height: 1.5;
+    }
+
+    .quickCardTitle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin:0 0 8px 0;
+    }
+    .quickCardTitle h3{
+      margin:0;
+      font-size: 20px;
+      font-weight: 950;
+      letter-spacing: -0.2px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .badgeMini{
+      border-radius: 999px;
+      padding: 6px 12px;
+      background: var(--softLilac);
+      border: 1px solid var(--softLilacBd);
+      font-weight: 900;
+      font-size: 13px;
+      color:#2e2e34;
+    }
+
+    .quickList{
+      margin: 10px 0 0;
+      padding-left: 18px;
+      line-height: 1.55;
+      font-size: 15.5px;
+    }
+    .quickList li{ margin: 8px 0; }
+    .quickList b{ color:#111827; }
+
+    .bridgeBox{
+      margin-top: 12px;
+      border-radius: var(--radius2);
+      padding: 12px;
+      background: var(--softPink);
+      border: 1px dashed var(--softPinkBd);
+    }
+    .bridgeBox .t{
+      font-weight: 950;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:0 0 6px 0;
+      font-size: 15px;
+    }
+    .bridgeBox .q{
+      margin:0;
+      font-size: 15px;
+      line-height: 1.45;
+      color:#3b2f37;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+
+    .btn{
+      border:none;
+      border-radius: 999px;
+      padding: 12px 14px;
+      font-weight: 950;
+      cursor:pointer;
+      font-size: 15px;
+      display:inline-flex;
+      gap:10px;
+      align-items:center;
+      user-select:none;
+      transition: transform .06s ease, filter .15s ease;
+    }
+    .btn:active{ transform: scale(0.985); }
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#fff;
+      box-shadow: 0 12px 22px rgba(167,0,92,0.18);
+    }
+    .btnSoft{
+      background: #fff;
+      border:1px solid rgba(0,0,0,0.08);
+      color:#2e2e34;
+    }
+
+    /* Mini plan form */
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 920px){
+      .layout{ grid-template-columns: 1fr; }
+      .formGrid{ grid-template-columns: 1fr; }
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    label{
+      font-weight: 900;
+      color:#2f2f36;
+      font-size: 14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    input, textarea, select{
+      width:100%;
+      border-radius: 16px;
+      border:1px solid rgba(0,0,0,0.10);
+      padding: 12px 12px;
+      font-size: 15px;
+      outline: none;
+      background:#fff;
+      color:#1f2937;
+    }
+    textarea{ min-height: 92px; resize: vertical; }
+    input:focus, textarea:focus, select:focus{ box-shadow: var(--focus); border-color: rgba(185,211,255,0.95); }
+
+    .saveRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
+
+    .hint{
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13.5px;
+      line-height: 1.45;
+    }
+
+    .savedBox{
+      margin-top: 12px;
+      border-radius: var(--radius2);
+      padding: 14px;
+      background: #f7fbff;
+      border: 1px solid #cfe3ff;
+    }
+    .savedBox h4{
+      margin:0 0 8px 0;
+      font-size: 16px;
+      font-weight: 950;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .savedBox pre{
+      margin:0;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13.5px;
+      line-height: 1.4;
+      color:#1f2a44;
+    }
+
+    .footer{
+      margin-top: 10px;
+      text-align:center;
+      color: #3b2f37;
+      opacity: 0.85;
+      font-size: 13.5px;
+    }
+    .footer b{ font-weight: 950; }
+
+    /* Small helper list blocks inside content */
+    .miniCards{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin-top: 12px;
+    }
+    .miniCard{
+      border-radius: 18px;
+      padding: 12px;
+      border: 1px solid rgba(0,0,0,0.08);
+      background: #fff;
+    }
+    .miniCard h4{
+      margin:0 0 6px 0;
+      font-size: 15.5px;
+      font-weight: 950;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .miniCard ul{
+      margin:0;
+      padding-left: 18px;
+      line-height: 1.5;
+      color:#2f2f36;
+      font-size: 14.8px;
+    }
+    .miniCard li{ margin: 6px 0; }
+    @media (max-width: 560px){
+      .miniCards{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div class="hero">
+      <div class="heroTop">
+        <div class="titleWrap">
+          <div class="brandBadge">🌸</div>
+          <div>
+            <h1>Neurodivergencia — Mini App</h1>
+            <div class="subtitle">Guía breve e interactiva (psicoeducación) para comprender, validar y apoyar.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabs" id="tabs"></div>
+    </div>
+
+    <div class="layout">
+      <!-- MAIN -->
+      <div class="card">
+        <div class="cardTitleRow">
+          <h2 class="cardTitle" id="mainTitle">🧠 ¿Qué es la neurodivergencia?</h2>
+          <span class="chip" id="mainChip">Concepto</span>
+        </div>
+
+        <div class="content" id="mainContent"></div>
+      </div>
+
+      <!-- QUICK -->
+      <div class="card">
+        <div class="quickCardTitle">
+          <h3>💗 Recordatorio rápido</h3>
+          <span class="badgeMini">1 minuto</span>
+        </div>
+
+        <div class="sub" style="margin-top:2px;">
+          Cuando alguien se desregula, suele haber <b>sobrecarga + necesidad</b>.
+          Primero regulamos, luego conversamos.
+        </div>
+
+        <ul class="quickList">
+          <li><b>Validar</b> primero (“te entiendo”).</li>
+          <li><b>Bajar estímulos</b> (ruido / luz / demanda).</li>
+          <li><b>Dar estructura</b> (pasos cortos / 2 opciones).</li>
+          <li><b>Reparar después</b> (cuando bajó la emoción).</li>
+        </ul>
+
+        <div class="bridgeBox">
+          <div class="t">☁️ Frase puente</div>
+          <p class="q">“Ahora bajemos la carga. Luego lo hablamos.”</p>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn btnSoft" type="button" onclick="goTo('que_es')">Ir a 🧠 Qué es</button>
+          <button class="btn btnPrimary" type="button" onclick="goTo('mini_plan')">Ir a 🧾 Mini plan</button>
+        </div>
+
+        <div class="footer">
+          Desarrollado por<br/>
+          <b>Lic. Gonzalo Buendía – Psicólogo</b><br/>
+          y <b>Blanquita – Co-terapeuta</b> 🐾
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    //   DATA (contenido base)
+    // =========================
+    const SECTIONS = [
+      { id:"que_es",    label:"Qué es",       icon:"🧠", chip:"Concepto" },
+      { id:"fortalezas",label:"Fortalezas",   icon:"✨", chip:"Recursos" },
+      { id:"desafios",  label:"Desafíos",     icon:"🧩", chip:"Retos" },
+      { id:"perfiles",  label:"Perfiles",     icon:"🗂️", chip:"Variabilidad" },
+      { id:"apoyos",    label:"Apoyos",       icon:"🤝", chip:"Estrategias" },
+      { id:"escuela",   label:"Escuela",      icon:"🏫", chip:"Entorno" },
+      { id:"mini_plan", label:"Mini plan",    icon:"🧾", chip:"Acción" }
+    ];
+
+    const CONTENT = {
+      que_es: {
+        title: "🧠 ¿Qué es la neurodivergencia?",
+        chip: "Concepto",
+        quote: "“Neurodivergencia” describe formas diversas de percibir, procesar, aprender y responder al mundo. No es una etiqueta para “arreglar” a una persona, sino un enfoque que invita a comprender su perfil y ajustar apoyos y entornos.",
+        bullets: [
+          "<b>Es diversidad:</b> diferentes estilos cerebrales existen en la población.",
+          "<b>Importa el contexto:</b> lo que cuesta en un entorno puede funcionar mejor en otro.",
+          "<b>Meta práctica:</b> apoyos personalizados + ambientes más amigables."
+        ],
+        ideaTitle: "🌿 Idea clave",
+        ideaText: "Comprender el perfil + ajustar el entorno suele reducir conflicto y aumentar participación."
+      },
+
+      fortalezas: {
+        title: "✨ Fortalezas",
+        chip: "Recursos",
+        paragraphs: [
+          "La neurodivergencia puede traer <b>fortalezas reales</b> cuando el entorno acompaña.",
+          "No se trata de idealizar: se trata de identificar lo que funciona y construir desde ahí."
+        ],
+        cards: [
+          {
+            icon:"🔎",
+            title:"Detalle y precisión",
+            items:["Detecta patrones", "Cuida la calidad", "Observación fina"]
+          },
+          {
+            icon:"🎯",
+            title:"Foco profundo",
+            items:["Trabajo intenso en intereses", "Aprendizaje autónomo", "Persistencia"]
+          },
+          {
+            icon:"💡",
+            title:"Creatividad / soluciones",
+            items:["Ideas distintas", "Pensamiento lateral", "Enfoques no convencionales"]
+          },
+          {
+            icon:"🤍",
+            title:"Autenticidad",
+            items:["Coherencia interna", "Sinceridad", "Valores claros"]
+          }
+        ],
+        ideaTitle: "🧡 Tip",
+        ideaText: "Cuando hay fortaleza, no siempre es “talento puro”: suele ser <b>fortaleza + condiciones correctas</b> (estructura, predictibilidad, respeto)."
+      },
+
+      desafios: {
+        title: "🧩 Desafíos comunes",
+        chip: "Retos",
+        paragraphs: [
+          "Los desafíos suelen aparecer cuando hay <b>sobrecarga</b> (sensorial, social o emocional) o <b>exigencias desajustadas</b>.",
+          "En vez de castigar conductas, buscamos entender la función: <b>¿qué necesita?</b>"
+        ],
+        bullets: [
+          "<b>Sensibilidad sensorial:</b> ruido, luces, texturas, multitudes.",
+          "<b>Función ejecutiva:</b> iniciar tareas, organizar, priorizar, cambiar de plan.",
+          "<b>Comunicación social:</b> lectura de señales, malentendidos, fatiga social.",
+          "<b>Regulación emocional:</b> rapidez para saturarse, dificultad para “bajar” solo.",
+          "<b>Rigidez / inflexibilidad:</b> no por terquedad, sino por seguridad."
+        ],
+        ideaTitle: "🧯 Señal de alerta útil",
+        ideaText: "Si hay llanto/ira/cierre, a menudo es <b>sobrecarga</b>. Primero regulamos (bajar estímulos), luego conversamos."
+      },
+
+      perfiles: {
+        title: "🗂️ Perfiles",
+        chip: "Variabilidad",
+        paragraphs: [
+          "No hay un solo “tipo”. Hay perfiles diversos y combinaciones.",
+          "Aquí tienes ejemplos prácticos para orientar apoyos (sin encasillar)."
+        ],
+        cards: [
+          {
+            icon:"🧠",
+            title:"Atención y foco",
+            items:["Hiperfoco vs distracción", "Dificultad para iniciar", "Necesidad de señales claras"]
+          },
+          {
+            icon:"🧩",
+            title:"Procesamiento sensorial",
+            items:["Sobrecarga por ruido/luz", "Búsqueda sensorial", "Preferencias de textura/ropa"]
+          },
+          {
+            icon:"🗣️",
+            title:"Comunicación",
+            items:["Literalidad", "Dificultad con indirectas", "Mejor con mensajes concretos"]
+          },
+          {
+            icon:"🫶",
+            title:"Regulación emocional",
+            items:["Saturación rápida", "Necesita pausas", "Mejor con rutinas de calma"]
+          }
+        ],
+        ideaTitle: "🔍 Nota clínica",
+        ideaText: "El objetivo no es “normalizar”, sino <b>adaptar</b>: menos conflicto, más participación y bienestar."
+      },
+
+      apoyos: {
+        title: "🤝 Apoyos prácticos",
+        chip: "Estrategias",
+        paragraphs: [
+          "Apoyar no es “ceder todo”. Es <b>hacer el entorno más predecible</b> y la comunicación más clara.",
+          "Usa lo mínimo efectivo: pequeñas adaptaciones producen grandes cambios."
+        ],
+        cards: [
+          {
+            icon:"🧭",
+            title:"Estructura",
+            items:["Agenda visual", "Pasos cortos", "Dos opciones en vez de muchas"]
+          },
+          {
+            icon:"🕯️",
+            title:"Regulación",
+            items:["Pausa sensorial", "Respiración guiada", "Objeto de calma (textura)"]
+          },
+          {
+            icon:"🗣️",
+            title:"Comunicación",
+            items:["Mensajes concretos", "Evitar ironías", "Repetir con calma sin humillar"]
+          },
+          {
+            icon:"🏁",
+            title:"Transiciones",
+            items:["Avisos con tiempo", "Cuenta regresiva", "Rituales de cierre/arranque"]
+          }
+        ],
+        ideaTitle: "🌿 Frase útil",
+        ideaText: "“Te entiendo. Vamos paso a paso. ¿Prefieres A o B?”"
+      },
+
+      escuela: {
+        title: "🏫 Escuela",
+        chip: "Entorno",
+        paragraphs: [
+          "En escuela, el objetivo es reducir fricción y aumentar acceso al aprendizaje.",
+          "Ajustes razonables + coordinación = más seguridad y mejor rendimiento."
+        ],
+        bullets: [
+          "<b>Instrucciones claras:</b> una por vez, en positivo, con ejemplo.",
+          "<b>Evaluación flexible:</b> más tiempo / menos distractores / formato alterno.",
+          "<b>Señales de descanso:</b> micro pausas, rincón tranquilo, tarjeta de “necesito pausa”.",
+          "<b>Prevención:</b> anticipar cambios, avisar, permitir transiciones graduales.",
+          "<b>Relación:</b> validar antes de corregir; corregir sin humillar."
+        ],
+        ideaTitle: "🧡 Regla de oro",
+        ideaText: "Más que “obediencia”, buscamos <b>regulación + comunicación</b>."
+      },
+
+      mini_plan: {
+        title: "🧾 Mini plan de apoyo",
+        chip: "Acción",
+        paragraphs: [
+          "Completa este mini plan en 2–3 minutos. Se guarda en tu dispositivo (localStorage).",
+          "Está pensado para padres, docentes o cuidadores: breve, claro y accionable."
+        ]
+      }
+    };
+
+    // =========================
+    //   STORAGE (mini plan)
+    // =========================
+    const PLAN_KEY = "neurodivergencia_mini_plan_v1";
+
+    function loadPlan(){
+      const raw = localStorage.getItem(PLAN_KEY);
+      if(!raw) return null;
+      try{ return JSON.parse(raw); }catch(e){ return null; }
+    }
+
+    function savePlan(data){
+      localStorage.setItem(PLAN_KEY, JSON.stringify(data));
+    }
+
+    function clearPlan(){
+      localStorage.removeItem(PLAN_KEY);
+    }
+
+    // =========================
+    //   UI RENDER
+    // =========================
+    const tabsEl = document.getElementById("tabs");
+    const mainTitleEl = document.getElementById("mainTitle");
+    const mainChipEl  = document.getElementById("mainChip");
+    const mainContentEl = document.getElementById("mainContent");
+
+    let current = "que_es";
+
+    function buildTabs(){
+      tabsEl.innerHTML = "";
+      SECTIONS.forEach(s => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "tab";
+        b.setAttribute("data-id", s.id);
+        b.setAttribute("aria-selected", s.id === current ? "true":"false");
+        b.innerHTML = `<span class="ic">${s.icon}</span><span>${s.label}</span>`;
+        b.addEventListener("click", () => setSection(s.id));
+        tabsEl.appendChild(b);
+      });
+    }
+
+    function setSection(id){
+      current = id;
+      document.querySelectorAll(".tab").forEach(t => {
+        t.setAttribute("aria-selected", t.getAttribute("data-id") === id ? "true":"false");
+      });
+      renderMain();
+      // scroll suave a contenido (útil en móvil)
+      mainTitleEl.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function goTo(id){
+      setSection(id);
+    }
+
+    function renderMain(){
+      const c = CONTENT[current];
+      mainTitleEl.textContent = c.title;
+      mainChipEl.textContent  = c.chip;
+
+      // Base container
+      const parts = [];
+
+      if(c.quote){
+        parts.push(`<p style="margin-top:4px;">${escapeHtml(c.quote)}</p>`);
+      }
+
+      if(c.paragraphs){
+        c.paragraphs.forEach(p => parts.push(`<p>${p}</p>`));
+      }
+
+      if(c.bullets){
+        parts.push(`<ul class="bullets">${c.bullets.map(li => `<li>${li}</li>`).join("")}</ul>`);
+      }
+
+      if(c.cards){
+        parts.push(`<div class="miniCards">${c.cards.map(cardHTML).join("")}</div>`);
+      }
+
+      if(current === "mini_plan"){
+        parts.push(renderMiniPlanHTML());
+      }
+
+      if(c.ideaTitle && c.ideaText){
+        parts.push(`
+          <div class="ideaBox">
+            <div class="ideaTitle">${c.ideaTitle}</div>
+            <p>${c.ideaText}</p>
+          </div>
+        `);
+      }
+
+      mainContentEl.innerHTML = parts.join("");
+      if(current === "mini_plan"){
+        bindMiniPlanHandlers();
+        paintSavedPlan();
+      }
+    }
+
+    function cardHTML(c){
+      return `
+        <div class="miniCard">
+          <h4>${c.icon} ${c.title}</h4>
+          <ul>${c.items.map(i => `<li>${escapeHtml(i)}</li>`).join("")}</ul>
+        </div>
+      `;
+    }
+
+    // =========================
+    //   MINI PLAN
+    // =========================
+    function renderMiniPlanHTML(){
+      return `
+        <div class="ideaBox" style="background: #f6fbff; border: 1px dashed #b9d3ff;">
+          <div class="ideaTitle">🧾 Mini plan (rápido)</div>
+          <p>Completa lo esencial. Luego puedes copiarlo y compartirlo.</p>
+        </div>
+
+        <div class="formGrid">
+          <div class="field">
+            <label>👤 Persona / estudiante (opcional)</label>
+            <input id="p_name" type="text" placeholder="Ej.: Mi hijo / Alumno A" />
+          </div>
+
+          <div class="field">
+            <label>🎯 Objetivo (1 frase)</label>
+            <input id="p_goal" type="text" placeholder="Ej.: Reducir conflictos y aumentar participación" />
+          </div>
+
+          <div class="field">
+            <label>⚡ Disparadores de sobrecarga</label>
+            <textarea id="p_triggers" placeholder="Ej.: ruido, cambios sin aviso, tareas largas, hambre, cansancio..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>🧘 Señales tempranas</label>
+            <textarea id="p_signs" placeholder="Ej.: se tapa oídos, se irrita, se acelera, se va, llora, discute..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>🧰 Apoyos que sí funcionan</label>
+            <textarea id="p_supports" placeholder="Ej.: 2 opciones, pasos cortos, pausa sensorial, agenda visual..."></textarea>
+          </div>
+
+          <div class="field">
+            <label>🗣️ Frase puente</label>
+            <input id="p_bridge" type="text" placeholder="Ej.: Ahora bajemos la carga. Luego lo hablamos." />
+          </div>
+
+          <div class="field">
+            <label>🪜 Pasos (cuando se desregula)</label>
+            <textarea id="p_steps" placeholder="Ej.: 1) validar 2) bajar estímulos 3) dar estructura 4) reparar después"></textarea>
+          </div>
+
+          <div class="field">
+            <label>✅ Próximo ajuste (1 cosa concreta)</label>
+            <input id="p_next" type="text" placeholder="Ej.: Avisar transiciones con 5 minutos + timer visual" />
+          </div>
+        </div>
+
+        <div class="saveRow">
+          <button class="btn btnPrimary" type="button" id="btnSave">💾 Guardar</button>
+          <button class="btn btnSoft" type="button" id="btnCopy">📋 Copiar plan</button>
+          <button class="btn btnSoft" type="button" id="btnClear">🧼 Borrar</button>
+        </div>
+
+        <div class="hint">
+          🔒 Se guarda solo en este dispositivo (localStorage). Si lo abres en otro navegador, no aparece.
+        </div>
+
+        <div class="savedBox" id="savedBox" style="display:none;">
+          <h4>📌 Plan guardado</h4>
+          <pre id="savedText"></pre>
+        </div>
+      `;
+    }
+
+    function bindMiniPlanHandlers(){
+      const btnSave = document.getElementById("btnSave");
+      const btnCopy = document.getElementById("btnCopy");
+      const btnClear= document.getElementById("btnClear");
+
+      btnSave.addEventListener("click", () => {
+        const data = readPlanFromUI();
+        savePlan(data);
+        paintSavedPlan();
+        alert("Plan guardado ✅");
+      });
+
+      btnCopy.addEventListener("click", async () => {
+        const data = readPlanFromUI();
+        const text = planToText(data);
+        try{
+          await navigator.clipboard.writeText(text);
+          alert("Copiado ✅");
+        }catch(e){
+          // fallback: seleccionar texto en pantalla
+          paintSavedPlan(text, true);
+          alert("No pude copiar automáticamente. Selecciona el texto del recuadro y copia manualmente.");
+        }
+      });
+
+      btnClear.addEventListener("click", () => {
+        const ok = confirm("¿Borrar el mini plan guardado? (No se puede deshacer)");
+        if(!ok) return;
+        clearPlan();
+        fillPlanUI(null);
+        paintSavedPlan();
+      });
+
+      // cargar si existe
+      const saved = loadPlan();
+      if(saved) fillPlanUI(saved);
+    }
+
+    function readPlanFromUI(){
+      return {
+        name: getVal("p_name"),
+        goal: getVal("p_goal"),
+        triggers: getVal("p_triggers"),
+        signs: getVal("p_signs"),
+        supports: getVal("p_supports"),
+        bridge: getVal("p_bridge"),
+        steps: getVal("p_steps"),
+        next: getVal("p_next"),
+        updatedISO: new Date().toISOString()
+      };
+    }
+
+    function fillPlanUI(data){
+      setVal("p_name", data?.name || "");
+      setVal("p_goal", data?.goal || "");
+      setVal("p_triggers", data?.triggers || "");
+      setVal("p_signs", data?.signs || "");
+      setVal("p_supports", data?.supports || "");
+      setVal("p_bridge", data?.bridge || "Ahora bajemos la carga. Luego lo hablamos.");
+      setVal("p_steps", data?.steps || "1) Validar  2) Bajar estímulos  3) Dar estructura  4) Reparar después");
+      setVal("p_next", data?.next || "");
+    }
+
+    function planToText(p){
+      const d = (p?.updatedISO ? new Date(p.updatedISO) : new Date());
+      const when = isNaN(d.getTime()) ? "" : d.toLocaleString("es-PE");
+
+      return [
+        "NEURODIVERGENCIA — MINI PLAN",
+        when ? `Actualizado: ${when}` : "",
+        "",
+        `Persona/estudiante: ${p.name || "—"}`,
+        `Objetivo: ${p.goal || "—"}`,
+        "",
+        "Disparadores de sobrecarga:",
+        p.triggers || "—",
+        "",
+        "Señales tempranas:",
+        p.signs || "—",
+        "",
+        "Apoyos que sí funcionan:",
+        p.supports || "—",
+        "",
+        `Frase puente: ${p.bridge || "—"}`,
+        "",
+        "Pasos cuando se desregula:",
+        p.steps || "—",
+        "",
+        `Próximo ajuste (1 cosa concreta): ${p.next || "—"}`
+      ].filter(Boolean).join("\n");
+    }
+
+    function paintSavedPlan(forceText = null, forceShow = false){
+      const savedBox = document.getElementById("savedBox");
+      const savedText = document.getElementById("savedText");
+
+      const saved = loadPlan();
+      if(!saved && !forceShow){
+        savedBox.style.display = "none";
+        return;
+      }
+
+      const text = forceText || planToText(saved || readPlanFromUI());
+      savedText.textContent = text;
+      savedBox.style.display = "block";
+    }
+
+    function getVal(id){
+      const el = document.getElementById(id);
+      return (el?.value || "").trim();
+    }
+    function setVal(id, v){
+      const el = document.getElementById(id);
+      if(el) el.value = v;
+    }
+
+    // =========================
+    //   Helpers
+    // =========================
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // =========================
+    //   INIT
+    // =========================
+    buildTabs();
+    renderMain();
+  </script>
+</body>
+</html>

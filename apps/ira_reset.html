@@ -1,0 +1,1708 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2A3555" />
+  <title>Reset de Ira — Mini app</title>
+
+  <style>
+    :root{
+      --bg:#F6F7FB;
+      --card:#FFFFFF;
+      --text:#151A26;
+      --muted:#5B6477;
+
+      --primary:#2A3555;
+      --primary2:#3B4A74;
+
+      --accent:#2B8C8C;
+      --accent2:#E7F6F6;
+
+      --warn:#C97A2B;
+      --warn2:#FFF3E8;
+
+      --danger:#B5474A;
+      --danger2:#FDEBEC;
+
+      --ok:#2D8A4B;
+      --ok2:#EAF8EF;
+
+      --border: 1px solid rgba(21,26,38,.10);
+      --shadow: 0 10px 25px rgba(21,26,38,.10);
+      --r:18px;
+      --tap:52px;
+      --max:980px;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% -10%, #EAF0FF 0%, transparent 55%),
+        radial-gradient(900px 700px at 90% 10%, #E7F6F6 0%, transparent 50%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .safe{
+      padding: env(safe-area-inset-top) env(safe-area-inset-right)
+               env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px 14px 112px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 6px 18px;
+    }
+    .brand{display:flex; gap:10px; align-items:center; min-width:0;}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--primary),var(--accent));
+      box-shadow:0 10px 18px rgba(42,53,85,.18);
+      display:grid;place-items:center;
+      flex:0 0 auto;
+    }
+    .logo svg{width:26px;height:26px;fill:#fff;opacity:.95}
+    .titlebox{min-width:0}
+    .app-title{
+      margin:0;
+      font-size:16px;
+      font-weight:900;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:8px 10px; border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:var(--border);
+      backdrop-filter: blur(8px);
+      font-size:12px; color:var(--muted);
+      white-space:nowrap;
+    }
+    .pill svg{width:14px;height:14px;fill:var(--muted)}
+
+    .card{
+      background:rgba(255,255,255,.88);
+      border:var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      align-items:stretch;
+      margin-bottom:14px;
+    }
+    .hero-left{padding:16px; position:relative;}
+    .hero-left:before{
+      content:"";
+      position:absolute; inset:-40px -40px auto auto;
+      width:160px; height:160px;
+      background: radial-gradient(circle at 30% 30%, rgba(181,71,74,.18), transparent 60%);
+      border-radius:999px;
+      pointer-events:none;
+    }
+    h2{margin:0 0 8px;font-size:18px;letter-spacing:.2px}
+    p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+
+    .quick-actions{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .btn{
+      min-height:var(--tap);
+      border:none;
+      border-radius:16px;
+      padding:12px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      box-shadow:0 14px 24px rgba(42,53,85,.18);
+      transition:transform .08s ease, background .12s ease;
+    }
+    .btn:hover{background:var(--primary2)}
+    .btn:active{transform:scale(.99)}
+    .btn svg{width:18px;height:18px;fill:#fff;opacity:.95}
+
+    .btn.secondary{
+      background:#fff;
+      color:var(--primary);
+      border:var(--border);
+      box-shadow:none;
+    }
+    .btn.secondary svg{fill:var(--primary)}
+    .btn.ghost{
+      background:rgba(255,255,255,.8);
+      color:var(--primary);
+      border:var(--border);
+      box-shadow:none;
+    }
+    .btn.ghost svg{fill:var(--primary)}
+    .btn.danger{
+      background:var(--danger);
+      box-shadow:0 14px 24px rgba(181,71,74,.20);
+    }
+    .btn.danger:hover{background:#9D3E41}
+    .btn.small{min-height:46px; border-radius:14px; padding:10px 12px; font-size:13px; flex:1 1 160px}
+
+    .hero-right{display:flex; flex-direction:column; gap:12px;}
+    .meter{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom:8px;
+    }
+    .meter .label{display:flex; gap:10px; align-items:center; min-width:0;}
+    .meter .label svg{width:18px;height:18px;fill:var(--accent)}
+    .meter h3{margin:0;font-size:13px;letter-spacing:.2px}
+    .meter .sub{margin:2px 0 0; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px}
+    .badge{
+      font-size:12px;
+      font-weight:900;
+      padding:8px 10px;
+      border-radius:999px;
+      border:var(--border);
+      background:#fff;
+      color:var(--primary);
+      white-space:nowrap;
+    }
+    .bar{width:100%; height:10px; background:rgba(42,53,85,.08); border-radius:999px; overflow:hidden;}
+    .bar > div{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--primary)); border-radius:999px; transition: width .25s ease;}
+    .smallnote{margin-top:8px; font-size:12px; color:var(--muted); line-height:1.4}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .tile{
+      padding:14px;
+      border-radius:var(--r);
+      border:var(--border);
+      background:rgba(255,255,255,.86);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      min-height:88px;
+      transition:transform .08s ease, border-color .12s ease;
+    }
+    .tile:hover{border-color:rgba(42,53,85,.20)}
+    .tile:active{transform:scale(.99)}
+    .ico{
+      width:40px;height:40px;border-radius:14px;
+      background:rgba(181,71,74,.10);
+      border:1px solid rgba(181,71,74,.18);
+      display:grid;place-items:center;
+      flex:0 0 auto;
+    }
+    .ico svg{width:20px;height:20px;fill:var(--danger)}
+    .tile h4{margin:0;font-size:14px}
+    .tile p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.35}
+
+    .footer{
+      margin:14px 4px 0;
+      color:rgba(91,100,119,.95);
+      font-size:11px;
+      line-height:1.35;
+    }
+    .footer strong{color:var(--primary)}
+
+    /* Bottom nav */
+    .nav{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background:rgba(246,247,251,.78);
+      backdrop-filter: blur(10px);
+      border-top:1px solid rgba(21,26,38,.08);
+      z-index:40;
+    }
+    .nav-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+    }
+    .navbtn{
+      min-height:54px;
+      border-radius:16px;
+      border:var(--border);
+      background:rgba(255,255,255,.90);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:900;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .navbtn svg{width:18px;height:18px;fill:var(--muted)}
+    .navbtn.active{
+      background:#fff;
+      color:var(--primary);
+      border-color:rgba(42,53,85,.20);
+      box-shadow:0 10px 20px rgba(21,26,38,.10);
+    }
+    .navbtn.active svg{fill:var(--primary)}
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(10,12,18,.45);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      z-index:60;
+    }
+    .modal.show{display:flex}
+    .sheet{
+      width:min(var(--max), 100%);
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:22px;
+      box-shadow:0 30px 80px rgba(0,0,0,.28);
+      overflow:hidden;
+      max-height:86vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .sheet-head{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(21,26,38,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.90));
+    }
+    .sheet-title{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .chip{
+      width:40px;height:40px;border-radius:14px;
+      background:rgba(181,71,74,.10);
+      border:1px solid rgba(181,71,74,.18);
+      display:grid; place-items:center;
+      flex:0 0 auto;
+    }
+    .chip svg{width:20px;height:20px;fill:var(--danger)}
+    .sheet-title h3{
+      margin:0;
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .sheet-title p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:520px;
+    }
+    .close{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:var(--border);
+      background:rgba(255,255,255,.92);
+      cursor:pointer;
+      display:grid; place-items:center;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .close svg{width:18px;height:18px;fill:var(--muted)}
+    .sheet-body{padding:14px; overflow:auto;}
+
+    .section{
+      margin-bottom:14px;
+      border:var(--border);
+      background:rgba(255,255,255,.90);
+      border-radius:18px;
+      padding:12px;
+    }
+    .section h4{
+      margin:0 0 10px;
+      font-size:13px;
+      letter-spacing:.2px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .section h4 svg{width:16px;height:16px;fill:var(--primary);opacity:.9}
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+      margin:0 0 6px;
+    }
+    input, textarea, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(21,26,38,.12);
+      background:#fff;
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+      line-height:1.3;
+    }
+    textarea{min-height:96px; resize:vertical}
+    .help{margin:8px 0 0; font-size:12px; color:var(--muted); line-height:1.4}
+
+    .notice{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(201,122,43,.25);
+      background:var(--warn2);
+      color:#6A3C11;
+      font-size:12px;
+      line-height:1.4;
+    }
+    .dangerBox{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(181,71,74,.25);
+      background:var(--danger2);
+      color:#6A1E22;
+      font-size:12px;
+      line-height:1.4;
+    }
+    .okBox{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(45,138,75,.22);
+      background:var(--ok2);
+      color:#1F5A35;
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .list{display:flex; flex-direction:column; gap:10px; margin-top:10px}
+    .item{
+      border:1px solid rgba(21,26,38,.10);
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+    }
+    .item .t{margin:0; font-weight:900; font-size:13px}
+    .item .d{margin:6px 0 0; font-size:12px; color:var(--muted); white-space:pre-wrap; line-height:1.35}
+    .item .meta{margin-top:8px; font-size:11px; color:rgba(91,100,119,.95)}
+    .ops{display:flex; gap:8px; flex:0 0 auto}
+    .iconbtn{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:var(--border);
+      background:rgba(246,247,251,.75);
+      cursor:pointer;
+      display:grid; place-items:center;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .iconbtn svg{width:18px;height:18px;fill:var(--muted)}
+    .iconbtn.danger svg{fill:var(--danger)}
+    .iconbtn.good svg{fill:var(--ok)}
+
+    @media (max-width:820px){ .hero{grid-template-columns:1fr} }
+    @media (max-width:520px){
+      .row{grid-template-columns:1fr}
+      .quick-actions{grid-template-columns:1fr}
+      .wrap{padding-bottom:118px}
+    }
+    @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+  </style>
+</head>
+
+<body class="safe">
+  <div class="wrap" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm0 2a8 8 0 1 1 0 16a8 8 0 0 1 0-16Zm3.8 4.7-2.9 1.2c-.3.1-.5.3-.6.6l-1.2 2.9a1 1 0 0 0 1.3 1.3l2.9-1.2c.3-.1.5-.3.6-.6l1.2-2.9a1 1 0 0 0-1.3-1.3ZM12 12.2l1.4-.6-.6 1.4-1.4.6.6-1.4Z"/></svg>
+        </div>
+        <div class="titlebox">
+          <h1 class="app-title">Reset de Ira</h1>
+          <p class="subtitle">Regulación • pausa • comunicación segura</p>
+        </div>
+      </div>
+
+      <div class="pillrow">
+        <div class="pill">
+          <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5Zm-3 8V6a3 3 0 0 1 6 0v3H9Z"/></svg>
+          <span>Privado</span>
+        </div>
+        <div class="pill" id="pillStreak">
+          <svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v4H0V6a2 2 0 0 1 2-2h3V2Zm-7 10h24v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V12Z"/></svg>
+          <span id="streakTxt">0 días</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="card hero-left">
+        <h2>Hoy: frenar antes de dañar.</h2>
+        <p>Mini app de apoyo psicoeducativo para detectar escalada de ira, activar pausa segura, y practicar comunicación respetuosa y reparación.</p>
+
+        <div class="quick-actions">
+          <button class="btn" data-action="open:checkin">
+            <svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+            Check-in (2 min)
+          </button>
+
+          <button class="btn danger" data-action="open:stop">
+            <svg viewBox="0 0 24 24"><path d="M7 7h10v10H7V7Zm5-6a11 11 0 1 0 0 22a11 11 0 0 0 0-22Z"/></svg>
+            STOP seguro
+          </button>
+
+          <button class="btn secondary" data-action="open:scripts">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16v10H7l-3 3V4Zm4 3h8v2H8V7Zm0 4h6v2H8v-2Z"/></svg>
+            Scripts
+          </button>
+
+          <button class="btn ghost" data-action="open:abc">
+            <svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg>
+            Reencuadre
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="card">
+          <div class="meter">
+            <div class="label">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-7.1 17.1l1.4-1.4A8 8 0 1 1 20 12h2A10 10 0 0 0 12 2Z"/></svg>
+              <div style="min-width:0;">
+                <h3>Riesgo de escalada (hoy)</h3>
+                <div class="sub" id="riskHint">Se calcula con tu check-in.</div>
+              </div>
+            </div>
+            <div class="badge" id="badgeRisk">—</div>
+          </div>
+          <div class="bar"><div id="barFill"></div></div>
+          <div class="smallnote" id="riskNote">Meta: bajar la escalada con pausa + límites + reparación.</div>
+        </div>
+
+        <div class="card">
+          <div class="meter" style="margin-bottom:10px;">
+            <div class="label">
+              <svg viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm1-15h-2v6h6v-2h-4V7Z"/></svg>
+              <div style="min-width:0;">
+                <h3>Micro-pausas</h3>
+                <div class="sub" id="breakTxt">0 hoy • 0 esta semana</div>
+              </div>
+            </div>
+            <div class="badge" id="badgeBreaks">0</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn small" data-action="timer:cool120">
+              <svg viewBox="0 0 24 24"><path d="M12 22a9 9 0 1 1 0-18 9 9 0 0 1 0 18Zm1-9V7h-2v8h7v-2h-5Z"/></svg>
+              2:00 Enfriar
+            </button>
+            <button class="btn small secondary" data-action="timer:breath60">
+              <svg viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm1-15h-2v6h6v-2h-4V7Z"/></svg>
+              1:00 Respirar
+            </button>
+          </div>
+
+          <div class="help" id="timerHelp">Úsalo cuando notes tensión, urgencia, insultos en mente o ganas de “ganar”.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="modules">
+      <div class="tile" data-open="triggers">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 9L2 6v11l10 5 10-5V6l-10 5Z"/></svg></div>
+        <div><h4>Mapa de detonantes</h4><p>Qué lo enciende, qué señales aparecen y qué lo acelera.</p></div>
+      </div>
+
+      <div class="tile" data-open="stop">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M7 7h10v10H7V7Zm5-6a11 11 0 1 0 0 22a11 11 0 0 0 0-22Z"/></svg></div>
+        <div><h4>STOP seguro</h4><p>Pausa inmediata + distancia + respiración + decisión.</p></div>
+      </div>
+
+      <div class="tile" data-open="boundaries">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4Zm0 7h10v2H4v-2Zm0 7h16v2H4v-2Zm12-7h4v9h-4v-9Z"/></svg></div>
+        <div><h4>Acuerdos de seguridad</h4><p>Reglas claras: nada de gritos, insultos, amenazas ni contacto físico.</p></div>
+      </div>
+
+      <div class="tile" data-open="scripts">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v10H7l-3 3V4Zm4 3h8v2H8V7Zm0 4h6v2H8v-2Z"/></svg></div>
+        <div><h4>Comunicación</h4><p>Scripts: pedir pausa, hablar en “yo”, validar, negociar.</p></div>
+      </div>
+
+      <div class="tile" data-open="abc">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg></div>
+        <div><h4>Reencuadre (ABC)</h4><p>De “tengo que ganar” a “tengo que proteger el vínculo”.</p></div>
+      </div>
+
+      <div class="tile" data-open="repair">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.7 5.7 0 0 1 12 5.2 5.7 5.7 0 0 1 21.5 12C19 16.6 12 21 12 21Z"/></svg></div>
+        <div><h4>Reparación</h4><p>Disculpa efectiva, responsabilidad y plan para prevenir recaídas.</p></div>
+      </div>
+
+      <div class="tile" data-open="values">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2 1 7l11 5 9-4.1V17h2V7L12 2Zm-7 9.7V17l7 3.2 7-3.2v-5.3l-7 3.2-7-3.2Z"/></svg></div>
+        <div><h4>Brújula</h4><p>¿Qué tipo de esposo/persona quiero ser en conflicto?</p></div>
+      </div>
+
+      <div class="tile" data-open="plan">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 18H5V9h14v12ZM7 11h5v2H7v-2Zm0 4h10v2H7v-2Z"/></svg></div>
+        <div><h4>Plan 7 días</h4><p>Rutina de práctica + seguimiento + prevención.</p></div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div style="margin-top:14px;">
+        <strong>Nota clínica:</strong> herramienta de apoyo psicoeducativo. No reemplaza evaluación ni tratamiento profesional.
+      </div>
+      <div style="margin-top:8px;">
+        <strong>Seguridad:</strong> si existe riesgo de daño, prioriza distancia, pausa y búsqueda de ayuda profesional/local de emergencias.
+      </div>
+      <div style="margin-top:8px;">
+        <strong>Autoría:</strong> Todas las mini aplicaciones fueron desarrolladas por <strong>Lic. Gonzalo Buendía – Psicólogo</strong>, como herramientas psicoeducativas digitales de apoyo clínico, <strong>y Blanquita – Co terapeuta</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="sheet" role="document">
+      <div class="sheet-head">
+        <div class="sheet-title">
+          <div class="chip" id="chip"></div>
+          <div style="min-width:0;">
+            <h3 id="sheetTitle">Panel</h3>
+            <p id="sheetSub">—</p>
+          </div>
+        </div>
+        <button class="close" id="btnClose" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4Z"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav">
+    <div class="nav-inner">
+      <button class="navbtn active" data-nav="home">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2 10h3v10h6v-6h2v6h6V10h3L12 3Z"/></svg>
+        Inicio
+      </button>
+      <button class="navbtn" data-nav="modules">
+        <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3Zm10 0h8v8h-8V3ZM3 13h8v8H3v-8Zm10 0h8v8h-8v-8Z"/></svg>
+        Módulos
+      </button>
+      <button class="navbtn" data-nav="progress">
+        <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg>
+        Progreso
+      </button>
+      <button class="navbtn" data-nav="settings">
+        <svg viewBox="0 0 24 24"><path d="M19.4 13a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 2h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5L6.6 12a7.7 7.7 0 0 0 .1 1L4.7 14.5l2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5L19.4 13ZM13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>
+        Ajustes
+      </button>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const STORAGE_KEY = 'ira_reset_v1';
+
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    function todayISO(){ return new Date().toISOString().slice(0,10); }
+    function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+    function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+    function esc(str){
+      return String(str ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
+    }
+    function fmtDateTime(iso){
+      if(!iso) return '—';
+      const d = new Date(iso);
+      const y=d.getFullYear();
+      const m=String(d.getMonth()+1).padStart(2,'0');
+      const da=String(d.getDate()).padStart(2,'0');
+      const hh=String(d.getHours()).padStart(2,'0');
+      const mm=String(d.getMinutes()).padStart(2,'0');
+      return `${y}-${m}-${da} ${hh}:${mm}`;
+    }
+    function lastNDaysSet(n){
+      const s = new Set();
+      const d = new Date();
+      for(let i=0;i<n;i++){
+        const x = new Date(d);
+        x.setDate(d.getDate()-i);
+        s.add(x.toISOString().slice(0,10));
+      }
+      return s;
+    }
+
+    function defaultState(){
+      return {
+        createdAt: new Date().toISOString(),
+        checkins: [],
+        triggers: [],
+        boundaries: [],
+        scripts: [],
+        reframes: [],
+        repairs: [],
+        values: { identity:'', protect:'' },
+        plan: { daily:'', practice:'', note:'' },
+        breaks: []
+      };
+    }
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        return Object.assign(defaultState(), parsed);
+      }catch{ return defaultState(); }
+    }
+    let state = load();
+    function save(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      refreshDashboard();
+    }
+
+    const ICONS = {
+      check:`<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`,
+      stop:`<svg viewBox="0 0 24 24"><path d="M7 7h10v10H7V7Zm5-6a11 11 0 1 0 0 22a11 11 0 0 0 0-22Z"/></svg>`,
+      map:`<svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 9L2 6v11l10 5 10-5V6l-10 5Z"/></svg>`,
+      bound:`<svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4Zm0 7h10v2H4v-2Zm0 7h16v2H4v-2Zm12-7h4v9h-4v-9Z"/></svg>`,
+      chat:`<svg viewBox="0 0 24 24"><path d="M4 4h16v10H7l-3 3V4Zm4 3h8v2H8V7Zm0 4h6v2H8v-2Z"/></svg>`,
+      abc:`<svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg>`,
+      heart:`<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.7 5.7 0 0 1 12 5.2 5.7 5.7 0 0 1 21.5 12C19 16.6 12 21 12 21Z"/></svg>`,
+      values:`<svg viewBox="0 0 24 24"><path d="M12 2 1 7l11 5 9-4.1V17h2V7L12 2Zm-7 9.7V17l7 3.2 7-3.2v-5.3l-7 3.2-7-3.2Z"/></svg>`,
+      plan:`<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 18H5V9h14v12ZM7 11h5v2H7v-2Zm0 4h10v2H7v-2Z"/></svg>`
+    };
+
+    let toastTimer=null;
+    function toast(msg){
+      let t = document.getElementById('toast');
+      if(!t){
+        t = document.createElement('div');
+        t.id='toast';
+        Object.assign(t.style,{
+          position:'fixed',left:'50%',bottom:'92px',transform:'translateX(-50%)',
+          background:'rgba(21,26,38,.92)',color:'#fff',padding:'10px 12px',
+          borderRadius:'14px',fontSize:'12px',fontWeight:'900',
+          letterSpacing:'.2px',boxShadow:'0 18px 40px rgba(0,0,0,.25)',
+          zIndex:'120',maxWidth:'90vw',textAlign:'center',opacity:'0',
+          transition:'opacity .15s ease'
+        });
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity='1';
+      clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>{t.style.opacity='0';},1800);
+    }
+
+    const modal = $('#modal');
+    const sheetBody = $('#sheetBody');
+    const sheetTitle = $('#sheetTitle');
+    const sheetSub = $('#sheetSub');
+    const chip = $('#chip');
+
+    function openModal(title, sub, iconSVG, renderFn){
+      sheetTitle.textContent = title;
+      sheetSub.textContent = sub || '';
+      chip.innerHTML = iconSVG || '';
+      sheetBody.innerHTML = '';
+      renderFn(sheetBody);
+      modal.classList.add('show');
+      document.body.style.overflow='hidden';
+    }
+    function closeModal(){
+      modal.classList.remove('show');
+      document.body.style.overflow='';
+      sheetBody.innerHTML='';
+    }
+    $('#btnClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.classList.contains('show')) closeModal(); });
+
+    function emptyBox(text){
+      const d = document.createElement('div');
+      d.className='notice';
+      d.textContent=text;
+      return d;
+    }
+    function itemCard(title, body, meta, actions){
+      const card = document.createElement('div');
+      card.className='item';
+      card.innerHTML = `
+        <div style="min-width:0;">
+          <p class="t">${esc(title)}</p>
+          <div class="d">${esc(body)}</div>
+          <div class="meta">${esc(meta || '')}</div>
+        </div>
+        <div class="ops"></div>
+      `;
+      const ops = $('.ops', card);
+      (actions || []).forEach(a=>{
+        const b = document.createElement('button');
+        b.className = 'iconbtn ' + (a.kind==='danger'?'danger':a.kind==='good'?'good':'');
+        b.title=a.label;
+        b.innerHTML = a.kind==='danger'
+          ? `<svg viewBox="0 0 24 24"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>`
+          : `<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`;
+        b.addEventListener('click', a.onClick);
+        ops.appendChild(b);
+      });
+      return card;
+    }
+
+    function getCheckin(date){ return state.checkins.find(c=>c.date===date) || null; }
+    function upsertCheckin(ci){
+      const i = state.checkins.findIndex(c=>c.date===ci.date);
+      if(i>=0) state.checkins[i]=ci; else state.checkins.push(ci);
+    }
+
+    // Riesgo: tensión + impulsividad + insultos en mente + sueño bajo (protector)
+    function computeRisk({tension, impulse, thoughts, sleep}){
+      const t = clamp((tension/10)*100, 0, 100);
+      const i = clamp((impulse/10)*100, 0, 100);
+      const th = clamp((thoughts/10)*100, 0, 100);
+      const sleepPenalty = clamp((sleep<6? (6-sleep)/6*100 : 0), 0, 100);
+
+      let value = Math.round(clamp(0.30*t + 0.30*i + 0.25*th + 0.15*sleepPenalty, 0, 100));
+
+      let label='Bajo';
+      if(value>=75) label='Alto';
+      else if(value>=50) label='Moderado';
+      else if(value>=25) label='Leve';
+
+      return { value, label };
+    }
+
+    /* ================= PANELS ================= */
+
+    function panelCheckin(){
+      const last = getCheckin(todayISO());
+      openModal('Check-in (2 min)','Mide señales y activa un plan antes de escalar.', ICONS.check, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.check} Señales de hoy</h4>
+            <div class="row">
+              <div>
+                <label>Tensión corporal (0–10)</label>
+                <input id="ciT" type="number" min="0" max="10" inputmode="numeric" value="${last?.tension ?? ''}">
+              </div>
+              <div>
+                <label>Impulso a gritar/ofender (0–10)</label>
+                <input id="ciI" type="number" min="0" max="10" inputmode="numeric" value="${last?.impulse ?? ''}">
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label>Pensamientos ofensivos (0–10)</label>
+                <input id="ciTh" type="number" min="0" max="10" inputmode="numeric" value="${last?.thoughts ?? ''}">
+              </div>
+              <div>
+                <label>Sueño (horas)</label>
+                <input id="ciS" type="number" min="0" max="14" step="0.5" inputmode="decimal" value="${last?.sleep ?? ''}">
+              </div>
+            </div>
+
+            <label>Detonante principal (qué lo encendió)</label>
+            <textarea id="ciTrig">${esc(last?.trigger ?? '')}</textarea>
+
+            <label>Micro-plan (3 pasos seguros)</label>
+            <textarea id="ciPlan" placeholder="1)\n2)\n3)">${esc(last?.plan ?? '')}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="ci:save">Guardar</button>
+              <button class="btn small secondary" data-action="ci:suggest">Sugerencia</button>
+              <button class="btn small danger" data-action="open:stop">Abrir STOP</button>
+            </div>
+
+            <div class="dangerBox" style="margin-top:10px;">
+              <strong>Regla de seguridad:</strong> si sube el impulso, se prioriza distancia + pausa + no discutir.
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='ci:suggest'){
+            const trig = $('#ciTrig', root);
+            const plan = $('#ciPlan', root);
+            if(!trig.value.trim()) trig.value='Detonante: crítica, frustración, sensación de falta de respeto, cansancio.';
+            if(!plan.value.trim()) plan.value =
+              '1) STOP: me retiro 10–20 min (sin discutir).\n' +
+              '2) Respiración 60s + agua + bajar tono.\n' +
+              '3) Reintento: “hablo cuando esté calmado” + script breve.';
+            toast('Sugerencia aplicada.');
+          }
+
+          if(act==='ci:save'){
+            const tension = Number($('#ciT', root).value);
+            const impulse = Number($('#ciI', root).value);
+            const thoughts = Number($('#ciTh', root).value);
+            const sleep = Number($('#ciS', root).value);
+
+            const okNums = [tension, impulse, thoughts, sleep].every(v=>Number.isFinite(v));
+            if(!okNums){ toast('Completa valores numéricos.'); return; }
+            if(tension<0||tension>10||impulse<0||impulse>10||thoughts<0||thoughts>10||sleep<0||sleep>14){
+              toast('Revisa rangos (0–10 y horas).'); return;
+            }
+
+            const trigger = $('#ciTrig', root).value.trim();
+            const plan = $('#ciPlan', root).value.trim();
+            const risk = computeRisk({tension, impulse, thoughts, sleep});
+            upsertCheckin({date:todayISO(), tension, impulse, thoughts, sleep, trigger, plan, risk});
+            save(); toast('Check-in guardado ✅'); closeModal();
+          }
+
+          if(act==='open:stop'){
+            panelStop();
+          }
+        });
+      });
+    }
+
+    function panelTriggers(){
+      openModal('Mapa de detonantes','Detecta qué enciende y qué acelera la escalada.', ICONS.map, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.map} Registrar detonante</h4>
+            <label>Título breve</label>
+            <input id="tgTitle" type="text" placeholder="Ej. Me siento desautorizado">
+            <label>Cadena: situación → pensamiento → emoción → conducta</label>
+            <textarea id="tgDetail" placeholder="Describe lo que ocurre y qué señales aparecen..."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="tg:add">Guardar</button>
+              <button class="btn small secondary" data-action="tg:seed">Cargar ejemplos</button>
+            </div>
+            <div class="help">Tip: si lo nombras a tiempo, puedes activar STOP antes del daño.</div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.map} Lista</h4>
+            <div class="list" id="tgList"></div>
+          </div>
+        `;
+
+        const list = $('#tgList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.triggers.length===0){
+            list.appendChild(emptyBox('Aún no hay detonantes.'));
+            return;
+          }
+          state.triggers
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(t=>{
+              list.appendChild(itemCard(
+                t.title,
+                t.detail,
+                `Registrado: ${fmtDateTime(t.createdAt)}`,
+                [
+                  {label:'Eliminar', kind:'danger', onClick:()=>{
+                    state.triggers = state.triggers.filter(x=>x.id!==t.id);
+                    save(); render(); toast('Eliminado.');
+                  }}
+                ]
+              ));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='tg:add'){
+            const title = $('#tgTitle', root).value.trim();
+            const detail = $('#tgDetail', root).value.trim();
+            if(!title || !detail){ toast('Completa título y descripción.'); return; }
+            state.triggers.push({id:uid(), title, detail, createdAt:new Date().toISOString()});
+            $('#tgTitle', root).value=''; $('#tgDetail', root).value='';
+            save(); render(); toast('Detonante guardado ✅');
+          }
+
+          if(act==='tg:seed'){
+            const seeds = [
+              {title:'Sensación de falta de respeto', detail:'Situación: tono alto / interrupción → “me están faltando el respeto” → rabia → sube volumen.'},
+              {title:'Frustración acumulada', detail:'Día estresante → “no me entienden” → tensión → exploto con la primera chispa.'},
+              {title:'Necesidad de control', detail:'Desorden/plan cambia → “si no controlo, pierdo” → irritación → critico/impongo.'},
+              {title:'Celos o inseguridad', detail:'Interpretación → “no soy importante” → rabia/vergüenza → ataque verbal.'},
+            ];
+            const existing = new Set(state.triggers.map(x=>(x.title||'').toLowerCase()));
+            seeds.forEach(s=>{
+              if(!existing.has(s.title.toLowerCase())){
+                state.triggers.push({id:uid(), title:s.title, detail:s.detail, createdAt:new Date().toISOString()});
+              }
+            });
+            save(); render(); toast('Ejemplos cargados.');
+          }
+        });
+
+        render();
+      });
+    }
+
+    function panelStop(){
+      openModal('STOP seguro','Pausa inmediata para cortar escalada y prevenir daño.', ICONS.stop, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.stop} Protocolo STOP</h4>
+            <div class="dangerBox">
+              <strong>Primero seguridad.</strong> Si hay impulso alto: <strong>distancia física</strong>, voz baja o silencio, y no continuar la discusión.
+            </div>
+
+            <div class="list" style="margin-top:10px;">
+              <div class="item">
+                <div style="min-width:0;">
+                  <p class="t">S — Stop</p>
+                  <div class="d">Detente. No discutas. No “ganes”.</div>
+                </div>
+              </div>
+
+              <div class="item">
+                <div style="min-width:0;">
+                  <p class="t">T — Toma distancia</p>
+                  <div class="d">Retírate 10–20 min. Cambia de ambiente. Agua en la cara o manos.</div>
+                </div>
+              </div>
+
+              <div class="item">
+                <div style="min-width:0;">
+                  <p class="t">O — Oxigena</p>
+                  <div class="d">Respiración 4–6 (inhala 4, exhala 6) por 60–120 s.</div>
+                </div>
+              </div>
+
+              <div class="item">
+                <div style="min-width:0;">
+                  <p class="t">P — Plan</p>
+                  <div class="d">Decide: “Retomo cuando esté calmado” o “Retomo mañana con terapeuta/estructura”.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions" style="margin-top:10px;">
+              <button class="btn small" data-action="timer:cool120">Iniciar 2:00 Enfriar</button>
+              <button class="btn small secondary" data-action="timer:breath60">Iniciar 1:00 Respirar</button>
+              <button class="btn small" data-action="open:scripts">Abrir scripts</button>
+            </div>
+
+            <div class="okBox" style="margin-top:10px;">
+              <strong>Frase corta:</strong> “Necesito una pausa. Vuelvo a hablar cuando esté calmado.”
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='timer:cool120') startTimer(120,'enfriar');
+          if(act==='timer:breath60') startTimer(60,'respirar');
+          if(act==='open:scripts') panelScripts();
+        });
+      });
+    }
+
+    function panelBoundaries(){
+      openModal('Acuerdos de seguridad','Reglas explícitas para proteger el vínculo y frenar escalada.', ICONS.bound, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.bound} Crear acuerdo</h4>
+            <label>Nombre del acuerdo</label>
+            <input id="bdTitle" type="text" placeholder="Ej. Nada de gritos ni insultos">
+            <label>Regla concreta</label>
+            <textarea id="bdRule" placeholder="Ej. Si sube el tono, se activa STOP y se pausa 20 min."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="bd:add">Guardar</button>
+              <button class="btn small secondary" data-action="bd:seed">Cargar acuerdos base</button>
+            </div>
+
+            <div class="dangerBox" style="margin-top:10px;">
+              <strong>Acuerdo mínimo:</strong> cero insultos, cero amenazas, cero contacto físico. Si aparece impulso → STOP + distancia.
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.bound} Mis acuerdos</h4>
+            <div class="list" id="bdList"></div>
+          </div>
+        `;
+
+        const list = $('#bdList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.boundaries.length===0){
+            list.appendChild(emptyBox('Aún no hay acuerdos.'));
+            return;
+          }
+          state.boundaries
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(bd=>{
+              list.appendChild(itemCard(
+                bd.title,
+                bd.rule,
+                `Registrado: ${fmtDateTime(bd.createdAt)}`,
+                [
+                  {label:'Eliminar', kind:'danger', onClick:()=>{
+                    state.boundaries = state.boundaries.filter(x=>x.id!==bd.id);
+                    save(); render(); toast('Eliminado.');
+                  }}
+                ]
+              ));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='bd:add'){
+            const title = $('#bdTitle', root).value.trim();
+            const rule = $('#bdRule', root).value.trim();
+            if(!title || !rule){ toast('Completa nombre y regla.'); return; }
+            state.boundaries.push({id:uid(), title, rule, createdAt:new Date().toISOString()});
+            $('#bdTitle', root).value=''; $('#bdRule', root).value='';
+            save(); render(); toast('Acuerdo guardado ✅');
+          }
+
+          if(act==='bd:seed'){
+            const seeds = [
+              {title:'Pausa obligatoria', rule:'Si sube el tono o la tensión, STOP y pausa 20 min. No se discute en caliente.'},
+              {title:'Cero insultos', rule:'No se usan ofensas ni humillaciones. Si aparecen, se corta la conversación.'},
+              {title:'Cero amenazas', rule:'No se amenaza con irse, castigar o “hacer pagar”. Se pospone el tema.'},
+              {title:'Cero contacto físico', rule:'No hay empujones, jalones ni acercamiento intimidante. Distancia y salida del espacio.'},
+              {title:'Retomar con estructura', rule:'Retomar el tema con turnos: 2 minutos cada uno + resumen + acuerdo.'}
+            ];
+            const existing = new Set(state.boundaries.map(x=>(x.title||'').toLowerCase()));
+            seeds.forEach(s=>{
+              if(!existing.has(s.title.toLowerCase())){
+                state.boundaries.push({id:uid(), title:s.title, rule:s.rule, createdAt:new Date().toISOString()});
+              }
+            });
+            save(); render(); toast('Acuerdos base cargados.');
+          }
+        });
+
+        render();
+      });
+    }
+
+    function panelScripts(){
+      openModal('Scripts de comunicación','Frases cortas para pausar, validar y negociar sin escalar.', ICONS.chat, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.chat} Crear script</h4>
+            <label>Etiqueta</label>
+            <input id="scTitle" type="text" placeholder="Ej. Pedir pausa">
+            <label>Texto</label>
+            <textarea id="scText" placeholder="Ej. Necesito una pausa. Vuelvo en 20 minutos para hablar mejor."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="sc:add">Guardar</button>
+              <button class="btn small secondary" data-action="sc:seed">Cargar scripts base</button>
+            </div>
+            <div class="notice" style="margin-top:10px;">
+              Fórmula: <strong>breve + responsabilidad + alternativa</strong>.
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.chat} Mis scripts</h4>
+            <div class="list" id="scList"></div>
+          </div>
+        `;
+
+        const list = $('#scList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.scripts.length===0){
+            list.appendChild(emptyBox('Aún no hay scripts.'));
+            return;
+          }
+          state.scripts
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(s=>{
+              list.appendChild(itemCard(
+                s.title,
+                s.text,
+                `Registrado: ${fmtDateTime(s.createdAt)}`,
+                [
+                  {label:'Eliminar', kind:'danger', onClick:()=>{
+                    state.scripts = state.scripts.filter(x=>x.id!==s.id);
+                    save(); render(); toast('Eliminado.');
+                  }}
+                ]
+              ));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='sc:add'){
+            const title = $('#scTitle', root).value.trim();
+            const text = $('#scText', root).value.trim();
+            if(!title || !text){ toast('Completa etiqueta y texto.'); return; }
+            state.scripts.push({id:uid(), title, text, createdAt:new Date().toISOString()});
+            $('#scTitle', root).value=''; $('#scText', root).value='';
+            save(); render(); toast('Script guardado ✅');
+          }
+
+          if(act==='sc:seed'){
+            const seeds = [
+              {title:'Pedir pausa', text:'Necesito una pausa para calmarme. Vuelvo en 20 minutos para hablar mejor.'},
+              {title:'Validar sin ceder', text:'Entiendo que esto te moleste. Quiero escucharte, pero sin gritos. Hablemos con calma.'},
+              {title:'Hablar en “yo”', text:'Yo me siento tenso y me estoy activando. No quiero lastimar. Voy a pausar.'},
+              {title:'Negociar', text:'Puedo ofrecer A ahora. B lo vemos mañana. Quiero una solución, no una pelea.'},
+              {title:'Reparación inicial', text:'Me excedí. Me hago responsable. Quiero reparar y prevenir que esto se repita.'}
+            ];
+            const existing = new Set(state.scripts.map(x=>(x.title||'').toLowerCase()));
+            seeds.forEach(s=>{
+              if(!existing.has(s.title.toLowerCase())){
+                state.scripts.push({id:uid(), title:s.title, text:s.text, createdAt:new Date().toISOString()});
+              }
+            });
+            save(); render(); toast('Scripts base cargados.');
+          }
+        });
+
+        render();
+      });
+    }
+
+    function panelABC(){
+      openModal('Reencuadre (ABC)','Cambia la creencia que empuja a atacar por una alternativa funcional.', ICONS.abc, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.abc} Registrar ABC</h4>
+            <label>A (Evento activador)</label>
+            <textarea id="abA" placeholder="Ej. Me interrumpen o me contradicen."></textarea>
+            <label>B (Creencia/pensamiento)</label>
+            <textarea id="abB" placeholder="Ej. 'Me están faltando el respeto y debo imponerme.'"></textarea>
+            <label>C (Consecuencia)</label>
+            <textarea id="abC" placeholder="Ej. Rabia → sube el tono → ofendo."></textarea>
+            <label>Alternativa funcional (nuevo B)</label>
+            <textarea id="abAlt" placeholder="Ej. 'Puedo poner límites sin atacar. Pauso y vuelvo con calma.'"></textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="ab:add">Guardar</button>
+              <button class="btn small secondary" data-action="ab:seed">Cargar ejemplos</button>
+            </div>
+
+            <div class="okBox" style="margin-top:10px;">
+              Objetivo: <strong>proteger el vínculo</strong> y resolver el problema, no ganar la discusión.
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.abc} Mis reencuadres</h4>
+            <div class="list" id="abList"></div>
+          </div>
+        `;
+
+        const list = $('#abList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.reframes.length===0){
+            list.appendChild(emptyBox('Aún no hay reencuadres.'));
+            return;
+          }
+          state.reframes
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(r=>{
+              const body = `A: ${r.a}\n\nB: ${r.b}\n\nC: ${r.c}\n\nAlternativa: ${r.alt}`;
+              list.appendChild(itemCard('Reencuadre', body, `Registrado: ${fmtDateTime(r.createdAt)}`, [
+                {label:'Eliminar', kind:'danger', onClick:()=>{
+                  state.reframes = state.reframes.filter(x=>x.id!==r.id);
+                  save(); render(); toast('Eliminado.');
+                }}
+              ]));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='ab:add'){
+            const a = $('#abA', root).value.trim();
+            const b = $('#abB', root).value.trim();
+            const c = $('#abC', root).value.trim();
+            const alt = $('#abAlt', root).value.trim();
+            if(!a || !b || !c || !alt){ toast('Completa A, B, C y Alternativa.'); return; }
+            state.reframes.push({id:uid(), a, b, c, alt, createdAt:new Date().toISOString()});
+            $('#abA', root).value=''; $('#abB', root).value=''; $('#abC', root).value=''; $('#abAlt', root).value='';
+            save(); render(); toast('Guardado ✅');
+          }
+
+          if(act==='ab:seed'){
+            const seeds = [
+              {
+                a:'Me contradicen delante de otros.',
+                b:'“Si no me impongo, pierdo respeto.”',
+                c:'Rabia + subo tono + ataque verbal.',
+                alt:'“El respeto no se impone con daño. Pauso y pongo límites con calma.”'
+              },
+              {
+                a:'Siento que no me entienden.',
+                b:'“Me ignoran a propósito.”',
+                c:'Me acelero y humillo.',
+                alt:'“No leeré intención. Pregunto y escucho; si me activo, STOP.”'
+              }
+            ];
+            seeds.forEach(s=>{
+              state.reframes.push({id:uid(), a:s.a, b:s.b, c:s.c, alt:s.alt, createdAt:new Date().toISOString()});
+            });
+            save(); render(); toast('Ejemplos cargados.');
+          }
+        });
+
+        render();
+      });
+    }
+
+    function panelRepair(){
+      openModal('Reparación','Responsabilidad + reparación + prevención.', ICONS.heart, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.heart} Plantilla de reparación</h4>
+            <div class="notice">
+              Reparar no es justificarse. Es <strong>asumir</strong>, <strong>validar</strong> y <strong>prevenir</strong>.
+            </div>
+
+            <label>¿Qué hice mal? (conducta concreta)</label>
+            <textarea id="rpWhat" placeholder="Ej. Levanté la voz y ofendí."></textarea>
+
+            <label>Impacto en la otra persona (validación)</label>
+            <textarea id="rpImpact" placeholder="Ej. Te hice sentir insegura y lastimada."></textarea>
+
+            <label>Responsabilidad (sin excusas)</label>
+            <textarea id="rpResp" placeholder="Ej. Me hago responsable de haber escalado."></textarea>
+
+            <label>Prevención (plan concreto)</label>
+            <textarea id="rpPrev" placeholder="Ej. STOP + pausa 20 min + retomar con turnos."></textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="rp:add">Guardar</button>
+              <button class="btn small secondary" data-action="rp:seed">Ejemplo</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.heart} Historial</h4>
+            <div class="list" id="rpList"></div>
+          </div>
+        `;
+
+        const list = $('#rpList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.repairs.length===0){
+            list.appendChild(emptyBox('Aún no hay registros de reparación.'));
+            return;
+          }
+          state.repairs
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(r=>{
+              const body =
+                `Conducta: ${r.what}\n\nImpacto: ${r.impact}\n\nResponsabilidad: ${r.resp}\n\nPrevención: ${r.prev}`;
+              list.appendChild(itemCard(
+                'Reparación',
+                body,
+                `Registrado: ${fmtDateTime(r.createdAt)}`,
+                [{label:'Eliminar', kind:'danger', onClick:()=>{
+                  state.repairs = state.repairs.filter(x=>x.id!==r.id);
+                  save(); render(); toast('Eliminado.');
+                }}]
+              ));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='rp:seed'){
+            if(!$('#rpWhat', root).value.trim()) $('#rpWhat', root).value='Levanté la voz y dije palabras hirientes.';
+            if(!$('#rpImpact', root).value.trim()) $('#rpImpact', root).value='Te hice sentir insegura y lastimada.';
+            if(!$('#rpResp', root).value.trim()) $('#rpResp', root).value='Me hago responsable. No hay excusas.';
+            if(!$('#rpPrev', root).value.trim()) $('#rpPrev', root).value='Activaré STOP a tiempo, pausaré 20 min y retomaré con turnos y tono bajo.';
+            toast('Ejemplo aplicado.');
+          }
+
+          if(act==='rp:add'){
+            const what = $('#rpWhat', root).value.trim();
+            const impact = $('#rpImpact', root).value.trim();
+            const resp = $('#rpResp', root).value.trim();
+            const prev = $('#rpPrev', root).value.trim();
+            if(!what || !impact || !resp || !prev){ toast('Completa los cuatro campos.'); return; }
+            state.repairs.push({id:uid(), what, impact, resp, prev, createdAt:new Date().toISOString()});
+            $('#rpWhat', root).value=''; $('#rpImpact', root).value=''; $('#rpResp', root).value=''; $('#rpPrev', root).value='';
+            save(); render(); toast('Guardado ✅');
+          }
+        });
+
+        render();
+      });
+    }
+
+    function panelValues(){
+      openModal('Brújula','Identidad y protección del vínculo.', ICONS.values, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.values} Definición</h4>
+            <label>¿Qué tipo de esposo/persona quiero ser en conflicto?</label>
+            <textarea id="vId">${esc(state.values.identity)}</textarea>
+            <label>¿Qué debo proteger sí o sí?</label>
+            <textarea id="vProt">${esc(state.values.protect)}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="v:save">Guardar</button>
+              <button class="btn small secondary" data-action="v:seed">Sugerencia</button>
+            </div>
+
+            <div class="okBox" style="margin-top:10px;">
+              “Poner límites sin atacar” es una habilidad. Se entrena.
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='v:seed'){
+            if(!$('#vId', root).value.trim()) $('#vId', root).value='Quiero ser firme, respetuoso y seguro. Prefiero pausa antes que daño.';
+            if(!$('#vProt', root).value.trim()) $('#vProt', root).value='Respeto, seguridad, tono bajo, distancia cuando me activo.';
+            toast('Sugerencia aplicada.');
+          }
+
+          if(act==='v:save'){
+            state.values.identity = $('#vId', root).value.trim();
+            state.values.protect = $('#vProt', root).value.trim();
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelPlan(){
+      openModal('Plan 7 días','Práctica corta, diaria y medible.', ICONS.plan, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.plan} Rutina</h4>
+            <label>Rutina diaria (5–10 min)</label>
+            <textarea id="pDaily">${esc(state.plan.daily)}</textarea>
+            <label>Práctica clave (habilidad a entrenar)</label>
+            <textarea id="pPractice">${esc(state.plan.practice)}</textarea>
+            <label>Nota personal</label>
+            <textarea id="pNote">${esc(state.plan.note)}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="p:save">Guardar</button>
+              <button class="btn small secondary" data-action="p:seed">Sugerencia</button>
+            </div>
+
+            <div class="notice" style="margin-top:10px;">
+              Ejemplo: 1 check-in + 1 respiración + 1 script + 1 reencuadre. Repetición > intensidad.
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='p:seed'){
+            if(!$('#pDaily', root).value.trim()) $('#pDaily', root).value='Check-in diario + 60s respiración + revisar 1 detonante.';
+            if(!$('#pPractice', root).value.trim()) $('#pPractice', root).value='Pedir pausa sin discutir y retomar con tono bajo.';
+            if(!$('#pNote', root).value.trim()) $('#pNote', root).value='Mi objetivo es seguridad y vínculo. STOP primero.';
+            toast('Sugerencia aplicada.');
+          }
+
+          if(act==='p:save'){
+            state.plan.daily = $('#pDaily', root).value.trim();
+            state.plan.practice = $('#pPractice', root).value.trim();
+            state.plan.note = $('#pNote', root).value.trim();
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    /* ====== TIMERS ====== */
+    let microTimer=null; let remaining=0;
+    function fmtTime(s){ const m=Math.floor(s/60); const r=s%60; return `${m}:${String(r).padStart(2,'0')}`; }
+    function startTimer(seconds, type){
+      if(microTimer) clearInterval(microTimer);
+      remaining = seconds;
+
+      state.breaks.push({dateTime:new Date().toISOString(), type, seconds});
+      save();
+
+      $('#timerHelp').textContent = `Pausa en curso: ${fmtTime(remaining)} • ${type}`;
+      microTimer = setInterval(()=>{
+        remaining--;
+        if(remaining<=0){
+          clearInterval(microTimer); microTimer=null;
+          $('#timerHelp').textContent='Pausa completada ✅ Vuelve con voz baja y una frase corta.';
+          toast('Pausa completada ✅');
+          return;
+        }
+        $('#timerHelp').textContent = `Pausa en curso: ${fmtTime(remaining)} • ${type}`;
+      }, 1000);
+    }
+
+    /* ====== PROGRESS / SETTINGS ====== */
+    function panelProgress(){
+      openModal('Progreso','Resumen semanal de check-ins y pausas.', `<svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg>`, (root)=>{
+        const tdy=todayISO();
+        const week=lastNDaysSet(7);
+        const breaksToday=state.breaks.filter(b=>(b.dateTime||'').slice(0,10)===tdy).length;
+        const breaksWeek=state.breaks.filter(b=>week.has((b.dateTime||'').slice(0,10))).length;
+        const checkinsWeek=state.checkins.filter(c=>week.has(c.date)).length;
+
+        root.innerHTML = `
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M19 7H5v2h14V7Zm0 4H5v2h14v-2Zm0 4H5v2h10v-2Z"/></svg> Semana</h4>
+            <div class="row">
+              <div><label>Check-ins</label><input value="${checkinsWeek}/7" readonly></div>
+              <div><label>Micro-pausas</label><input value="${breaksWeek}" readonly></div>
+            </div>
+            <div class="row">
+              <div><label>Pausas hoy</label><input value="${breaksToday}" readonly></div>
+              <div><label>Registros</label><input value="${state.triggers.length + state.reframes.length + state.repairs.length}" readonly></div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function panelSettings(){
+      openModal('Ajustes','Exportar/Importar y reiniciar.', `<svg viewBox="0 0 24 24"><path d="M19.4 13a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 2h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5L6.6 12a7.7 7.7 0 0 0 .1 1L4.7 14.5l2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5L19.4 13ZM13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>`, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5Zm-3 8V6a3 3 0 0 1 6 0v3H9Z"/></svg> Privacidad</h4>
+            <div class="notice">Todo se guarda <strong>solo en este dispositivo</strong> (localStorage).</div>
+          </div>
+
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M12 2v12l4-4 1.4 1.4L12 18l-5.4-5.6L8 10l4 4V2ZM4 20h16v2H4v-2Z"/></svg> Exportar / Importar</h4>
+            <label>Exportar JSON</label>
+            <textarea id="exportBox" readonly></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="set:export">Generar</button>
+              <button class="btn small secondary" data-action="set:copy">Copiar</button>
+            </div>
+            <label style="margin-top:10px;">Importar JSON</label>
+            <textarea id="importBox" placeholder="Pega aquí el JSON exportado..."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="set:import">Importar</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg> Reiniciar</h4>
+            <div class="dangerBox">Esto borrará los datos guardados en este dispositivo.</div>
+            <div class="actions" style="margin-top:10px;">
+              <button class="btn small danger" data-action="set:reset">Borrar datos</button>
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', async (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+          const exportBox = $('#exportBox', root);
+          const importBox = $('#importBox', root);
+
+          if(act==='set:export'){ exportBox.value = JSON.stringify(state, null, 2); toast('Exportación lista.'); }
+          if(act==='set:copy'){
+            if(!exportBox.value.trim()){ toast('Primero genera el JSON.'); return; }
+            try{ await navigator.clipboard.writeText(exportBox.value); toast('Copiado ✅'); }
+            catch{ toast('No se pudo copiar. Copia manualmente.'); }
+          }
+          if(act==='set:import'){
+            const raw = importBox.value.trim();
+            if(!raw){ toast('Pega el JSON primero.'); return; }
+            try{
+              const incoming = JSON.parse(raw);
+              if(!incoming || typeof incoming!=='object') throw new Error('Formato inválido');
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(incoming));
+              location.reload();
+            }catch{ toast('JSON inválido.'); }
+          }
+          if(act==='set:reset'){
+            const ok = confirm('¿Seguro que deseas borrar todos los datos de esta mini app en este dispositivo?');
+            if(!ok) return;
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+          }
+        });
+      });
+    }
+
+    /* ====== OPEN MAP ====== */
+    const OPEN = {
+      checkin: panelCheckin,
+      triggers: panelTriggers,
+      stop: panelStop,
+      boundaries: panelBoundaries,
+      scripts: panelScripts,
+      abc: panelABC,
+      repair: panelRepair,
+      values: panelValues,
+      plan: panelPlan,
+      progress: panelProgress,
+      settings: panelSettings
+    };
+
+    /* ====== EVENT DELEGATION GLOBAL ====== */
+    $('#modules').addEventListener('click', (e)=>{
+      const tile = e.target.closest('.tile[data-open]');
+      if(!tile) return;
+      const key = tile.getAttribute('data-open');
+      if(OPEN[key]) OPEN[key]();
+      else toast('Módulo no disponible.');
+    });
+
+    $('#app').addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if(!btn) return;
+      const act = btn.getAttribute('data-action');
+
+      if(act?.startsWith('open:')){
+        const key = act.split(':')[1];
+        if(OPEN[key]) OPEN[key]();
+      }
+
+      if(act==='timer:cool120') startTimer(120,'enfriar');
+      if(act==='timer:breath60') startTimer(60,'respirar');
+    });
+
+    $$('.navbtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        $$('.navbtn').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+
+        const key = btn.dataset.nav;
+        if(key==='home'){ closeModal(); window.scrollTo({top:0, behavior:'smooth'}); }
+        if(key==='modules'){ closeModal(); const top = $('#modules').offsetTop - 10; window.scrollTo({top, behavior:'smooth'}); }
+        if(key==='progress'){ OPEN.progress(); }
+        if(key==='settings'){ OPEN.settings(); }
+      });
+    });
+
+    /* ====== DASHBOARD ====== */
+    function refreshDashboard(){
+      const dates = new Set(state.checkins.map(c=>c.date));
+      let streak=0; let d=new Date();
+      while(true){
+        const iso=d.toISOString().slice(0,10);
+        if(dates.has(iso)){ streak++; d.setDate(d.getDate()-1); } else break;
+      }
+      $('#streakTxt').textContent = `${streak} día${streak===1?'':'s'}`;
+
+      const tdy=todayISO();
+      const last = getCheckin(tdy);
+      if(last && last.risk){
+        $('#barFill').style.width = `${last.risk.value}%`;
+        $('#badgeRisk').textContent = `${last.risk.label} (${last.risk.value}/100)`;
+        if(last.risk.value>=75){
+          $('#riskNote').innerHTML = `Riesgo alto: activa <strong>STOP</strong> y evita discutir. Prioriza seguridad.`;
+        } else if(last.risk.value>=50){
+          $('#riskNote').innerHTML = `Riesgo moderado: pausa + script breve + reencuadre.`;
+        } else {
+          $('#riskNote').innerHTML = `Riesgo bajo/leve: mantén práctica diaria y acuerdos.`;
+        }
+      }else{
+        $('#barFill').style.width='0%';
+        $('#badgeRisk').textContent='—';
+        $('#riskNote').innerHTML = `Haz un <strong>check-in</strong> para calcular tu riesgo de escalada hoy.`;
+      }
+
+      const week=lastNDaysSet(7);
+      const breaksToday=state.breaks.filter(b=>(b.dateTime||'').slice(0,10)===tdy).length;
+      const breaksWeek=state.breaks.filter(b=>week.has((b.dateTime||'').slice(0,10))).length;
+      $('#breakTxt').textContent = `${breaksToday} hoy • ${breaksWeek} esta semana`;
+      $('#badgeBreaks').textContent = breaksToday;
+    }
+    refreshDashboard();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2B3A67" />
+  <title>Duelos & Centro — Mini app</title>
+  <style>
+    :root{
+      --bg:#F6F7FB;
+      --card:#FFFFFF;
+      --text:#141A2A;
+      --muted:#5B6477;
+
+      --primary:#2B3A67;
+      --primary2:#3B4A78;
+
+      --accent:#2B8C8C;
+      --accent2:#E7F6F6;
+
+      --rose:#B75B7A;
+      --rose2:#FBEAF1;
+
+      --warn:#C97A2B;
+      --warn2:#FFF3E8;
+
+      --ok:#2D8A4B;
+      --ok2:#EAF8EF;
+
+      --border: 1px solid rgba(20,26,42,.10);
+      --shadow: 0 10px 25px rgba(20,26,42,.10);
+      --r:18px;
+      --tap:52px;
+      --max:980px;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1100px 700px at 15% -10%, #EAF0FF 0%, transparent 55%),
+        radial-gradient(900px 700px at 90% 10%, #FBEAF1 0%, transparent 55%),
+        radial-gradient(900px 700px at 70% 110%, #E7F6F6 0%, transparent 55%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .safe{
+      padding: env(safe-area-inset-top) env(safe-area-inset-right)
+               env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px 14px 118px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 6px 18px;
+    }
+    .brand{display:flex; gap:10px; align-items:center; min-width:0;}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--primary),var(--accent));
+      box-shadow:0 10px 18px rgba(43,58,103,.18);
+      display:grid;place-items:center;
+      flex:0 0 auto;
+    }
+    .logo svg{width:26px;height:26px;fill:#fff;opacity:.95}
+    .titlebox{min-width:0}
+    .app-title{
+      margin:0;
+      font-size:16px;
+      font-weight:900;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      padding:8px 10px; border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:var(--border);
+      backdrop-filter: blur(8px);
+      font-size:12px; color:var(--muted);
+      white-space:nowrap;
+    }
+    .pill svg{width:14px;height:14px;fill:var(--muted)}
+
+    .card{
+      background:rgba(255,255,255,.88);
+      border:var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      align-items:stretch;
+      margin-bottom:14px;
+    }
+    .hero-left{padding:16px; position:relative;}
+    .hero-left:before{
+      content:"";
+      position:absolute; inset:-40px -40px auto auto;
+      width:180px; height:180px;
+      background: radial-gradient(circle at 30% 30%, rgba(183,91,122,.18), transparent 60%);
+      border-radius:999px;
+      pointer-events:none;
+    }
+    h2{margin:0 0 8px;font-size:18px;letter-spacing:.2px}
+    p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+
+    .hero-illus{
+      margin-top:12px;
+      border-radius:18px;
+      border:1px solid rgba(20,26,42,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.75));
+      padding:10px;
+      overflow:hidden;
+    }
+    .hero-illus svg{width:100%; height:auto; display:block}
+
+    .quick-actions{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .btn{
+      min-height:var(--tap);
+      border:none;
+      border-radius:16px;
+      padding:12px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      box-shadow:0 14px 24px rgba(43,58,103,.18);
+      transition:transform .08s ease, background .12s ease;
+    }
+    .btn:hover{background:var(--primary2)}
+    .btn:active{transform:scale(.99)}
+    .btn svg{width:18px;height:18px;fill:#fff;opacity:.95}
+
+    .btn.secondary{
+      background:#fff;
+      color:var(--primary);
+      border:var(--border);
+      box-shadow:none;
+    }
+    .btn.secondary svg{fill:var(--primary)}
+    .btn.ghost{
+      background:rgba(255,255,255,.8);
+      color:var(--primary);
+      border:var(--border);
+      box-shadow:none;
+    }
+    .btn.ghost svg{fill:var(--primary)}
+    .btn.small{min-height:46px; border-radius:14px; padding:10px 12px; font-size:13px; flex:1 1 160px}
+
+    .hero-right{display:flex; flex-direction:column; gap:12px;}
+    .meter{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom:8px;
+    }
+    .meter .label{display:flex; gap:10px; align-items:center; min-width:0;}
+    .meter .label svg{width:18px;height:18px;fill:var(--accent)}
+    .meter h3{margin:0;font-size:13px;letter-spacing:.2px}
+    .meter .sub{margin:2px 0 0; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px}
+    .badge{
+      font-size:12px;
+      font-weight:900;
+      padding:8px 10px;
+      border-radius:999px;
+      border:var(--border);
+      background:#fff;
+      color:var(--primary);
+      white-space:nowrap;
+    }
+    .bar{width:100%; height:10px; background:rgba(43,58,103,.08); border-radius:999px; overflow:hidden;}
+    .bar > div{height:100%; width:0%; background:linear-gradient(90deg,var(--rose),var(--accent)); border-radius:999px; transition: width .25s ease;}
+    .smallnote{margin-top:8px; font-size:12px; color:var(--muted); line-height:1.4}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .tile{
+      padding:14px;
+      border-radius:var(--r);
+      border:var(--border);
+      background:rgba(255,255,255,.86);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      min-height:92px;
+      transition:transform .08s ease, border-color .12s ease;
+    }
+    .tile:hover{border-color:rgba(43,58,103,.20)}
+    .tile:active{transform:scale(.99)}
+    .ico{
+      width:40px;height:40px;border-radius:14px;
+      background:rgba(183,91,122,.10);
+      border:1px solid rgba(183,91,122,.18);
+      display:grid;place-items:center;
+      flex:0 0 auto;
+    }
+    .ico svg{width:20px;height:20px;fill:var(--rose)}
+    .tile h4{margin:0;font-size:14px}
+    .tile p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.35}
+
+    .footer{
+      margin:14px 4px 0;
+      color:rgba(91,100,119,.95);
+      font-size:11px;
+      line-height:1.35;
+    }
+    .footer strong{color:var(--primary)}
+
+    /* Bottom nav */
+    .nav{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background:rgba(246,247,251,.78);
+      backdrop-filter: blur(10px);
+      border-top:1px solid rgba(20,26,42,.08);
+      z-index:40;
+    }
+    .nav-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+    }
+    .navbtn{
+      min-height:54px;
+      border-radius:16px;
+      border:var(--border);
+      background:rgba(255,255,255,.90);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:900;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .navbtn svg{width:18px;height:18px;fill:var(--muted)}
+    .navbtn.active{
+      background:#fff;
+      color:var(--primary);
+      border-color:rgba(43,58,103,.20);
+      box-shadow:0 10px 20px rgba(20,26,42,.10);
+    }
+    .navbtn.active svg{fill:var(--primary)}
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(10,12,18,.45);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      z-index:60;
+    }
+    .modal.show{display:flex}
+    .sheet{
+      width:min(var(--max), 100%);
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:22px;
+      box-shadow:0 30px 80px rgba(0,0,0,.28);
+      overflow:hidden;
+      max-height:86vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .sheet-head{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(20,26,42,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.90));
+    }
+    .sheet-title{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .chip{
+      width:40px;height:40px;border-radius:14px;
+      background:rgba(183,91,122,.10);
+      border:1px solid rgba(183,91,122,.18);
+      display:grid; place-items:center;
+      flex:0 0 auto;
+    }
+    .chip svg{width:20px;height:20px;fill:var(--rose)}
+    .sheet-title h3{
+      margin:0;
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .sheet-title p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:520px;
+    }
+    .close{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:var(--border);
+      background:rgba(255,255,255,.92);
+      cursor:pointer;
+      display:grid; place-items:center;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .close svg{width:18px;height:18px;fill:var(--muted)}
+    .sheet-body{padding:14px; overflow:auto;}
+
+    .section{
+      margin-bottom:14px;
+      border:var(--border);
+      background:rgba(255,255,255,.90);
+      border-radius:18px;
+      padding:12px;
+    }
+    .section h4{
+      margin:0 0 10px;
+      font-size:13px;
+      letter-spacing:.2px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .section h4 svg{width:16px;height:16px;fill:var(--primary);opacity:.9}
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:900;
+      margin:0 0 6px;
+    }
+    input, textarea, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(20,26,42,.12);
+      background:#fff;
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+      line-height:1.3;
+    }
+    textarea{min-height:96px; resize:vertical}
+    .help{margin:8px 0 0; font-size:12px; color:var(--muted); line-height:1.4}
+
+    .notice{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(201,122,43,.25);
+      background:var(--warn2);
+      color:#6A3C11;
+      font-size:12px;
+      line-height:1.4;
+    }
+    .okBox{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(45,138,75,.22);
+      background:var(--ok2);
+      color:#1F5A35;
+      font-size:12px;
+      line-height:1.4;
+    }
+    .softBox{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(183,91,122,.22);
+      background:var(--rose2);
+      color:#6A2640;
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .list{display:flex; flex-direction:column; gap:10px; margin-top:10px}
+    .item{
+      border:1px solid rgba(20,26,42,.10);
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+    }
+    .item .t{margin:0; font-weight:900; font-size:13px}
+    .item .d{margin:6px 0 0; font-size:12px; color:var(--muted); white-space:pre-wrap; line-height:1.35}
+    .item .meta{margin-top:8px; font-size:11px; color:rgba(91,100,119,.95)}
+    .ops{display:flex; gap:8px; flex:0 0 auto}
+    .iconbtn{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:var(--border);
+      background:rgba(246,247,251,.75);
+      cursor:pointer;
+      display:grid; place-items:center;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .iconbtn svg{width:18px;height:18px;fill:var(--muted)}
+    .iconbtn.danger svg{fill:var(--rose)}
+    .iconbtn.good svg{fill:var(--ok)}
+
+    /* Tiny illustrated cards inside sheets */
+    .mini-illus{
+      border-radius:16px;
+      border:1px solid rgba(20,26,42,.08);
+      background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,.75));
+      padding:10px;
+      overflow:hidden;
+      margin-top:10px;
+    }
+    .mini-illus svg{width:100%; height:auto; display:block}
+
+    @media (max-width:820px){ .hero{grid-template-columns:1fr} }
+    @media (max-width:520px){
+      .row{grid-template-columns:1fr}
+      .quick-actions{grid-template-columns:1fr}
+      .wrap{padding-bottom:122px}
+    }
+    @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+  </style>
+</head>
+
+<body class="safe">
+  <div class="wrap" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm0 2a8 8 0 1 1 0 16a8 8 0 0 1 0-16Zm0 3a1 1 0 0 0-1 1v3.2l-1.6 1.6a1 1 0 1 0 1.4 1.4l1.9-1.9A1 1 0 0 0 13 12V8a1 1 0 0 0-1-1Z"/></svg>
+        </div>
+        <div class="titlebox">
+          <h1 class="app-title">Duelo Reset</h1>
+          <p class="subtitle">Ruptura • dependencia emocional • reenganche a vida</p>
+        </div>
+      </div>
+
+      <div class="pillrow">
+        <div class="pill">
+          <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5Zm-3 8V6a3 3 0 0 1 6 0v3H9Z"/></svg>
+          <span>Privado</span>
+        </div>
+        <div class="pill" id="pillStreak">
+          <svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v4H0V6a2 2 0 0 1 2-2h3V2Zm-7 10h24v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V12Z"/></svg>
+          <span id="streakTxt">0 días</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="card hero-left">
+        <h2>Hoy: un paso pequeño, pero real.</h2>
+        <p>Mini app psicoeducativa para acompañar duelo afectivo, reducir dependencia emocional y recuperar ritmo de vida con acciones breves, compasión y estructura.</p>
+
+        <div class="hero-illus" aria-hidden="true">
+          <!-- Ilustración suave (SVG) -->
+          <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#EAF0FF"/>
+                <stop offset="1" stop-color="#FBEAF1"/>
+              </linearGradient>
+              <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#2B3A67" stop-opacity=".9"/>
+                <stop offset="1" stop-color="#2B8C8C" stop-opacity=".85"/>
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="760" height="280" rx="18" fill="url(#g1)"/>
+            <circle cx="650" cy="70" r="70" fill="#E7F6F6"/>
+            <circle cx="120" cy="210" r="90" fill="#E7F6F6"/>
+            <path d="M110 190c70-80 150-60 220 0s150 70 220 10 140-10 170 40" fill="none" stroke="#2B3A67" stroke-opacity=".12" stroke-width="14" stroke-linecap="round"/>
+            <path d="M120 205c55-55 115-45 170 0s120 60 180 15 130-10 170 35" fill="none" stroke="#B75B7A" stroke-opacity=".14" stroke-width="12" stroke-linecap="round"/>
+            <!-- “camino” -->
+            <path d="M60 250c140-80 210-40 310-70s170-120 330-40" fill="none" stroke="url(#g2)" stroke-width="10" stroke-linecap="round" stroke-opacity=".8"/>
+            <!-- iconos -->
+            <g opacity=".92">
+              <path d="M155 94c0-18 15-33 33-33s33 15 33 33c0 29-33 56-33 56s-33-27-33-56Z" fill="#B75B7A" fill-opacity=".22"/>
+              <path d="M400 80c0-16 13-29 29-29s29 13 29 29c0 26-29 50-29 50s-29-24-29-50Z" fill="#2B8C8C" fill-opacity=".22"/>
+              <path d="M560 165c0-14 11-25 25-25s25 11 25 25c0 22-25 42-25 42s-25-20-25-42Z" fill="#2B3A67" fill-opacity=".18"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="quick-actions">
+          <button class="btn" data-action="open:checkin">
+            <svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+            Check-in (2 min)
+          </button>
+
+          <button class="btn secondary" data-action="open:activation">
+            <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20Zm1 5h-2v6h6v-2h-4V7Z"/></svg>
+            Activación
+          </button>
+
+          <button class="btn ghost" data-action="open:duelo">
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.7 5.7 0 0 1 12 5.2 5.7 5.7 0 0 1 21.5 12C19 16.6 12 21 12 21Z"/></svg>
+            Duelo afectivo
+          </button>
+
+          <button class="btn ghost" data-action="open:abc">
+            <svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg>
+            Reencuadre
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="card">
+          <div class="meter">
+            <div class="label">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-7.1 17.1l1.4-1.4A8 8 0 1 1 20 12h2A10 10 0 0 0 12 2Z"/></svg>
+              <div style="min-width:0;">
+                <h3>Energía y ánimo (hoy)</h3>
+                <div class="sub" id="moodHint">Se calcula con el check-in.</div>
+              </div>
+            </div>
+            <div class="badge" id="badgeMood">—</div>
+          </div>
+          <div class="bar"><div id="barFill"></div></div>
+          <div class="smallnote" id="moodNote">Meta: micro-acciones, no perfección.</div>
+        </div>
+
+        <div class="card">
+          <div class="meter" style="margin-bottom:10px;">
+            <div class="label">
+              <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg>
+              <div style="min-width:0;">
+                <h3>Pequeñas acciones</h3>
+                <div class="sub" id="actsTxt">0 hoy • 0 esta semana</div>
+              </div>
+            </div>
+            <div class="badge" id="badgeActs">0</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn small" data-action="act:log">
+              <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 18H5V9h14v12ZM7 11h10v2H7v-2Z"/></svg>
+              Registrar 1 acción
+            </button>
+            <button class="btn small secondary" data-action="open:support">
+              <svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 9L2 6v11l10 5 10-5V6l-10 5Z"/></svg>
+              Plan apoyo
+            </button>
+          </div>
+
+          <div class="help" id="actsHelp">Ejemplos: ducha, caminar 10 min, comer algo, ordenar 1 cosa, escribir 3 líneas.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid" id="modules">
+      <div class="tile" data-open="activation">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20a10 10 0 0 0 0-20Zm1 5h-2v6h6v-2h-4V7Z"/></svg></div>
+        <div><h4>Activación conductual</h4><p>Micro-plan por áreas: cuerpo, mente, vínculo y entorno.</p></div>
+      </div>
+
+      <div class="tile" data-open="duelo">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.7 5.7 0 0 1 12 5.2 5.7 5.7 0 0 1 21.5 12C19 16.6 12 21 12 21Z"/></svg></div>
+        <div><h4>Duelo afectivo</h4><p>Validar emoción, soltar idealización y reorientar sentido.</p></div>
+      </div>
+
+      <div class="tile" data-open="dependencia">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M7 7h10v2H7V7Zm0 4h10v2H7v-2Zm0 4h7v2H7v-2Zm12-8h2v10h-2V7Z"/></svg></div>
+        <div><h4>Dependencia emocional</h4><p>Detecta “enganche”, urgencias y diseña límites de contacto.</p></div>
+      </div>
+
+      <div class="tile" data-open="abc">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg></div>
+        <div><h4>Reencuadre (ABC)</h4><p>De “sin esa persona no soy nada” a alternativas funcionales.</p></div>
+      </div>
+
+      <div class="tile" data-open="compasion">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 22s-7-4.4-9.5-9A5.7 5.7 0 0 1 12 6.2 5.7 5.7 0 0 1 21.5 13C19 17.6 12 22 12 22Z"/></svg></div>
+        <div><h4>Autocompasión</h4><p>Guía breve: hablarte como hablarías a alguien querido.</p></div>
+      </div>
+
+      <div class="tile" data-open="support">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 9L2 6v11l10 5 10-5V6l-10 5Z"/></svg></div>
+        <div><h4>Plan de apoyo</h4><p>Red de soporte, recordatorios y plan de crisis (seguro).</p></div>
+      </div>
+
+      <div class="tile" data-open="values">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2 1 7l11 5 9-4.1V17h2V7L12 2Zm-7 9.7V17l7 3.2 7-3.2v-5.3l-7 3.2-7-3.2Z"/></svg></div>
+        <div><h4>Brújula de valores</h4><p>¿Quién quiero ser fuera de la relación? Salud, estudio, vínculo.</p></div>
+      </div>
+
+      <div class="tile" data-open="progress">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg></div>
+        <div><h4>Progreso</h4><p>Resumen semanal de check-ins y acciones pequeñas.</p></div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div style="margin-top:14px;">
+        <strong>Nota clínica:</strong> herramienta de apoyo psicoeducativo. No reemplaza evaluación ni tratamiento profesional.
+      </div>
+      <div style="margin-top:8px;">
+        <strong>Seguridad:</strong> si te sientes en riesgo o sin control, busca ayuda inmediata con un adulto de confianza o servicios locales de emergencia.
+      </div>
+      <div style="margin-top:8px;">
+        <strong>Autoría:</strong> Todas las mini aplicaciones fueron desarrolladas por <strong>Lic. Gonzalo Buendía – Psicólogo</strong>, como herramientas psicoeducativas digitales de apoyo clínico, <strong>y Blanquita – Co terapeuta</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="sheet" role="document">
+      <div class="sheet-head">
+        <div class="sheet-title">
+          <div class="chip" id="chip"></div>
+          <div style="min-width:0;">
+            <h3 id="sheetTitle">Panel</h3>
+            <p id="sheetSub">—</p>
+          </div>
+        </div>
+        <button class="close" id="btnClose" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4Z"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav">
+    <div class="nav-inner">
+      <button class="navbtn active" data-nav="home">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2 10h3v10h6v-6h2v6h6V10h3L12 3Z"/></svg>
+        Inicio
+      </button>
+      <button class="navbtn" data-nav="modules">
+        <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3Zm10 0h8v8h-8V3ZM3 13h8v8H3v-8Zm10 0h8v8h-8v-8Z"/></svg>
+        Módulos
+      </button>
+      <button class="navbtn" data-nav="progress">
+        <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg>
+        Progreso
+      </button>
+      <button class="navbtn" data-nav="settings">
+        <svg viewBox="0 0 24 24"><path d="M19.4 13a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 2h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5L6.6 12a7.7 7.7 0 0 0 .1 1L4.7 14.5l2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5L19.4 13ZM13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>
+        Ajustes
+      </button>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    const STORAGE_KEY = 'duelo_reset_v1';
+
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    function todayISO(){ return new Date().toISOString().slice(0,10); }
+    function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+    function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+    function esc(str){
+      return String(str ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
+    }
+    function fmtDateTime(iso){
+      if(!iso) return '—';
+      const d = new Date(iso);
+      const y=d.getFullYear();
+      const m=String(d.getMonth()+1).padStart(2,'0');
+      const da=String(d.getDate()).padStart(2,'0');
+      const hh=String(d.getHours()).padStart(2,'0');
+      const mm=String(d.getMinutes()).padStart(2,'0');
+      return `${y}-${m}-${da} ${hh}:${mm}`;
+    }
+    function lastNDaysSet(n){
+      const s = new Set();
+      const d = new Date();
+      for(let i=0;i<n;i++){
+        const x = new Date(d);
+        x.setDate(d.getDate()-i);
+        s.add(x.toISOString().slice(0,10));
+      }
+      return s;
+    }
+
+    function defaultState(){
+      return {
+        createdAt: new Date().toISOString(),
+        checkins: [],
+        acts: [],
+        abc: [],
+        values: { who:'', protect:'' },
+        support: { people:'', places:'', reminders:'' },
+        boundaries: { contact:'', triggers:'' }
+      };
+    }
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        return Object.assign(defaultState(), parsed);
+      }catch{ return defaultState(); }
+    }
+    let state = load();
+    function save(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      refreshDashboard();
+    }
+
+    const ICONS = {
+      check:`<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`,
+      clock:`<svg viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm1-15h-2v6h6v-2h-4V7Z"/></svg>`,
+      heart:`<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.4-9.5-9A5.7 5.7 0 0 1 12 5.2 5.7 5.7 0 0 1 21.5 12C19 16.6 12 21 12 21Z"/></svg>`,
+      abc:`<svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg>`,
+      map:`<svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 9L2 6v11l10 5 10-5V6l-10 5Z"/></svg>`,
+      values:`<svg viewBox="0 0 24 24"><path d="M12 2 1 7l11 5 9-4.1V17h2V7L12 2Zm-7 9.7V17l7 3.2 7-3.2v-5.3l-7 3.2-7-3.2Z"/></svg>`,
+      progress:`<svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg>`
+    };
+
+    let toastTimer=null;
+    function toast(msg){
+      let t = document.getElementById('toast');
+      if(!t){
+        t = document.createElement('div');
+        t.id='toast';
+        Object.assign(t.style,{
+          position:'fixed',left:'50%',bottom:'92px',transform:'translateX(-50%)',
+          background:'rgba(20,26,42,.92)',color:'#fff',padding:'10px 12px',
+          borderRadius:'14px',fontSize:'12px',fontWeight:'900',
+          letterSpacing:'.2px',boxShadow:'0 18px 40px rgba(0,0,0,.25)',
+          zIndex:'120',maxWidth:'90vw',textAlign:'center',opacity:'0',
+          transition:'opacity .15s ease'
+        });
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity='1';
+      clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>{t.style.opacity='0';},1800);
+    }
+
+    const modal = $('#modal');
+    const sheetBody = $('#sheetBody');
+    const sheetTitle = $('#sheetTitle');
+    const sheetSub = $('#sheetSub');
+    const chip = $('#chip');
+
+    function openModal(title, sub, iconSVG, renderFn){
+      sheetTitle.textContent = title;
+      sheetSub.textContent = sub || '';
+      chip.innerHTML = iconSVG || '';
+      sheetBody.innerHTML = '';
+      renderFn(sheetBody);
+      modal.classList.add('show');
+      document.body.style.overflow='hidden';
+    }
+    function closeModal(){
+      modal.classList.remove('show');
+      document.body.style.overflow='';
+      sheetBody.innerHTML='';
+    }
+    $('#btnClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.classList.contains('show')) closeModal(); });
+
+    function emptyBox(text){
+      const d = document.createElement('div');
+      d.className='notice';
+      d.textContent=text;
+      return d;
+    }
+    function itemCard(title, body, meta, actions){
+      const card = document.createElement('div');
+      card.className='item';
+      card.innerHTML = `
+        <div style="min-width:0;">
+          <p class="t">${esc(title)}</p>
+          <div class="d">${esc(body)}</div>
+          <div class="meta">${esc(meta || '')}</div>
+        </div>
+        <div class="ops"></div>
+      `;
+      const ops = $('.ops', card);
+      (actions || []).forEach(a=>{
+        const b = document.createElement('button');
+        b.className = 'iconbtn ' + (a.kind==='danger'?'danger':a.kind==='good'?'good':'');
+        b.title=a.label;
+        b.innerHTML = a.kind==='danger'
+          ? `<svg viewBox="0 0 24 24"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>`
+          : `<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`;
+        b.addEventListener('click', a.onClick);
+        ops.appendChild(b);
+      });
+      return card;
+    }
+
+    function getCheckin(date){ return state.checkins.find(c=>c.date===date) || null; }
+    function upsertCheckin(ci){
+      const i = state.checkins.findIndex(c=>c.date===ci.date);
+      if(i>=0) state.checkins[i]=ci; else state.checkins.push(ci);
+    }
+
+    // Índice “ánimo/energía”: ánimo + energía + sueño - rumiación - urgencia de contacto
+    function computeMood({mood, energy, sleep, rum, urge}){
+      const a = clamp((mood/10)*100,0,100);
+      const e = clamp((energy/10)*100,0,100);
+      const s = clamp((sleep/10)*100,0,100);
+      const r = clamp((rum/10)*100,0,100);
+      const u = clamp((urge/10)*100,0,100);
+
+      let value = Math.round(clamp(0.28*a + 0.25*e + 0.20*s - 0.15*r - 0.12*u, 0, 100));
+      let label='Muy bajo';
+      if(value>=75) label='Alto';
+      else if(value>=55) label='Medio';
+      else if(value>=35) label='Bajo';
+      return { value, label };
+    }
+
+    function panelCheckin(){
+      const last = getCheckin(todayISO());
+      openModal('Check-in (2 min)','Mide estado y elige 1 micro-acción.', ICONS.check, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.check} Estado de hoy</h4>
+            <div class="row">
+              <div>
+                <label>Ánimo (0–10)</label>
+                <input id="ciMood" type="number" min="0" max="10" inputmode="numeric" value="${last?.mood ?? ''}">
+              </div>
+              <div>
+                <label>Energía (0–10)</label>
+                <input id="ciEnergy" type="number" min="0" max="10" inputmode="numeric" value="${last?.energy ?? ''}">
+              </div>
+            </div>
+
+            <div class="row">
+              <div>
+                <label>Sueño (0–10)</label>
+                <input id="ciSleep" type="number" min="0" max="10" inputmode="numeric" value="${last?.sleep ?? ''}">
+              </div>
+              <div>
+                <label>Rumiación (0–10)</label>
+                <input id="ciRum" type="number" min="0" max="10" inputmode="numeric" value="${last?.rum ?? ''}">
+              </div>
+            </div>
+
+            <label>Urgencia de contacto / revisar redes (0–10)</label>
+            <input id="ciUrge" type="number" min="0" max="10" inputmode="numeric" value="${last?.urge ?? ''}">
+
+            <label>Lo más difícil de hoy (1 frase)</label>
+            <textarea id="ciHard">${esc(last?.hard ?? '')}</textarea>
+
+            <label>Micro-acción (1 cosa realista)</label>
+            <textarea id="ciAct" placeholder="Ej. Ducha + desayunar algo + caminar 10 min.">${esc(last?.act ?? '')}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="ci:save">Guardar</button>
+              <button class="btn small secondary" data-action="ci:suggest">Sugerencias</button>
+              <button class="btn small" data-action="open:activation">Abrir activación</button>
+            </div>
+
+            <div class="softBox" style="margin-top:10px;">
+              <strong>Regla:</strong> en depresión, el cuerpo no “se motiva” primero; se mueve un poco y la motivación llega después.
+            </div>
+
+            <div class="mini-illus" aria-hidden="true">
+              <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="c1" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" stop-color="#EAF0FF"/>
+                    <stop offset="1" stop-color="#E7F6F6"/>
+                  </linearGradient>
+                </defs>
+                <rect width="760" height="220" rx="18" fill="url(#c1)"/>
+                <circle cx="90" cy="120" r="55" fill="#B75B7A" fill-opacity=".18"/>
+                <circle cx="660" cy="70" r="70" fill="#2B8C8C" fill-opacity=".16"/>
+                <path d="M80 170c90-80 190-60 270 0s180 70 260 10 120 10 140 40" fill="none" stroke="#2B3A67" stroke-opacity=".16" stroke-width="12" stroke-linecap="round"/>
+                <path d="M120 180c60-35 120-20 170 0s120 45 190 5 120 10 150 25" fill="none" stroke="#B75B7A" stroke-opacity=".18" stroke-width="10" stroke-linecap="round"/>
+                <g opacity=".9">
+                  <circle cx="260" cy="85" r="22" fill="#fff"/>
+                  <path d="M250 86h20" stroke="#2B3A67" stroke-width="4" stroke-linecap="round"/>
+                  <path d="M260 76v20" stroke="#2B3A67" stroke-width="4" stroke-linecap="round"/>
+                </g>
+              </svg>
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='ci:suggest'){
+            const hard = $('#ciHard', root);
+            const mic = $('#ciAct', root);
+            if(!hard.value.trim()) hard.value='Me cuesta aceptar la ruptura y me siento sola/solo.';
+            if(!mic.value.trim()) mic.value=
+              '1) Ducha rápida o lavarme la cara.\n' +
+              '2) Comer algo simple (fruta / yogurt / pan).\n' +
+              '3) Caminar 10 minutos o abrir ventana 3 minutos.';
+            toast('Sugerencias aplicadas.');
+          }
+
+          if(act==='ci:save'){
+            const mood = Number($('#ciMood', root).value);
+            const energy = Number($('#ciEnergy', root).value);
+            const sleep = Number($('#ciSleep', root).value);
+            const rum = Number($('#ciRum', root).value);
+            const urge = Number($('#ciUrge', root).value);
+
+            const okNums = [mood,energy,sleep,rum,urge].every(v=>Number.isFinite(v));
+            if(!okNums){ toast('Completa valores numéricos.'); return; }
+            const inRange = [mood,energy,sleep,rum,urge].every(v=>v>=0 && v<=10);
+            if(!inRange){ toast('Usa valores de 0 a 10.'); return; }
+
+            const hard = $('#ciHard', root).value.trim();
+            const actTxt = $('#ciAct', root).value.trim();
+            const moodIndex = computeMood({mood,energy,sleep,rum,urge});
+            upsertCheckin({date:todayISO(), mood,energy,sleep,rum,urge, hard, act:actTxt, moodIndex});
+            save(); toast('Check-in guardado ✅'); closeModal();
+          }
+
+          if(act==='open:activation'){ panelActivation(); }
+        });
+      });
+    }
+
+    function panelActivation(){
+      openModal('Activación conductual','Elegir 1 acción por área (muy pequeña).', ICONS.clock, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.clock} Micro-plan por áreas</h4>
+            <div class="row">
+              <div>
+                <label>Cuerpo (5–10 min)</label>
+                <textarea id="aBody" placeholder="Ej. ducha / caminar / estirar"></textarea>
+              </div>
+              <div>
+                <label>Entorno (5 min)</label>
+                <textarea id="aEnv" placeholder="Ej. cama / basura / escritorio"></textarea>
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label>Mente (2–5 min)</label>
+                <textarea id="aMind" placeholder="Ej. 3 líneas en notas / respiración"></textarea>
+              </div>
+              <div>
+                <label>Vínculo (1 gesto)</label>
+                <textarea id="aBond" placeholder="Ej. mensaje a amiga / familiar"></textarea>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn small" data-action="a:seed">Ejemplos</button>
+              <button class="btn small secondary" data-action="a:save">Guardar como acción de hoy</button>
+            </div>
+
+            <div class="okBox" style="margin-top:10px;">
+              <strong>Regla de oro:</strong> si parece “poco”, probablemente es lo correcto para depresión. Suma por repetición.
+            </div>
+          </div>
+
+          <div class="mini-illus" aria-hidden="true">
+            <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="760" height="220" rx="18" fill="#FFFFFF"/>
+              <circle cx="140" cy="120" r="70" fill="#2B8C8C" fill-opacity=".14"/>
+              <circle cx="640" cy="80" r="60" fill="#B75B7A" fill-opacity=".14"/>
+              <path d="M110 170c70-70 150-60 220 0s150 70 220 10 140-10 170 40" fill="none" stroke="#2B3A67" stroke-opacity=".12" stroke-width="12" stroke-linecap="round"/>
+              <g opacity=".9">
+                <rect x="260" y="70" width="240" height="90" rx="18" fill="#F6F7FB" stroke="rgba(20,26,42,.10)"/>
+                <path d="M290 98h180" stroke="#2B3A67" stroke-opacity=".35" stroke-width="8" stroke-linecap="round"/>
+                <path d="M290 128h140" stroke="#B75B7A" stroke-opacity=".35" stroke-width="8" stroke-linecap="round"/>
+              </g>
+            </svg>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='a:seed'){
+            $('#aBody', root).value = 'Ducha rápida o caminar 10 min.';
+            $('#aEnv', root).value  = 'Ordenar 1 superficie por 5 min.';
+            $('#aMind', root).value = 'Escribir 3 líneas: “hoy me duele…, y aun así haré…”';
+            $('#aBond', root).value = 'Enviar un mensaje: “¿Podemos hablar 10 min?”';
+            toast('Ejemplos cargados.');
+          }
+
+          if(act==='a:save'){
+            const body = $('#aBody', root).value.trim();
+            const env  = $('#aEnv', root).value.trim();
+            const mind = $('#aMind', root).value.trim();
+            const bond = $('#aBond', root).value.trim();
+            const combo = [body,env,mind,bond].filter(Boolean).join(' | ');
+            if(!combo){ toast('Completa al menos 1 área.'); return; }
+            state.acts.push({id:uid(), title:'Acción de hoy', body:combo, createdAt:new Date().toISOString()});
+            save(); toast('Acción registrada ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelDuelo(){
+      openModal('Duelo afectivo','Validar, soltar idealización y reorientar el sentido.', ICONS.heart, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.heart} 3 pasos (hoy)</h4>
+            <div class="softBox">
+              <strong>1) Nombrar:</strong> “Esto duele. Es una pérdida real.”<br>
+              <strong>2) Regular:</strong> 60 segundos de respiración lenta o agua en manos.<br>
+              <strong>3) Reorientar:</strong> una acción pequeña que te cuide (comer, caminar, hablar con alguien).
+            </div>
+
+            <label>¿Qué estoy idealizando?</label>
+            <textarea id="dIdeal" placeholder="Ej. ‘Era mi única oportunidad…’"></textarea>
+
+            <label>¿Qué es verdad, aunque duela?</label>
+            <textarea id="dTrue" placeholder="Ej. ‘Terminó, y puedo sobrevivir a esto…’"></textarea>
+
+            <label>¿Qué haré por mí hoy (1 acción)?</label>
+            <textarea id="dAct" placeholder="Ej. Ducha + desayuno + 10 min fuera de casa."></textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="d:seed">Sugerencia</button>
+              <button class="btn small secondary" data-action="d:save">Guardar como acción</button>
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='d:seed'){
+            $('#dIdeal', root).value = '“Sin esa persona, yo no valgo / no puedo.”';
+            $('#dTrue', root).value  = '“Mi valor no depende de una relación. Duele, pero puedo avanzar paso a paso.”';
+            $('#dAct', root).value   = 'Caminar 10 min + comer algo + hablar con una persona de confianza.';
+            toast('Sugerencia aplicada.');
+          }
+
+          if(act==='d:save'){
+            const dAct = $('#dAct', root).value.trim();
+            if(!dAct){ toast('Escribe 1 acción.'); return; }
+            state.acts.push({id:uid(), title:'Acción (duelo)', body:dAct, createdAt:new Date().toISOString()});
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelDependencia(){
+      openModal('Dependencia emocional','Reducir urgencias y diseñar límites de contacto.', ICONS.map, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.map} Detectar “enganche”</h4>
+            <label>Mi disparador típico</label>
+            <textarea id="dpTrig" placeholder="Ej. ver historias / estar sola de noche / música."></textarea>
+            <label>Mi impulso</label>
+            <textarea id="dpImp" placeholder="Ej. escribir / revisar redes / llamar."></textarea>
+            <label>Mi alternativa (2 minutos)</label>
+            <textarea id="dpAlt" placeholder="Ej. agua + respiración + mensaje a amiga + caminar por casa."></textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="dp:seed">Ejemplo</button>
+              <button class="btn small secondary" data-action="dp:save">Guardar límites</button>
+            </div>
+
+            <div class="notice" style="margin-top:10px;">
+              Tip: el objetivo no es “no sentir”; es <strong>no obedecer la urgencia</strong>.
+            </div>
+          </div>
+          <div class="section">
+            <h4>${ICONS.map} Límite de contacto (hoy)</h4>
+            <label>Regla de hoy</label>
+            <textarea id="dpContact" placeholder="Ej. No revisar redes 24h. Si urge: 10 min pausa + alternativa."></textarea>
+            <div class="actions">
+              <button class="btn small secondary" data-action="dp:save2">Guardar regla</button>
+            </div>
+          </div>
+        `;
+
+        // Cargar valores guardados
+        const saved = state.boundaries || {};
+        $('#dpContact', root).value = saved.contact || '';
+        $('#dpTrig', root).value = saved.triggers || '';
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='dp:seed'){
+            $('#dpTrig', root).value = 'Ver redes por la noche / sentir silencio en casa.';
+            $('#dpImp', root).value  = 'Escribir “solo para saber cómo estás”.';
+            $('#dpAlt', root).value  = 'Pausar 2 min + agua en manos + escribir en notas (no enviar) + caminar 10 min.';
+            $('#dpContact', root).value = 'Regla: 24h sin revisar redes. Si urge: 10 min pausa + alternativa + hablar con alguien.';
+            toast('Ejemplo aplicado.');
+          }
+
+          if(act==='dp:save'){
+            state.boundaries.triggers = $('#dpTrig', root).value.trim();
+            save(); toast('Guardado ✅');
+          }
+          if(act==='dp:save2'){
+            state.boundaries.contact = $('#dpContact', root).value.trim();
+            save(); toast('Regla guardada ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelABC(){
+      openModal('Reencuadre (ABC)','Cambiar la idea que hunde por una alternativa funcional.', ICONS.abc, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.abc} Registrar ABC</h4>
+            <label>A (Evento activador)</label>
+            <textarea id="abA" placeholder="Ej. Veo una foto / recuerdo."></textarea>
+            <label>B (Pensamiento)</label>
+            <textarea id="abB" placeholder="Ej. ‘Nunca voy a estar bien…’"></textarea>
+            <label>C (Consecuencia)</label>
+            <textarea id="abC" placeholder="Ej. Me apago, lloro, me aíslo."></textarea>
+            <label>Alternativa (nuevo B)</label>
+            <textarea id="abAlt" placeholder="Ej. ‘Duele, pero no es para siempre. Hoy haré 1 acción pequeña.’"></textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="ab:add">Guardar</button>
+              <button class="btn small secondary" data-action="ab:seed">Ejemplos</button>
+            </div>
+
+            <div class="okBox" style="margin-top:10px;">
+              Reencuadre = <strong>más realista</strong>, no “positivo forzado”.
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.abc} Mis reencuadres</h4>
+            <div class="list" id="abList"></div>
+          </div>
+        `;
+
+        const list = $('#abList', root);
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.abc.length===0){ list.appendChild(emptyBox('Aún no hay reencuadres.')); return; }
+          state.abc.slice().sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).forEach(r=>{
+            const body = `A: ${r.a}\n\nB: ${r.b}\n\nC: ${r.c}\n\nAlternativa: ${r.alt}`;
+            list.appendChild(itemCard('Reencuadre', body, `Registrado: ${fmtDateTime(r.createdAt)}`, [
+              {label:'Eliminar', kind:'danger', onClick:()=>{
+                state.abc = state.abc.filter(x=>x.id!==r.id);
+                save(); render(); toast('Eliminado.');
+              }}
+            ]));
+          });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='ab:seed'){
+            $('#abA', root).value='Me despierto y siento vacío.';
+            $('#abB', root).value='“No voy a poder con esto.”';
+            $('#abC', root).value='Me quedo en cama y evito el día.';
+            $('#abAlt', root).value='“Hoy solo necesito 1 paso pequeño: ducha + comida + luz. Mañana otro.”';
+            toast('Ejemplo aplicado.');
+          }
+
+          if(act==='ab:add'){
+            const a=$('#abA', root).value.trim();
+            const b=$('#abB', root).value.trim();
+            const c=$('#abC', root).value.trim();
+            const alt=$('#abAlt', root).value.trim();
+            if(!a||!b||!c||!alt){ toast('Completa A, B, C y Alternativa.'); return; }
+            state.abc.push({id:uid(), a,b,c,alt, createdAt:new Date().toISOString()});
+            save(); render(); toast('Guardado ✅');
+            $('#abA', root).value=''; $('#abB', root).value=''; $('#abC', root).value=''; $('#abAlt', root).value='';
+          }
+        });
+
+        render();
+      });
+    }
+
+    function panelCompasion(){
+      openModal('Autocompasión','Guía breve para hablarte con humanidad.', ICONS.heart, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.heart} 60 segundos</h4>
+            <div class="softBox">
+              <strong>1) Nombrar:</strong> “Estoy sufriendo.”<br>
+              <strong>2) Humanizar:</strong> “No soy la única persona a la que le pasa.”<br>
+              <strong>3) Cuidar:</strong> “¿Qué necesito ahora mismo, de forma pequeña?”
+            </div>
+
+            <label>Frase amable (para hoy)</label>
+            <textarea id="cpLine" placeholder="Ej. ‘Hoy me acompaño. Duele, pero estoy aquí.’"></textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="cp:seed">Sugerencia</button>
+              <button class="btn small secondary" data-action="cp:save">Guardar como acción</button>
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='cp:seed'){
+            $('#cpLine', root).value='“Hoy me acompaño. No necesito estar perfecta/o para avanzar.”';
+            toast('Sugerencia aplicada.');
+          }
+          if(act==='cp:save'){
+            const line = $('#cpLine', root).value.trim();
+            if(!line){ toast('Escribe una frase.'); return; }
+            state.acts.push({id:uid(), title:'Acción (autocompasión)', body:line, createdAt:new Date().toISOString()});
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelSupport(){
+      openModal('Plan de apoyo','Red de soporte + recordatorios + plan seguro.', ICONS.map, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.map} Mi red</h4>
+            <label>Personas (2–3)</label>
+            <textarea id="spPeople" placeholder="Ej. mamá, amiga, terapeuta...">${esc(state.support.people)}</textarea>
+            <label>Lugares que me ayudan</label>
+            <textarea id="spPlaces" placeholder="Ej. sala, balcón, parque...">${esc(state.support.places)}</textarea>
+            <label>Recordatorios</label>
+            <textarea id="spRem" placeholder="Ej. ‘No revisar redes’, ‘comer algo’, ‘pedir ayuda’...">${esc(state.support.reminders)}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="sp:seed">Sugerencia</button>
+              <button class="btn small secondary" data-action="sp:save">Guardar</button>
+            </div>
+
+            <div class="notice" style="margin-top:10px;">
+              Si te sientes <strong>en riesgo o sin control</strong>, busca ayuda inmediata con un adulto de confianza o servicios locales de emergencia.
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='sp:seed'){
+            if(!$('#spPeople', root).value.trim()) $('#spPeople', root).value='Persona 1: ____\nPersona 2: ____\nProfesional: ____';
+            if(!$('#spPlaces', root).value.trim()) $('#spPlaces', root).value='Lugar 1: balcón/ventana\nLugar 2: caminar cerca de casa';
+            if(!$('#spRem', root).value.trim()) $('#spRem', root).value='1) Comer algo\n2) Ducharme\n3) No revisar redes\n4) Hablar 10 min con alguien';
+            toast('Sugerencia aplicada.');
+          }
+
+          if(act==='sp:save'){
+            state.support.people = $('#spPeople', root).value.trim();
+            state.support.places = $('#spPlaces', root).value.trim();
+            state.support.reminders = $('#spRem', root).value.trim();
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelValues(){
+      openModal('Brújula de valores','Reconstruir identidad fuera de la relación.', ICONS.values, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.values} Identidad</h4>
+            <label>¿Quién quiero ser ahora?</label>
+            <textarea id="vWho">${esc(state.values.who)}</textarea>
+            <label>¿Qué debo proteger sí o sí?</label>
+            <textarea id="vProt">${esc(state.values.protect)}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="v:seed">Sugerencia</button>
+              <button class="btn small secondary" data-action="v:save">Guardar</button>
+            </div>
+
+            <div class="okBox" style="margin-top:10px;">
+              Una ruptura no define tu valor. Define un capítulo.
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='v:seed'){
+            if(!$('#vWho', root).value.trim()) $('#vWho', root).value='Quiero ser alguien que se cuida, se respeta y vuelve a construir.';
+            if(!$('#vProt', root).value.trim()) $('#vProt', root).value='Mi salud, mi sueño, mi alimentación, mis vínculos sanos.';
+            toast('Sugerencia aplicada.');
+          }
+          if(act==='v:save'){
+            state.values.who = $('#vWho', root).value.trim();
+            state.values.protect = $('#vProt', root).value.trim();
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelProgress(){
+      openModal('Progreso','Resumen semanal de check-ins y acciones.', ICONS.progress, (root)=>{
+        const tdy=todayISO();
+        const week=lastNDaysSet(7);
+        const actsToday=state.acts.filter(a=>(a.createdAt||'').slice(0,10)===tdy).length;
+        const actsWeek=state.acts.filter(a=>week.has((a.createdAt||'').slice(0,10))).length;
+        const checkinsWeek=state.checkins.filter(c=>week.has(c.date)).length;
+
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.progress} Semana</h4>
+            <div class="row">
+              <div><label>Check-ins</label><input value="${checkinsWeek}/7" readonly></div>
+              <div><label>Acciones</label><input value="${actsWeek}" readonly></div>
+            </div>
+            <div class="row">
+              <div><label>Acciones hoy</label><input value="${actsToday}" readonly></div>
+              <div><label>Reencuadres</label><input value="${state.abc.length}" readonly></div>
+            </div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.progress} Historial de acciones</h4>
+            <div class="list" id="actsList"></div>
+          </div>
+        `;
+
+        const list = $('#actsList', root);
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.acts.length===0){ list.appendChild(emptyBox('Aún no hay acciones registradas.')); return; }
+          state.acts.slice().sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')).forEach(a=>{
+            list.appendChild(itemCard(
+              a.title || 'Acción',
+              a.body || '',
+              `Registrado: ${fmtDateTime(a.createdAt)}`,
+              [{label:'Eliminar', kind:'danger', onClick:()=>{
+                state.acts = state.acts.filter(x=>x.id!==a.id);
+                save(); render(); toast('Eliminado.');
+              }}]
+            ));
+          });
+        };
+        render();
+      });
+    }
+
+    function panelSettings(){
+      openModal('Ajustes','Exportar/Importar y reiniciar.', `<svg viewBox="0 0 24 24"><path d="M19.4 13a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 2h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5L6.6 12a7.7 7.7 0 0 0 .1 1L4.7 14.5l2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5L19.4 13ZM13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>`, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5Zm-3 8V6a3 3 0 0 1 6 0v3H9Z"/></svg> Privacidad</h4>
+            <div class="notice">Todo se guarda <strong>solo en este dispositivo</strong> (localStorage).</div>
+          </div>
+
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M12 2v12l4-4 1.4 1.4L12 18l-5.4-5.6L8 10l4 4V2ZM4 20h16v2H4v-2Z"/></svg> Exportar / Importar</h4>
+            <label>Exportar JSON</label>
+            <textarea id="exportBox" readonly></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="set:export">Generar</button>
+              <button class="btn small secondary" data-action="set:copy">Copiar</button>
+            </div>
+            <label style="margin-top:10px;">Importar JSON</label>
+            <textarea id="importBox" placeholder="Pega aquí el JSON exportado..."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="set:import">Importar</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg> Reiniciar</h4>
+            <div class="notice">Esto borrará los datos guardados en este dispositivo.</div>
+            <div class="actions" style="margin-top:10px;">
+              <button class="btn small" data-action="set:reset">Borrar datos</button>
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', async (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+          const exportBox = $('#exportBox', root);
+          const importBox = $('#importBox', root);
+
+          if(act==='set:export'){ exportBox.value = JSON.stringify(state, null, 2); toast('Exportación lista.'); }
+          if(act==='set:copy'){
+            if(!exportBox.value.trim()){ toast('Primero genera el JSON.'); return; }
+            try{ await navigator.clipboard.writeText(exportBox.value); toast('Copiado ✅'); }
+            catch{ toast('No se pudo copiar. Copia manualmente.'); }
+          }
+          if(act==='set:import'){
+            const raw = importBox.value.trim();
+            if(!raw){ toast('Pega el JSON primero.'); return; }
+            try{
+              const incoming = JSON.parse(raw);
+              if(!incoming || typeof incoming!=='object') throw new Error('Formato inválido');
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(incoming));
+              location.reload();
+            }catch{ toast('JSON inválido.'); }
+          }
+          if(act==='set:reset'){
+            const ok = confirm('¿Seguro que deseas borrar todos los datos de esta mini app en este dispositivo?');
+            if(!ok) return;
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+          }
+        });
+      });
+    }
+
+    function panelActLog(){
+      openModal('Registrar acción','Guarda 1 acción pequeña (realista).', ICONS.clock, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.clock} Acción</h4>
+            <label>¿Qué hiciste (o harás) hoy?</label>
+            <textarea id="actText" placeholder="Ej. Salí 10 min al aire, comí algo, hablé con alguien."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="act:seed">Ejemplo</button>
+              <button class="btn small secondary" data-action="act:save">Guardar</button>
+            </div>
+          </div>
+        `;
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+          if(act==='act:seed'){
+            $('#actText', root).value='Ducha rápida + desayuné algo + caminé 10 min.';
+            toast('Ejemplo aplicado.');
+          }
+          if(act==='act:save'){
+            const txt = $('#actText', root).value.trim();
+            if(!txt){ toast('Escribe una acción.'); return; }
+            state.acts.push({id:uid(), title:'Acción', body:txt, createdAt:new Date().toISOString()});
+            save(); toast('Acción guardada ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    const OPEN = {
+      checkin: panelCheckin,
+      activation: panelActivation,
+      duelo: panelDuelo,
+      dependencia: panelDependencia,
+      abc: panelABC,
+      compasion: panelCompasion,
+      support: panelSupport,
+      values: panelValues,
+      progress: panelProgress,
+      settings: panelSettings
+    };
+
+    // Event delegation for tiles
+    $('#modules').addEventListener('click', (e)=>{
+      const tile = e.target.closest('.tile[data-open]');
+      if(!tile) return;
+      const key = tile.getAttribute('data-open');
+      if(OPEN[key]) OPEN[key]();
+      else toast('Módulo no disponible.');
+    });
+
+    // Event delegation for top actions
+    $('#app').addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if(!btn) return;
+      const act = btn.getAttribute('data-action');
+
+      if(act?.startsWith('open:')){
+        const key = act.split(':')[1];
+        if(OPEN[key]) OPEN[key]();
+      }
+      if(act==='act:log'){ panelActLog(); }
+    });
+
+    // Bottom nav
+    $$('.navbtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        $$('.navbtn').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+
+        const key = btn.dataset.nav;
+        if(key==='home'){ closeModal(); window.scrollTo({top:0, behavior:'smooth'}); }
+        if(key==='modules'){ closeModal(); const top = $('#modules').offsetTop - 10; window.scrollTo({top, behavior:'smooth'}); }
+        if(key==='progress'){ OPEN.progress(); }
+        if(key==='settings'){ OPEN.settings(); }
+      });
+    });
+
+    function refreshDashboard(){
+      // streak by checkins
+      const dates = new Set(state.checkins.map(c=>c.date));
+      let streak=0; let d=new Date();
+      while(true){
+        const iso=d.toISOString().slice(0,10);
+        if(dates.has(iso)){ streak++; d.setDate(d.getDate()-1); } else break;
+      }
+      $('#streakTxt').textContent = `${streak} día${streak===1?'':'s'}`;
+
+      // mood index from today's checkin
+      const tdy=todayISO();
+      const last = getCheckin(tdy);
+      if(last && last.moodIndex){
+        $('#barFill').style.width = `${last.moodIndex.value}%`;
+        $('#badgeMood').textContent = `${last.moodIndex.label} (${last.moodIndex.value}/100)`;
+        if(last.moodIndex.value>=75){
+          $('#moodNote').innerHTML = `Buen día para consolidar 1–2 hábitos y cuidarte.`;
+        } else if(last.moodIndex.value>=55){
+          $('#moodNote').innerHTML = `Día medio: elige 1 micro-acción + 1 contacto sano.`;
+        } else if(last.moodIndex.value>=35){
+          $('#moodNote').innerHTML = `Día bajo: reduce exigencia. Prioriza cuerpo + alimento + luz.`;
+        } else {
+          $('#moodNote').innerHTML = `Día muy bajo: enfócate en lo mínimo viable y busca apoyo.`;
+        }
+      }else{
+        $('#barFill').style.width='0%';
+        $('#badgeMood').textContent='—';
+        $('#moodNote').innerHTML = `Haz un <strong>check-in</strong> para estimar tu energía/ánimo hoy.`;
+      }
+
+      // actions counts
+      const week=lastNDaysSet(7);
+      const actsToday=state.acts.filter(a=>(a.createdAt||'').slice(0,10)===tdy).length;
+      const actsWeek=state.acts.filter(a=>week.has((a.createdAt||'').slice(0,10))).length;
+      $('#actsTxt').textContent = `${actsToday} hoy • ${actsWeek} esta semana`;
+      $('#badgeActs').textContent = actsToday;
+    }
+    refreshDashboard();
+  </script>
+</body>
+</html>

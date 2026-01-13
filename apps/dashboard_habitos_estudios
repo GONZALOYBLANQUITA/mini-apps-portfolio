@@ -1,0 +1,1310 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>StudyOS — Hábitos de Estudio (Dashboard)</title>
+
+  <meta name="theme-color" content="#0b1020" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+
+  <style>
+    :root{
+      --bg0:#070916;
+      --bg1:#0b1020;
+      --panel:rgba(255,255,255,.06);
+      --panel2:rgba(255,255,255,.09);
+      --stroke:rgba(255,255,255,.14);
+      --txt:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.68);
+      --soft:rgba(255,255,255,.10);
+
+      --a:#7c3aed; /* violeta */
+      --b:#22c55e; /* verde */
+      --c:#06b6d4; /* cian */
+      --d:#f59e0b; /* ámbar */
+      --e:#fb7185; /* rosa */
+
+      --r:18px;
+      --shadow:0 18px 60px rgba(0,0,0,.55);
+      --shadow2:0 10px 30px rgba(0,0,0,.45);
+      --ring:0 0 0 3px rgba(124,58,237,.25);
+      --ring2:0 0 0 3px rgba(34,197,94,.22);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--txt);
+      font: 15px/1.4 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(124,58,237,.35), transparent 60%),
+        radial-gradient(1000px 650px at 85% 10%, rgba(6,182,212,.25), transparent 60%),
+        radial-gradient(900px 700px at 55% 90%, rgba(245,158,11,.20), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
+
+    /* trama / textura */
+    .noise{
+      pointer-events:none;
+      position:fixed; inset:0;
+      opacity:.10;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+      mix-blend-mode:overlay;
+    }
+
+    .wrap{max-width:1200px;margin:0 auto;padding:18px 16px 40px}
+    header{
+      display:flex;gap:14px;align-items:center;justify-content:space-between;
+      padding:14px 14px 10px;border-radius:22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      box-shadow:var(--shadow2);
+      position:sticky; top:10px; z-index:10;
+      backdrop-filter: blur(12px);
+    }
+    .brand{display:flex;align-items:center;gap:12px;min-width:240px}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(255,255,255,.38), transparent 60%),
+        linear-gradient(135deg, rgba(124,58,237,.95), rgba(6,182,212,.75));
+      box-shadow:0 12px 30px rgba(124,58,237,.25);
+      border:1px solid rgba(255,255,255,.18);
+    }
+    .title{display:flex;flex-direction:column;gap:2px}
+    .title b{font-size:14px;letter-spacing:.2px}
+    .title small{color:var(--muted)}
+    .chip{
+      padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--muted); font-size:12px;
+      display:inline-flex; gap:8px; align-items:center;
+    }
+    .dot{width:8px;height:8px;border-radius:99px;background:var(--b);box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+    .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    button, .btn{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.06);
+      color:var(--txt);
+      border-radius:14px;
+      padding:10px 12px;
+      box-shadow:0 10px 24px rgba(0,0,0,.22);
+      cursor:pointer;
+      transition:.15s transform,.15s background,.15s border;
+      font-weight:600;
+    }
+    button:hover{transform:translateY(-1px); background:rgba(255,255,255,.085)}
+    button:active{transform:translateY(0px)}
+    .primary{
+      background: linear-gradient(135deg, rgba(124,58,237,.9), rgba(6,182,212,.72));
+      border:1px solid rgba(255,255,255,.22);
+      box-shadow: 0 16px 44px rgba(124,58,237,.22);
+    }
+    .primary:hover{background: linear-gradient(135deg, rgba(124,58,237,.98), rgba(6,182,212,.80))}
+    .ok{
+      background: linear-gradient(135deg, rgba(34,197,94,.9), rgba(6,182,212,.55));
+      border:1px solid rgba(255,255,255,.22);
+    }
+
+    main{margin-top:14px;display:grid;gap:14px}
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 1.25fr .9fr;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      header{position:relative;top:auto}
+      .brand{min-width:auto}
+    }
+
+    .card{
+      border-radius: var(--r);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.03));
+      border:1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(700px 220px at 20% 10%, rgba(124,58,237,.20), transparent 60%),
+                  radial-gradient(700px 220px at 80% 10%, rgba(6,182,212,.15), transparent 60%);
+      pointer-events:none;
+    }
+    .card > *{position:relative}
+    .hd{
+      padding:14px 14px 10px;
+      display:flex;justify-content:space-between;align-items:flex-start;gap:10px
+    }
+    .hd h2{margin:0;font-size:14px;letter-spacing:.2px}
+    .hd p{margin:6px 0 0;color:var(--muted);font-size:12px}
+    .body{padding:0 14px 14px}
+    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{
+      padding:8px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      color:var(--muted); font-size:12px;
+      display:flex;gap:8px;align-items:center;
+    }
+    .kpi{
+      display:grid; gap:10px;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+    }
+    @media (max-width: 760px){ .kpi{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    .k{
+      padding:12px; border-radius:16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+    }
+    .k .t{color:var(--muted);font-size:12px}
+    .k .v{margin-top:6px;font-size:18px;font-weight:800}
+    .k .s{margin-top:4px;font-size:12px;color:var(--muted)}
+    .bar{
+      height:10px;border-radius:99px; background:rgba(255,255,255,.08);
+      overflow:hidden; border:1px solid rgba(255,255,255,.12);
+      margin-top:10px;
+    }
+    .bar > i{
+      display:block;height:100%;
+      width:0%;
+      background:linear-gradient(90deg, rgba(34,197,94,.95), rgba(6,182,212,.70));
+      border-radius:99px;
+      transition:.25s width;
+    }
+
+    .form{
+      display:grid; gap:10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 760px){ .form{grid-template-columns:1fr} }
+    label{display:flex;flex-direction:column;gap:6px}
+    label span{font-size:12px;color:var(--muted)}
+    input, select, textarea{
+      width:100%;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.18);
+      color:var(--txt);
+      padding:10px 11px;
+      outline:none;
+    }
+    input:focus, select:focus, textarea:focus{box-shadow:var(--ring); border-color:rgba(124,58,237,.5)}
+    textarea{min-height:84px; resize:vertical}
+
+    .split{
+      display:grid; gap:14px;
+      grid-template-columns: 1fr;
+    }
+
+    .canvasWrap{
+      padding:0 14px 14px;
+    }
+    canvas{
+      width:100%;
+      height:290px;
+      display:block;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(600px 260px at 20% 20%, rgba(124,58,237,.14), transparent 60%),
+        radial-gradient(600px 260px at 80% 20%, rgba(6,182,212,.10), transparent 60%),
+        rgba(0,0,0,.18);
+    }
+
+    .tip{
+      position:fixed;
+      pointer-events:none;
+      opacity:0;
+      transform:translateY(6px);
+      transition:.10s opacity,.10s transform;
+      padding:10px 11px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.72);
+      box-shadow:0 18px 60px rgba(0,0,0,.55);
+      font-size:12px;
+      max-width:260px;
+      z-index:999;
+    }
+    .tip.show{opacity:1; transform:translateY(0)}
+    .tip b{font-size:12px}
+    .muted{color:var(--muted)}
+    .hr{height:1px;background:rgba(255,255,255,.10);margin:12px 0}
+
+    .heat{
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap:8px;
+      margin-top:10px;
+    }
+    .cell{
+      aspect-ratio: 1/1;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.05);
+      position:relative;
+      overflow:hidden;
+      cursor:pointer;
+      transition:.12s transform,.12s border;
+    }
+    .cell:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.22)}
+    .cell i{position:absolute; inset:0; opacity:.92}
+    .cell small{
+      position:absolute; left:8px; top:7px;
+      font-size:11px; color:rgba(255,255,255,.78);
+      text-shadow:0 2px 12px rgba(0,0,0,.45);
+    }
+
+    .toast{
+      position:fixed; left:50%; bottom:16px; transform:translateX(-50%);
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.68);
+      box-shadow:0 18px 60px rgba(0,0,0,.55);
+      opacity:0; pointer-events:none;
+      transition:.15s opacity,.15s transform;
+      z-index:999;
+      font-size:12px;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-2px)}
+
+    /* modo enfoque */
+    body.focus header{opacity:.88}
+    body.focus .distractHide{display:none !important}
+    .focusBadge{
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(34,197,94,.12);
+      color:rgba(255,255,255,.92);
+      font-size:12px;
+      display:none;
+    }
+    body.focus .focusBadge{display:inline-flex}
+
+    /* modal informe */
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.58);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding:16px;
+      z-index:999;
+    }
+    .modal.show{display:flex}
+    .sheet{
+      width:min(920px, 100%);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.16);
+      background:
+        radial-gradient(700px 300px at 20% 0%, rgba(124,58,237,.20), transparent 60%),
+        radial-gradient(700px 300px at 80% 0%, rgba(6,182,212,.14), transparent 60%),
+        rgba(10,12,26,.96);
+      box-shadow:0 30px 100px rgba(0,0,0,.70);
+      overflow:hidden;
+      max-height: 78vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .sheetHd{
+      padding:12px 14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .sheetHd b{font-size:14px}
+    .sheetBd{padding:14px; overflow:auto}
+    .sheetBd p, .sheetBd li{color:rgba(255,255,255,.86)}
+    .sheetBd small{color:var(--muted)}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;}
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div class="title">
+          <b>StudyOS — Dashboard PreU</b>
+          <small>Evaluación y seguimiento de hábitos de estudio · Demo local (sin datos personales)</small>
+        </div>
+      </div>
+
+      <div class="actions">
+        <span class="chip"><span class="dot"></span> Estado: listo</span>
+        <span class="focusBadge">Modo enfoque activo</span>
+        <button id="btnFocus" class="btn">Modo enfoque</button>
+        <button id="btnInforme" class="primary">Informe semanal</button>
+        <button id="btnExport" class="btn">Exportar</button>
+        <button id="btnImport" class="btn">Importar</button>
+        <input id="fileImport" type="file" accept="application/json" style="display:none" />
+      </div>
+    </header>
+
+    <main class="grid">
+      <!-- IZQUIERDA -->
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2>Registro diario</h2>
+            <p>Completa 1 registro al día. El sistema calcula un <b>Índice de Estudio (0–100)</b> y genera recomendaciones.</p>
+          </div>
+          <div class="row distractHide">
+            <span class="pill">🎯 Meta semanal: <b id="metaTxt">18h</b></span>
+            <span class="pill">🔥 Racha: <b id="rachaTxt">0</b></span>
+          </div>
+        </div>
+
+        <div class="body">
+          <div class="kpi">
+            <div class="k">
+              <div class="t">Índice hoy</div>
+              <div class="v" id="kScore">—</div>
+              <div class="s" id="kScoreSub">Sin registro</div>
+              <div class="bar"><i id="barScore"></i></div>
+            </div>
+            <div class="k">
+              <div class="t">Horas hoy</div>
+              <div class="v" id="kHours">—</div>
+              <div class="s" id="kHoursSub">Plan vs. real</div>
+              <div class="bar"><i id="barHours"></i></div>
+            </div>
+            <div class="k">
+              <div class="t">Distracción</div>
+              <div class="v" id="kDis">—</div>
+              <div class="s" id="kDisSub">0=control · 10=alto</div>
+              <div class="bar"><i id="barDis"></i></div>
+            </div>
+            <div class="k">
+              <div class="t">Sueño</div>
+              <div class="v" id="kSleep">—</div>
+              <div class="s" id="kSleepSub">Horas y calidad</div>
+              <div class="bar"><i id="barSleep"></i></div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+
+          <div class="form">
+            <label>
+              <span>Fecha</span>
+              <input id="fDate" type="date" />
+            </label>
+
+            <label>
+              <span>Plan de estudio (horas)</span>
+              <input id="fPlan" type="number" min="0" max="14" step="0.5" placeholder="Ej: 3.5" />
+            </label>
+
+            <label>
+              <span>Estudio real (horas)</span>
+              <input id="fReal" type="number" min="0" max="14" step="0.5" placeholder="Ej: 3.0" />
+            </label>
+
+            <label>
+              <span>Calidad de enfoque (0–10)</span>
+              <input id="fFocus" type="range" min="0" max="10" step="1" value="6" />
+            </label>
+
+            <label>
+              <span>Distracción (0–10)</span>
+              <input id="fDis" type="range" min="0" max="10" step="1" value="4" />
+            </label>
+
+            <label>
+              <span>Sueño (horas)</span>
+              <input id="fSleep" type="number" min="0" max="12" step="0.5" placeholder="Ej: 7.5" />
+            </label>
+
+            <label>
+              <span>Ansiedad pre-examen (0–10)</span>
+              <input id="fAnx" type="range" min="0" max="10" step="1" value="4" />
+            </label>
+
+            <label>
+              <span>Estrategia principal</span>
+              <select id="fStrat">
+                <option value="Pomodoro">Pomodoro (25/5)</option>
+                <option value="Bloques 50/10">Bloques 50/10</option>
+                <option value="Active Recall">Active Recall</option>
+                <option value="Spaced Repetition">Spaced Repetition</option>
+                <option value="Mapa mental">Mapa mental</option>
+                <option value="Resumen y ejercicios">Resumen y ejercicios</option>
+              </select>
+            </label>
+
+            <label style="grid-column:1/-1">
+              <span>Nota breve del día (gatillos, logros, obstáculos)</span>
+              <textarea id="fNote" placeholder="Ej: Me distrae el celular después de almuerzo. Mejoré con Pomodoro + modo avión."></textarea>
+            </label>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <button id="btnSave" class="ok">Guardar registro</button>
+            <button id="btnDemo" class="btn">Cargar demo</button>
+            <button id="btnClear" class="btn">Reiniciar</button>
+            <span class="pill distractHide">📌 Consejo automático: <b id="tipAuto">—</b></span>
+          </div>
+        </div>
+
+        <div class="canvasWrap">
+          <div class="hd" style="padding:10px 14px 8px">
+            <div>
+              <h2>Tendencia (7 días)</h2>
+              <p>Toca el gráfico: tooltip con valores exactos y nota del día.</p>
+            </div>
+            <div class="row">
+              <span class="pill">📈 Índice</span>
+              <span class="pill">⏱️ Horas</span>
+              <span class="pill">🧠 Enfoque</span>
+            </div>
+          </div>
+          <canvas id="chart" width="1200" height="520" aria-label="Gráfico semanal"></canvas>
+        </div>
+      </section>
+
+      <!-- DERECHA -->
+      <aside class="split">
+        <section class="card">
+          <div class="hd">
+            <div>
+              <h2>Heatmap de consistencia</h2>
+              <p>7 días. Color = intensidad de estudio / enfoque. Toca un día para ver detalle.</p>
+            </div>
+            <span class="pill">🗓️ Semana actual</span>
+          </div>
+          <div class="body">
+            <div class="heat" id="heat"></div>
+            <div class="hr"></div>
+            <div class="row">
+              <span class="pill">🟩 Alto</span>
+              <span class="pill">🟦 Medio</span>
+              <span class="pill">🟨 Bajo</span>
+              <span class="pill">⬛ Sin datos</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <div>
+              <h2>Motor de hábitos</h2>
+              <p>Recomendaciones automáticas (psicoeducativas) según patrón semanal.</p>
+            </div>
+            <span class="pill">⚙️ Reglas + heurística</span>
+          </div>
+          <div class="body">
+            <ul id="recList" style="margin:0; padding-left:18px">
+              <li class="muted">Registra al menos 3 días para activar recomendaciones inteligentes.</li>
+            </ul>
+            <div class="hr"></div>
+            <div class="row">
+              <span class="pill">📵 Anti-distracción</span>
+              <span class="pill">🧪 Active Recall</span>
+              <span class="pill">🧊 Micro-pauses</span>
+              <span class="pill">🛌 Sueño</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="hd">
+            <div>
+              <h2>Configuración</h2>
+              <p>Meta semanal de horas y estilo de estudio.</p>
+            </div>
+            <span class="pill">🔒 Local (tu dispositivo)</span>
+          </div>
+          <div class="body">
+            <div class="form">
+              <label>
+                <span>Meta semanal (horas)</span>
+                <input id="cfgGoal" type="number" min="5" max="60" step="1" />
+              </label>
+              <label>
+                <span>Horario preferido</span>
+                <select id="cfgSlot">
+                  <option value="Mañana">Mañana</option>
+                  <option value="Tarde">Tarde</option>
+                  <option value="Noche">Noche</option>
+                  <option value="Mixto">Mixto</option>
+                </select>
+              </label>
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button id="btnCfg" class="primary">Guardar config</button>
+              <span class="pill">✅ Guardado automático</span>
+            </div>
+            <div class="hr"></div>
+            <small class="muted">Nota ética: demo sin datos sensibles. Útil como muestra de diseño/UX y lógica de seguimiento.</small>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <div class="hr"></div>
+    <small class="muted">Desarrollado por: Lic. Gonzalo Buendía – Psicólogo · Demo de innovación aplicada (Psicología + Tecnología)</small>
+  </div>
+
+  <div class="tip" id="tip"></div>
+  <div class="toast" id="toast"></div>
+
+  <!-- MODAL INFORME -->
+  <div class="modal" id="modal">
+    <div class="sheet" role="dialog" aria-modal="true" aria-label="Informe semanal">
+      <div class="sheetHd">
+        <b>📄 Informe semanal (1 clic)</b>
+        <div class="row">
+          <button id="btnCopy" class="btn">Copiar</button>
+          <button id="btnClose" class="btn">Cerrar</button>
+        </div>
+      </div>
+      <div class="sheetBd" id="report"></div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const KEY = "studyos_habits_v1";
+  const CFG = "studyos_cfg_v1";
+
+  const $ = (id) => document.getElementById(id);
+  const tip = $("tip");
+  const toast = $("toast");
+
+  // UI refs
+  const fDate = $("fDate"), fPlan=$("fPlan"), fReal=$("fReal"),
+        fFocus=$("fFocus"), fDis=$("fDis"), fSleep=$("fSleep"),
+        fAnx=$("fAnx"), fStrat=$("fStrat"), fNote=$("fNote");
+
+  const kScore=$("kScore"), kScoreSub=$("kScoreSub"), barScore=$("barScore");
+  const kHours=$("kHours"), kHoursSub=$("kHoursSub"), barHours=$("barHours");
+  const kDis=$("kDis"), kDisSub=$("kDisSub"), barDis=$("barDis");
+  const kSleep=$("kSleep"), kSleepSub=$("kSleepSub"), barSleep=$("barSleep");
+
+  const metaTxt=$("metaTxt"), rachaTxt=$("rachaTxt");
+  const tipAuto=$("tipAuto");
+  const recList=$("recList");
+
+  const heat=$("heat");
+  const canvas=$("chart");
+  const ctx=canvas.getContext("2d");
+
+  const cfgGoal=$("cfgGoal"), cfgSlot=$("cfgSlot");
+
+  const modal=$("modal"), report=$("report");
+
+  // Helpers
+  const todayISO = () => new Date().toISOString().slice(0,10);
+  const clamp = (n,a,b) => Math.max(a, Math.min(b, n));
+  const round1 = (n) => Math.round(n*10)/10;
+  const fmt = (iso) => {
+    const d=new Date(iso+"T00:00:00");
+    return d.toLocaleDateString("es-PE",{weekday:"short", day:"2-digit", month:"short"});
+  };
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1400);
+  }
+
+  function load(){
+    try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+    catch{ return []; }
+  }
+  function save(arr){
+    localStorage.setItem(KEY, JSON.stringify(arr));
+  }
+  function loadCfg(){
+    const def = { goal: 18, slot: "Mixto" };
+    try{ return Object.assign(def, JSON.parse(localStorage.getItem(CFG) || "{}")); }
+    catch{ return def; }
+  }
+  function saveCfg(cfg){
+    localStorage.setItem(CFG, JSON.stringify(cfg));
+  }
+
+  // Score model (0-100) — simple pero robusto
+  function computeIndex(it, cfg){
+    const plan = Math.max(0, Number(it.plan||0));
+    const real = Math.max(0, Number(it.real||0));
+
+    const focus = clamp(Number(it.focus||0), 0, 10);
+    const dis = clamp(Number(it.dis||0), 0, 10);
+    const anx = clamp(Number(it.anx||0), 0, 10);
+    const sleep = Math.max(0, Number(it.sleep||0));
+
+    // cumplimiento plan (0..1) con saturación suave
+    const comp = plan <= 0 ? clamp(real/2, 0, 1) : clamp(real/plan, 0, 1.15);
+    const compScore = clamp(comp, 0, 1) * 42;
+
+    // foco + control distractores (0..10)
+    const focusScore = (focus/10) * 22;
+    const disScore = ((10-dis)/10) * 18;
+
+    // ansiedad penaliza ligeramente, sueño impulsa
+    const anxScore = ((10-anx)/10) * 8;
+    const sleepScore = clamp(sleep/8, 0, 1.1) * 10;
+
+    // bonus por estrategia "active"
+    const stratBonus = ["Active Recall","Spaced Repetition"].includes(it.strat) ? 4 : 0;
+
+    let total = compScore + focusScore + disScore + anxScore + sleepScore + stratBonus;
+    total = clamp(total, 0, 100);
+
+    // band label
+    const band = total >= 80 ? {label:"Óptimo", color:"var(--b)"} :
+                 total >= 60 ? {label:"Sólido", color:"var(--c)"} :
+                 total >= 40 ? {label:"Inestable", color:"var(--d)"} :
+                               {label:"Crítico", color:"var(--e)"};
+    return {score: Math.round(total), band};
+  }
+
+  function streak(arr){
+    // racha de días con registro consecutivo hasta hoy
+    const set = new Set(arr.map(x=>x.date));
+    let s=0;
+    let d = new Date();
+    while(true){
+      const iso = d.toISOString().slice(0,10);
+      if(!set.has(iso)) break;
+      s++;
+      d.setDate(d.getDate()-1);
+    }
+    return s;
+  }
+
+  function weekRangeISO(endISO=todayISO()){
+    const end = new Date(endISO+"T00:00:00");
+    const start = new Date(end);
+    start.setDate(end.getDate()-6);
+    const days=[];
+    for(let i=0;i<7;i++){
+      const x=new Date(start);
+      x.setDate(start.getDate()+i);
+      days.push(x.toISOString().slice(0,10));
+    }
+    return days;
+  }
+
+  function getByDate(arr){
+    const map = new Map();
+    for(const it of arr) map.set(it.date, it);
+    return map;
+  }
+
+  function autoTipFromToday(todayIt, cfg){
+    if(!todayIt) return "Registra hoy para recibir recomendaciones.";
+    const {score} = computeIndex(todayIt, cfg);
+    const real=Number(todayIt.real||0), plan=Number(todayIt.plan||0);
+    const dis=Number(todayIt.dis||0), focus=Number(todayIt.focus||0), sleep=Number(todayIt.sleep||0);
+    if(score >= 80) return "Mantén el patrón: repaso activo + ejercicios. Cierra con 10 min de planificación.";
+    if(dis >= 7) return "Activa control: modo avión + bloque 25/5 + checklist visible. 1 tarea a la vez.";
+    if(plan > 0 && real/plan < .7) return "Ajusta meta diaria: reduce plan 15–20% y sube consistencia (mejor 2.5h diarias que 6h un día).";
+    if(sleep < 6.5) return "Prioriza sueño: +60–90 min hoy. El rendimiento cae con déficit de sueño aunque estudies más horas.";
+    if(focus <= 4) return "Cambia técnica: 10 preguntas (active recall) antes de leer. Estudio pasivo baja el foco.";
+    return "Optimiza: divide en 2 bloques + repaso espaciado al final. Registra qué funcionó hoy.";
+  }
+
+  function genRecs(arr, cfg){
+    const days = weekRangeISO();
+    const map = getByDate(arr);
+    const items = days.map(d=>map.get(d)).filter(Boolean);
+    if(items.length < 3){
+      return [
+        "Registra al menos 3 días para activar recomendaciones inteligentes.",
+        "Tip rápido: una meta realista + bloques cortos + repaso activo = consistencia.",
+      ];
+    }
+    const scores = items.map(it=>computeIndex(it,cfg).score);
+    const avg = scores.reduce((a,b)=>a+b,0)/scores.length;
+
+    const realH = items.map(it=>Number(it.real||0));
+    const planH = items.map(it=>Number(it.plan||0));
+    const dis = items.map(it=>Number(it.dis||0));
+    const anx = items.map(it=>Number(it.anx||0));
+    const sleep = items.map(it=>Number(it.sleep||0));
+
+    const sumReal = realH.reduce((a,b)=>a+b,0);
+    const sumPlan = planH.reduce((a,b)=>a+b,0);
+    const avgDis = dis.reduce((a,b)=>a+b,0)/dis.length;
+    const avgAnx = anx.reduce((a,b)=>a+b,0)/anx.length;
+    const avgSleep = sleep.reduce((a,b)=>a+b,0)/sleep.length;
+
+    const recs = [];
+
+    // cumplimiento semanal
+    const goal = Number(cfg.goal||18);
+    const pctGoal = clamp(sumReal/goal, 0, 1.25);
+
+    if(pctGoal >= 1){
+      recs.push(`✅ Meta semanal alcanzada (${round1(sumReal)}h / ${goal}h). Mantén consistencia y añade 1 sesión de simulacro.`);
+    } else {
+      recs.push(`🎯 Progreso semanal: ${round1(sumReal)}h / ${goal}h. Ajusta micro-metas diarias para cerrar la brecha.`);
+    }
+
+    if(sumPlan>0 && sumReal/sumPlan < .75){
+      recs.push("📌 Tu planificación está por encima del desempeño real. Recalibra: planifica 80–85% de lo que crees que harás.");
+    }
+
+    if(avgDis >= 6){
+      recs.push("📵 Distracción alta. Intervención: modo avión + bloque único visible + recompensas breves (2–3 min) al final del bloque.");
+    } else {
+      recs.push("🧠 Buen control de distractores. Sube nivel: active recall + ejercicios cronometrados al final de cada sesión.");
+    }
+
+    if(avgSleep < 6.7){
+      recs.push("🛌 Sueño bajo. Recomendación: prioriza dormir (7–8h). El aprendizaje y memoria dependen de consolidación nocturna.");
+    }
+
+    if(avgAnx >= 6){
+      recs.push("🫁 Ansiedad elevada. Usa protocolo: 2 min respiración + 1 micro-tarea + cronómetro 10 min. Acción reduce ansiedad.");
+    }
+
+    if(avg >= 75) recs.push("🏁 Índice promedio alto. Agrega simulacros y revisión de errores (metacognición) para consolidar.");
+    else if(avg >= 55) recs.push("⚙️ Índice medio. Prioriza consistencia: menos variación, más rutina; un horario fijo ayuda mucho.");
+    else recs.push("🧱 Índice bajo. Empieza por hábito base: 2 bloques diarios + ambiente sin fricción + objetivo mínimo no negociable.");
+
+    // slot preferido
+    recs.push(`⏰ Preferencia: ${cfg.slot}. Diseña tu día alrededor del “bloque ancla” (tu mejor franja).`);
+
+    return recs;
+  }
+
+  // Heat colors
+  function heatColor(score){
+    if(score == null) return "rgba(255,255,255,.05)";
+    if(score >= 80) return "linear-gradient(135deg, rgba(34,197,94,.85), rgba(6,182,212,.55))";
+    if(score >= 60) return "linear-gradient(135deg, rgba(6,182,212,.75), rgba(124,58,237,.35))";
+    if(score >= 40) return "linear-gradient(135deg, rgba(245,158,11,.75), rgba(251,113,133,.25))";
+    return "linear-gradient(135deg, rgba(251,113,133,.78), rgba(124,58,237,.25))";
+  }
+
+  // Chart
+  let lastPoints = [];
+  function draw(){
+    const arr = load();
+    const cfg = loadCfg();
+    const map = getByDate(arr);
+    const days = weekRangeISO();
+    const series = days.map(d=>{
+      const it = map.get(d);
+      if(!it) return {d, score:null, real:null, focus:null, note:null, strat:null, dis:null};
+      const c = computeIndex(it,cfg);
+      return {
+        d,
+        score:c.score,
+        band:c.band,
+        real:Number(it.real||0),
+        plan:Number(it.plan||0),
+        focus:Number(it.focus||0),
+        dis:Number(it.dis||0),
+        anx:Number(it.anx||0),
+        sleep:Number(it.sleep||0),
+        strat: it.strat,
+        note: it.note || ""
+      };
+    });
+
+    // HiDPI
+    const rect = canvas.getBoundingClientRect();
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+
+    const W = rect.width, H = rect.height;
+    ctx.clearRect(0,0,W,H);
+
+    // grid
+    const pad = 16;
+    const left = pad+14, right = W - pad-10, top = pad+12, bottom = H - pad-24;
+    const gh = bottom - top;
+    const gw = right - left;
+
+    ctx.save();
+    ctx.globalAlpha=.9;
+    ctx.strokeStyle = "rgba(255,255,255,.10)";
+    for(let i=0;i<=4;i++){
+      const y = top + (gh/4)*i;
+      ctx.beginPath(); ctx.moveTo(left,y); ctx.lineTo(right,y); ctx.stroke();
+    }
+    ctx.restore();
+
+    // labels
+    ctx.fillStyle = "rgba(255,255,255,.75)";
+    ctx.font = "12px system-ui";
+    for(let i=0;i<days.length;i++){
+      const x = left + (gw/(days.length-1))*i;
+      ctx.fillText(fmt(days[i]), x-22, bottom+16);
+    }
+
+    // compute points
+    const maxHours = 8; // scale ref
+    const pts = [];
+    const ptsH = [];
+    const ptsF = [];
+
+    for(let i=0;i<series.length;i++){
+      const x = left + (gw/(series.length-1))*i;
+
+      // score
+      const s = series[i].score;
+      const y = s==null ? null : top + (1 - (s/100))*gh;
+      pts.push({x,y, it:series[i]});
+
+      // hours
+      const rh = series[i].real;
+      const yh = rh==null ? null : top + (1 - clamp(rh/maxHours,0,1))*gh;
+      ptsH.push({x,y:yh, it:series[i]});
+
+      // focus
+      const f = series[i].focus;
+      const yf = f==null ? null : top + (1 - (f/10))*gh;
+      ptsF.push({x,y:yf, it:series[i]});
+    }
+
+    function line(points, stroke, fill){
+      ctx.save();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = stroke;
+      ctx.beginPath();
+      let started=false;
+      for(const p of points){
+        if(p.y==null) continue;
+        if(!started){ ctx.moveTo(p.x,p.y); started=true; }
+        else ctx.lineTo(p.x,p.y);
+      }
+      ctx.stroke();
+
+      // area fill
+      ctx.globalAlpha=.18;
+      ctx.fillStyle = fill;
+      ctx.lineTo(points[points.length-1].x, bottom);
+      ctx.lineTo(points[0].x, bottom);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // draw series
+    line(pts, "rgba(34,197,94,.95)", "rgba(34,197,94,.9)");
+    line(ptsH, "rgba(6,182,212,.85)", "rgba(6,182,212,.8)");
+    line(ptsF, "rgba(124,58,237,.85)", "rgba(124,58,237,.8)");
+
+    // points
+    function dots(points, color){
+      for(const p of points){
+        if(p.y==null) continue;
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.arc(p.x,p.y,4.2,0,Math.PI*2);
+        ctx.fill();
+        ctx.strokeStyle="rgba(255,255,255,.22)";
+        ctx.lineWidth=1;
+        ctx.stroke();
+      }
+    }
+    dots(pts, "rgba(34,197,94,.95)");
+    dots(ptsH, "rgba(6,182,212,.90)");
+    dots(ptsF, "rgba(124,58,237,.90)");
+
+    lastPoints = {score:pts, hours:ptsH, focus:ptsF, series};
+
+    // update KPIs from today
+    const tISO = todayISO();
+    const todayIt = map.get(tISO);
+    if(todayIt){
+      const {score, band} = computeIndex(todayIt, cfg);
+      kScore.textContent = score;
+      kScoreSub.innerHTML = `Banda: <b style="color:${band.color}">${band.label}</b>`;
+      barScore.style.width = score + "%";
+
+      const real = Number(todayIt.real||0), plan = Number(todayIt.plan||0);
+      kHours.textContent = round1(real) + "h";
+      kHoursSub.textContent = plan>0 ? `Plan ${round1(plan)}h · ${Math.round(clamp(real/plan,0,1.25)*100)}%` : "Sin plan (solo real)";
+      barHours.style.width = Math.round(clamp(real/6,0,1)*100) + "%";
+
+      const dis = Number(todayIt.dis||0);
+      kDis.textContent = dis + "/10";
+      kDisSub.textContent = dis<=3 ? "Control alto" : dis<=6 ? "Control medio" : "Riesgo";
+      barDis.style.width = Math.round(clamp((10-dis)/10,0,1)*100) + "%";
+
+      const sl = Number(todayIt.sleep||0);
+      kSleep.textContent = (sl?round1(sl):"—") + (sl? "h":"");
+      kSleepSub.textContent = sl>=7 ? "Adecuado" : sl>=6 ? "Límite" : "Bajo";
+      barSleep.style.width = Math.round(clamp(sl/8,0,1)*100) + "%";
+
+      tipAuto.textContent = autoTipFromToday({...todayIt}, cfg);
+    } else {
+      kScore.textContent = "—"; kScoreSub.textContent = "Sin registro"; barScore.style.width="0%";
+      kHours.textContent = "—"; kHoursSub.textContent = "Plan vs. real"; barHours.style.width="0%";
+      kDis.textContent = "—"; kDisSub.textContent = "0=control · 10=alto"; barDis.style.width="0%";
+      kSleep.textContent = "—"; kSleepSub.textContent = "Horas y calidad"; barSleep.style.width="0%";
+      tipAuto.textContent = "Registra hoy para activar sugerencias.";
+    }
+
+    // meta + racha
+    const sumWeek = lastPoints.series.filter(x=>x.real!=null).reduce((a,b)=>a+b.real,0);
+    metaTxt.textContent = (cfg.goal||18) + "h";
+    rachaTxt.textContent = streak(arr) + " días";
+    $("barHours").style.width = Math.round(clamp(sumWeek/(cfg.goal||18),0,1)*100) + "%";
+
+    // recs
+    const recs = genRecs(arr, cfg);
+    recList.innerHTML = recs.map(r=>`<li>${r}</li>`).join("");
+
+    // heatmap
+    heat.innerHTML = "";
+    for(const s of lastPoints.series){
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      const label = document.createElement("small");
+      label.textContent = new Date(s.d+"T00:00:00").toLocaleDateString("es-PE",{weekday:"short"}).replace(".","");
+      const bg = document.createElement("i");
+      bg.style.background = heatColor(s.score);
+      cell.appendChild(bg);
+      cell.appendChild(label);
+
+      cell.addEventListener("click", (ev)=>{
+        const msg = s.score==null
+          ? `<b>${fmt(s.d)}</b><div class="muted">Sin registro</div>`
+          : `<b>${fmt(s.d)}</b><div>Índice: <b>${s.score}</b> · Horas: <b>${round1(s.real)}h</b> · Enfoque: <b>${s.focus}/10</b></div>
+             <div class="muted">Estrategia: ${s.strat || "—"} · Distracción: ${s.dis}/10</div>
+             ${s.note?`<div class="hr"></div><div class="muted">${escapeHtml(s.note)}</div>`:""}`;
+        showTip(ev.clientX, ev.clientY, msg);
+        setTimeout(hideTip, 1800);
+      });
+
+      heat.appendChild(cell);
+    }
+  }
+
+  function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g, (m)=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+  }
+
+  function nearestPoint(x,y){
+    // search across 3 series
+    const all = [];
+    for(const p of lastPoints.score) if(p.y!=null) all.push({kind:"score", ...p});
+    for(const p of lastPoints.hours) if(p.y!=null) all.push({kind:"hours", ...p});
+    for(const p of lastPoints.focus) if(p.y!=null) all.push({kind:"focus", ...p});
+    if(!all.length) return null;
+
+    let best=null, bd=1e9;
+    for(const p of all){
+      const dx=p.x-x, dy=p.y-y;
+      const d=dx*dx+dy*dy;
+      if(d<bd){ bd=d; best=p; }
+    }
+    return bd < 18*18 ? best : null;
+  }
+
+  function showTip(px,py,html){
+    tip.innerHTML = html;
+    const pad = 12;
+    tip.classList.add("show");
+    // position with bounds
+    const r = tip.getBoundingClientRect();
+    let x = px + 12, y = py + 12;
+    if(x + r.width > window.innerWidth - pad) x = px - r.width - 12;
+    if(y + r.height > window.innerHeight - pad) y = py - r.height - 12;
+    tip.style.left = x + "px";
+    tip.style.top = y + "px";
+  }
+  function hideTip(){ tip.classList.remove("show"); }
+
+  canvas.addEventListener("mousemove", (e)=>{
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const p = nearestPoint(x,y);
+    if(!p){ hideTip(); return; }
+    const it = p.it;
+    const cfg = loadCfg();
+    const c = it.score==null ? null : computeIndex({
+      date:it.d, plan:it.plan, real:it.real,
+      focus:it.focus, dis:it.dis, anx:it.anx, sleep:it.sleep,
+      strat:it.strat, note:it.note
+    }, cfg);
+
+    const header = `<b>${fmt(it.d)}</b>`;
+    const note = it.note ? `<div class="hr"></div><div class="muted">${escapeHtml(it.note)}</div>` : "";
+    const lines = it.score==null
+      ? `<div class="muted">Sin registro</div>`
+      : `<div>Índice: <b>${c.score}</b> (${c.band.label})</div>
+         <div>Horas: <b>${round1(it.real)}h</b> (plan ${round1(it.plan)}h)</div>
+         <div>Enfoque: <b>${it.focus}/10</b> · Distracción: <b>${it.dis}/10</b> · Sueño: <b>${round1(it.sleep)}h</b></div>
+         <div class="muted">Estrategia: ${it.strat || "—"}</div>`;
+
+    showTip(e.clientX, e.clientY, header + lines + note);
+  });
+  canvas.addEventListener("mouseleave", hideTip);
+  canvas.addEventListener("click", (e)=>{
+    // touch-friendly: keep visible 2s
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const p = nearestPoint(x,y);
+    if(!p) return;
+    // show and auto-hide
+    setTimeout(hideTip, 1800);
+  });
+
+  // Save record
+  function upsert(arr, item){
+    const i = arr.findIndex(x=>x.date===item.date);
+    if(i>=0) arr[i]=item; else arr.push(item);
+    arr.sort((a,b)=>a.date.localeCompare(b.date));
+    return arr;
+  }
+
+  function readForm(){
+    const d = fDate.value || todayISO();
+    return {
+      date: d,
+      plan: Number(fPlan.value||0),
+      real: Number(fReal.value||0),
+      focus: Number(fFocus.value||0),
+      dis: Number(fDis.value||0),
+      sleep: Number(fSleep.value||0),
+      anx: Number(fAnx.value||0),
+      strat: fStrat.value,
+      note: (fNote.value||"").trim()
+    };
+  }
+
+  function fillForm(it){
+    fDate.value = it.date || todayISO();
+    fPlan.value = it.plan ?? "";
+    fReal.value = it.real ?? "";
+    fFocus.value = it.focus ?? 6;
+    fDis.value = it.dis ?? 4;
+    fSleep.value = it.sleep ?? "";
+    fAnx.value = it.anx ?? 4;
+    fStrat.value = it.strat || "Pomodoro";
+    fNote.value = it.note || "";
+  }
+
+  $("btnSave").addEventListener("click", ()=>{
+    const cfg = loadCfg();
+    const it = readForm();
+    // small validations
+    if(it.real < 0 || it.plan < 0){ showToast("Revisa horas (no negativos)."); return; }
+    if(it.real > 14 || it.plan > 14){ showToast("Máx. 14h (demo)."); return; }
+
+    const arr = load();
+    save(upsert(arr,it));
+    showToast("Registro guardado ✅");
+    draw();
+  });
+
+  $("btnDemo").addEventListener("click", ()=>{
+    const cfg = loadCfg();
+    const days = weekRangeISO();
+    const demo = days.map((d,idx)=>({
+      date:d,
+      plan: [3,4,4,3.5,5,4,2][idx],
+      real: [2.5,3.5,4,2.5,4.5,3.8,1.6][idx],
+      focus:[6,7,8,5,7,6,4][idx],
+      dis:  [5,4,3,6,4,5,7][idx],
+      sleep:[7.2,7.0,6.5,6.0,7.4,6.8,6.2][idx],
+      anx:  [4,4,5,6,4,5,7][idx],
+      strat:["Pomodoro","Active Recall","Spaced Repetition","Pomodoro","Active Recall","Bloques 50/10","Pomodoro"][idx],
+      note: idx===3 ? "Me distraje después de almuerzo. Mañana: modo avión + 25/5." :
+            idx===4 ? "Buen rendimiento con preguntas + ejercicios cronometrados." :
+            idx===6 ? "Baja energía. Priorizar sueño y empezar con 10 min para arrancar." : ""
+    }));
+    save(demo);
+    fillForm({date: todayISO(), plan:4, real:3, focus:6, dis:4, sleep:7, anx:4, strat:"Pomodoro", note:""});
+    showToast("Demo cargada ✨");
+    draw();
+  });
+
+  $("btnClear").addEventListener("click", ()=>{
+    if(!confirm("¿Reiniciar y borrar registros locales de esta demo?")) return;
+    localStorage.removeItem(KEY);
+    showToast("Datos reiniciados.");
+    draw();
+  });
+
+  // Config
+  $("btnCfg").addEventListener("click", ()=>{
+    const cfg = {
+      goal: clamp(Number(cfgGoal.value||18), 5, 60),
+      slot: cfgSlot.value
+    };
+    saveCfg(cfg);
+    showToast("Config guardada ✅");
+    draw();
+  });
+
+  // Focus mode
+  $("btnFocus").addEventListener("click", ()=>{
+    document.body.classList.toggle("focus");
+    showToast(document.body.classList.contains("focus") ? "Modo enfoque ON" : "Modo enfoque OFF");
+  });
+
+  // Informe semanal
+  function makeReport(){
+    const arr = load();
+    const cfg = loadCfg();
+    const map = getByDate(arr);
+    const days = weekRangeISO();
+    const items = days.map(d=>map.get(d)).filter(Boolean);
+
+    const sumReal = items.reduce((a,b)=>a+Number(b.real||0),0);
+    const sumPlan = items.reduce((a,b)=>a+Number(b.plan||0),0);
+    const avgFocus = items.length ? items.reduce((a,b)=>a+Number(b.focus||0),0)/items.length : 0;
+    const avgDis = items.length ? items.reduce((a,b)=>a+Number(b.dis||0),0)/items.length : 0;
+    const avgSleep = items.length ? items.reduce((a,b)=>a+Number(b.sleep||0),0)/items.length : 0;
+    const avgAnx = items.length ? items.reduce((a,b)=>a+Number(b.anx||0),0)/items.length : 0;
+
+    const scores = items.map(it=>computeIndex(it,cfg).score);
+    const avgScore = scores.length ? scores.reduce((a,b)=>a+b,0)/scores.length : 0;
+
+    const recs = genRecs(arr,cfg);
+
+    const bullets = recs.map(r=>`<li>${r}</li>`).join("");
+    const log = items.slice(-5).reverse().map(it=>{
+      const c = computeIndex(it,cfg);
+      return `<li><b>${fmt(it.date)}</b> — Índice <b>${c.score}</b>, ${round1(it.real)}h, foco ${it.focus}/10, dis ${it.dis}/10 ${it.note?`<div class="muted">Nota: ${escapeHtml(it.note)}</div>`:""}</li>`;
+    }).join("");
+
+    const goal = Number(cfg.goal||18);
+    const pctGoal = Math.round(clamp(sumReal/goal,0,1.25)*100);
+
+    return `
+      <p><b>Resumen ejecutivo</b></p>
+      <ul>
+        <li>Horas reales: <b>${round1(sumReal)}h</b> (planificadas ${round1(sumPlan)}h) · Cumplimiento meta: <b>${pctGoal}%</b> de ${goal}h</li>
+        <li>Índice promedio (0–100): <b>${Math.round(avgScore)}</b></li>
+        <li>Enfoque promedio: <b>${round1(avgFocus)}/10</b> · Distracción promedio: <b>${round1(avgDis)}/10</b></li>
+        <li>Sueño promedio: <b>${round1(avgSleep)}h</b> · Ansiedad promedio: <b>${round1(avgAnx)}/10</b></li>
+      </ul>
+
+      <div class="hr"></div>
+
+      <p><b>Recomendaciones automáticas</b></p>
+      <ul>${bullets}</ul>
+
+      <div class="hr"></div>
+
+      <p><b>Registro reciente</b> <small class="muted">(últimos días con datos)</small></p>
+      <ul>${log || "<li class='muted'>Sin registros aún.</li>"}</ul>
+
+      <div class="hr"></div>
+      <small class="muted">Demo local. No recoge información sensible. Diseñada para mostrar seguimiento psicoeducativo con UX y visualización.</small>
+    `;
+  }
+
+  $("btnInforme").addEventListener("click", ()=>{
+    report.innerHTML = makeReport();
+    modal.classList.add("show");
+  });
+  $("btnClose").addEventListener("click", ()=> modal.classList.remove("show"));
+  modal.addEventListener("click", (e)=>{ if(e.target === modal) modal.classList.remove("show"); });
+
+  $("btnCopy").addEventListener("click", async ()=>{
+    const tmp = document.createElement("div");
+    tmp.innerHTML = makeReport();
+    const text = tmp.innerText.trim();
+    try{
+      await navigator.clipboard.writeText(text);
+      showToast("Informe copiado ✅");
+    } catch {
+      showToast("No se pudo copiar (permiso).");
+    }
+  });
+
+  // Export / Import
+  $("btnExport").addEventListener("click", ()=>{
+    const payload = {
+      meta: { app:"StudyOS", version:1, exportedAt: new Date().toISOString() },
+      cfg: loadCfg(),
+      data: load()
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "studyos_habitos_export.json";
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Exportado ✅");
+  });
+
+  $("btnImport").addEventListener("click", ()=> $("fileImport").click());
+  $("fileImport").addEventListener("change", async (e)=>{
+    const file = e.target.files && e.target.files[0];
+    if(!file) return;
+    try{
+      const txt = await file.text();
+      const payload = JSON.parse(txt);
+      if(!payload || !Array.isArray(payload.data)) throw new Error("Formato inválido");
+      if(payload.cfg) saveCfg(payload.cfg);
+      save(payload.data);
+      showToast("Importado ✅");
+      draw();
+    } catch(err){
+      showToast("Error importando JSON.");
+    } finally {
+      e.target.value = "";
+    }
+  });
+
+  // Tooltip direct
+  function showTip(px,py,html){
+    tip.innerHTML = html;
+    tip.classList.add("show");
+    const pad=12;
+    // after paint
+    requestAnimationFrame(()=>{
+      const r=tip.getBoundingClientRect();
+      let x=px+12, y=py+12;
+      if(x+r.width>window.innerWidth-pad) x=px-r.width-12;
+      if(y+r.height>window.innerHeight-pad) y=py-r.height-12;
+      tip.style.left=x+"px"; tip.style.top=y+"px";
+    });
+  }
+  function hideTip(){ tip.classList.remove("show"); }
+
+  // Init
+  function init(){
+    // set date default
+    fDate.value = todayISO();
+
+    const cfg = loadCfg();
+    cfgGoal.value = cfg.goal ?? 18;
+    cfgSlot.value = cfg.slot ?? "Mixto";
+
+    // prefill today if exists
+    const arr = load();
+    const today = arr.find(x=>x.date===todayISO());
+    if(today) fillForm(today);
+
+    draw();
+  }
+
+  window.addEventListener("resize", ()=> draw());
+  init();
+
+  // PWA SW
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", ()=>{
+      navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    });
+  }
+})();
+</script>
+</body>
+</html>

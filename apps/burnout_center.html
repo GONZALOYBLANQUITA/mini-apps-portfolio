@@ -1,0 +1,1502 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#2E3A59" />
+  <title>Volver al Centro — Mini app</title>
+
+  <style>
+    :root{
+      --bg:#F6F7FB;
+      --card:#FFFFFF;
+      --text:#1B1F2A;
+      --muted:#5B6477;
+
+      --primary:#2E3A59;
+      --primary2:#3E4D73;
+
+      --accent:#2B8C8C;
+      --accent2:#E7F6F6;
+
+      --warn:#C97A2B;
+      --warn2:#FFF3E8;
+
+      --danger:#B5474A;
+      --danger2:#FDEBEC;
+
+      --border: 1px solid rgba(27,31,42,.10);
+      --shadow: 0 10px 25px rgba(27,31,42,.10);
+      --r:18px;
+      --tap:52px;
+      --max:980px;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% -10%, #EAF0FF 0%, transparent 55%),
+        radial-gradient(900px 700px at 90% 10%, #E7F6F6 0%, transparent 50%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .safe{
+      padding: env(safe-area-inset-top) env(safe-area-inset-right)
+               env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    .wrap{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:18px 14px 110px;
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 6px 18px;
+    }
+    .brand{display:flex; gap:10px; align-items:center; min-width:0;}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background:linear-gradient(135deg,var(--primary),var(--accent));
+      box-shadow:0 10px 18px rgba(46,58,89,.18);
+      display:grid;place-items:center;
+      flex:0 0 auto;
+    }
+    .logo svg{width:26px;height:26px;fill:#fff;opacity:.95}
+    .titlebox{min-width:0}
+    .app-title{
+      margin:0;
+      font-size:16px;
+      font-weight:800;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .pillrow{display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.75);
+      border:var(--border);
+      backdrop-filter: blur(8px);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .pill svg{width:14px;height:14px;fill:var(--muted)}
+
+    .card{
+      background:rgba(255,255,255,.88);
+      border:var(--border);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      padding:14px;
+      overflow:hidden;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap:14px;
+      align-items:stretch;
+      margin-bottom:14px;
+    }
+    .hero-left{padding:16px; position:relative;}
+    .hero-left:before{
+      content:"";
+      position:absolute; inset:-40px -40px auto auto;
+      width:160px; height:160px;
+      background: radial-gradient(circle at 30% 30%, rgba(43,140,140,.25), transparent 60%);
+      border-radius:999px;
+      pointer-events:none;
+    }
+    h2{margin:0 0 8px;font-size:18px;letter-spacing:.2px}
+    p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}
+
+    .quick-actions{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:10px;
+    }
+    .btn{
+      min-height:var(--tap);
+      border:none;
+      border-radius:16px;
+      padding:12px;
+      background:var(--primary);
+      color:#fff;
+      font-weight:800;
+      font-size:13px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      box-shadow:0 14px 24px rgba(46,58,89,.18);
+      transition:transform .08s ease, background .12s ease;
+    }
+    .btn:hover{background:var(--primary2)}
+    .btn:active{transform:scale(.99)}
+    .btn svg{width:18px;height:18px;fill:#fff;opacity:.95}
+
+    .btn.secondary{
+      background:#fff;
+      color:var(--primary);
+      border:var(--border);
+      box-shadow:none;
+    }
+    .btn.secondary svg{fill:var(--primary)}
+    .btn.ghost{
+      background:rgba(255,255,255,.8);
+      color:var(--primary);
+      border:var(--border);
+      box-shadow:none;
+    }
+    .btn.ghost svg{fill:var(--primary)}
+    .btn.small{min-height:46px; border-radius:14px; padding:10px 12px; font-size:13px; flex:1 1 160px}
+
+    .hero-right{display:flex; flex-direction:column; gap:12px;}
+    .meter{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:10px; margin-bottom:8px;
+    }
+    .meter .label{display:flex; gap:10px; align-items:center; min-width:0;}
+    .meter .label svg{width:18px;height:18px;fill:var(--accent)}
+    .meter h3{margin:0;font-size:13px;letter-spacing:.2px}
+    .meter .sub{margin:2px 0 0; font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:260px}
+    .badge{
+      font-size:12px;
+      font-weight:900;
+      padding:8px 10px;
+      border-radius:999px;
+      border:var(--border);
+      background:#fff;
+      color:var(--primary);
+      white-space:nowrap;
+    }
+    .bar{width:100%; height:10px; background:rgba(46,58,89,.08); border-radius:999px; overflow:hidden;}
+    .bar > div{height:100%; width:0%; background:linear-gradient(90deg,var(--accent),var(--primary)); border-radius:999px; transition: width .25s ease;}
+    .smallnote{margin-top:8px; font-size:12px; color:var(--muted); line-height:1.4}
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+      margin-top:12px;
+    }
+    .tile{
+      padding:14px;
+      border-radius:var(--r);
+      border:var(--border);
+      background:rgba(255,255,255,.86);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      min-height:88px;
+      transition:transform .08s ease, border-color .12s ease;
+    }
+    .tile:hover{border-color:rgba(46,58,89,.20)}
+    .tile:active{transform:scale(.99)}
+    .ico{
+      width:40px;height:40px;border-radius:14px;
+      background:var(--accent2);
+      border:1px solid rgba(43,140,140,.20);
+      display:grid;place-items:center;
+      flex:0 0 auto;
+    }
+    .ico svg{width:20px;height:20px;fill:var(--accent)}
+    .tile h4{margin:0;font-size:14px}
+    .tile p{margin:6px 0 0;font-size:12px;color:var(--muted);line-height:1.35}
+
+    .footer{
+      margin:14px 4px 0;
+      color:rgba(91,100,119,.95);
+      font-size:11px;
+      line-height:1.35;
+    }
+    .footer strong{color:var(--primary)}
+
+    /* Bottom nav */
+    .nav{
+      position:fixed; left:0; right:0; bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background:rgba(246,247,251,.78);
+      backdrop-filter: blur(10px);
+      border-top:1px solid rgba(27,31,42,.08);
+      z-index:40;
+    }
+    .nav-inner{
+      max-width:var(--max);
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap:10px;
+    }
+    .navbtn{
+      min-height:54px;
+      border-radius:16px;
+      border:var(--border);
+      background:rgba(255,255,255,.90);
+      cursor:pointer;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      color:var(--muted);
+      font-size:11px;
+      font-weight:800;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .navbtn svg{width:18px;height:18px;fill:var(--muted)}
+    .navbtn.active{
+      background:#fff;
+      color:var(--primary);
+      border-color:rgba(46,58,89,.20);
+      box-shadow:0 10px 20px rgba(27,31,42,.10);
+    }
+    .navbtn.active svg{fill:var(--primary)}
+
+    /* Modal */
+    .modal{
+      position:fixed; inset:0;
+      background:rgba(10,12,18,.45);
+      display:none;
+      align-items:flex-end;
+      justify-content:center;
+      padding:12px 12px calc(12px + env(safe-area-inset-bottom));
+      z-index:60;
+    }
+    .modal.show{display:flex}
+    .sheet{
+      width:min(var(--max), 100%);
+      background:rgba(255,255,255,.96);
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:22px;
+      box-shadow:0 30px 80px rgba(0,0,0,.28);
+      overflow:hidden;
+      max-height:86vh;
+      display:flex;
+      flex-direction:column;
+    }
+    .sheet-head{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(27,31,42,.08);
+      background: linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.90));
+    }
+    .sheet-title{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .chip{
+      width:40px;height:40px;border-radius:14px;
+      background:var(--accent2);
+      border:1px solid rgba(43,140,140,.20);
+      display:grid; place-items:center;
+      flex:0 0 auto;
+    }
+    .chip svg{width:20px;height:20px;fill:var(--accent)}
+    .sheet-title h3{
+      margin:0;
+      font-size:14px;
+      font-weight:900;
+      letter-spacing:.2px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .sheet-title p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      max-width:520px;
+    }
+    .close{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:var(--border);
+      background:rgba(255,255,255,.92);
+      cursor:pointer;
+      display:grid; place-items:center;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .close svg{width:18px;height:18px;fill:var(--muted)}
+    .sheet-body{padding:14px; overflow:auto;}
+
+    .section{
+      margin-bottom:14px;
+      border:var(--border);
+      background:rgba(255,255,255,.90);
+      border-radius:18px;
+      padding:12px;
+    }
+    .section h4{
+      margin:0 0 10px;
+      font-size:13px;
+      letter-spacing:.2px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .section h4 svg{width:16px;height:16px;fill:var(--primary);opacity:.9}
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    label{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+      margin:0 0 6px;
+    }
+    input, textarea, select{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(27,31,42,.12);
+      background:#fff;
+      color:var(--text);
+      outline:none;
+      font-size:14px;
+      line-height:1.3;
+    }
+    textarea{min-height:96px; resize:vertical}
+    .help{margin:8px 0 0; font-size:12px; color:var(--muted); line-height:1.4}
+
+    .notice{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(201,122,43,.25);
+      background:var(--warn2);
+      color:#6A3C11;
+      font-size:12px;
+      line-height:1.4;
+    }
+    .dangerBox{
+      border-radius:16px;
+      padding:12px;
+      border:1px solid rgba(181,71,74,.25);
+      background:var(--danger2);
+      color:#6A1E22;
+      font-size:12px;
+      line-height:1.4;
+    }
+    .list{display:flex; flex-direction:column; gap:10px; margin-top:10px}
+    .item{
+      border:1px solid rgba(27,31,42,.10);
+      background:#fff;
+      border-radius:16px;
+      padding:12px;
+      display:flex; gap:10px; align-items:flex-start; justify-content:space-between;
+    }
+    .item .t{margin:0; font-weight:900; font-size:13px}
+    .item .d{margin:6px 0 0; font-size:12px; color:var(--muted); white-space:pre-wrap; line-height:1.35}
+    .item .meta{margin-top:8px; font-size:11px; color:rgba(91,100,119,.95)}
+    .ops{display:flex; gap:8px; flex:0 0 auto}
+    .iconbtn{
+      width:44px; height:44px;
+      border-radius:14px;
+      border:var(--border);
+      background:rgba(246,247,251,.75);
+      cursor:pointer;
+      display:grid; place-items:center;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .iconbtn svg{width:18px;height:18px;fill:var(--muted)}
+    .iconbtn.danger svg{fill:var(--danger)}
+    .iconbtn.good svg{fill:var(--accent)}
+
+    @media (max-width:820px){ .hero{grid-template-columns:1fr} }
+    @media (max-width:520px){
+      .row{grid-template-columns:1fr}
+      .quick-actions{grid-template-columns:1fr}
+      .wrap{padding-bottom:118px}
+    }
+    @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+  </style>
+</head>
+
+<body class="safe">
+  <div class="wrap" id="app">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 .001 20.001A10 10 0 0 0 12 2Zm0 2a8 8 0 1 1 0 16a8 8 0 0 1 0-16Zm4.6 4.8l-3.7 1.5a1 1 0 0 0-.6.6l-1.5 3.7a1 1 0 0 0 1.3 1.3l3.7-1.5a1 1 0 0 0 .6-.6l1.5-3.7a1 1 0 0 0-1.3-1.3Zm-4 3.2l1.9-.8-.8 1.9-1.9.8.8-1.9Z"/></svg>
+        </div>
+        <div class="titlebox">
+          <h1 class="app-title">Volver al Centro</h1>
+          <p class="subtitle">Regulación • límites • autonomía frente al trabajo</p>
+        </div>
+      </div>
+
+      <div class="pillrow">
+        <div class="pill">
+          <svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5Zm-3 8V6a3 3 0 0 1 6 0v3H9Z"/></svg>
+          <span>Privado</span>
+        </div>
+        <div class="pill" id="pillStreak">
+          <svg viewBox="0 0 24 24"><path d="M7 2h2v2h6V2h2v2h3a2 2 0 0 1 2 2v4H0V6a2 2 0 0 1 2-2h3V2Zm-7 10h24v10a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V12Zm5 2v2h4v-2H5Zm0 4v2h6v-2H5Z"/></svg>
+          <span id="streakTxt">0 días</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="card hero-left">
+        <h2>Hoy: volver a ti, sin romperte por rendir.</h2>
+        <p>Mini app de apoyo psicoeducativo para detectar enganche al trabajo y entrenar micro-pausas, límites y reencuadre.</p>
+
+        <!-- IMPORTANT: usamos data-action (no IDs) para que nunca “se pierdan” listeners -->
+        <div class="quick-actions">
+          <button class="btn" data-action="open:checkin">
+            <svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>
+            Check-in (2 min)
+          </button>
+
+          <button class="btn ghost" data-action="open:pause">
+            <svg viewBox="0 0 24 24"><path d="M12 22a9 9 0 1 1 0-18 9 9 0 0 1 0 18Zm1-9V7h-2v8h7v-2h-5Z"/></svg>
+            Pausa guiada
+          </button>
+
+          <button class="btn secondary" data-action="open:boundaries">
+            <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3Zm10 0h8v8h-8V3ZM3 13h8v8H3v-8Zm10 2h8v2h-8v-2Zm0 4h8v2h-8v-2Z"/></svg>
+            Límite de hoy
+          </button>
+
+          <button class="btn secondary" data-action="open:reframe">
+            <svg viewBox="0 0 24 24"><path d="M9 22h6v-2H9v2ZM12 2a7 7 0 0 0-4 12.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3A7 7 0 0 0 12 2Zm3 11.5-.9.6V17h-4v-2.9l-.9-.6A5 5 0 1 1 15 13.5Z"/></svg>
+            Reencuadre
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="card">
+          <div class="meter">
+            <div class="label">
+              <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-7.1 17.1l1.4-1.4A8 8 0 1 1 20 12h2A10 10 0 0 0 12 2Z"/></svg>
+              <div style="min-width:0;">
+                <h3>Balance de hoy</h3>
+                <div class="sub" id="balanceHint">Se calcula con tu check-in diario.</div>
+              </div>
+            </div>
+            <div class="badge" id="badgeBalance">—</div>
+          </div>
+          <div class="bar"><div id="barFill"></div></div>
+          <div class="smallnote" id="balanceNote">Tip: lo importante no es “hacer más”, sino <strong>hacer con límites</strong>.</div>
+        </div>
+
+        <div class="card">
+          <div class="meter" style="margin-bottom:10px;">
+            <div class="label">
+              <svg viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm1-15h-2v6h6v-2h-4V7Z"/></svg>
+              <div style="min-width:0;">
+                <h3>Micro-pausas</h3>
+                <div class="sub" id="breakTxt">0 hoy • 0 esta semana</div>
+              </div>
+            </div>
+            <div class="badge" id="badgeBreaks">0</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn small" data-action="timer:reset230">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              2:30 Reset
+            </button>
+            <button class="btn small secondary" data-action="timer:breath100">
+              <svg viewBox="0 0 24 24"><path d="M12 22a10 10 0 1 1 0-20 10 10 0 0 1 0 20Zm1-15h-2v6h6v-2h-4V7Z"/></svg>
+              1:00 Respiración
+            </button>
+          </div>
+
+          <div class="help" id="timerHelp">Haz una pausa breve cuando notes urgencia, culpa o “tengo que…”</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IMPORTANT: tiles con data-open + event delegation -->
+    <section class="grid" id="modules">
+      <div class="tile" data-open="checkin">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg></div>
+        <div><h4>Check-in diario (2 min)</h4><p>Señales de burnout + micro-plan realista.</p></div>
+      </div>
+
+      <div class="tile" data-open="triggers">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 9L2 6v11l10 5 10-5V6l-10 5Z"/></svg></div>
+        <div><h4>Mapa de enganche</h4><p>Detonantes: culpa, perfeccionismo, miedo a fallar…</p></div>
+      </div>
+
+      <div class="tile" data-open="boundaries">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4Zm0 7h10v2H4v-2Zm0 7h16v2H4v-2Zm12-7h4v9h-4v-9Z"/></svg></div>
+        <div><h4>Límites y acuerdos</h4><p>Define “hasta aquí”, scripts breves y cierre mental.</p></div>
+      </div>
+
+      <div class="tile" data-open="reframe">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg></div>
+        <div><h4>Reencuadre (ABC)</h4><p>Transforma hiper-responsabilidad en alternativas funcionales.</p></div>
+      </div>
+
+      <div class="tile" data-open="values">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 2 1 7l11 5 9-4.1V17h2V7L12 2Zm-7 9.7V17l7 3.2 7-3.2v-5.3l-7 3.2-7-3.2Z"/></svg></div>
+        <div><h4>Brújula de valores</h4><p>Identidad fuera del rol: salud, vínculo y descanso.</p></div>
+      </div>
+
+      <div class="tile" data-open="plan">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 18H5V9h14v12ZM7 11h5v2H7v-2Zm0 4h10v2H7v-2Z"/></svg></div>
+        <div><h4>Plan anti-burnout</h4><p>Esenciales, pausa, cierre y recuperación.</p></div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div style="margin-top:14px;"><strong>Nota clínica:</strong> herramienta de apoyo psicoeducativo. No reemplaza evaluación ni tratamiento profesional.</div>
+      <div style="margin-top:8px;"><strong>Autoría:</strong> Todas las mini aplicaciones fueron desarrolladas por <strong>Lic. Gonzalo Buendía – Psicólogo</strong>, como herramientas psicoeducativas digitales de apoyo clínico, <strong>y Blanquita – Co terapeuta</strong>.</div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" role="dialog" aria-modal="true">
+    <div class="sheet" role="document">
+      <div class="sheet-head">
+        <div class="sheet-title">
+          <div class="chip" id="chip"></div>
+          <div style="min-width:0;">
+            <h3 id="sheetTitle">Panel</h3>
+            <p id="sheetSub">—</p>
+          </div>
+        </div>
+        <button class="close" id="btnClose" aria-label="Cerrar">
+          <svg viewBox="0 0 24 24"><path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3 1.4 1.4Z"/></svg>
+        </button>
+      </div>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav">
+    <div class="nav-inner">
+      <button class="navbtn active" data-nav="home">
+        <svg viewBox="0 0 24 24"><path d="M12 3 2 10h3v10h6v-6h2v6h6V10h3L12 3Z"/></svg>
+        Inicio
+      </button>
+      <button class="navbtn" data-nav="modules">
+        <svg viewBox="0 0 24 24"><path d="M3 3h8v8H3V3Zm10 0h8v8h-8V3ZM3 13h8v8H3v-8Zm10 0h8v8h-8v-8Z"/></svg>
+        Módulos
+      </button>
+      <button class="navbtn" data-nav="progress">
+        <svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg>
+        Progreso
+      </button>
+      <button class="navbtn" data-nav="settings">
+        <svg viewBox="0 0 24 24"><path d="M19.4 13a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 2h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5L6.6 12a7.7 7.7 0 0 0 .1 1L4.7 14.5l2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5L19.4 13ZM13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>
+        Ajustes
+      </button>
+    </div>
+  </div>
+
+  <script>
+    'use strict';
+
+    /* ========= UTIL ========= */
+    const STORAGE_KEY = 'volver_al_centro_v3';
+
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+    function todayISO(){ return new Date().toISOString().slice(0,10); }
+    function uid(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+    function clamp(n,a,b){ return Math.max(a, Math.min(b,n)); }
+    function esc(str){
+      return String(str ?? '')
+        .replaceAll('&','&amp;')
+        .replaceAll('<','&lt;')
+        .replaceAll('>','&gt;')
+        .replaceAll('"','&quot;')
+        .replaceAll("'","&#039;");
+    }
+    function fmtDateTime(iso){
+      if(!iso) return '—';
+      const d = new Date(iso);
+      const y=d.getFullYear();
+      const m=String(d.getMonth()+1).padStart(2,'0');
+      const da=String(d.getDate()).padStart(2,'0');
+      const hh=String(d.getHours()).padStart(2,'0');
+      const mm=String(d.getMinutes()).padStart(2,'0');
+      return `${y}-${m}-${da} ${hh}:${mm}`;
+    }
+    function lastNDaysSet(n){
+      const s = new Set();
+      const d = new Date();
+      for(let i=0;i<n;i++){
+        const x = new Date(d);
+        x.setDate(d.getDate()-i);
+        s.add(x.toISOString().slice(0,10));
+      }
+      return s;
+    }
+
+    function defaultState(){
+      return {
+        createdAt: new Date().toISOString(),
+        checkins: [],
+        triggers: [],
+        boundaries: [],
+        reframes: [],
+        values: { why:'', notWork:'', protect:'' },
+        plan: { essentials:'', stopRule:'', recovery:'', note:'' },
+        breaks: []
+      };
+    }
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        return Object.assign(defaultState(), parsed);
+      }catch{ return defaultState(); }
+    }
+    let state = load();
+    function save(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      refreshDashboard();
+    }
+
+    /* ========= ICONS ========= */
+    const ICONS = {
+      check:`<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`,
+      map:`<svg viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5Zm0 9L2 6v11l10 5 10-5V6l-10 5Z"/></svg>`,
+      bound:`<svg viewBox="0 0 24 24"><path d="M4 4h16v2H4V4Zm0 7h10v2H4v-2Zm0 7h16v2H4v-2Zm12-7h4v9h-4v-9Z"/></svg>`,
+      reframe:`<svg viewBox="0 0 24 24"><path d="M7 6h10v2H7V6Zm-2 4h14v2H5v-2Zm2 4h10v2H7v-2Zm-2 4h14v2H5v-2Z"/></svg>`,
+      values:`<svg viewBox="0 0 24 24"><path d="M12 2 1 7l11 5 9-4.1V17h2V7L12 2Zm-7 9.7V17l7 3.2 7-3.2v-5.3l-7 3.2-7-3.2Z"/></svg>`,
+      plan:`<svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm0 18H5V9h14v12ZM7 11h5v2H7v-2Zm0 4h10v2H7v-2Z"/></svg>`,
+      pause:`<svg viewBox="0 0 24 24"><path d="M12 22a9 9 0 1 1 0-18 9 9 0 0 1 0 18Zm1-9V7h-2v8h7v-2h-5Z"/></svg>`
+    };
+
+    /* ========= TOAST ========= */
+    let toastTimer=null;
+    function toast(msg){
+      let t = document.getElementById('toast');
+      if(!t){
+        t = document.createElement('div');
+        t.id='toast';
+        Object.assign(t.style,{
+          position:'fixed',left:'50%',bottom:'92px',transform:'translateX(-50%)',
+          background:'rgba(27,31,42,.92)',color:'#fff',padding:'10px 12px',
+          borderRadius:'14px',fontSize:'12px',fontWeight:'900',
+          letterSpacing:'.2px',boxShadow:'0 18px 40px rgba(0,0,0,.25)',
+          zIndex:'120',maxWidth:'90vw',textAlign:'center',opacity:'0',
+          transition:'opacity .15s ease'
+        });
+        document.body.appendChild(t);
+      }
+      t.textContent = msg;
+      t.style.opacity='1';
+      clearTimeout(toastTimer);
+      toastTimer=setTimeout(()=>{t.style.opacity='0';},1800);
+    }
+
+    /* ========= MODAL ========= */
+    const modal = $('#modal');
+    const sheetBody = $('#sheetBody');
+    const sheetTitle = $('#sheetTitle');
+    const sheetSub = $('#sheetSub');
+    const chip = $('#chip');
+
+    function openModal(title, sub, iconSVG, renderFn){
+      sheetTitle.textContent = title;
+      sheetSub.textContent = sub || '';
+      chip.innerHTML = iconSVG || '';
+      sheetBody.innerHTML = '';
+      renderFn(sheetBody);              // ✅ render dentro del modal
+      modal.classList.add('show');
+      document.body.style.overflow='hidden';
+    }
+    function closeModal(){
+      modal.classList.remove('show');
+      document.body.style.overflow='';
+      sheetBody.innerHTML='';
+    }
+    $('#btnClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.classList.contains('show')) closeModal(); });
+
+    /* ========= HELPERS LIST ========= */
+    function emptyBox(text){
+      const d = document.createElement('div');
+      d.className='notice';
+      d.textContent=text;
+      return d;
+    }
+    function itemCard(title, body, meta, actions){
+      const card = document.createElement('div');
+      card.className='item';
+      card.innerHTML = `
+        <div style="min-width:0;">
+          <p class="t">${esc(title)}</p>
+          <div class="d">${esc(body)}</div>
+          <div class="meta">${esc(meta || '')}</div>
+        </div>
+        <div class="ops"></div>
+      `;
+      const ops = $('.ops', card);
+      (actions || []).forEach(a=>{
+        const b = document.createElement('button');
+        b.className = 'iconbtn ' + (a.kind==='danger'?'danger':a.kind==='good'?'good':'');
+        b.title=a.label;
+        b.innerHTML = a.kind==='danger'
+          ? `<svg viewBox="0 0 24 24"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg>`
+          : `<svg viewBox="0 0 24 24"><path d="M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg>`;
+        b.addEventListener('click', a.onClick);
+        ops.appendChild(b);
+      });
+      return card;
+    }
+
+    /* ========= SCORE ========= */
+    function computeScore({burn, attach, sleep, mood}){
+      const sleepScore = clamp((sleep/8)*100, 0, 100);
+      const moodScore  = clamp((mood/10)*100, 0, 100);
+      const burnPenalty = clamp((burn/10)*100, 0, 100);
+      const attachPenalty = clamp((attach/10)*100, 0, 100);
+
+      let value = 0.35*sleepScore + 0.25*moodScore + 0.20*(100-burnPenalty) + 0.20*(100-attachPenalty);
+      value = Math.round(clamp(value, 0, 100));
+
+      let label='En recuperación';
+      if(value>=75) label='Sostenible';
+      else if(value>=55) label='Cuidado activo';
+      else if(value>=35) label='Alerta: regular';
+      else label='Alto riesgo: simplificar';
+
+      return { value, label };
+    }
+    function getCheckin(date){ return state.checkins.find(c=>c.date===date) || null; }
+    function upsertCheckin(ci){
+      const i = state.checkins.findIndex(c=>c.date===ci.date);
+      if(i>=0) state.checkins[i]=ci; else state.checkins.push(ci);
+    }
+
+    /* ========= PANELS (LOS 3 QUE TE FALLAN + LOS DEMÁS) ========= */
+    function panelCheckin(){
+      const last = getCheckin(todayISO());
+      openModal('Check-in diario','2 minutos para medir carga y definir un micro-plan.', ICONS.check, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.check} Señales de hoy</h4>
+            <div class="row">
+              <div>
+                <label>Agotamiento (0–10)</label>
+                <input id="ciBurn" type="number" min="0" max="10" inputmode="numeric" value="${last?.burn ?? ''}">
+              </div>
+              <div>
+                <label>Apego al trabajo (0–10)</label>
+                <input id="ciAttach" type="number" min="0" max="10" inputmode="numeric" value="${last?.attach ?? ''}">
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <label>Sueño (horas)</label>
+                <input id="ciSleep" type="number" min="0" max="14" step="0.5" inputmode="decimal" value="${last?.sleep ?? ''}">
+              </div>
+              <div>
+                <label>Estado emocional (0–10)</label>
+                <input id="ciMood" type="number" min="0" max="10" inputmode="numeric" value="${last?.mood ?? ''}">
+              </div>
+            </div>
+
+            <label>Detonante principal hoy</label>
+            <textarea id="ciNote">${esc(last?.note ?? '')}</textarea>
+
+            <label>Micro-plan (3 acciones realistas)</label>
+            <textarea id="ciPlan" placeholder="1)\n2)\n3)">${esc(last?.microplan ?? '')}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="ci:save">Guardar</button>
+              <button class="btn small secondary" data-action="ci:suggest">Sugerencia</button>
+            </div>
+
+            <div class="notice" style="margin-top:10px;">
+              <strong>Regla:</strong> si el agotamiento está alto, hoy NO se compensa: hoy se regula y se cierra.
+            </div>
+          </div>
+        `;
+
+        // Delegación dentro del modal (root)
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='ci:suggest'){
+            const note = $('#ciNote', root);
+            const plan = $('#ciPlan', root);
+            if(!note.value.trim()) note.value='Detonantes: urgencia, culpa (“si no estoy, colapsa”), perfeccionismo.';
+            if(!plan.value.trim()) plan.value =
+              '1) Definir 3 tareas esenciales (no más).\n' +
+              '2) Pausa breve cuando aparezca urgencia/culpa.\n' +
+              '3) Cierre mental: “hice lo suficiente por hoy”.';
+            toast('Sugerencia aplicada.');
+          }
+
+          if(act==='ci:save'){
+            const burn = Number($('#ciBurn', root).value);
+            const attach = Number($('#ciAttach', root).value);
+            const sleep = Number($('#ciSleep', root).value);
+            const mood = Number($('#ciMood', root).value);
+
+            const okNums = [burn,attach,sleep,mood].every(v=>Number.isFinite(v));
+            if(!okNums){ toast('Completa valores numéricos.'); return; }
+            if(burn<0||burn>10||attach<0||attach>10||sleep<0||sleep>14||mood<0||mood>10){
+              toast('Revisa rangos (0–10 y horas).'); return;
+            }
+
+            const note = $('#ciNote', root).value.trim();
+            const microplan = $('#ciPlan', root).value.trim();
+            const score = computeScore({burn,attach,sleep,mood});
+            upsertCheckin({date:todayISO(), burn, attach, sleep, mood, note, microplan, score});
+            save(); toast('Check-in guardado ✅'); closeModal();
+          }
+        }, { once:false });
+      });
+    }
+
+    // ✅ MAPA DE ENGANCHE (TRIGGERS) - TOTALMENTE FUNCIONAL
+    function panelTriggers(){
+      openModal('Mapa de enganche','Detecta detonantes que activan sobre-esfuerzo y culpa.', ICONS.map, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.map} Registrar detonante</h4>
+            <label>Título breve</label>
+            <input id="tgTitle" type="text" placeholder="Ej. Culpa al descansar">
+            <label>¿Qué lo dispara y qué haces después?</label>
+            <textarea id="tgDetail" placeholder="Situación → pensamiento → conducta..."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="tg:add">Guardar</button>
+              <button class="btn small secondary" data-action="tg:seed">Cargar ejemplos</button>
+            </div>
+            <div class="help">Tip: nombrar el detonante reduce su poder.</div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.map} Lista</h4>
+            <div class="list" id="tgList"></div>
+          </div>
+        `;
+
+        const list = $('#tgList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.triggers.length===0){
+            list.appendChild(emptyBox('Aún no hay detonantes.'));
+            return;
+          }
+          state.triggers
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(t=>{
+              list.appendChild(itemCard(
+                t.title,
+                t.detail,
+                `Registrado: ${fmtDateTime(t.createdAt)}`,
+                [
+                  {label:'Eliminar', kind:'danger', onClick:()=>{
+                    state.triggers = state.triggers.filter(x=>x.id!==t.id);
+                    save(); render(); toast('Eliminado.');
+                  }}
+                ]
+              ));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='tg:add'){
+            const title = $('#tgTitle', root).value.trim();
+            const detail = $('#tgDetail', root).value.trim();
+            if(!title || !detail){ toast('Completa título y descripción.'); return; }
+            state.triggers.push({id:uid(), title, detail, createdAt:new Date().toISOString()});
+            $('#tgTitle', root).value=''; $('#tgDetail', root).value='';
+            save(); render(); toast('Detonante guardado ✅');
+          }
+
+          if(act==='tg:seed'){
+            const seeds = [
+              {title:'Culpa al descansar', detail:'Pausa → culpa (“debería avanzar”) → vuelvo a tareas/correo.'},
+              {title:'Miedo a fallar / ser evaluada', detail:'Plazo/feedback → “si no es perfecto, pierdo valor” → sobre-esfuerzo.'},
+              {title:'Responsabilidad total', detail:'Problema → “si yo no lo resuelvo, nadie” → no delego, me quedo tarde.'},
+              {title:'Urgencia artificial', detail:'Mensajes fuera de horario → “debo responder ya” → rompo límites.'},
+            ];
+            const existing = new Set(state.triggers.map(x=>(x.title||'').toLowerCase()));
+            seeds.forEach(s=>{
+              if(!existing.has(s.title.toLowerCase())){
+                state.triggers.push({id:uid(), title:s.title, detail:s.detail, createdAt:new Date().toISOString()});
+              }
+            });
+            save(); render(); toast('Ejemplos cargados.');
+          }
+        });
+
+        render();
+      });
+    }
+
+    // ✅ LÍMITES Y ACUERDOS - TOTALMENTE FUNCIONAL
+    function panelBoundaries(){
+      openModal('Límites y acuerdos','Define “hasta aquí” y scripts breves (sin sobre-explicar).', ICONS.bound, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.bound} Crear límite</h4>
+            <label>Nombre del límite</label>
+            <input id="bdTitle" type="text" placeholder="Ej. No responder después de 19:30">
+            <div class="row">
+              <div>
+                <label>¿Cuándo aplica?</label>
+                <input id="bdWhen" type="text" placeholder="Ej. L-V después de 19:30">
+              </div>
+              <div>
+                <label>Tipo</label>
+                <select id="bdType">
+                  <option value="personal">Personal</option>
+                  <option value="equipo">Equipo</option>
+                  <option value="jefatura">Jefatura</option>
+                </select>
+              </div>
+            </div>
+            <label>Script breve (respuesta lista)</label>
+            <textarea id="bdScript" placeholder="Ej. Estoy fuera de horario. Lo reviso mañana a primera hora."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="bd:add">Guardar</button>
+              <button class="btn small secondary" data-action="bd:seed">Cargar modelos</button>
+            </div>
+            <div class="notice" style="margin-top:10px;"><strong>Regla:</strong> claro + breve + alternativa.</div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.bound} Mis límites</h4>
+            <div class="list" id="bdList"></div>
+          </div>
+        `;
+
+        const list = $('#bdList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.boundaries.length===0){
+            list.appendChild(emptyBox('Aún no hay límites.'));
+            return;
+          }
+          const tdy = todayISO();
+          state.boundaries
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(bd=>{
+              const doneToday = (bd.doneDates||[]).includes(tdy);
+              list.appendChild(itemCard(
+                bd.title,
+                `Cuándo: ${bd.when || '—'}\n\nScript:\n${bd.script || ''}`,
+                `Tipo: ${bd.type || '—'} • ${doneToday ? 'Aplicado hoy ✅' : 'No aplicado hoy'}`,
+                [
+                  {label: doneToday ? 'Desmarcar' : 'Marcar aplicado', kind:'good', onClick:()=>{
+                    bd.doneDates = bd.doneDates || [];
+                    if(doneToday) bd.doneDates = bd.doneDates.filter(d=>d!==tdy);
+                    else bd.doneDates.push(tdy);
+                    save(); render(); toast(doneToday?'Desmarcado.':'Aplicado ✅');
+                  }},
+                  {label:'Eliminar', kind:'danger', onClick:()=>{
+                    state.boundaries = state.boundaries.filter(x=>x.id!==bd.id);
+                    save(); render(); toast('Eliminado.');
+                  }}
+                ]
+              ));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='bd:add'){
+            const title = $('#bdTitle', root).value.trim();
+            const when = $('#bdWhen', root).value.trim();
+            const type = $('#bdType', root).value;
+            const script = $('#bdScript', root).value.trim();
+            if(!title || !script){ toast('Completa nombre y script.'); return; }
+            state.boundaries.push({id:uid(), title, when, type, script, createdAt:new Date().toISOString(), doneDates:[]});
+            $('#bdTitle', root).value=''; $('#bdWhen', root).value=''; $('#bdScript', root).value='';
+            save(); render(); toast('Límite guardado ✅');
+          }
+
+          if(act==='bd:seed'){
+            const seeds = [
+              {title:'Mensajes fuera de horario', when:'Después de mi hora de cierre', type:'equipo', script:'Gracias. Estoy fuera de horario. Lo reviso mañana a primera hora.'},
+              {title:'Cierre mental diario', when:'Al terminar la jornada', type:'personal', script:'Por hoy cierro. Retomo mañana con mente fresca. Ahora priorizo recuperación.'},
+              {title:'Perfeccionismo funcional', when:'Cuando aparece “debe ser perfecto”', type:'personal', script:'Haré una versión suficiente y clara. Mejoro mañana; hoy cierro.'},
+              {title:'Negociar alcance', when:'Cuando aparece una nueva tarea', type:'jefatura', script:'Puedo A hoy. B lo hago mañana o lo delego para cuidar calidad y plazos.'},
+            ];
+            const existing = new Set(state.boundaries.map(x=>(x.title||'').toLowerCase()));
+            seeds.forEach(s=>{
+              if(!existing.has(s.title.toLowerCase())){
+                state.boundaries.push({id:uid(), title:s.title, when:s.when, type:s.type, script:s.script, createdAt:new Date().toISOString(), doneDates:[]});
+              }
+            });
+            save(); render(); toast('Modelos cargados.');
+          }
+        });
+
+        render();
+      });
+    }
+
+    // ✅ REENCUADRE ABC - TOTALMENTE FUNCIONAL
+    function panelReframe(){
+      openModal('Reencuadre (ABC)','De “me rompo para sostener” a “me sostengo para rendir”.', ICONS.reframe, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.reframe} Registrar ABC</h4>
+            <label>A (Evento activador)</label>
+            <textarea id="abA" placeholder="Ej. Mensaje urgente fuera de horario."></textarea>
+            <label>B (Pensamiento / creencia)</label>
+            <textarea id="abB" placeholder="Ej. 'Si no respondo ya, pierdo valor.'"></textarea>
+            <label>C (Consecuencia emocional y conductual)</label>
+            <textarea id="abC" placeholder="Ej. Ansiedad + me quedo conectada + no descanso."></textarea>
+            <label>Alternativa funcional (nuevo B)</label>
+            <textarea id="abAlt" placeholder="Ej. 'Ser responsable dentro de límites me protege.'"></textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="ab:add">Guardar</button>
+              <button class="btn small secondary" data-action="ab:seed">Cargar ejemplos</button>
+            </div>
+            <div class="help"><strong>Tip:</strong> que sea creíble y conductual (qué haré distinto).</div>
+          </div>
+
+          <div class="section">
+            <h4>${ICONS.reframe} Mis reencuadres</h4>
+            <div class="list" id="abList"></div>
+          </div>
+        `;
+
+        const list = $('#abList', root);
+
+        const render = ()=>{
+          list.innerHTML='';
+          if(state.reframes.length===0){
+            list.appendChild(emptyBox('Aún no hay reencuadres.'));
+            return;
+          }
+          state.reframes
+            .slice()
+            .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||''))
+            .forEach(r=>{
+              const body = `A: ${r.a}\n\nB: ${r.b}\n\nC: ${r.c}\n\nAlternativa: ${r.alt}`;
+              list.appendChild(itemCard('Reencuadre', body, `Registrado: ${fmtDateTime(r.createdAt)}`, [
+                {label:'Eliminar', kind:'danger', onClick:()=>{
+                  state.reframes = state.reframes.filter(x=>x.id!==r.id);
+                  save(); render(); toast('Eliminado.');
+                }}
+              ]));
+            });
+        };
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]');
+          if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='ab:add'){
+            const a = $('#abA', root).value.trim();
+            const b = $('#abB', root).value.trim();
+            const c = $('#abC', root).value.trim();
+            const alt = $('#abAlt', root).value.trim();
+            if(!a || !b || !c || !alt){ toast('Completa A, B, C y Alternativa.'); return; }
+            state.reframes.push({id:uid(), a, b, c, alt, createdAt:new Date().toISOString()});
+            $('#abA', root).value=''; $('#abB', root).value=''; $('#abC', root).value=''; $('#abAlt', root).value='';
+            save(); render(); toast('Guardado ✅');
+          }
+
+          if(act==='ab:seed'){
+            const seeds = [
+              {
+                a:'Mensaje urgente a las 10 pm.',
+                b:'“Si no respondo ya, soy irresponsable.”',
+                c:'Ansiedad, respondo, me quedo conectada, no descanso.',
+                alt:'“Responsabilidad con límites. Respondo mañana temprano. Hoy cierro.”'
+              },
+              {
+                a:'Error mínimo en un informe.',
+                b:'“Si no es perfecto, pierdo valor.”',
+                c:'Auto-crítica, hiper-corrección, horas extra.',
+                alt:'“Valor ≠ perfección. Corregiré lo suficiente y priorizaré recuperación.”'
+              }
+            ];
+            seeds.forEach(s=>{
+              state.reframes.push({id:uid(), a:s.a, b:s.b, c:s.c, alt:s.alt, createdAt:new Date().toISOString()});
+            });
+            save(); render(); toast('Ejemplos cargados.');
+          }
+        });
+
+        render();
+      });
+    }
+
+    function panelValues(){
+      openModal('Brújula de valores','Identidad fuera del rol: salud, vínculo y descanso.', ICONS.values, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.values} Completar</h4>
+            <label>¿Para qué trabajo? (propósito)</label>
+            <textarea id="vWhy">${esc(state.values.why)}</textarea>
+            <label>¿Quién soy fuera del trabajo? (identidad)</label>
+            <textarea id="vNot">${esc(state.values.notWork)}</textarea>
+            <label>¿Qué debo proteger sí o sí? (línea roja)</label>
+            <textarea id="vProt">${esc(state.values.protect)}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="v:save">Guardar</button>
+              <button class="btn small secondary" data-action="v:seed">Sugerencia</button>
+            </div>
+            <div class="notice" style="margin-top:10px;">El trabajo es un rol. Tu valor no depende de estar disponible 24/7.</div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='v:seed'){
+            if(!$('#vWhy', root).value.trim()) $('#vWhy', root).value='Aportar con calidad sin sacrificar salud.';
+            if(!$('#vNot', root).value.trim()) $('#vNot', root).value='Soy una persona con vínculos, cuerpo y derecho a descanso.';
+            if(!$('#vProt', root).value.trim()) $('#vProt', root).value='Sueño, comida, pausas, cierre mental diario.';
+            toast('Sugerencia aplicada.');
+          }
+          if(act==='v:save'){
+            state.values.why = $('#vWhy', root).value.trim();
+            state.values.notWork = $('#vNot', root).value.trim();
+            state.values.protect = $('#vProt', root).value.trim();
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    function panelPlan(){
+      openModal('Plan anti-burnout','Esenciales + pausa + cierre + recuperación.', ICONS.plan, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.plan} Plantilla diaria</h4>
+            <label>3 tareas esenciales</label>
+            <textarea id="pEss">${esc(state.plan.essentials)}</textarea>
+            <label>Regla de cierre (stop rule)</label>
+            <textarea id="pStop">${esc(state.plan.stopRule)}</textarea>
+            <label>Recuperación no negociable</label>
+            <textarea id="pRec">${esc(state.plan.recovery)}</textarea>
+            <label>Nota</label>
+            <textarea id="pNote">${esc(state.plan.note)}</textarea>
+
+            <div class="actions">
+              <button class="btn small" data-action="p:save">Guardar</button>
+              <button class="btn small secondary" data-action="p:seed">Sugerencia</button>
+            </div>
+
+            <div class="dangerBox" style="margin-top:10px;">Si hay burnout: simplifica a <strong>esenciales + pausas + cierre</strong>.</div>
+          </div>
+        `;
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+          if(act==='p:seed'){
+            if(!$('#pEss', root).value.trim()) $('#pEss', root).value='1) Tarea crítica 1\n2) Tarea crítica 2\n3) Cierre/orden';
+            if(!$('#pStop', root).value.trim()) $('#pStop', root).value='Cierro a una hora definida. Mensajes fuera de horario se ven mañana.';
+            if(!$('#pRec', root).value.trim()) $('#pRec', root).value='Pausa + alimentación + desconexión + sueño.';
+            if(!$('#pNote', root).value.trim()) $('#pNote', root).value='Hoy elijo cuidarme. Mi valor no se mide por disponibilidad.';
+            toast('Sugerencia aplicada.');
+          }
+          if(act==='p:save'){
+            state.plan.essentials = $('#pEss', root).value.trim();
+            state.plan.stopRule = $('#pStop', root).value.trim();
+            state.plan.recovery = $('#pRec', root).value.trim();
+            state.plan.note = $('#pNote', root).value.trim();
+            save(); toast('Guardado ✅'); closeModal();
+          }
+        });
+      });
+    }
+
+    /* ========= PAUSAS ========= */
+    let microTimer=null; let remaining=0;
+    function fmtTime(s){ const m=Math.floor(s/60); const r=s%60; return `${m}:${String(r).padStart(2,'0')}`; }
+    function startTimer(seconds, type){
+      if(microTimer) clearInterval(microTimer);
+      remaining = seconds;
+
+      state.breaks.push({dateTime:new Date().toISOString(), type, seconds});
+      save();
+
+      $('#timerHelp').textContent = `Pausa en curso: ${fmtTime(remaining)} • ${type}`;
+      microTimer = setInterval(()=>{
+        remaining--;
+        if(remaining<=0){
+          clearInterval(microTimer); microTimer=null;
+          $('#timerHelp').textContent='Pausa completada ✅ Vuelve con un paso pequeño, no con urgencia.';
+          toast('Pausa completada ✅');
+          return;
+        }
+        $('#timerHelp').textContent = `Pausa en curso: ${fmtTime(remaining)} • ${type}`;
+      }, 1000);
+    }
+
+    function panelPause(){
+      openModal('Pausa guiada','1 minuto para cortar urgencia y volver al cuerpo.', ICONS.pause, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4>${ICONS.pause} Reset (60s)</h4>
+            <div class="notice"><strong>Instrucción:</strong> suelta hombros. Exhala más largo que inhalas.</div>
+            <div class="help" id="pauseText" style="margin-top:10px;">Pulsa “Iniciar” (4s inhalar • 6s exhalar).</div>
+            <div class="actions" style="margin-top:10px;">
+              <button class="btn small" data-action="pause:start">Iniciar 60s</button>
+              <button class="btn small secondary" data-action="pause:stop">Detener</button>
+            </div>
+          </div>
+        `;
+        const pauseText = $('#pauseText', root);
+        let t=null; let secs=0;
+
+        function stop(){
+          if(t) clearInterval(t);
+          t=null;
+          pauseText.textContent='Pulsa “Iniciar” (4s inhalar • 6s exhalar).';
+        }
+
+        root.addEventListener('click', (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+
+          if(act==='pause:start'){
+            if(t) return;
+            secs=60;
+            state.breaks.push({dateTime:new Date().toISOString(), type:'respiración', seconds:60});
+            save();
+
+            pauseText.textContent='Quedan 60s • Inhala 4s…';
+            t=setInterval(()=>{
+              secs--;
+              if(secs<=0){ stop(); toast('Pausa completada ✅'); return; }
+              const elapsed = 60 - secs;
+              const cycle = elapsed % 10;
+              const phase = (cycle < 4) ? 'Inhala 4s…' : 'Exhala 6s…';
+              pauseText.textContent = `Quedan ${secs}s • ${phase}`;
+            }, 1000);
+          }
+
+          if(act==='pause:stop'){
+            stop(); toast('Pausa detenida.');
+          }
+        });
+      });
+    }
+
+    /* ========= PROGRESS / SETTINGS (mínimo funcional) ========= */
+    function panelProgress(){
+      openModal('Progreso','Resumen semanal de check-ins, pausas y límites.', `<svg viewBox="0 0 24 24"><path d="M4 19h16v2H4v-2Zm2-2V9h3v8H6Zm5 0V5h3v12h-3Zm5 0v-6h3v6h-3Z"/></svg>`, (root)=>{
+        const tdy=todayISO();
+        const week=lastNDaysSet(7);
+        const breaksToday=state.breaks.filter(b=>(b.dateTime||'').slice(0,10)===tdy).length;
+        const breaksWeek=state.breaks.filter(b=>week.has((b.dateTime||'').slice(0,10))).length;
+        const checkinsWeek=state.checkins.filter(c=>week.has(c.date)).length;
+        const limitsWeek=state.boundaries.reduce((acc,bd)=>acc+(bd.doneDates||[]).filter(d=>week.has(d)).length,0);
+
+        root.innerHTML = `
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M19 7H5v2h14V7Zm0 4H5v2h14v-2Zm0 4H5v2h10v-2Z"/></svg> Semana</h4>
+            <div class="row">
+              <div><label>Check-ins</label><input value="${checkinsWeek}/7" readonly></div>
+              <div><label>Micro-pausas</label><input value="${breaksWeek}" readonly></div>
+            </div>
+            <div class="row">
+              <div><label>Pausas hoy</label><input value="${breaksToday}" readonly></div>
+              <div><label>Límites aplicados</label><input value="${limitsWeek}" readonly></div>
+            </div>
+          </div>
+        `;
+      });
+    }
+    function panelSettings(){
+      openModal('Ajustes','Exportar/Importar y reiniciar.', `<svg viewBox="0 0 24 24"><path d="M19.4 13a7.7 7.7 0 0 0 .1-1l2-1.5-2-3.5-2.4 1a8 8 0 0 0-1.7-1L15 2h-4l-.4 2.9a8 8 0 0 0-1.7 1l-2.4-1-2 3.5L6.6 12a7.7 7.7 0 0 0 .1 1L4.7 14.5l2 3.5 2.4-1a8 8 0 0 0 1.7 1L11 22h4l.4-2.9a8 8 0 0 0 1.7-1l2.4 1 2-3.5L19.4 13ZM13 12a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>`, (root)=>{
+        root.innerHTML = `
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M12 1a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v9a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-9a2 2 0 0 0-2-2h-1V6a5 5 0 0 0-5-5Zm-3 8V6a3 3 0 0 1 6 0v3H9Z"/></svg> Privacidad</h4>
+            <div class="notice">Todo se guarda <strong>solo en este dispositivo</strong> (localStorage).</div>
+          </div>
+
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M12 2v12l4-4 1.4 1.4L12 18l-5.4-5.6L8 10l4 4V2ZM4 20h16v2H4v-2Z"/></svg> Exportar / Importar</h4>
+            <label>Exportar JSON</label>
+            <textarea id="exportBox" readonly></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="set:export">Generar</button>
+              <button class="btn small secondary" data-action="set:copy">Copiar</button>
+            </div>
+            <label style="margin-top:10px;">Importar JSON</label>
+            <textarea id="importBox" placeholder="Pega aquí el JSON exportado..."></textarea>
+            <div class="actions">
+              <button class="btn small" data-action="set:import">Importar</button>
+            </div>
+          </div>
+
+          <div class="section">
+            <h4><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 14H7L6 7Zm3-3h6l1 2H8l1-2Z"/></svg> Reiniciar</h4>
+            <div class="dangerBox">Esto borrará los datos guardados en este dispositivo.</div>
+            <div class="actions" style="margin-top:10px;">
+              <button class="btn small" data-action="set:reset" style="background:var(--danger);">Borrar datos</button>
+            </div>
+          </div>
+        `;
+
+        root.addEventListener('click', async (e)=>{
+          const btn = e.target.closest('[data-action]'); if(!btn) return;
+          const act = btn.getAttribute('data-action');
+          const exportBox = $('#exportBox', root);
+          const importBox = $('#importBox', root);
+
+          if(act==='set:export'){ exportBox.value = JSON.stringify(state, null, 2); toast('Exportación lista.'); }
+          if(act==='set:copy'){
+            if(!exportBox.value.trim()){ toast('Primero genera el JSON.'); return; }
+            try{ await navigator.clipboard.writeText(exportBox.value); toast('Copiado ✅'); }
+            catch{ toast('No se pudo copiar. Copia manualmente.'); }
+          }
+          if(act==='set:import'){
+            const raw = importBox.value.trim();
+            if(!raw){ toast('Pega el JSON primero.'); return; }
+            try{
+              const incoming = JSON.parse(raw);
+              if(!incoming || typeof incoming!=='object') throw new Error('Formato inválido');
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(incoming));
+              location.reload();
+            }catch{ toast('JSON inválido.'); }
+          }
+          if(act==='set:reset'){
+            const ok = confirm('¿Seguro que deseas borrar todos los datos de esta mini app en este dispositivo?');
+            if(!ok) return;
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+          }
+        });
+      });
+    }
+
+    /* ========= OPEN MAP ========= */
+    const OPEN = {
+      checkin: panelCheckin,
+      triggers: panelTriggers,
+      boundaries: panelBoundaries,
+      reframe: panelReframe,
+      values: panelValues,
+      plan: panelPlan,
+      pause: panelPause,
+      progress: panelProgress,
+      settings: panelSettings
+    };
+
+    /* ========= EVENT DELEGATION GLOBAL (CLAVE) ========= */
+    // 1) Clicks en tiles (Mapa/Límites/Reencuadre etc.)
+    $('#modules').addEventListener('click', (e)=>{
+      const tile = e.target.closest('.tile[data-open]');
+      if(!tile) return;
+      const key = tile.getAttribute('data-open');
+      if(OPEN[key]) OPEN[key]();
+      else toast('Módulo no disponible.');
+    });
+
+    // 2) Clicks en quick-actions y timers (arriba) usando data-action
+    $('#app').addEventListener('click', (e)=>{
+      const btn = e.target.closest('[data-action]');
+      if(!btn) return;
+      const act = btn.getAttribute('data-action');
+
+      if(act?.startsWith('open:')){
+        const key = act.split(':')[1];
+        if(OPEN[key]) OPEN[key]();
+      }
+
+      if(act==='timer:reset230') startTimer(150,'reset');
+      if(act==='timer:breath100') startTimer(60,'respiración');
+    });
+
+    // 3) Bottom nav
+    $$('.navbtn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        $$('.navbtn').forEach(x=>x.classList.remove('active'));
+        btn.classList.add('active');
+
+        const key = btn.dataset.nav;
+        if(key==='home'){ closeModal(); window.scrollTo({top:0, behavior:'smooth'}); }
+        if(key==='modules'){ closeModal(); const top = $('#modules').offsetTop - 10; window.scrollTo({top, behavior:'smooth'}); }
+        if(key==='progress'){ OPEN.progress(); }
+        if(key==='settings'){ OPEN.settings(); }
+      });
+    });
+
+    /* ========= DASHBOARD ========= */
+    function refreshDashboard(){
+      const dates = new Set(state.checkins.map(c=>c.date));
+      let streak=0; let d=new Date();
+      while(true){
+        const iso=d.toISOString().slice(0,10);
+        if(dates.has(iso)){ streak++; d.setDate(d.getDate()-1); } else break;
+      }
+      $('#streakTxt').textContent = `${streak} día${streak===1?'':'s'}`;
+
+      const tdy=todayISO();
+      const last = getCheckin(tdy);
+      if(last && last.score){
+        $('#barFill').style.width = `${last.score.value}%`;
+        $('#badgeBalance').textContent = last.score.label;
+        $('#balanceNote').innerHTML = `Puntaje ${last.score.value}/100. Enfócate en <strong>límites + recuperación</strong>.`;
+      }else{
+        $('#barFill').style.width='0%';
+        $('#badgeBalance').textContent='—';
+        $('#balanceNote').innerHTML = `Haz un <strong>check-in</strong> para calcular tu balance de hoy.`;
+      }
+
+      const week=lastNDaysSet(7);
+      const breaksToday=state.breaks.filter(b=>(b.dateTime||'').slice(0,10)===tdy).length;
+      const breaksWeek=state.breaks.filter(b=>week.has((b.dateTime||'').slice(0,10))).length;
+      $('#breakTxt').textContent = `${breaksToday} hoy • ${breaksWeek} esta semana`;
+      $('#badgeBreaks').textContent = breaksToday;
+    }
+    refreshDashboard();
+  </script>
+</body>
+</html>

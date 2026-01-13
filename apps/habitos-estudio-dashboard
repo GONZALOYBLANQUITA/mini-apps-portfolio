@@ -1,0 +1,1324 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard de Hábitos de Estudio</title>
+  <meta name="description" content="Dashboard interactivo para hábitos de estudio: tiempo, ambiente, procrastinación, técnicas y repaso." />
+  <style>
+    :root{
+      --bg:#0f1417;
+      --panel:#141b20;
+      --card:#182129;
+      --card2:#11181d;
+      --stroke:rgba(255,255,255,.08);
+      --text:#eaf2f6;
+      --muted:rgba(234,242,246,.72);
+      --muted2:rgba(234,242,246,.52);
+      --good:#55d6a6;
+      --warn:#ffcc66;
+      --bad:#ff6b6b;
+      --accent:#7fd3ff;
+      --accent2:#b79cff;
+      --accent3:#ff9fd3;
+      --shadow: 0 18px 40px rgba(0,0,0,.35);
+      --radius:22px;
+      --radius2:18px;
+      --pad:18px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(127,211,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 95% 0%, rgba(183,156,255,.16), transparent 55%),
+        radial-gradient(900px 700px at 40% 110%, rgba(255,159,211,.10), transparent 60%),
+        linear-gradient(180deg, #0c1013 0%, #0f1417 40%, #0c1013 100%);
+      overflow-x:hidden;
+    }
+
+    a{color:inherit}
+    .wrap{
+      max-width:1180px;
+      margin:0 auto;
+      padding:20px 16px 40px;
+    }
+
+    /* Top bar */
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:18px 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width: 240px;
+    }
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, rgba(127,211,255,.9), rgba(183,156,255,.8) 55%, rgba(255,159,211,.6) 100%);
+      box-shadow: 0 10px 18px rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .brand h1{
+      font-size:14px;
+      margin:0;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted2);
+    }
+
+    .controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .chip{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.18);
+      border-radius: 999px;
+      color:var(--muted);
+      font-size:12px;
+      box-shadow: 0 10px 22px rgba(0,0,0,.22);
+    }
+    .chip input[type="text"]{
+      width:140px;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:var(--text);
+      font-size:12px;
+    }
+    .btn{
+      cursor:pointer;
+      border:none;
+      padding:10px 12px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(127,211,255,.25), rgba(127,211,255,.10));
+      border:1px solid rgba(127,211,255,.25);
+      color:var(--text);
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      box-shadow: 0 12px 24px rgba(0,0,0,.22);
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .btn:hover{transform: translateY(-1px); filter: brightness(1.05);}
+    .btn.secondary{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border:1px solid var(--stroke);
+    }
+
+    /* Layout grid */
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .brand{min-width:unset}
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panelHead{
+      padding:16px 18px 10px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .panelHead h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .panelHead p{
+      margin:4px 0 0;
+      font-size:12px;
+      color:var(--muted2);
+    }
+
+    .panelBody{padding: 0 18px 18px;}
+
+    /* Cards */
+    .cards{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width: 560px){
+      .cards{grid-template-columns:1fr}
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(0,0,0,.16), rgba(0,0,0,.05));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius2);
+      padding:14px;
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: radial-gradient(420px 180px at 20% 20%, rgba(127,211,255,.12), transparent 60%),
+                  radial-gradient(340px 160px at 85% 0%, rgba(183,156,255,.12), transparent 55%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card > *{position:relative}
+    .cardTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .badge{
+      font-size:11px;
+      color:var(--muted);
+      padding:6px 10px;
+      border:1px solid var(--stroke);
+      border-radius:999px;
+      background: rgba(0,0,0,.18);
+      white-space:nowrap;
+    }
+    .metric{
+      font-size:26px;
+      font-weight:700;
+      letter-spacing:.2px;
+      line-height:1;
+    }
+    .metricSub{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted2);
+      line-height:1.35;
+    }
+
+    /* mini bar chart */
+    .spark{
+      margin-top:10px;
+      height:44px;
+      display:flex;
+      align-items:flex-end;
+      gap:6px;
+    }
+    .bar{
+      flex:1;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(127,211,255,.34), rgba(127,211,255,.08));
+      height:20%;
+      transition: height .25s ease, filter .2s ease;
+      filter: saturate(1.05);
+    }
+    .bar.alt{
+      background: linear-gradient(180deg, rgba(183,156,255,.34), rgba(183,156,255,.08));
+    }
+    .bar.pink{
+      background: linear-gradient(180deg, rgba(255,159,211,.30), rgba(255,159,211,.08));
+    }
+
+    /* Right column stack */
+    .stack{display:grid; gap:16px;}
+
+    /* Ring */
+    .ringWrap{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .ring{
+      width:96px; height:96px;
+      border-radius:999px;
+      background:
+        conic-gradient(rgba(85,214,166,.95) var(--p), rgba(255,255,255,.08) 0);
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+    }
+    .ringInner{
+      width:72px; height:72px;
+      border-radius:999px;
+      background: linear-gradient(180deg, rgba(20,27,32,.95), rgba(10,14,17,.85));
+      border:1px solid rgba(255,255,255,.10);
+      display:grid;
+      place-items:center;
+      text-align:center;
+      padding:8px;
+    }
+    .ringInner b{font-size:16px}
+    .ringInner span{font-size:11px;color:var(--muted2)}
+
+    /* Checklist */
+    .checklist{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .check{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      background: rgba(0,0,0,.16);
+      border:1px solid var(--stroke);
+    }
+    .check input{margin-top:3px; transform: scale(1.1);}
+    .check label{cursor:pointer}
+    .check small{display:block; color:var(--muted2); margin-top:2px; line-height:1.35}
+
+    /* Sliders */
+    .sliderRow{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .row{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+    }
+    .row .name{
+      font-size:12px;
+      color:var(--muted);
+      min-width: 140px;
+    }
+    input[type="range"]{
+      width:100%;
+      accent-color: rgba(127,211,255,.95);
+    }
+    .pill{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      color: var(--text);
+      min-width: 64px;
+      text-align:center;
+      white-space:nowrap;
+    }
+
+    /* Alerts */
+    .alert{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px solid var(--stroke);
+      background: rgba(0,0,0,.16);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      margin-top:4px;
+      background: var(--good);
+      box-shadow:0 0 0 6px rgba(85,214,166,.14);
+    }
+    .dot.warn{
+      background: var(--warn);
+      box-shadow:0 0 0 6px rgba(255,204,102,.14);
+    }
+    .dot.bad{
+      background: var(--bad);
+      box-shadow:0 0 0 6px rgba(255,107,107,.14);
+    }
+    .alert b{font-size:12px}
+    .alert p{margin:2px 0 0; font-size:12px; color:var(--muted2); line-height:1.35}
+
+    /* Modal */
+    .backdrop{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .modal{
+      width:min(760px, 100%);
+      border-radius: 24px;
+      border:1px solid rgba(255,255,255,.12);
+      background: linear-gradient(180deg, rgba(20,27,32,.98), rgba(10,14,17,.94));
+      box-shadow: 0 26px 60px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalHead{
+      padding:16px 18px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .modalHead h3{margin:0; font-size:14px;}
+    .modalHead p{margin:4px 0 0; font-size:12px; color:var(--muted2); line-height:1.4}
+    .modalBody{padding:16px 18px 18px;}
+    .modalBody .cols{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width:700px){
+      .modalBody .cols{grid-template-columns:1fr}
+    }
+    .note{
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      border-radius: 18px;
+      padding:12px;
+    }
+    .note h4{margin:0 0 6px; font-size:12px;}
+    .note ul{margin:0; padding-left:16px; color:var(--muted); font-size:12px; line-height:1.45;}
+    .note li{margin:6px 0;}
+    .closeX{
+      border:none;
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      width:34px;height:34px;
+      border-radius: 12px;
+      cursor:pointer;
+      border:1px solid rgba(255,255,255,.10);
+    }
+
+    /* Footer credits */
+    .footer{
+      margin-top:16px;
+      padding:14px 4px 0;
+      color: rgba(234,242,246,.55);
+      font-size:12px;
+      line-height:1.4;
+      text-align:center;
+    }
+    .footer b{color: rgba(234,242,246,.78)}
+    .kbd{
+      font-family:var(--mono);
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color: rgba(234,242,246,.82);
+      font-size:11px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Dashboard de Hábitos de Estudio</h1>
+          <p id="subtitle">Rutina · Ambiente · Procrastinación · Técnicas · Repaso</p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="chip" title="Nombre del estudiante">
+          <span>👋</span>
+          <input id="studentName" type="text" placeholder="Tu nombre…" maxlength="24" />
+        </div>
+
+        <div class="chip" title="Fecha">
+          <span>📅</span>
+          <span id="today">—</span>
+        </div>
+
+        <button class="btn secondary" id="btnTips" type="button" title="Consejos basados en el PDF">
+          💡 Consejos
+        </button>
+        <button class="btn" id="btnReset" type="button" title="Reiniciar datos">
+          🔄 Reiniciar
+        </button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT / MAIN PANEL -->
+      <section class="panel">
+        <div class="panelHead">
+          <div>
+            <h2>Resumen diario</h2>
+            <p>Visualiza tu jornada de estudio, descanso y consistencia semanal.</p>
+          </div>
+          <div class="badge" id="dayBadge">Hoy</div>
+        </div>
+
+        <div class="panelBody">
+          <div class="cards">
+            <!-- Card: Study hours -->
+            <div class="card">
+              <div class="cardTop">
+                <div>
+                  <div class="badge">Tiempo de estudio</div>
+                  <div class="metric"><span id="studyHoursTxt">0.0</span> h</div>
+                  <div class="metricSub">Meta sugerida: 4–6 h/día (ajusta según tus cursos).</div>
+                </div>
+                <div class="badge" id="studyStatus">—</div>
+              </div>
+
+              <div class="sliderRow">
+                <div class="row">
+                  <div class="name">Horas hoy</div>
+                  <input id="studyHours" type="range" min="0" max="10" step="0.5" />
+                  <div class="pill" id="studyHoursPill">0.0h</div>
+                </div>
+                <div class="row">
+                  <div class="name">Bloques (Pomodoro)</div>
+                  <input id="blocks" type="range" min="0" max="12" step="1" />
+                  <div class="pill" id="blocksPill">0</div>
+                </div>
+              </div>
+
+              <div class="spark" aria-label="Actividad semanal">
+                <div class="bar" id="w0"></div>
+                <div class="bar alt" id="w1"></div>
+                <div class="bar" id="w2"></div>
+                <div class="bar pink" id="w3"></div>
+                <div class="bar alt" id="w4"></div>
+                <div class="bar" id="w5"></div>
+                <div class="bar pink" id="w6"></div>
+              </div>
+              <div class="metricSub">Actividad semanal (autoestimada). Se actualiza con tu consistencia.</div>
+            </div>
+
+            <!-- Card: Breaks -->
+            <div class="card">
+              <div class="cardTop">
+                <div>
+                  <div class="badge">Descanso y pausas</div>
+                  <div class="metric"><span id="breakTxt">0</span> min</div>
+                  <div class="metricSub">Pausas recomendadas para evitar fatiga mental e interferencia en memoria.</div>
+                </div>
+                <div class="badge" id="breakStatus">—</div>
+              </div>
+
+              <div class="sliderRow">
+                <div class="row">
+                  <div class="name">Pausa (min)</div>
+                  <input id="breakMinutes" type="range" min="0" max="60" step="5" />
+                  <div class="pill" id="breakPill">0m</div>
+                </div>
+                <div class="row">
+                  <div class="name">Ciclo</div>
+                  <select id="cycle" class="pill" style="min-width:120px; padding:8px 10px; border-radius:999px;">
+                    <option value="55-5">55/5</option>
+                    <option value="50-10">50/10</option>
+                    <option value="45-15">45/15</option>
+                  </select>
+                  <div class="pill" id="cycleHint">—</div>
+                </div>
+              </div>
+
+              <div class="alert" id="breakAlert">
+                <div class="dot" id="breakDot"></div>
+                <div>
+                  <b id="breakTitle">—</b>
+                  <p id="breakMsg">—</p>
+                </div>
+              </div>
+
+              <div class="metricSub">Tip: evita recreos demasiado largos para mantener atención sostenida.</div>
+            </div>
+
+            <!-- Card: Procrastination -->
+            <div class="card">
+              <div class="cardTop">
+                <div>
+                  <div class="badge">Procrastinación</div>
+                  <div class="metric" id="procrScoreTxt">0</div>
+                  <div class="metricSub">Cuanto más alto, mayor riesgo de postergar tareas importantes.</div>
+                </div>
+                <div class="badge" id="procrLabel">—</div>
+              </div>
+
+              <div class="checklist">
+                <div class="check">
+                  <input id="p1" type="checkbox" />
+                  <label for="p1">
+                    Postergué una tarea importante hoy.
+                    <small>La procrastinación suele aparecer por autocontrol bajo, miedo a fallar o poco valor percibido.</small>
+                  </label>
+                </div>
+                <div class="check">
+                  <input id="p2" type="checkbox" />
+                  <label for="p2">
+                    Revisé redes/mensajes en la mañana.
+                    <small>En la mañana suele haber mayor energía y concentración: protege ese bloque.</small>
+                  </label>
+                </div>
+                <div class="check">
+                  <input id="p3" type="checkbox" />
+                  <label for="p3">
+                    Me distraje con el reloj/tiempo.
+                    <small>Mirar la hora con frecuencia puede hacer sentir que el tiempo pasa más lento.</small>
+                  </label>
+                </div>
+              </div>
+
+              <div class="alert" id="procrAlert">
+                <div class="dot" id="procrDot"></div>
+                <div>
+                  <b id="procrTitle">—</b>
+                  <p id="procrMsg">—</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Techniques -->
+            <div class="card">
+              <div class="cardTop">
+                <div>
+                  <div class="badge">Técnicas de estudio</div>
+                  <div class="metric"><span id="techCount">0</span>/6</div>
+                  <div class="metricSub">Combinar técnicas mejora abordaje de temas complejos y facilita memoria a largo plazo.</div>
+                </div>
+                <div class="badge" id="techBadge">—</div>
+              </div>
+
+              <div class="checklist">
+                <div class="check">
+                  <input id="t1" type="checkbox" />
+                  <label for="t1">Subrayado <small>Destaca ideas principales y detalles de apoyo (evita sobrecargar).</small></label>
+                </div>
+                <div class="check">
+                  <input id="t2" type="checkbox" />
+                  <label for="t2">Esquema <small>Representación jerárquica: concreta y rápida de revisar.</small></label>
+                </div>
+                <div class="check">
+                  <input id="t3" type="checkbox" />
+                  <label for="t3">Mapa conceptual <small>Relaciones significativas entre conceptos; jerarquía y enlaces.</small></label>
+                </div>
+                <div class="check">
+                  <input id="t4" type="checkbox" />
+                  <label for="t4">Cornell <small>Sistematiza: palabras clave, preguntas y resumen en tus palabras.</small></label>
+                </div>
+                <div class="check">
+                  <input id="t5" type="checkbox" />
+                  <label for="t5">SQ3R <small>Survey–Question–Read–Repeat–Review para comprensión lectora.</small></label>
+                </div>
+                <div class="check">
+                  <input id="t6" type="checkbox" />
+                  <label for="t6">Autoexplicación <small>Explícalo “como a un amigo”: mejora codificación y comprensión.</small></label>
+                </div>
+              </div>
+
+              <div class="alert" id="techAlert">
+                <div class="dot" id="techDot"></div>
+                <div>
+                  <b id="techTitle">—</b>
+                  <p id="techMsg">—</p>
+                </div>
+              </div>
+            </div>
+          </div><!-- /cards -->
+        </div><!-- /panelBody -->
+      </section>
+
+      <!-- RIGHT / SIDE STACK -->
+      <aside class="stack">
+        <!-- Habit ring -->
+        <section class="panel">
+          <div class="panelHead">
+            <div>
+              <h2>Consistencia del hábito</h2>
+              <p>Los hábitos se consolidan con repetición y metas claras.</p>
+            </div>
+            <div class="badge" id="habitBadge">—</div>
+          </div>
+          <div class="panelBody">
+            <div class="ringWrap">
+              <div class="ring" id="ring" style="--p:0deg;">
+                <div class="ringInner">
+                  <b id="ringPct">0%</b><span>hábito</span>
+                </div>
+              </div>
+              <div style="flex:1">
+                <div class="metric" style="font-size:22px;"><span id="streak">0</span> días</div>
+                <div class="metricSub">
+                  Referencia: para muchas personas el hábito se logra alrededor de <b>66 días</b>.
+                  Ajusta tu ritmo y celebra pequeñas metas.
+                </div>
+              </div>
+            </div>
+
+            <div class="sliderRow">
+              <div class="row">
+                <div class="name">Días consecutivos</div>
+                <input id="streakRange" type="range" min="0" max="90" step="1" />
+                <div class="pill" id="streakPill">0</div>
+              </div>
+              <div class="row">
+                <div class="name">Meta (días)</div>
+                <input id="goalDays" type="range" min="18" max="120" step="1" />
+                <div class="pill" id="goalPill">66</div>
+              </div>
+            </div>
+
+            <div class="alert" id="habitAlert">
+              <div class="dot" id="habitDot"></div>
+              <div>
+                <b id="habitTitle">—</b>
+                <p id="habitMsg">—</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Study environment -->
+        <section class="panel">
+          <div class="panelHead">
+            <div>
+              <h2>Ambiente de estudio</h2>
+              <p>La iluminación, postura y ruido influyen en tu atención.</p>
+            </div>
+            <div class="badge" id="envScoreBadge">—</div>
+          </div>
+          <div class="panelBody">
+            <div class="ringWrap" style="margin-bottom:10px;">
+              <div class="ring" id="envRing" style="--p:0deg; width:86px;height:86px;">
+                <div class="ringInner" style="width:64px;height:64px;">
+                  <b id="envScore">0</b><span>score</span>
+                </div>
+              </div>
+              <div class="metricSub" style="flex:1">
+                Recomendaciones: lugar fijo, buena ventilación y postura adecuada (espalda recta, pies al suelo).
+              </div>
+            </div>
+
+            <div class="checklist">
+              <div class="check">
+                <input id="e1" type="checkbox" />
+                <label for="e1">Lugar fijo de estudio <small>Asocia el espacio con la rutina y crea hábito.</small></label>
+              </div>
+              <div class="check">
+                <input id="e2" type="checkbox" />
+                <label for="e2">Iluminación adecuada <small>Preferible luz natural o lámpara dirigida.</small></label>
+              </div>
+              <div class="check">
+                <input id="e3" type="checkbox" />
+                <label for="e3">Postura correcta <small>Espalda recta, piernas 90°, texto a ~30 cm.</small></label>
+              </div>
+              <div class="check">
+                <input id="e4" type="checkbox" />
+                <label for="e4">Bajo ruido / sin interrupciones <small>Reduce distractores externos para sostener la atención.</small></label>
+              </div>
+            </div>
+
+            <div class="alert" id="envAlert">
+              <div class="dot" id="envDot"></div>
+              <div>
+                <b id="envTitle">—</b>
+                <p id="envMsg">—</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Energy & sleep -->
+        <section class="panel">
+          <div class="panelHead">
+            <div>
+              <h2>Energía y concentración</h2>
+              <p>Sueño y hábitos básicos sostienen el aprendizaje.</p>
+            </div>
+            <div class="badge" id="energyBadge">—</div>
+          </div>
+          <div class="panelBody">
+            <div class="sliderRow">
+              <div class="row">
+                <div class="name">Sueño (horas)</div>
+                <input id="sleep" type="range" min="3" max="10" step="0.5" />
+                <div class="pill" id="sleepPill">—</div>
+              </div>
+              <div class="row">
+                <div class="name">Cafeína (mg)</div>
+                <input id="caf" type="range" min="0" max="400" step="25" />
+                <div class="pill" id="cafPill">—</div>
+              </div>
+              <div class="row">
+                <div class="name">Multitarea</div>
+                <select id="multi" class="pill" style="min-width:140px; padding:8px 10px; border-radius:999px;">
+                  <option value="no">No (una cosa a la vez)</option>
+                  <option value="a_veces">A veces</option>
+                  <option value="si">Sí (frecuente)</option>
+                </select>
+                <div class="pill" id="energyScorePill">0/100</div>
+              </div>
+            </div>
+
+            <div class="alert" id="energyAlert">
+              <div class="dot" id="energyDot"></div>
+              <div>
+                <b id="energyTitle">—</b>
+                <p id="energyMsg">—</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="footer">
+      <div style="margin-bottom:6px;">
+        Consejo rápido: presiona <span class="kbd">Consejos</span> para ver estrategias (Pomodoro, 10–2, Cornell, SQ3R, repaso).
+      </div>
+      <div><b>Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, como herramientas psicoeducativas digitales de apoyo clínico.</b></div>
+      <div style="margin-top:6px;">y Blanquita – Co terapeuta</div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="tipsTitle">
+    <div class="modal">
+      <div class="modalHead">
+        <div>
+          <h3 id="tipsTitle">Consejos prácticos (basados en el eBook)</h3>
+          <p>Recomendaciones para organizar el tiempo, combatir la procrastinación y mejorar técnicas de estudio.</p>
+        </div>
+        <button class="closeX" id="closeModal" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="modalBody">
+        <div class="cols">
+          <div class="note">
+            <h4>⏱️ Gestión del tiempo y pausas</h4>
+            <ul>
+              <li>Usa ciclos: 55/5, 50/10 o 45/15. Evita pausas excesivamente largas.</li>
+              <li>En descansos: estira, camina unos minutos, respira o hidrátate.</li>
+              <li>Planifica horarios visibles y flexibles; contempla imprevistos.</li>
+            </ul>
+          </div>
+          <div class="note">
+            <h4>🧩 Procrastinación</h4>
+            <ul>
+              <li><b>Primero lo importante</b>: inicia con lo más difícil cuando tu energía está alta.</li>
+              <li><b>Regla 10–2</b>: 10 min con la tarea indeseable + 2 min de pausa motivante.</li>
+              <li>Evita redes sociales por la mañana y deja notificaciones para recreos.</li>
+            </ul>
+          </div>
+          <div class="note">
+            <h4>📚 Técnicas útiles</h4>
+            <ul>
+              <li>Cornell: palabras clave + preguntas + resumen en tus palabras.</li>
+              <li>SQ3R para lectura: Survey, Question, Read, Repeat, Review.</li>
+              <li>Mapas conceptuales: jerarquía + enlaces con significado.</li>
+            </ul>
+          </div>
+          <div class="note">
+            <h4>🔁 Repaso y memoria</h4>
+            <ul>
+              <li>El repaso vence la curva del olvido: revisa pronto tras estudiar.</li>
+              <li>Autoevalúate: explica el tema con tus palabras y detecta vacíos.</li>
+              <li>Prioriza lo difícil en el último repaso, con respuestas ágiles.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="metricSub" style="margin-top:10px;">
+          Nota: Este dashboard traduce recomendaciones del eBook a indicadores y hábitos medibles.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /******************************************************************
+     * Dashboard de Hábitos de Estudio
+     * - Guardado local (localStorage)
+     * - Interacción: sliders, checks, rings, alertas
+     * - Listo para GitHub Pages (un solo index.html)
+     ******************************************************************/
+
+    const $ = (id) => document.getElementById(id);
+
+    const STORAGE_KEY = "study_habits_dashboard_v1";
+
+    const state = {
+      studentName: "",
+      studyHours: 0,
+      blocks: 0,
+      breakMinutes: 0,
+      cycle: "55-5",
+      procrastination: { p1:false, p2:false, p3:false },
+      techniques: { t1:false,t2:false,t3:false,t4:false,t5:false,t6:false },
+      streak: 0,
+      goalDays: 66,
+      environment: { e1:false,e2:false,e3:false,e4:false },
+      sleep: 7,
+      caf: 0,
+      multi: "no",
+      weekActivity: [20, 35, 45, 30, 55, 40, 25] // default visual
+    };
+
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+
+    function load(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return;
+        const parsed = JSON.parse(raw);
+        Object.assign(state, parsed);
+      }catch(e){
+        console.warn("No se pudo cargar estado:", e);
+      }
+    }
+
+    function save(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function setDate(){
+      const d = new Date();
+      const opts = { weekday:"short", year:"numeric", month:"short", day:"numeric" };
+      $("today").textContent = d.toLocaleDateString("es-PE", opts);
+      $("dayBadge").textContent = "Hoy · " + d.toLocaleDateString("es-PE", { day:"2-digit", month:"2-digit" });
+    }
+
+    function scoreEnvironment(){
+      const vals = Object.values(state.environment);
+      const ok = vals.filter(Boolean).length;
+      return Math.round((ok/vals.length)*100);
+    }
+
+    function scoreProcrastination(){
+      // 0..100 (más alto = peor)
+      const flags = Object.values(state.procrastination);
+      const n = flags.filter(Boolean).length;
+      return clamp(n * 34, 0, 100);
+    }
+
+    function scoreTechniques(){
+      const flags = Object.values(state.techniques);
+      const n = flags.filter(Boolean).length;
+      return { n, pct: Math.round((n/flags.length)*100) };
+    }
+
+    function scoreEnergy(){
+      // 0..100 (más alto = mejor)
+      // Sueño: ideal >=7. Multitarea baja. Cafeína moderada.
+      let s = 0;
+
+      // sleep contribution
+      const sleep = state.sleep;
+      if(sleep >= 8) s += 45;
+      else if(sleep >= 7) s += 40;
+      else if(sleep >= 6) s += 30;
+      else if(sleep >= 5) s += 18;
+      else s += 10;
+
+      // caffeine penalty (exceso)
+      const caf = state.caf;
+      if(caf <= 100) s += 30;
+      else if(caf <= 200) s += 24;
+      else if(caf <= 300) s += 16;
+      else s += 10;
+
+      // multitasking penalty
+      if(state.multi === "no") s += 25;
+      else if(state.multi === "a_veces") s += 15;
+      else s += 8;
+
+      return clamp(Math.round(s), 0, 100);
+    }
+
+    function statusChip(val, goodMin, warnMin){
+      if(val >= goodMin) return { label:"Bien", tone:"good" };
+      if(val >= warnMin) return { label:"En progreso", tone:"warn" };
+      return { label:"Bajo", tone:"bad" };
+    }
+
+    function paintDot(dotEl, tone){
+      dotEl.classList.remove("warn","bad");
+      if(tone === "warn") dotEl.classList.add("warn");
+      if(tone === "bad") dotEl.classList.add("bad");
+    }
+
+    function setBadge(el, tone, text){
+      el.textContent = text;
+      el.style.borderColor = tone==="good" ? "rgba(85,214,166,.25)" : tone==="warn" ? "rgba(255,204,102,.25)" : "rgba(255,107,107,.25)";
+      el.style.background = tone==="good" ? "rgba(85,214,166,.10)" : tone==="warn" ? "rgba(255,204,102,.10)" : "rgba(255,107,107,.10)";
+      el.style.color = "rgba(234,242,246,.85)";
+    }
+
+    function setRing(el, pct){
+      const deg = clamp(pct, 0, 100) * 3.6;
+      el.style.setProperty("--p", deg + "deg");
+    }
+
+    function computeWeeklyBars(){
+      // Build a simple weekly pattern using consistency + hours
+      // (sin pretender ser "medición real": es un visual motivacional)
+      const base = 18 + state.studyHours * 6; // 0..78
+      const streakFactor = clamp(state.streak / Math.max(1,state.goalDays), 0, 1); // 0..1
+      const bump = streakFactor * 22; // 0..22
+      const arr = [];
+      for(let i=0;i<7;i++){
+        const wobble = (i%2===0 ? 6 : -4) + (i===3 ? 10 : 0);
+        arr.push(clamp(Math.round(base + bump + wobble), 8, 95));
+      }
+      state.weekActivity = arr;
+    }
+
+    function render(){
+      // name
+      $("studentName").value = state.studentName || "";
+      $("subtitle").textContent = state.studentName
+        ? `Hola, ${state.studentName} · Monitorea tu estudio con claridad`
+        : "Rutina · Ambiente · Procrastinación · Técnicas · Repaso";
+
+      // study hours
+      $("studyHours").value = state.studyHours;
+      $("studyHoursTxt").textContent = Number(state.studyHours).toFixed(1);
+      $("studyHoursPill").textContent = Number(state.studyHours).toFixed(1) + "h";
+
+      $("blocks").value = state.blocks;
+      $("blocksPill").textContent = state.blocks;
+
+      const studyStat = statusChip(state.studyHours, 4, 2);
+      setBadge($("studyStatus"), studyStat.tone, studyStat.label);
+
+      // breaks
+      $("breakMinutes").value = state.breakMinutes;
+      $("breakTxt").textContent = state.breakMinutes;
+      $("breakPill").textContent = state.breakMinutes + "m";
+
+      $("cycle").value = state.cycle;
+      const cycleMap = {
+        "55-5": "55/5",
+        "50-10": "50/10",
+        "45-15": "45/15"
+      };
+      $("cycleHint").textContent = cycleMap[state.cycle] || "—";
+
+      // break alert logic
+      let breakTone = "good";
+      let breakTitle = "Pausas en rango saludable";
+      let breakMsg = "Mantén descansos breves para sostener la atención y evitar fatiga mental.";
+      if(state.breakMinutes === 0 && state.studyHours >= 1){
+        breakTone = "warn";
+        breakTitle = "Sin pausas registradas";
+        breakMsg = "Incluye micro-pauses: estira, camina o respira para recomponer el cuerpo.";
+      } else if(state.breakMinutes >= 35){
+        breakTone = "warn";
+        breakTitle = "Pausa larga";
+        breakMsg = "Evita recreos demasiado extensos para no romper el foco y la continuidad.";
+      } else if(state.breakMinutes >= 50){
+        breakTone = "bad";
+        breakTitle = "Pausa excesiva";
+        breakMsg = "Retoma con un ciclo estructurado (55/5, 50/10 o 45/15).";
+      }
+      setBadge($("breakStatus"), breakTone, breakTone==="good"?"Ok":breakTone==="warn"?"Atento":"Riesgo");
+      paintDot($("breakDot"), breakTone);
+      $("breakTitle").textContent = breakTitle;
+      $("breakMsg").textContent = breakMsg;
+
+      // procrastination
+      $("p1").checked = state.procrastination.p1;
+      $("p2").checked = state.procrastination.p2;
+      $("p3").checked = state.procrastination.p3;
+
+      const procr = scoreProcrastination();
+      $("procrScoreTxt").textContent = procr;
+
+      let procrTone = "good", procrLabel = "Bajo";
+      let procrTitle = "Buen control hoy";
+      let procrMsg = "Sigue priorizando lo importante y protege tu mañana de distracciones.";
+      if(procr >= 68){
+        procrTone = "bad"; procrLabel = "Alto";
+        procrTitle = "Riesgo alto de procrastinación";
+        procrMsg = "Prueba la regla 10–2 y empieza por lo más difícil cuando tu energía está alta.";
+      }else if(procr >= 34){
+        procrTone = "warn"; procrLabel = "Medio";
+        procrTitle = "Atención: tendencia a postergar";
+        procrMsg = "Reduce redes en la mañana y define 1–3 puntos importantes para hoy.";
+      }
+      setBadge($("procrLabel"), procrTone, procrLabel);
+      paintDot($("procrDot"), procrTone);
+      $("procrTitle").textContent = procrTitle;
+      $("procrMsg").textContent = procrMsg;
+
+      // techniques
+      for(const k of Object.keys(state.techniques)){
+        $(k).checked = state.techniques[k];
+      }
+      const tech = scoreTechniques();
+      $("techCount").textContent = tech.n;
+
+      let techTone="warn", techBadge="En progreso";
+      let techTitle="Suma técnicas para profundizar";
+      let techMsg="Combina al menos 2–3 técnicas (p. ej., Cornell + esquema + autoexplicación).";
+      if(tech.n >= 4){
+        techTone="good"; techBadge="Fuerte";
+        techTitle="Buen repertorio de técnicas";
+        techMsg="Excelente. Mantén consistencia y prioriza comprensión antes que memorización mecánica.";
+      }else if(tech.n <= 1){
+        techTone="bad"; techBadge="Bajo";
+        techTitle="Pocas técnicas registradas";
+        techMsg="Añade una técnica de comprensión (SQ3R/Cornell) y una de organización (esquema/mapa).";
+      }
+      setBadge($("techBadge"), techTone, techBadge);
+      paintDot($("techDot"), techTone);
+      $("techTitle").textContent = techTitle;
+      $("techMsg").textContent = techMsg;
+
+      // habit ring
+      $("streakRange").value = state.streak;
+      $("streakPill").textContent = state.streak;
+      $("streak").textContent = state.streak;
+
+      $("goalDays").value = state.goalDays;
+      $("goalPill").textContent = state.goalDays;
+
+      const habitPct = clamp(Math.round((state.streak / Math.max(1,state.goalDays)) * 100), 0, 100);
+      setRing($("ring"), habitPct);
+      $("ringPct").textContent = habitPct + "%";
+
+      let habitTone="warn", habitBadge="Construyendo";
+      let habitTitle="Avance gradual";
+      let habitMsg="Empieza con sesiones cortas, controla distractores y define metas claras.";
+      if(habitPct >= 70){
+        habitTone="good"; habitBadge="Sólido";
+        habitTitle="Hábito bastante consolidado";
+        habitMsg="Sigue reforzando recompensas pequeñas y sostén tu rutina con flexibilidad.";
+      }else if(habitPct <= 20 && state.streak > 0){
+        habitTone="warn"; habitBadge="Inicio";
+        habitTitle="Vas bien: fase de instalación";
+        habitMsg="Mantén objetivos realistas y consistencia: la repetición hace el hábito.";
+      }else if(state.streak === 0){
+        habitTone="bad"; habitBadge="Sin racha";
+        habitTitle="Inicia una racha hoy";
+        habitMsg="Define un bloque corto (20–30 min) y protégelo de redes/Smartphone.";
+      }
+      setBadge($("habitBadge"), habitTone, habitBadge);
+      paintDot($("habitDot"), habitTone);
+      $("habitTitle").textContent = habitTitle;
+      $("habitMsg").textContent = habitMsg;
+
+      // environment
+      for(const k of Object.keys(state.environment)){
+        $(k).checked = state.environment[k];
+      }
+      const env = scoreEnvironment();
+      $("envScore").textContent = env;
+      setRing($("envRing"), env);
+
+      let envTone="warn", envBadge="Mejorable";
+      let envTitle="Ajusta tu entorno";
+      let envMsg="Mejora iluminación, postura y reduce ruido para aumentar atención.";
+      if(env >= 75){
+        envTone="good"; envBadge="Óptimo";
+        envTitle="Buen ambiente para estudiar";
+        envMsg="Mantén el lugar fijo y cuida postura/iluminación para sostener el rendimiento.";
+      }else if(env <= 25){
+        envTone="bad"; envBadge="Bajo";
+        envTitle="Ambiente poco favorable";
+        envMsg="Prioriza 1 cambio hoy: luz, postura o un lugar sin interrupciones.";
+      }
+      setBadge($("envScoreBadge"), envTone, envBadge);
+      paintDot($("envDot"), envTone);
+      $("envTitle").textContent = envTitle;
+      $("envMsg").textContent = envMsg;
+
+      // energy
+      $("sleep").value = state.sleep;
+      $("sleepPill").textContent = Number(state.sleep).toFixed(1) + "h";
+      $("caf").value = state.caf;
+      $("cafPill").textContent = state.caf + "mg";
+      $("multi").value = state.multi;
+
+      const energy = scoreEnergy();
+      $("energyScorePill").textContent = energy + "/100";
+
+      let energyTone="warn", energyBadge="Normal";
+      let energyTitle="Energía moderada";
+      let energyMsg="Protege sueño y evita multitarea para mejorar concentración.";
+      if(energy >= 78){
+        energyTone="good"; energyBadge="Alta";
+        energyTitle="Buena base para aprender";
+        energyMsg="Sueño y enfoque favorecen codificación y retención. Mantén una tarea a la vez.";
+      }else if(energy <= 50){
+        energyTone="bad"; energyBadge="Baja";
+        energyTitle="Atención: energía baja";
+        energyMsg="Dormir poco y multitarea bajan rendimiento. Ajusta hoy: más sueño + foco único.";
+      }
+      setBadge($("energyBadge"), energyTone, energyBadge);
+      paintDot($("energyDot"), energyTone);
+      $("energyTitle").textContent = energyTitle;
+      $("energyMsg").textContent = energyMsg;
+
+      // weekly bars
+      computeWeeklyBars();
+      for(let i=0;i<7;i++){
+        const el = $("w"+i);
+        const h = clamp(state.weekActivity[i], 8, 95);
+        el.style.height = h + "%";
+      }
+    }
+
+    function bind(){
+      $("studentName").addEventListener("input", (e)=>{
+        state.studentName = e.target.value.trim();
+        save(); render();
+      });
+
+      $("studyHours").addEventListener("input", (e)=>{
+        state.studyHours = Number(e.target.value);
+        save(); render();
+      });
+
+      $("blocks").addEventListener("input", (e)=>{
+        state.blocks = Number(e.target.value);
+        save(); render();
+      });
+
+      $("breakMinutes").addEventListener("input", (e)=>{
+        state.breakMinutes = Number(e.target.value);
+        save(); render();
+      });
+
+      $("cycle").addEventListener("change", (e)=>{
+        state.cycle = e.target.value;
+        save(); render();
+      });
+
+      // procrastination checks
+      ["p1","p2","p3"].forEach(id=>{
+        $(id).addEventListener("change", (e)=>{
+          state.procrastination[id] = e.target.checked;
+          save(); render();
+        });
+      });
+
+      // techniques checks
+      ["t1","t2","t3","t4","t5","t6"].forEach(id=>{
+        $(id).addEventListener("change", (e)=>{
+          state.techniques[id] = e.target.checked;
+          save(); render();
+        });
+      });
+
+      // habit sliders
+      $("streakRange").addEventListener("input", (e)=>{
+        state.streak = Number(e.target.value);
+        save(); render();
+      });
+      $("goalDays").addEventListener("input", (e)=>{
+        state.goalDays = Number(e.target.value);
+        save(); render();
+      });
+
+      // environment checks
+      ["e1","e2","e3","e4"].forEach(id=>{
+        $(id).addEventListener("change", (e)=>{
+          state.environment[id] = e.target.checked;
+          save(); render();
+        });
+      });
+
+      // energy
+      $("sleep").addEventListener("input", (e)=>{
+        state.sleep = Number(e.target.value);
+        save(); render();
+      });
+      $("caf").addEventListener("input", (e)=>{
+        state.caf = Number(e.target.value);
+        save(); render();
+      });
+      $("multi").addEventListener("change", (e)=>{
+        state.multi = e.target.value;
+        save(); render();
+      });
+
+      // modal
+      const backdrop = $("backdrop");
+      $("btnTips").addEventListener("click", ()=>{
+        backdrop.style.display = "flex";
+      });
+      $("closeModal").addEventListener("click", ()=>{
+        backdrop.style.display = "none";
+      });
+      backdrop.addEventListener("click", (e)=>{
+        if(e.target === backdrop) backdrop.style.display = "none";
+      });
+      document.addEventListener("keydown", (e)=>{
+        if(e.key === "Escape") backdrop.style.display = "none";
+      });
+
+      // reset
+      $("btnReset").addEventListener("click", ()=>{
+        localStorage.removeItem(STORAGE_KEY);
+        // reset values (keep defaults)
+        state.studentName = "";
+        state.studyHours = 0;
+        state.blocks = 0;
+        state.breakMinutes = 0;
+        state.cycle = "55-5";
+        state.procrastination = { p1:false, p2:false, p3:false };
+        state.techniques = { t1:false,t2:false,t3:false,t4:false,t5:false,t6:false };
+        state.streak = 0;
+        state.goalDays = 66;
+        state.environment = { e1:false,e2:false,e3:false,e4:false };
+        state.sleep = 7;
+        state.caf = 0;
+        state.multi = "no";
+        state.weekActivity = [20, 35, 45, 30, 55, 40, 25];
+        save(); render();
+      });
+    }
+
+    // INIT
+    load();
+    setDate();
+    // set initial range defaults for better UX (if state not set)
+    if(state.sleep == null) state.sleep = 7;
+    if(state.goalDays == null) state.goalDays = 66;
+
+    bind();
+    render();
+  </script>
+</body>
+</html>

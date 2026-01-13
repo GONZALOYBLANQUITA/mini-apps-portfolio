@@ -1,0 +1,1389 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+  <title>StudyOS — Dashboard PreU (Demo)</title>
+  <meta name="theme-color" content="#0b1020"/>
+  <link rel="manifest" href="manifest.webmanifest"/>
+
+  <style>
+    :root{
+      --bg0:#070916;
+      --bg1:#090c1e;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.09);
+      --stroke: rgba(255,255,255,.14);
+      --txt: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+
+      --a:#7c3aed;   /* violeta */
+      --b:#22c55e;   /* verde */
+      --c:#06b6d4;   /* cian */
+      --d:#f59e0b;   /* ámbar */
+      --e:#fb7185;   /* rosa */
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r: 18px;
+      --r2: 22px;
+
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--font); color:var(--txt);
+      background:
+        radial-gradient(900px 500px at 12% 12%, rgba(124,58,237,.30), transparent 60%),
+        radial-gradient(900px 600px at 88% 18%, rgba(6,182,212,.18), transparent 62%),
+        radial-gradient(900px 700px at 50% 96%, rgba(34,197,94,.14), transparent 58%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* Sutil “trama/noise” tipo producto (sin imágenes externas) */
+    body:before{
+      content:"";
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:.14;
+      background-image:
+        radial-gradient(rgba(255,255,255,.08) 1px, transparent 1px);
+      background-size: 26px 26px;
+      mask-image: radial-gradient(circle at 30% 20%, black, transparent 55%);
+    }
+
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+    @media (max-width: 980px){
+      .app{grid-template-columns:1fr}
+    }
+
+    /* Sidebar */
+    .side{
+      border-right:1px solid rgba(255,255,255,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      backdrop-filter: blur(10px);
+      padding: 18px 16px;
+      position:sticky; top:0; height:100vh;
+    }
+    @media (max-width: 980px){
+      .side{position:relative; height:auto}
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      padding:14px 12px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: var(--r2);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 12px 34px rgba(0,0,0,.35);
+    }
+    .logo{
+      width:44px; height:44px; border-radius:16px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.25), transparent 60%),
+        linear-gradient(135deg, rgba(124,58,237,.85), rgba(6,182,212,.70));
+      border:1px solid rgba(255,255,255,.16);
+      display:grid; place-items:center;
+      font-weight:900;
+      letter-spacing:.6px;
+    }
+    .brand b{display:block; font-size:14px}
+    .brand span{display:block; font-size:12px; color:var(--muted); margin-top:2px}
+
+    .nav{
+      margin-top:14px;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .nav .btn{
+      display:flex; align-items:center; gap:10px;
+      padding:12px 12px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      color:var(--txt);
+      cursor:pointer;
+      user-select:none;
+      transition: transform .08s ease, background .12s ease, border-color .12s ease;
+    }
+    .nav .btn:active{transform: translateY(1px)}
+    .nav .btn.active{
+      border-color: rgba(124,58,237,.40);
+      background: rgba(124,58,237,.14);
+    }
+    .chip{
+      font-size:12px; color:var(--muted);
+      padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      display:inline-flex; align-items:center; gap:6px;
+    }
+
+    .side .panel{
+      margin-top:12px;
+      padding:12px;
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+    }
+    .side .panel h4{margin:0 0 8px; font-size:13px}
+    .side .panel p{margin:0; font-size:12px; color:var(--muted); line-height:1.35}
+    .side .minirow{display:flex; gap:10px; margin-top:10px; flex-wrap:wrap}
+
+    /* Main */
+    .main{
+      padding: 18px 18px 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      width:100%;
+    }
+    .top{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
+      padding: 14px 14px;
+      border-radius: var(--r2);
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      box-shadow: var(--shadow);
+      position:sticky; top:12px; z-index:10; backdrop-filter: blur(12px);
+    }
+    .top .left b{display:block; font-size:14px}
+    .top .left span{display:block; font-size:12px; color:var(--muted); margin-top:2px}
+    .top .right{display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end}
+    button{
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      color:var(--txt);
+      padding:10px 12px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight:700; font-size:13px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.25);
+      transition: transform .08s ease, background .12s ease;
+    }
+    button:active{transform: translateY(1px)}
+    button.primary{
+      border-color: rgba(34,197,94,.35);
+      background: linear-gradient(180deg, rgba(34,197,94,.30), rgba(34,197,94,.16));
+    }
+    button.warn{
+      border-color: rgba(245,158,11,.35);
+      background: linear-gradient(180deg, rgba(245,158,11,.25), rgba(245,158,11,.12));
+    }
+    button.ghost{background:transparent; box-shadow:none}
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid rgba(255,255,255,.14);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
+      border-radius: var(--r2);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card h3{
+      margin:0; padding:14px 16px 8px;
+      font-size:13px; letter-spacing:.2px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .sub{
+      padding:0 16px 12px;
+      font-size:12px; color:var(--muted);
+    }
+    .pad{padding:0 16px 16px}
+    .kpis{
+      display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;
+      padding: 0 16px 16px;
+    }
+    @media (max-width: 820px){ .kpis{grid-template-columns:1fr 1fr} }
+    @media (max-width: 520px){ .kpis{grid-template-columns:1fr} }
+    .kpi{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      padding:12px;
+    }
+    .kpi .label{font-size:12px; color:var(--muted)}
+    .kpi .val{font-size:18px; font-weight:900; margin-top:4px}
+    .kpi .hint{font-size:12px; color:var(--muted); margin-top:2px}
+
+    .canvasWrap{position:relative; padding: 0 16px 16px}
+    canvas{width:100%; height:260px; display:block}
+    .tooltip{
+      position:absolute; pointer-events:none;
+      background: rgba(10,14,24,.95);
+      border:1px solid rgba(255,255,255,.16);
+      border-radius: 14px;
+      padding:10px 10px;
+      font-size:12px;
+      color:var(--txt);
+      box-shadow: 0 20px 60px rgba(0,0,0,.45);
+      transform: translate(-50%, -110%);
+      display:none;
+      min-width: 170px;
+      backdrop-filter: blur(8px);
+      z-index:5;
+    }
+    .tooltip b{display:block; margin-bottom:4px}
+    .tooltip span{display:block; color:var(--muted); margin-top:2px}
+
+    /* Form */
+    .field{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      padding:12px;
+      margin-bottom:10px;
+    }
+    .field label{display:block; font-size:12px; color:var(--muted); margin-bottom:8px}
+    input[type="date"], input[type="number"], textarea, select{
+      width:100%;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      padding:10px 12px;
+      color:var(--txt);
+      outline:none;
+      font-size:14px;
+    }
+    textarea{min-height:86px; resize: vertical}
+
+    .seg3{display:grid; grid-template-columns: 1fr 1fr 1fr; gap:8px}
+    .opt{
+      padding:10px 10px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      text-align:center;
+      font-weight:800;
+      cursor:pointer; user-select:none;
+      transition: transform .08s ease, background .12s ease, border-color .12s ease;
+      font-size:13px;
+    }
+    .opt:active{transform: translateY(1px)}
+    .opt[data-v="3"].sel{border-color: rgba(34,197,94,.45); background: rgba(34,197,94,.14)}
+    .opt[data-v="2"].sel{border-color: rgba(245,158,11,.45); background: rgba(245,158,11,.12)}
+    .opt[data-v="1"].sel{border-color: rgba(251,113,133,.45); background: rgba(251,113,133,.10)}
+
+    .row2{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 520px){ .row2{grid-template-columns:1fr} }
+
+    .list{
+      display:flex; flex-direction:column; gap:10px;
+      max-height: 280px; overflow:auto; padding-right:6px;
+    }
+    .item{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      background: rgba(0,0,0,.18);
+      padding:12px;
+    }
+    .item b{display:block; font-size:13px}
+    .item span{display:block; font-size:12px; color:var(--muted); margin-top:3px}
+    .pills{display:flex; gap:6px; flex-wrap:wrap; margin-top:8px}
+    .pill{
+      font-size:12px;
+      padding:6px 8px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      white-space:nowrap;
+    }
+    .pill.good{border-color: rgba(34,197,94,.40); background: rgba(34,197,94,.12)}
+    .pill.warn{border-color: rgba(245,158,11,.40); background: rgba(245,158,11,.10)}
+    .pill.bad{border-color: rgba(251,113,133,.40); background: rgba(251,113,133,.09)}
+
+    .toast{
+      position: fixed; left:50%; bottom:16px; transform: translateX(-50%);
+      background: rgba(10,14,24,.95);
+      border:1px solid rgba(255,255,255,.16);
+      padding:10px 12px;
+      border-radius: 14px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.5);
+      color: var(--txt);
+      font-size:12px;
+      display:none;
+      max-width: min(680px, calc(100vw - 24px));
+      z-index:99;
+    }
+    .toast b{display:block; margin-bottom:2px}
+    .small{font-size:12px; color:var(--muted)}
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">SO</div>
+      <div>
+        <b>StudyOS</b>
+        <span>Dashboard PreU · Demo offline</span>
+      </div>
+    </div>
+
+    <div class="nav" style="margin-top:12px">
+      <div class="btn active" data-tab="dash">📊 Dashboard</div>
+      <div class="btn" data-tab="log">📝 Registro</div>
+      <div class="btn" data-tab="data">🧩 Datos</div>
+      <div class="btn" data-tab="about">🏥 Enfoque</div>
+    </div>
+
+    <div class="panel">
+      <h4>Vista institucional (impacto)</h4>
+      <p>Diseñado para verse como “producto” (métricas + tendencias + evidencia visual). Ideal para CV/portafolio.</p>
+      <div class="minirow">
+        <span class="chip">✅ Offline</span>
+        <span class="chip">📱 iOS/Android</span>
+        <span class="chip">➕ PWA</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h4>Atajos</h4>
+      <div class="minirow">
+        <button class="ghost" id="btnInstall" style="width:100%">➕ Instalar</button>
+        <button class="primary" id="btnReport" style="width:100%">🧾 Informe semanal</button>
+        <button class="warn" id="btnReset" style="width:100%">🧹 Reset</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="top">
+      <div class="left">
+        <b>Dashboard de hábitos de estudio — Adolescente 18 (Preuniversitario)</b>
+        <span>Registro diario + análisis visual: tendencias, heatmap, perfil radar, correlación horas-rendimiento.</span>
+      </div>
+      <div class="right">
+        <button id="btnToday">📍 Hoy</button>
+        <button id="btnSave" class="primary">💾 Guardar registro</button>
+        <button id="btnExport">⬇️ Export</button>
+        <button id="btnImport">⬆️ Import</button>
+      </div>
+    </div>
+
+    <!-- TAB: DASHBOARD -->
+    <section id="tab-dash" class="grid">
+      <div class="card">
+        <h3>📈 Tendencias (7 días) <span class="small">toque/pase para tooltip</span></h3>
+        <div class="sub">Puntaje total (perfil), Horas de estudio y Distracción (autorreporte).</div>
+
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label">Promedio total</div>
+            <div class="val" id="kAvg">—</div>
+            <div class="hint">Escala 0–100</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Mejor día</div>
+            <div class="val" id="kBest">—</div>
+            <div class="hint" id="kBestHint">—</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Horas promedio</div>
+            <div class="val" id="kHours">—</div>
+            <div class="hint">últimos 7 días</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Riesgo distracción</div>
+            <div class="val" id="kRisk">—</div>
+            <div class="hint">bajo/medio/alto</div>
+          </div>
+        </div>
+
+        <div class="canvasWrap">
+          <canvas id="cTrend" width="900" height="320"></canvas>
+          <div class="tooltip" id="tipTrend"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🧩 Heatmap (28 días) <span class="small">consistencia</span></h3>
+        <div class="sub">Intensidad = puntaje total. Tooltips por día.</div>
+        <div class="canvasWrap">
+          <canvas id="cHeat" width="900" height="320" style="height:240px"></canvas>
+          <div class="tooltip" id="tipHeat"></div>
+        </div>
+
+        <h3 style="padding-top:0">🕸️ Perfil (Radar)</h3>
+        <div class="sub">Planificación · Atención · Estrategias · Motivación · Sueño.</div>
+        <div class="canvasWrap">
+          <canvas id="cRadar" width="900" height="320" style="height:240px"></canvas>
+          <div class="tooltip" id="tipRadar"></div>
+        </div>
+      </div>
+
+      <div class="card" style="grid-column:1/-1">
+        <h3>📍 Correlación (Horas vs Puntaje) <span class="small">regresión + R²</span></h3>
+        <div class="sub">Sirve para “lenguaje institucional”: evidencia de relación entre hábito y rendimiento.</div>
+        <div class="canvasWrap">
+          <canvas id="cScatter" width="1200" height="320" style="height:260px"></canvas>
+          <div class="tooltip" id="tipScatter"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: REGISTRO -->
+    <section id="tab-log" style="display:none">
+      <div class="grid" style="grid-template-columns: 1fr .9fr">
+        <div class="card">
+          <h3>📝 Registro diario</h3>
+          <div class="sub">Escalas rápidas (1–5) y nota breve. Guarda local en el dispositivo.</div>
+          <div class="pad">
+            <div class="row2">
+              <div class="field">
+                <label for="d">Fecha</label>
+                <input id="d" type="date"/>
+              </div>
+              <div class="field">
+                <label for="hrs">Horas de estudio (0–12)</label>
+                <input id="hrs" type="number" min="0" max="12" step="0.25" placeholder="Ej: 3.5"/>
+              </div>
+            </div>
+
+            <div class="row2">
+              <div class="field">
+                <label for="dis">Distracción (0–10)</label>
+                <input id="dis" type="number" min="0" max="10" step="1" placeholder="0 = nada, 10 = alta"/>
+              </div>
+              <div class="field">
+                <label for="mood">Energía (1–5)</label>
+                <select id="mood">
+                  <option value="1">1 · Muy baja</option>
+                  <option value="2">2</option>
+                  <option value="3" selected>3 · Media</option>
+                  <option value="4">4</option>
+                  <option value="5">5 · Alta</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Planificación (1–5)</label>
+              <div class="seg3" data-k="plan">
+                <div class="opt" data-v="5">✅ Alto</div>
+                <div class="opt" data-v="3">🟡 Medio</div>
+                <div class="opt" data-v="1">⛔ Bajo</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Atención (1–5)</label>
+              <div class="seg3" data-k="att">
+                <div class="opt" data-v="5">✅ Alto</div>
+                <div class="opt" data-v="3">🟡 Medio</div>
+                <div class="opt" data-v="1">⛔ Bajo</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Estrategias (1–5)</label>
+              <div class="seg3" data-k="str">
+                <div class="opt" data-v="5">✅ Alto</div>
+                <div class="opt" data-v="3">🟡 Medio</div>
+                <div class="opt" data-v="1">⛔ Bajo</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Motivación (1–5)</label>
+              <div class="seg3" data-k="mot">
+                <div class="opt" data-v="5">✅ Alta</div>
+                <div class="opt" data-v="3">🟡 Media</div>
+                <div class="opt" data-v="1">⛔ Baja</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Sueño (1–5)</label>
+              <div class="seg3" data-k="sleep">
+                <div class="opt" data-v="5">😴 Bueno</div>
+                <div class="opt" data-v="3">🟡 Regular</div>
+                <div class="opt" data-v="1">⛔ Malo</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="note">Nota del día</label>
+              <textarea id="note" placeholder="Ej: simulacro + repaso; mañana biblioteca; evitar celular."></textarea>
+            </div>
+
+            <div class="small">Tip UX: todo está optimizado para “una mano” en móvil (toques grandes y scroll corto).</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>🗂️ Últimos registros</h3>
+          <div class="sub">Top 12 (para revisión rápida).</div>
+          <div class="pad">
+            <div class="list" id="list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: DATA -->
+    <section id="tab-data" style="display:none">
+      <div class="card">
+        <h3>🧾 Datos (Export/Import)</h3>
+        <div class="sub">Ideal para demo institucional: migrar registros entre dispositivos o mostrar un “dataset” precargado.</div>
+        <div class="pad">
+          <div class="field">
+            <label>JSON</label>
+            <textarea id="jsonbox" placeholder="Aquí aparecerá el export. Para importar: pega JSON y presiona Import."></textarea>
+          </div>
+          <div style="display:flex; gap:10px; flex-wrap:wrap">
+            <button id="btnToBox">📋 Poner Export aquí</button>
+            <button id="btnFromBox" class="primary">⬆️ Import desde caja</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB: ABOUT -->
+    <section id="tab-about" style="display:none">
+      <div class="card">
+        <h3>🏥 Enfoque (lenguaje institucional)</h3>
+        <div class="sub">Esta pieza está pensada para “enamorar” a instituciones: evidencia visual + métricas + tendencia + consistencia.</div>
+        <div class="pad">
+          <div class="field">
+            <label>Qué comunica (en 10 segundos)</label>
+            <textarea readonly>
+• Seguimiento cuantitativo simple pero robusto (puntaje 0–100).
+• Consistencia (heatmap) + perfil (radar) + evidencia (correlación).
+• Informe ejecutivo semanal (1 clic).
+• Producto listo para móvil y PWA (instalable).
+            </textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==========================
+   StudyOS — Dashboard PreU
+   - Offline, sin librerías
+   - 4 charts + tooltips
+   - Informe semanal
+   - PWA install
+========================== */
+
+const KEY = "studyos_records_v2";
+const $ = (id)=>document.getElementById(id);
+
+const state = {
+  records: load(),
+  sel: { plan:5, att:5, str:5, mot:5, sleep:5 },
+  pendingInstallEvent: null
+};
+
+function load(){
+  try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
+  catch{ return []; }
+}
+function persist(){ localStorage.setItem(KEY, JSON.stringify(state.records)); }
+
+function escapeHtml(s){
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function toast(title, msg){
+  const t = $("toast");
+  t.innerHTML = `<b>${escapeHtml(title)}</b><div>${escapeHtml(msg)}</div>`;
+  t.style.display="block";
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(()=>t.style.display="none", 2600);
+}
+function todayISO(){
+  const d = new Date();
+  const off = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - off*60000);
+  return local.toISOString().slice(0,10);
+}
+function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+/* ----- Scoring (0–100) -----
+   Variables 1–5 => promedio (1–5) => escala 0–100.
+   Penaliza distracción, premia horas moderadas (con saturación).
+*/
+function score(rec){
+  const core = (rec.plan + rec.att + rec.str + rec.mot + rec.sleep) / 5; // 1..5
+  let s = (core - 1) / 4; // 0..1
+  // horas: hasta 6h suma, luego se satura
+  const h = rec.hours ?? 0;
+  const hBoost = Math.min(h, 6) / 6; // 0..1
+  // distracción: 0..10 (más alto, peor)
+  const dis = rec.dis ?? 0;
+  const disPenalty = dis / 10; // 0..1
+  // combinación
+  let out = 0.70*s + 0.20*hBoost + 0.10*(1 - disPenalty);
+  out = clamp(out, 0, 1);
+  return Math.round(out * 100);
+}
+
+function band(v){
+  if(v >= 75) return {label:"Óptimo", cls:"good"};
+  if(v >= 55) return {label:"En progreso", cls:"warn"};
+  return {label:"Riesgo", cls:"bad"};
+}
+
+/* ===== Tabs ===== */
+document.querySelectorAll(".nav .btn").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    document.querySelectorAll(".nav .btn").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    const tab = b.dataset.tab;
+    ["dash","log","data","about"].forEach(t=>{
+      $("tab-"+t).style.display = (t===tab) ? (t==="dash" ? "grid" : "block") : "none";
+    });
+    // re-draw charts after tab switch
+    setTimeout(drawAll, 60);
+  });
+});
+
+/* ===== Segmented selections ===== */
+document.querySelectorAll(".seg3").forEach(seg=>{
+  const k = seg.dataset.k;
+  const opts = [...seg.querySelectorAll(".opt")];
+  function set(v){
+    state.sel[k] = v;
+    opts.forEach(o=> o.classList.toggle("sel", Number(o.dataset.v)===v));
+  }
+  // defaults
+  set(state.sel[k] ?? 5);
+  opts.forEach(o=> o.addEventListener("click", ()=> set(Number(o.dataset.v))));
+});
+
+/* ===== CRUD ===== */
+function upsert(rec){
+  const i = state.records.findIndex(r=>r.date===rec.date);
+  if(i>=0) state.records[i]=rec;
+  else state.records.push(rec);
+  state.records.sort((a,b)=>a.date.localeCompare(b.date));
+  persist();
+}
+
+$("btnToday").addEventListener("click", ()=>{
+  $("d").value = todayISO();
+  toast("Fecha", "Hoy seleccionado.");
+});
+
+$("btnSave").addEventListener("click", ()=>{
+  const date = $("d").value || todayISO();
+  const hours = $("hrs").value==="" ? 0 : clamp(Number($("hrs").value), 0, 12);
+  const dis = $("dis").value==="" ? 0 : clamp(Number($("dis").value), 0, 10);
+  const mood = clamp(Number($("mood").value || 3), 1, 5);
+  const note = ($("note").value || "").trim();
+
+  const rec = {
+    date, hours, dis, mood,
+    plan: state.sel.plan,
+    att: state.sel.att,
+    str: state.sel.str,
+    mot: state.sel.mot,
+    sleep: state.sel.sleep,
+    note
+  };
+  upsert(rec);
+  toast("Guardado", "Registro actualizado.");
+  renderList();
+  drawAll();
+});
+
+$("btnReset").addEventListener("click", ()=>{
+  if(!confirm("¿Borrar todos los datos guardados en este dispositivo?")) return;
+  state.records = [];
+  persist();
+  toast("Reset", "Datos eliminados.");
+  renderList();
+  drawAll();
+});
+
+/* ===== Export / Import ===== */
+function exportJSON(){ return JSON.stringify(state.records, null, 2); }
+
+$("btnExport").addEventListener("click", ()=>{
+  const txt = exportJSON();
+  navigator.clipboard?.writeText(txt).then(
+    ()=>toast("Export", "Copiado al portapapeles."),
+    ()=>toast("Export", "Listo: usa el tab Datos para copiar manual.")
+  );
+  $("jsonbox").value = txt;
+});
+
+$("btnImport").addEventListener("click", ()=>{
+  $("tab-data").style.display="block";
+  document.querySelector('[data-tab="data"]').click();
+  toast("Import", "Pega JSON en la caja y presiona Import desde caja.");
+});
+
+$("btnToBox").addEventListener("click", ()=>{
+  $("jsonbox").value = exportJSON();
+  toast("Datos", "Export volcado en la caja.");
+});
+
+$("btnFromBox").addEventListener("click", ()=>{
+  try{
+    const arr = JSON.parse($("jsonbox").value || "[]");
+    if(!Array.isArray(arr)) throw new Error("Formato inválido.");
+    // sanity minimal
+    state.records = arr
+      .filter(x=>x && typeof x.date==="string")
+      .map(x=>({
+        date: x.date,
+        hours: clamp(Number(x.hours||0),0,12),
+        dis: clamp(Number(x.dis||0),0,10),
+        mood: clamp(Number(x.mood||3),1,5),
+        plan: clamp(Number(x.plan||3),1,5),
+        att: clamp(Number(x.att||3),1,5),
+        str: clamp(Number(x.str||3),1,5),
+        mot: clamp(Number(x.mot||3),1,5),
+        sleep: clamp(Number(x.sleep||3),1,5),
+        note: String(x.note||"")
+      }));
+    state.records.sort((a,b)=>a.date.localeCompare(b.date));
+    persist();
+    toast("Import", "Datos cargados ✅");
+    renderList();
+    drawAll();
+  }catch(e){
+    alert("JSON inválido. Revisa el formato.");
+  }
+});
+
+/* ===== Informe semanal (1 clic) ===== */
+$("btnReport").addEventListener("click", ()=>{
+  const week = lastNDays(7).filter(r=>r);
+  if(week.length===0){ alert("Aún no hay registros."); return; }
+
+  const pts = week.map(r=>score(r));
+  const avg = Math.round(pts.reduce((a,b)=>a+b,0)/pts.length);
+  const bestIdx = pts.indexOf(Math.max(...pts));
+  const best = week[bestIdx];
+  const avgH = (week.reduce((s,r)=>s+(r.hours||0),0)/week.length).toFixed(1);
+  const avgDis = (week.reduce((s,r)=>s+(r.dis||0),0)/week.length).toFixed(1);
+
+  // cuellos de botella por dimensión (promedios)
+  const mean = k => week.reduce((s,r)=>s+(r[k]||0),0)/week.length;
+  const dims = [
+    {k:"plan", n:"Planificación"},
+    {k:"att", n:"Atención"},
+    {k:"str", n:"Estrategias"},
+    {k:"mot", n:"Motivación"},
+    {k:"sleep", n:"Sueño"}
+  ].map(d=>({ ...d, v: mean(d.k) }))
+   .sort((a,b)=>a.v-b.v);
+
+  const focus = dims[0].n;
+
+  const msg =
+`INFORME SEMANAL — StudyOS (PreU)
+• Registros: ${week.length}/7
+• Promedio puntaje: ${avg}/100
+• Mejor día: ${best.date} (${score(best)}/100)
+• Horas promedio: ${avgH} h/día
+• Distracción promedio: ${avgDis}/10
+• Prioridad clínica/educativa: ${focus}
+
+Notas destacadas:
+${week.filter(r=>r.note).slice(-3).map(r=>`- ${r.date}: ${r.note}`).join("\n") || "- (sin notas)"}`
+  ;
+
+  const w = window.open("", "_blank");
+  if(!w){ alert(msg); return; }
+  w.document.write(`<pre style="white-space:pre-wrap;font-family:ui-monospace,Menlo,Consolas,monospace;padding:16px;background:#0b1020;color:#fff;">${escapeHtml(msg)}</pre>`);
+  w.document.title = "Informe semanal — StudyOS";
+});
+
+/* ===== Helpers: time windows ===== */
+function lastNDays(n){
+  const map = new Map(state.records.map(r=>[r.date,r]));
+  const end = new Date();
+  const start = new Date(end.getTime() - (n-1)*86400000);
+  const out=[];
+  for(let i=0;i<n;i++){
+    const d = new Date(start.getTime() + i*86400000);
+    const iso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+    out.push(map.get(iso) || null);
+  }
+  return out;
+}
+
+/* ==========================
+   Charts (Canvas) + tooltips
+========================== */
+function setupCanvas(id){
+  const c = $(id);
+  const ctx = c.getContext("2d");
+  function resize(){
+    const rect = c.getBoundingClientRect();
+    const dpr = Math.max(1, Math.floor(window.devicePixelRatio || 1));
+    c.width = Math.floor(rect.width * dpr);
+    c.height = Math.floor(rect.height * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return {w: rect.width, h: rect.height};
+  }
+  return {c, ctx, resize};
+}
+
+const Trend = setupCanvas("cTrend");
+const Heat = setupCanvas("cHeat");
+const Radar = setupCanvas("cRadar");
+const Scat = setupCanvas("cScatter");
+
+const hit = {
+  trend: [],
+  heat: [],
+  radar: [],
+  scat: []
+};
+
+function drawAll(){
+  drawTrend();
+  drawHeat();
+  drawRadar();
+  drawScatter();
+  renderKPIs();
+}
+
+function gridLines(ctx,w,h){
+  ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){
+    const y = 18 + i*((h-42)/4);
+    ctx.strokeStyle="rgba(255,255,255,.10)";
+    ctx.beginPath(); ctx.moveTo(14,y); ctx.lineTo(w-14,y); ctx.stroke();
+  }
+}
+
+function drawTrend(){
+  const {ctx} = Trend;
+  const {w,h} = Trend.resize();
+  ctx.clearRect(0,0,w,h);
+  gridLines(ctx,w,h);
+
+  const days = lastNDays(7);
+  const xs = i => 18 + (w-36)*(i/6);
+  const padT=18, padB=28;
+  const plotH = h - padT - padB;
+
+  // series
+  const pts = days.map(d=> d ? score(d) : null);  // 0..100
+  const hrs = days.map(d=> d ? (d.hours||0) : null); // 0..12
+  const dis = days.map(d=> d ? (d.dis||0) : null);   // 0..10
+
+  const yScore = v => padT + plotH*(1 - (v/100));
+  const yHrs = v => padT + plotH*(1 - (Math.min(v,8)/8));
+  const yDis = v => padT + plotH*(1 - (v/10));
+
+  // path helper
+  function line(series, yfn, stroke, lw){
+    ctx.strokeStyle=stroke; ctx.lineWidth=lw;
+    ctx.beginPath();
+    let s=false;
+    series.forEach((v,i)=>{
+      if(v==null) return;
+      const x=xs(i), y=yfn(v);
+      if(!s){ ctx.moveTo(x,y); s=true; } else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  }
+
+  // gradients
+  const gradA = ctx.createLinearGradient(0,0,w,0);
+  gradA.addColorStop(0,"rgba(124,58,237,.95)");
+  gradA.addColorStop(1,"rgba(6,182,212,.85)");
+
+  const gradB = ctx.createLinearGradient(0,0,w,0);
+  gradB.addColorStop(0,"rgba(34,197,94,.90)");
+  gradB.addColorStop(1,"rgba(245,158,11,.75)");
+
+  line(pts, yScore, gradA, 2.6);
+  line(hrs, yHrs, "rgba(6,182,212,.90)", 2.0);
+  line(dis, yDis, gradB, 2.0);
+
+  // points + labels + hit
+  hit.trend = [];
+  ctx.font="11px " + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign="center";
+
+  pts.forEach((v,i)=>{
+    const x=xs(i);
+    const lab = dayLabel(i);
+    ctx.fillStyle="rgba(255,255,255,.60)";
+    ctx.fillText(lab, x, h-10);
+    if(v==null) return;
+    const y=yScore(v);
+    ctx.fillStyle="rgba(124,58,237,1)";
+    ctx.beginPath(); ctx.arc(x,y,4.4,0,Math.PI*2); ctx.fill();
+    hit.trend.push({x,y,i,type:"score"});
+  });
+  hrs.forEach((v,i)=>{
+    if(v==null) return;
+    const x=xs(i), y=yHrs(v);
+    ctx.fillStyle="rgba(6,182,212,1)";
+    ctx.beginPath(); ctx.arc(x,y,3.8,0,Math.PI*2); ctx.fill();
+    hit.trend.push({x,y,i,type:"hours"});
+  });
+  dis.forEach((v,i)=>{
+    if(v==null) return;
+    const x=xs(i), y=yDis(v);
+    ctx.fillStyle="rgba(245,158,11,1)";
+    ctx.beginPath(); ctx.arc(x,y,3.8,0,Math.PI*2); ctx.fill();
+    hit.trend.push({x,y,i,type:"dis"});
+  });
+
+  // legend
+  ctx.textAlign="left";
+  ctx.fillStyle="rgba(255,255,255,.82)";
+  ctx.fillText("● Puntaje", 16, 14);
+  ctx.fillStyle="rgba(255,255,255,.70)";
+  ctx.fillText("● Horas", 100, 14);
+  ctx.fillText("● Distracción", 170, 14);
+  // dots
+  ctx.fillStyle="rgba(124,58,237,1)"; ctx.beginPath(); ctx.arc(8,10,4,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="rgba(6,182,212,1)"; ctx.beginPath(); ctx.arc(92,10,4,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="rgba(245,158,11,1)"; ctx.beginPath(); ctx.arc(162,10,4,0,Math.PI*2); ctx.fill();
+}
+
+function dayLabel(i){
+  // etiqueta simple tipo "L", "M", ...
+  const labs = ["D","L","M","X","J","V","S"];
+  const d = new Date();
+  const idx = (d.getDay() - (6-i) + 7) % 7;
+  return labs[idx];
+}
+
+function drawHeat(){
+  const {ctx} = Heat;
+  const {w,h} = Heat.resize();
+  ctx.clearRect(0,0,w,h);
+
+  const days = lastNDays(28); // 28d
+  const cols = 14, rows = 2;  // 14x2
+  const pad=14;
+  const cell = Math.min((w-2*pad)/cols, (h-2*pad)/rows) - 6;
+  const gap = 6;
+
+  hit.heat = [];
+
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const idx = r*cols + c;
+      const rec = days[idx];
+      const x = pad + c*(cell+gap);
+      const y = pad + r*(cell+gap);
+      const val = rec ? score(rec) : null;
+
+      // color by intensity
+      let fill = "rgba(255,255,255,.06)";
+      if(val!=null){
+        const t = val/100;
+        // mix violeta->verde
+        const a = 124, b=58, c1=237;
+        const g = 34, g2=197, g3=94;
+        const rr = Math.round(a*(1-t) + g*t);
+        const gg = Math.round(b*(1-t) + g2*t);
+        const bb = Math.round(c1*(1-t) + g3*t);
+        fill = `rgba(${rr},${gg},${bb},${0.22 + 0.55*t})`;
+      }
+
+      // draw
+      roundRect(ctx,x,y,cell,cell,10, fill, "rgba(255,255,255,.10)");
+
+      if(rec){
+        hit.heat.push({x:x+cell/2,y:y+cell/2,cell, idx, rec});
+      }
+    }
+  }
+
+  // label
+  ctx.fillStyle="rgba(255,255,255,.70)";
+  ctx.font="12px " + getComputedStyle(document.body).fontFamily;
+  ctx.fillText("Últimos 28 días (intensidad = puntaje)", 14, h-10);
+}
+
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+  ctx.fillStyle=fill; ctx.fill();
+  ctx.strokeStyle=stroke; ctx.lineWidth=1; ctx.stroke();
+}
+
+function drawRadar(){
+  const {ctx} = Radar;
+  const {w,h} = Radar.resize();
+  ctx.clearRect(0,0,w,h);
+
+  const cx = w*0.5, cy = h*0.52;
+  const R = Math.min(w,h)*0.36;
+
+  const week = lastNDays(7).filter(Boolean);
+  const mean = k => week.length ? week.reduce((s,r)=>s+(r[k]||0),0)/week.length : 3;
+
+  const dims = [
+    {k:"plan", n:"Plan"},
+    {k:"att", n:"Aten"},
+    {k:"str", n:"Estr"},
+    {k:"mot", n:"Mot"},
+    {k:"sleep", n:"Sue"}
+  ];
+  const values = dims.map(d=> mean(d.k)); // 1..5
+
+  // grid
+  ctx.strokeStyle="rgba(255,255,255,.10)";
+  ctx.lineWidth=1;
+  for(let g=1; g<=4; g++){
+    const rr = R*(g/4);
+    ctx.beginPath();
+    dims.forEach((d,i)=>{
+      const ang = (-Math.PI/2) + i*(2*Math.PI/dims.length);
+      const x = cx + rr*Math.cos(ang);
+      const y = cy + rr*Math.sin(ang);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.closePath(); ctx.stroke();
+  }
+
+  // axes + labels
+  ctx.fillStyle="rgba(255,255,255,.70)";
+  ctx.font="12px " + getComputedStyle(document.body).fontFamily;
+  dims.forEach((d,i)=>{
+    const ang = (-Math.PI/2) + i*(2*Math.PI/dims.length);
+    const x = cx + (R+16)*Math.cos(ang);
+    const y = cy + (R+16)*Math.sin(ang);
+    ctx.strokeStyle="rgba(255,255,255,.10)";
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx + R*Math.cos(ang), cy + R*Math.sin(ang)); ctx.stroke();
+    ctx.textAlign = (Math.cos(ang) > 0.2) ? "left" : (Math.cos(ang) < -0.2 ? "right" : "center");
+    ctx.fillText(d.n, x, y);
+  });
+
+  // polygon
+  const grad = ctx.createLinearGradient(cx-R,cy,cx+R,cy);
+  grad.addColorStop(0,"rgba(124,58,237,.85)");
+  grad.addColorStop(1,"rgba(34,197,94,.75)");
+
+  ctx.beginPath();
+  const pts=[];
+  values.forEach((v,i)=>{
+    const t = (v-1)/4; // 0..1
+    const rr = R*t;
+    const ang = (-Math.PI/2) + i*(2*Math.PI/dims.length);
+    const x = cx + rr*Math.cos(ang);
+    const y = cy + rr*Math.sin(ang);
+    pts.push({x,y,i,v});
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle="rgba(124,58,237,.12)";
+  ctx.fill();
+  ctx.strokeStyle=grad;
+  ctx.lineWidth=2.4;
+  ctx.stroke();
+
+  // points + hit
+  hit.radar=[];
+  pts.forEach(p=>{
+    ctx.fillStyle="rgba(6,182,212,1)";
+    ctx.beginPath(); ctx.arc(p.x,p.y,4.2,0,Math.PI*2); ctx.fill();
+    hit.radar.push(p);
+  });
+
+  ctx.fillStyle="rgba(255,255,255,.70)";
+  ctx.textAlign="left";
+  ctx.fillText("Perfil promedio 7 días", 14, 16);
+}
+
+function drawScatter(){
+  const {ctx} = Scat;
+  const {w,h} = Scat.resize();
+  ctx.clearRect(0,0,w,h);
+  gridLines(ctx,w,h);
+
+  const data = state.records.slice(-30).filter(r=>r); // hasta 30
+  const pts = data.map(r=>({x:r.hours||0, y:score(r), date:r.date, note:r.note||"", dis:r.dis||0}));
+
+  const padL=40, padR=18, padT=18, padB=30;
+  const plotW = w - padL - padR;
+  const plotH = h - padT - padB;
+
+  const maxX = 8; // horas (escala visual)
+  const maxY = 100;
+
+  const xAt = v => padL + plotW*(clamp(v,0,maxX)/maxX);
+  const yAt = v => padT + plotH*(1 - clamp(v,0,maxY)/maxY);
+
+  // regression (simple)
+  const n = pts.length;
+  let a=0,b=0,c=0,d=0;
+  pts.forEach(p=>{ a+=p.x; b+=p.y; c+=p.x*p.x; d+=p.x*p.y; });
+  const denom = (n*c - a*a) || 1;
+  const m = (n*d - a*b)/denom;
+  const q = (b - m*a)/(n||1);
+
+  // R^2
+  const ybar = (b/(n||1));
+  let ssTot=0, ssRes=0;
+  pts.forEach(p=>{
+    const yh = m*p.x + q;
+    ssTot += (p.y - ybar)*(p.y - ybar);
+    ssRes += (p.y - yh)*(p.y - yh);
+  });
+  const r2 = n ? (1 - ssRes/(ssTot||1)) : 0;
+
+  // draw regression
+  ctx.strokeStyle="rgba(34,197,94,.85)";
+  ctx.lineWidth=2.2;
+  ctx.beginPath();
+  ctx.moveTo(xAt(0), yAt(q));
+  ctx.lineTo(xAt(maxX), yAt(m*maxX+q));
+  ctx.stroke();
+
+  // points + hit
+  hit.scat=[];
+  pts.forEach(p=>{
+    const x=xAt(p.x), y=yAt(p.y);
+    ctx.fillStyle="rgba(124,58,237,1)";
+    ctx.beginPath(); ctx.arc(x,y,4.2,0,Math.PI*2); ctx.fill();
+    hit.scat.push({x,y,p});
+  });
+
+  // axis labels
+  ctx.fillStyle="rgba(255,255,255,.70)";
+  ctx.font="12px " + getComputedStyle(document.body).fontFamily;
+  ctx.textAlign="left";
+  ctx.fillText(`Regresión: y = ${m.toFixed(2)}x + ${q.toFixed(1)}   ·   R² = ${r2.toFixed(2)}`, 14, 14);
+
+  ctx.textAlign="center";
+  for(let i=0;i<=8;i+=2){
+    ctx.fillStyle="rgba(255,255,255,.60)";
+    ctx.fillText(i+"h", xAt(i), h-10);
+  }
+  ctx.textAlign="right";
+  ctx.fillText("Puntaje", padL-8, padT+12);
+  ctx.textAlign="left";
+  ctx.fillText("Horas", w-48, h-10);
+}
+
+/* ===== Tooltips / hit testing ===== */
+function bindTooltip(canvasObj, tipEl, hitArrName, formatter){
+  const c = canvasObj.c;
+  const tip = $(tipEl);
+
+  function hide(){ tip.style.display="none"; }
+  function show(html, clientX, clientY){
+    tip.innerHTML = html;
+    tip.style.display="block";
+    const rect = c.getBoundingClientRect();
+    tip.style.left = (clientX - rect.left) + "px";
+    tip.style.top  = (clientY - rect.top) + "px";
+  }
+  function pick(x,y){
+    const arr = hit[hitArrName] || [];
+    let best=null, bestD=1e9;
+    const R = 16; // touch friendly
+    for(const it of arr){
+      const dx = (it.x ?? 0) - x, dy = (it.y ?? 0) - y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if(d < R && d < bestD){ best=it; bestD=d; }
+    }
+    return best;
+  }
+
+  const handler = (ev)=>{
+    const rect = c.getBoundingClientRect();
+    const p = (ev.touches && ev.touches[0]) ? ev.touches[0] : ev;
+    const x = p.clientX - rect.left;
+    const y = p.clientY - rect.top;
+    const got = pick(x,y);
+    if(!got){ hide(); return; }
+    show(formatter(got), p.clientX, p.clientY);
+  };
+
+  c.addEventListener("mousemove", handler);
+  c.addEventListener("mouseleave", hide);
+  c.addEventListener("touchstart", handler, {passive:true});
+  c.addEventListener("touchmove", handler, {passive:true});
+  c.addEventListener("touchend", hide);
+}
+
+/* Trend tooltip */
+bindTooltip(Trend, "tipTrend", "trend", (it)=>{
+  const d = lastNDays(7)[it.i];
+  if(!d) return `<b>Sin registro</b><span>—</span>`;
+  const s = score(d);
+  const b = band(s);
+  const label = it.type==="score" ? `Puntaje: <b>${s}/100</b> (${b.label})` :
+                it.type==="hours" ? `Horas: <b>${d.hours||0}h</b>` :
+                `Distracción: <b>${d.dis||0}/10</b>`;
+  return `<b>${d.date}</b>
+    <div>${label}</div>
+    <span>Plan ${d.plan} · Aten ${d.att} · Estr ${d.str} · Mot ${d.mot} · Sueño ${d.sleep}</span>
+    <span>Nota: ${escapeHtml(d.note||"Sin nota")}</span>`;
+});
+
+/* Heat tooltip: hit by proximity to centers already stored */
+(function(){
+  const c = Heat.c, tip = $("tipHeat");
+  function hide(){ tip.style.display="none"; }
+  function show(html, cx, cy){
+    tip.innerHTML = html;
+    tip.style.display="block";
+    const rect = c.getBoundingClientRect();
+    tip.style.left = (cx - rect.left) + "px";
+    tip.style.top  = (cy - rect.top) + "px";
+  }
+  function handler(ev){
+    const rect = c.getBoundingClientRect();
+    const p = (ev.touches && ev.touches[0]) ? ev.touches[0] : ev;
+    const x = p.clientX - rect.left;
+    const y = p.clientY - rect.top;
+
+    const arr = hit.heat || [];
+    let best=null;
+    for(const it of arr){
+      // square hit test
+      const half = (it.cell||18)/2;
+      if(Math.abs(it.x - x) <= half && Math.abs(it.y - y) <= half){
+        best=it; break;
+      }
+    }
+    if(!best){ hide(); return; }
+    const r = best.rec;
+    const s = score(r);
+    const b = band(s);
+    show(`<b>${r.date}</b>
+      <div>Puntaje: <b>${s}/100</b> (${b.label})</div>
+      <span>Horas ${r.hours||0} · Distracción ${r.dis||0}/10</span>
+      <span>Nota: ${escapeHtml(r.note||"—")}</span>`, p.clientX, p.clientY);
+  }
+  c.addEventListener("mousemove", handler);
+  c.addEventListener("mouseleave", hide);
+  c.addEventListener("touchstart", handler, {passive:true});
+  c.addEventListener("touchmove", handler, {passive:true});
+  c.addEventListener("touchend", hide);
+})();
+
+/* Radar tooltip */
+bindTooltip(Radar, "tipRadar", "radar", (it)=>{
+  const names = ["Planificación","Atención","Estrategias","Motivación","Sueño"];
+  return `<b>${names[it.i]}</b><span>Promedio 7 días: <b>${it.v.toFixed(1)}/5</b></span>`;
+});
+
+/* Scatter tooltip */
+bindTooltip(Scat, "tipScatter", "scat", (it)=>{
+  const r = it.p;
+  return `<b>${r.date}</b>
+    <div>Horas: <b>${r.x}h</b> · Puntaje: <b>${r.y}/100</b></div>
+    <span>Distracción: ${r.dis}/10</span>
+    <span>Nota: ${escapeHtml(r.note||"—")}</span>`;
+});
+
+/* ===== KPI render ===== */
+function renderKPIs(){
+  const week = lastNDays(7).filter(Boolean);
+  if(!week.length){
+    $("kAvg").textContent="—";
+    $("kBest").textContent="—";
+    $("kBestHint").textContent="—";
+    $("kHours").textContent="—";
+    $("kRisk").textContent="—";
+    return;
+  }
+  const sc = week.map(score);
+  const avg = Math.round(sc.reduce((a,b)=>a+b,0)/sc.length);
+  const bestV = Math.max(...sc);
+  const bestI = sc.indexOf(bestV);
+  const best = week[bestI];
+  const avgH = (week.reduce((s,r)=>s+(r.hours||0),0)/week.length).toFixed(1);
+  const avgDis = (week.reduce((s,r)=>s+(r.dis||0),0)/week.length);
+
+  $("kAvg").textContent = avg + "/100";
+  $("kBest").textContent = best.date.slice(5);
+  $("kBestHint").textContent = "Puntaje " + bestV + "/100";
+  $("kHours").textContent = avgH + "h";
+  $("kRisk").textContent = avgDis <= 3 ? "Bajo" : (avgDis <= 6 ? "Medio" : "Alto");
+}
+
+/* ===== List ===== */
+function renderList(){
+  const list = $("list");
+  const last = state.records.slice(-12).reverse();
+  if(!last.length){
+    list.innerHTML = `<div class="small">Aún no hay registros. Crea el primero en “Registro”.</div>`;
+    return;
+  }
+  list.innerHTML = last.map(r=>{
+    const s = score(r);
+    const b = band(s);
+    return `
+      <div class="item">
+        <b>${escapeHtml(r.date)} · ${s}/100</b>
+        <span>${escapeHtml(r.note || "Sin nota")}</span>
+        <div class="pills">
+          <span class="pill ${b.cls}">${b.label}</span>
+          <span class="pill">Horas ${r.hours||0}</span>
+          <span class="pill">Distr ${r.dis||0}/10</span>
+          <span class="pill">Plan ${r.plan} · Aten ${r.att} · Estr ${r.str}</span>
+          <span class="pill">Mot ${r.mot} · Sueño ${r.sleep}</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+/* ===== PWA ===== */
+window.addEventListener("beforeinstallprompt", (e)=>{
+  e.preventDefault();
+  state.pendingInstallEvent = e;
+  toast("Instalación", "Puedes instalar la app con “Instalar”.");
+});
+
+$("btnInstall").addEventListener("click", async ()=>{
+  if(state.pendingInstallEvent){
+    state.pendingInstallEvent.prompt();
+    const choice = await state.pendingInstallEvent.userChoice;
+    state.pendingInstallEvent = null;
+    toast("Instalación", choice.outcome==="accepted" ? "Instalada ✅" : "Cancelada.");
+    return;
+  }
+  alert("En iPhone/iPad: Compartir → “Agregar a pantalla de inicio”.");
+});
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+/* boot */
+$("d").value = todayISO();
+renderList();
+drawAll();
+window.addEventListener("resize", ()=>setTimeout(drawAll, 50));
+</script>
+</body>
+</html>

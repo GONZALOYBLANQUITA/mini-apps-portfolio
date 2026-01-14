@@ -1,0 +1,1269 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel de Evolución Terapéutica (Local)</title>
+  <style>
+    :root{
+      /* Paleta cálida institucional */
+      --bg0:#0f1412;
+      --bg1:#121c17;
+      --card: rgba(24, 33, 27, .62);
+      --card2: rgba(0,0,0,.18);
+      --text:#f4f1ea;
+      --muted:#c7c1b4;
+
+      --sand:#f1e6d2;     /* crema */
+      --clay:#dba27b;     /* terracota suave */
+      --amber:#f2c15b;    /* ámbar */
+      --sage:#8db7a6;     /* verde salvia */
+      --teal:#4fbfa7;     /* turquesa cálido (tipo la imagen) */
+      --rose:#e17b7b;     /* coral/rosa */
+      --border:rgba(241,230,210,.18);
+      --shadow:0 14px 34px rgba(0,0,0,.38);
+      --radius:18px;
+
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(1000px 520px at 12% -10%, rgba(219,162,123,.22), transparent 62%),
+        radial-gradient(900px 520px at 95% 0%, rgba(141,183,166,.20), transparent 56%),
+        radial-gradient(820px 420px at 60% 120%, rgba(242,193,91,.14), transparent 55%),
+        linear-gradient(180deg, #0a0f0d, var(--bg0));
+      min-height:100vh;
+      padding:14px;
+    }
+    .wrap{max-width:1240px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+
+    header{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), transparent), var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;
+      backdrop-filter: blur(10px);
+    }
+    header h1{margin:0;font-size:18px;letter-spacing:.2px}
+    header p{margin:6px 0 0 0;color:var(--muted);font-size:13px;line-height:1.35;max-width:860px}
+
+    .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
+    .badge{
+      font-size:12px; color:#1b2b23;
+      border:1px solid rgba(241,230,210,.35);
+      background:rgba(241,230,210,.85);
+      padding:8px 10px;border-radius:999px; white-space:nowrap;
+    }
+
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background:rgba(241,230,210,.08);
+      color:var(--text);
+      padding:10px 12px; border-radius:12px;
+      font-size:13px; cursor:pointer;
+      display:inline-flex; gap:8px; align-items:center;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{background:rgba(241,230,210,.13);border-color:rgba(241,230,210,.28)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{
+      background:rgba(79,191,167,.16);
+      border-color:rgba(79,191,167,.35);
+    }
+    .btn.primary:hover{background:rgba(79,191,167,.22)}
+    .btn.ok{
+      background:rgba(141,183,166,.16);
+      border-color:rgba(141,183,166,.35);
+    }
+    .btn.warn{
+      background:rgba(242,193,91,.14);
+      border-color:rgba(242,193,91,.30);
+    }
+    .btn.danger{
+      background:rgba(225,123,123,.14);
+      border-color:rgba(225,123,123,.28);
+    }
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+
+    .grid{
+      display:grid; gap:12px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width: 1040px){
+      .grid{grid-template-columns: 360px 1fr 360px;}
+    }
+
+    .card{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent), var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .hd{
+      padding:12px 12px 10px 12px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .hd h2{margin:0;font-size:14px;letter-spacing:.2px}
+    .hd small{color:var(--muted)}
+    .bd{padding:12px}
+
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px 2px}
+    input, textarea, select{
+      width:100%; border:1px solid var(--border);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      border-radius:14px;
+      padding:11px 12px;
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height:90px; resize:vertical; line-height:1.45}
+
+    .list{display:flex;flex-direction:column;gap:10px;max-height:66vh;overflow:auto;padding-right:4px}
+    .item{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.16);
+      border-radius:14px;
+      padding:10px;
+      cursor:pointer;
+    }
+    .item:hover{background:rgba(0,0,0,.22)}
+    .item .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .item .name{font-weight:700;font-size:13px}
+    .item .meta{color:var(--muted);font-size:12px;line-height:1.25}
+    .pill{
+      font-size:12px; padding:6px 9px; border-radius:999px;
+      border:1px solid var(--border); color:var(--muted);
+      background:rgba(0,0,0,.18); white-space:nowrap;
+    }
+    .pill.teal{border-color:rgba(79,191,167,.45); color:#d2fff4; background:rgba(79,191,167,.10)}
+    .pill.amber{border-color:rgba(242,193,91,.40); color:#fff1c7; background:rgba(242,193,91,.10)}
+    .pill.rose{border-color:rgba(225,123,123,.40); color:#ffd6d6; background:rgba(225,123,123,.10)}
+    .pill.sage{border-color:rgba(141,183,166,.40); color:#d8fff1; background:rgba(141,183,166,.10)}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .two{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width: 720px){.two{grid-template-columns:1fr 1fr}}
+    .three{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width: 980px){.three{grid-template-columns:1fr 1fr 1fr}}
+
+    .hint{color:var(--muted);font-size:12px;line-height:1.35}
+    .sep{height:1px;background:var(--border); margin:12px 0}
+
+    /* Workflow card estilo imagen */
+    .wf{
+      border:1px solid rgba(241,230,210,.20);
+      background:rgba(0,0,0,.18);
+      border-radius:16px;
+      padding:12px;
+    }
+    .wfTitle{
+      font-weight:800;
+      font-size:13px;
+      color:var(--sand);
+      letter-spacing:.2px;
+      margin:0 0 8px 0;
+      text-align:center;
+    }
+    .wfSub{
+      font-size:12px;
+      color:var(--muted);
+      text-align:center;
+      margin:0 0 10px 0;
+    }
+    .wfBox{
+      background:rgba(241,230,210,.08);
+      border:1px solid rgba(241,230,210,.18);
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:10px;
+      text-align:center;
+      color:var(--sand);
+      font-size:12px;
+      font-weight:600;
+    }
+    .wfPills{
+      display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+      margin:10px 0 6px;
+    }
+    .wfPill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(79,191,167,.40);
+      background:rgba(79,191,167,.14);
+      color:#d2fff4;
+      font-size:12px;
+      font-weight:700;
+      white-space:nowrap;
+    }
+    .wfPill.alt{
+      border-color:rgba(242,193,91,.35);
+      background:rgba(242,193,91,.12);
+      color:#fff1c7;
+    }
+    .wfActionTitle{
+      margin:10px 0 8px 0;
+      text-align:center;
+      color:var(--sand);
+      font-size:12px;
+      font-weight:800;
+    }
+    .wfAction{
+      display:flex; align-items:center; gap:8px;
+      padding:9px 10px;
+      border-radius:12px;
+      border:1px solid rgba(79,191,167,.35);
+      background:rgba(79,191,167,.14);
+      color:#d2fff4;
+      font-size:12px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+    .wfAction.alt{
+      border-color:rgba(141,183,166,.35);
+      background:rgba(141,183,166,.12);
+      color:#d8fff1;
+    }
+
+    canvas{
+      width:100%;
+      height:260px;
+      background:rgba(0,0,0,.14);
+      border:1px solid rgba(241,230,210,.16);
+      border-radius:16px;
+    }
+
+    .foot{
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      padding:6px 0 2px;
+    }
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(241,230,210,.22);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      box-shadow: var(--shadow);
+      opacity:0; transition: opacity .2s ease, transform .2s ease;
+      pointer-events:none;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Panel de Evolución Terapéutica (Local)</h1>
+      <p>
+        Seguimiento longitudinal por paciente: escalas 0–10 por sesión, eventos críticos, vista pre–post y un módulo de
+        <b>Automatización de Workflow</b> para acciones operativas (campaña + agenda) según condiciones.
+      </p>
+    </div>
+    <div class="toolbar">
+      <span class="badge">Modo: Local (LocalStorage)</span>
+      <button class="btn ok" id="btnBackup">⬇️ Exportar backup</button>
+      <label class="btn" style="cursor:pointer">
+        ⬆️ Importar backup
+        <input id="fileImport" type="file" accept="application/json" style="display:none" />
+      </label>
+      <button class="btn danger" id="btnReset">🧨 Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- IZQUIERDA: Pacientes -->
+    <aside class="card">
+      <div class="hd">
+        <div>
+          <h2>Pacientes</h2>
+          <small id="patientCount">0</small>
+        </div>
+        <button class="btn primary" id="btnNewPatient">➕ Nuevo</button>
+      </div>
+      <div class="bd">
+        <label for="q">Buscar</label>
+        <input id="q" placeholder="Nombre, código o diagnóstico…" />
+        <div style="height:10px"></div>
+        <div class="list" id="patientList"></div>
+
+        <div class="sep"></div>
+        <div class="hint">
+          Tip: usa códigos/alias si lo usarás en portafolio. Este sistema guarda en tu dispositivo.
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTRO: Evolución -->
+    <main class="card">
+      <div class="hd">
+        <div>
+          <h2 id="centerTitle">Evolución</h2>
+          <small id="centerSub">Selecciona un paciente para ver su línea temporal</small>
+        </div>
+        <div class="row">
+          <span class="pill teal" id="pillSessions">0 sesiones</span>
+          <span class="pill amber" id="pillEvents">0 eventos</span>
+          <span class="pill sage" id="pillPrePost">Pre–Post: —</span>
+        </div>
+      </div>
+
+      <div class="bd">
+        <div class="two">
+          <div>
+            <label>Vista gráfica (0–10)</label>
+            <canvas id="chart" width="900" height="260"></canvas>
+            <div class="hint" style="margin-top:8px">
+              Líneas: Ansiedad / Ánimo / Impulsividad / Adherencia. Se actualiza al guardar sesiones.
+            </div>
+          </div>
+
+          <div>
+            <div class="row" style="justify-content:space-between; align-items:flex-end">
+              <div style="flex:1">
+                <label for="noteFocus">Registrar sesión (estructura breve)</label>
+              </div>
+              <button class="btn primary" id="btnSaveSession">💾 Guardar sesión</button>
+            </div>
+
+            <div class="three">
+              <div>
+                <label for="sDate">Fecha</label>
+                <input id="sDate" type="date" />
+              </div>
+              <div>
+                <label for="sTag">Tipo</label>
+                <select id="sTag">
+                  <option value="seguimiento">Seguimiento</option>
+                  <option value="inicial">Inicial</option>
+                  <option value="intervencion">Intervención</option>
+                  <option value="cierre">Cierre</option>
+                </select>
+              </div>
+              <div>
+                <label for="sNote">Nota breve</label>
+                <input id="sNote" placeholder="Ej.: reestructuración, regulación emocional…" />
+              </div>
+            </div>
+
+            <div class="two" style="margin-top:10px">
+              <div>
+                <label for="anx">Ansiedad (0–10)</label>
+                <input id="anx" type="number" min="0" max="10" value="5" />
+              </div>
+              <div>
+                <label for="mood">Ánimo (0–10)</label>
+                <input id="mood" type="number" min="0" max="10" value="5" />
+              </div>
+            </div>
+
+            <div class="two" style="margin-top:10px">
+              <div>
+                <label for="imp">Impulsividad (0–10)</label>
+                <input id="imp" type="number" min="0" max="10" value="5" />
+              </div>
+              <div>
+                <label for="adh">Adherencia (0–10)</label>
+                <input id="adh" type="number" min="0" max="10" value="5" />
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <label for="task">Tarea para casa</label>
+              <input id="task" placeholder="Ej.: registro ABC 3 veces, práctica de pausa…" />
+            </div>
+
+            <div class="sep"></div>
+
+            <div class="row" style="justify-content:space-between">
+              <span class="pill" id="latestInfo">Última sesión: —</span>
+              <button class="btn warn" id="btnExportPatient">📝 Exportar resumen</button>
+            </div>
+
+            <div style="height:10px"></div>
+            <div class="list" id="sessionList" style="max-height:240px"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- DERECHA: Ficha + Eventos + Workflow -->
+    <aside class="card">
+      <div class="hd">
+        <div>
+          <h2>Ficha + Eventos + Workflow</h2>
+          <small>Operativo y clínico (local)</small>
+        </div>
+        <button class="btn danger" id="btnDeletePatient">🗑️</button>
+      </div>
+
+      <div class="bd">
+        <div class="two">
+          <div>
+            <label for="pName">Nombre / Alias</label>
+            <input id="pName" placeholder="Ej.: P-014 / Sra. M." />
+          </div>
+          <div>
+            <label for="pCode">Código</label>
+            <input id="pCode" placeholder="Ej.: P-014" />
+          </div>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="pAge">Edad</label>
+            <input id="pAge" type="number" min="0" max="120" placeholder="Ej.: 67" />
+          </div>
+          <div>
+            <label for="pPhone">WhatsApp (solo números)</label>
+            <input id="pPhone" placeholder="Ej.: 51999999999" />
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="pDx">Diagnóstico / condición (texto)</label>
+          <input id="pDx" placeholder="Ej.: HTA / Ansiedad / DCL / EA..." />
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="pLastAppt">Última cita (para workflow)</label>
+          <input id="pLastAppt" type="date" />
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="btnSavePatient">💾 Guardar ficha</button>
+          <button class="btn" id="btnWA">💬 WhatsApp</button>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <h2 style="margin:0;font-size:14px;letter-spacing:.2px">Eventos críticos</h2>
+          <button class="btn ok" id="btnAddEvent">➕</button>
+        </div>
+        <div style="height:10px"></div>
+        <div class="two">
+          <div>
+            <label for="eType">Tipo</label>
+            <select id="eType">
+              <option value="crisis">Crisis</option>
+              <option value="recaida">Recaída</option>
+              <option value="logro">Logro</option>
+              <option value="evento">Evento</option>
+            </select>
+          </div>
+          <div>
+            <label for="eDate">Fecha</label>
+            <input id="eDate" type="date" />
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <label for="eNote">Nota breve</label>
+          <input id="eNote" placeholder="Ej.: discusión familiar, aumento de ansiedad, logro de tarea…" />
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="list" id="eventList" style="max-height:220px"></div>
+
+        <div class="sep"></div>
+
+        <!-- WORKFLOW AUTOMATION (estilo imagen) -->
+        <div class="wf">
+          <div class="wfTitle">Automatización de Workflow</div>
+          <div class="wfSub">Cuando el paciente cumpla con las condiciones…</div>
+
+          <div class="wfBox">Evaluar reglas (1 click)</div>
+
+          <div class="wfPills">
+            <div class="wfPill">👤 Edad: +65</div>
+            <div class="wfPill">🩺 Diagnóstico: HTA</div>
+            <div class="wfPill alt">🗓️ +3 meses sin agendar cita</div>
+          </div>
+
+          <div class="wfActionTitle">Realizar el envío de…</div>
+
+          <div class="wfAction">📣 Campaña de concientización HTA</div>
+          <div class="wfAction alt">📅 Oferta de agenda</div>
+
+          <div class="row" style="justify-content:center; margin-top:10px">
+            <button class="btn primary" id="btnRunWorkflow">⚙️ Ejecutar workflow</button>
+          </div>
+
+          <div class="hint" style="margin-top:10px; text-align:center">
+            Se recomienda usar WhatsApp solo si el paciente tiene consentimiento para mensajes.
+          </div>
+        </div>
+
+      </div>
+    </aside>
+  </div>
+
+  <div class="foot">Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.</div>
+</div>
+
+<div class="toast" id="toast">Listo</div>
+
+<script>
+(() => {
+  // ===== Helpers =====
+  const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2,"0");
+  const todayISO = () => {
+    const d=new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  };
+  const uid = () => Math.random().toString(16).slice(2)+Date.now().toString(16);
+  const escapeHtml = (str) => (str||"").replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[s]));
+  const toast = (msg) => {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1700);
+  };
+  const clamp10 = (x) => Math.max(0, Math.min(10, Number(x||0)));
+
+  function monthsDiff(fromISO, toISO){
+    if(!fromISO || !toISO) return 0;
+    const f = new Date(fromISO+"T00:00:00");
+    const t = new Date(toISO+"T00:00:00");
+    let months = (t.getFullYear()-f.getFullYear())*12 + (t.getMonth()-f.getMonth());
+    if(t.getDate() < f.getDate()) months -= 1;
+    return months;
+  }
+
+  function waLink(phoneDigits, text){
+    const msg = encodeURIComponent(text||"");
+    return `https://wa.me/${phoneDigits}?text=${msg}`;
+  }
+
+  // ===== State =====
+  const KEY = "panel_evolucion_terapeutica_v1";
+  const defaultState = () => ({
+    patients: [], // {id,name,code,age,phone,dx,lastAppt,createdAt}
+    sessions: [], // {id,patientId,date,tag,note,anx,mood,imp,adh,task,createdAt}
+    events: [],   // {id,patientId,type,date,note,createdAt}
+  });
+  let state = defaultState();
+  let selectedPatientId = null;
+
+  function load(){
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return;
+    try{
+      const d = JSON.parse(raw);
+      if(d && typeof d==="object"){
+        state = { ...defaultState(), ...d };
+      }
+    }catch{}
+  }
+  function save(){
+    localStorage.setItem(KEY, JSON.stringify(state));
+  }
+  load();
+
+  // ===== UI defaults =====
+  $("sDate").value = todayISO();
+  $("eDate").value = todayISO();
+  $("pLastAppt").value = "";
+
+  // ===== Patients list =====
+  $("q").addEventListener("input", renderPatients);
+
+  $("btnNewPatient").addEventListener("click", ()=>{
+    const p = {
+      id: uid(), name:"", code:"", age:"", phone:"", dx:"", lastAppt:"",
+      createdAt: Date.now()
+    };
+    state.patients.unshift(p);
+    selectedPatientId = p.id;
+    save();
+    renderPatients();
+    renderSelected();
+    toast("Paciente creado");
+  });
+
+  $("btnDeletePatient").addEventListener("click", ()=>{
+    if(!selectedPatientId){ toast("Selecciona un paciente"); return; }
+    const ok = confirm("¿Eliminar este paciente y su evolución/eventos? (irreversible)");
+    if(!ok) return;
+    state.patients = state.patients.filter(p=>p.id!==selectedPatientId);
+    state.sessions = state.sessions.filter(s=>s.patientId!==selectedPatientId);
+    state.events = state.events.filter(e=>e.patientId!==selectedPatientId);
+    selectedPatientId = null;
+    save();
+    renderPatients();
+    renderSelected();
+    drawChart();
+    toast("Paciente eliminado");
+  });
+
+  function renderPatients(){
+    const list = $("patientList");
+    list.innerHTML = "";
+    const q = ($("q").value||"").trim().toLowerCase();
+
+    const ps = state.patients
+      .slice()
+      .sort((a,b)=> (b.createdAt||0)-(a.createdAt||0))
+      .filter(p=>{
+        if(!q) return true;
+        return [p.name,p.code,p.dx].some(x => (x||"").toLowerCase().includes(q));
+      });
+
+    $("patientCount").textContent = `${ps.length} paciente(s)`;
+
+    ps.forEach(p=>{
+      const div = document.createElement("div");
+      div.className="item";
+      const isSel = p.id===selectedPatientId;
+      div.style.borderColor = isSel ? "rgba(79,191,167,.45)" : "";
+      div.style.background = isSel ? "rgba(79,191,167,.10)" : "";
+
+      const lastS = state.sessions
+        .filter(s=>s.patientId===p.id)
+        .slice()
+        .sort((a,b)=> (b.date).localeCompare(a.date))[0];
+
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(p.name||"Sin nombre")}</div>
+            <div class="meta">
+              ${p.code ? `<span class="mono">${escapeHtml(p.code)}</span> • ` : ""}
+              ${p.dx ? `${escapeHtml(p.dx)}` : "Dx: —"}
+              ${lastS ? `<br/>Últ. ses: ${escapeHtml(lastS.date)}` : ""}
+            </div>
+          </div>
+          <div class="row" style="gap:6px;justify-content:flex-end">
+            <span class="pill teal">${countSessions(p.id)} ses.</span>
+            <span class="pill amber">${countEvents(p.id)} ev.</span>
+          </div>
+        </div>
+      `;
+      div.addEventListener("click", ()=>{
+        selectedPatientId = p.id;
+        renderPatients();
+        renderSelected();
+        drawChart();
+      });
+      list.appendChild(div);
+    });
+  }
+
+  function getPatient(id){
+    return state.patients.find(p=>p.id===id) || null;
+  }
+  function countSessions(pid){
+    return state.sessions.filter(s=>s.patientId===pid).length;
+  }
+  function countEvents(pid){
+    return state.events.filter(e=>e.patientId===pid).length;
+  }
+
+  // ===== Selected patient -> forms =====
+  const pName=$("pName"), pCode=$("pCode"), pAge=$("pAge"), pPhone=$("pPhone"), pDx=$("pDx"), pLastAppt=$("pLastAppt");
+
+  function renderSelected(){
+    const p = getPatient(selectedPatientId);
+
+    $("centerTitle").textContent = p ? `Evolución: ${p.name || "Paciente"}` : "Evolución";
+    $("centerSub").textContent = p ? "Línea temporal, eventos críticos y pre–post" : "Selecciona un paciente para ver su línea temporal";
+
+    $("pillSessions").textContent = `${p ? countSessions(p.id) : 0} sesiones`;
+    $("pillEvents").textContent = `${p ? countEvents(p.id) : 0} eventos`;
+
+    // pre-post simple: primera vs última sesión (por escala promedio)
+    const ss = p ? state.sessions.filter(s=>s.patientId===p.id).slice().sort((a,b)=>a.date.localeCompare(b.date)) : [];
+    let prepost = "—";
+    if(ss.length >= 2){
+      const a = avgScore(ss[0]);
+      const b = avgScore(ss[ss.length-1]);
+      const delta = (b - a);
+      prepost = `${a.toFixed(1)} → ${b.toFixed(1)} (${delta>=0?"+":""}${delta.toFixed(1)})`;
+    }
+    $("pillPrePost").textContent = `Pre–Post: ${prepost}`;
+
+    // Form
+    pName.value = p?.name || "";
+    pCode.value = p?.code || "";
+    pAge.value = p?.age || "";
+    pPhone.value = p?.phone || "";
+    pDx.value = p?.dx || "";
+    pLastAppt.value = p?.lastAppt || "";
+
+    $("btnSavePatient").disabled = !p;
+    $("btnWA").disabled = !p || !p.phone;
+
+    renderSessionsList();
+    renderEventsList();
+    updateLatestInfo();
+  }
+
+  function avgScore(s){
+    // Promedio simple: (mood invertido? No. Aquí todo 0–10 sin inversión para vista general)
+    // Si luego quieres: ansiedad/impulsividad bajan = mejora; ánimo/adherencia suben = mejora.
+    return (Number(s.anx)+Number(s.mood)+Number(s.imp)+Number(s.adh))/4;
+  }
+
+  $("btnSavePatient").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+    p.name = (pName.value||"").trim();
+    p.code = (pCode.value||"").trim();
+    p.age  = String(pAge.value||"").trim();
+    p.phone= String(pPhone.value||"").trim().replace(/\D/g,'');
+    p.dx   = (pDx.value||"").trim();
+    p.lastAppt = (pLastAppt.value||"").trim();
+    save();
+    renderPatients();
+    renderSelected();
+    toast("Ficha guardada");
+  });
+
+  $("btnWA").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p?.phone){ toast("Sin WhatsApp"); return; }
+    const msg = `Hola ${p.name||""}. Te escribo para coordinar tu seguimiento.`;
+    window.open(waLink(p.phone, msg), "_blank");
+  });
+
+  // ===== Sessions =====
+  $("btnSaveSession").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    const s = {
+      id: uid(),
+      patientId: p.id,
+      date: $("sDate").value || todayISO(),
+      tag: $("sTag").value || "seguimiento",
+      note: ($("sNote").value||"").trim(),
+      anx: clamp10($("anx").value),
+      mood: clamp10($("mood").value),
+      imp: clamp10($("imp").value),
+      adh: clamp10($("adh").value),
+      task: ($("task").value||"").trim(),
+      createdAt: Date.now()
+    };
+    state.sessions.unshift(s);
+
+    // actualización operativa: si guardas sesión, actualiza última cita
+    const d = s.date;
+    p.lastAppt = d;
+
+    save();
+    renderSelected();
+    drawChart();
+    toast("Sesión registrada");
+  });
+
+  function renderSessionsList(){
+    const list = $("sessionList");
+    list.innerHTML = "";
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      list.innerHTML = `<div class="item"><div class="name">Sin paciente</div><div class="meta">Selecciona uno para registrar sesiones.</div></div>`;
+      return;
+    }
+
+    const ss = state.sessions
+      .filter(s=>s.patientId===p.id)
+      .slice()
+      .sort((a,b)=> (b.date).localeCompare(a.date));
+
+    if(!ss.length){
+      list.innerHTML = `<div class="item"><div class="name">Aún no hay sesiones</div><div class="meta">Registra una sesión para ver evolución.</div></div>`;
+      return;
+    }
+
+    ss.forEach(s=>{
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(s.date)} • <span class="pill teal">${escapeHtml(s.tag)}</span></div>
+            <div class="meta">
+              ${s.note ? escapeHtml(s.note) : "—"}
+              <br/>A:${s.anx} | Án:${s.mood} | Imp:${s.imp} | Adh:${s.adh}
+              ${s.task ? `<br/>Tarea: ${escapeHtml(s.task)}` : ""}
+            </div>
+          </div>
+          <div class="row" style="gap:6px;justify-content:flex-end">
+            <button class="btn danger" data-del="${s.id}">🗑️</button>
+          </div>
+        </div>
+      `;
+      div.querySelector("button[data-del]").addEventListener("click",(ev)=>{
+        ev.stopPropagation();
+        const ok = confirm("¿Eliminar esta sesión?");
+        if(!ok) return;
+        state.sessions = state.sessions.filter(x=>x.id!==s.id);
+        save();
+        renderSelected();
+        drawChart();
+        toast("Sesión eliminada");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  function updateLatestInfo(){
+    const p = getPatient(selectedPatientId);
+    const pill = $("latestInfo");
+    if(!p){ pill.textContent="Última sesión: —"; return; }
+    const s = state.sessions.filter(x=>x.patientId===p.id).slice().sort((a,b)=> (b.date).localeCompare(a.date))[0];
+    pill.textContent = s ? `Última sesión: ${s.date}` : "Última sesión: —";
+  }
+
+  // ===== Events =====
+  $("btnAddEvent").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+    const e = {
+      id: uid(),
+      patientId: p.id,
+      type: $("eType").value || "evento",
+      date: $("eDate").value || todayISO(),
+      note: ($("eNote").value||"").trim(),
+      createdAt: Date.now()
+    };
+    state.events.unshift(e);
+    save();
+    renderSelected();
+    drawChart();
+    toast("Evento registrado");
+  });
+
+  function renderEventsList(){
+    const list = $("eventList");
+    list.innerHTML = "";
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      list.innerHTML = `<div class="item"><div class="name">Sin paciente</div><div class="meta">Selecciona uno para registrar eventos.</div></div>`;
+      return;
+    }
+
+    const evs = state.events
+      .filter(e=>e.patientId===p.id)
+      .slice()
+      .sort((a,b)=> (b.date).localeCompare(a.date));
+
+    if(!evs.length){
+      list.innerHTML = `<div class="item"><div class="name">Sin eventos críticos</div><div class="meta">Registra crisis, recaídas o logros.</div></div>`;
+      return;
+    }
+
+    const typeLabel = (t)=>{
+      if(t==="crisis") return `<span class="pill rose">Crisis</span>`;
+      if(t==="recaida") return `<span class="pill amber">Recaída</span>`;
+      if(t==="logro") return `<span class="pill sage">Logro</span>`;
+      return `<span class="pill teal">Evento</span>`;
+    };
+
+    evs.forEach(e=>{
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(e.date)} • ${typeLabel(e.type)}</div>
+            <div class="meta">${e.note ? escapeHtml(e.note) : "—"}</div>
+          </div>
+          <button class="btn danger" data-del="${e.id}">🗑️</button>
+        </div>
+      `;
+      div.querySelector("button[data-del]").addEventListener("click",(ev)=>{
+        ev.stopPropagation();
+        const ok = confirm("¿Eliminar este evento?");
+        if(!ok) return;
+        state.events = state.events.filter(x=>x.id!==e.id);
+        save();
+        renderSelected();
+        drawChart();
+        toast("Evento eliminado");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Chart (Canvas) =====
+  function drawChart(){
+    const canvas = $("chart");
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+
+    // fondo
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = "rgba(0,0,0,.10)";
+    ctx.fillRect(0,0,w,h);
+
+    // grilla
+    ctx.strokeStyle = "rgba(241,230,210,.10)";
+    ctx.lineWidth = 1;
+
+    const left = 44, right = 14, top = 14, bottom = 30;
+    const plotW = w - left - right;
+    const plotH = h - top - bottom;
+
+    for(let i=0;i<=10;i++){
+      const y = top + (plotH)*(i/10);
+      ctx.beginPath();
+      ctx.moveTo(left, y);
+      ctx.lineTo(left+plotW, y);
+      ctx.stroke();
+    }
+
+    // ejes
+    ctx.strokeStyle = "rgba(241,230,210,.18)";
+    ctx.beginPath();
+    ctx.moveTo(left, top);
+    ctx.lineTo(left, top+plotH);
+    ctx.lineTo(left+plotW, top+plotH);
+    ctx.stroke();
+
+    // labels 0-10
+    ctx.fillStyle = "rgba(241,230,210,.75)";
+    ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    for(let v=0; v<=10; v+=2){
+      const y = top + plotH - (v/10)*plotH;
+      ctx.fillText(String(v), 10, y+4);
+    }
+
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      ctx.fillStyle = "rgba(241,230,210,.65)";
+      ctx.font = "13px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+      ctx.fillText("Selecciona un paciente para ver la evolución.", left+12, top+24);
+      return;
+    }
+
+    const ss = state.sessions
+      .filter(s=>s.patientId===p.id)
+      .slice()
+      .sort((a,b)=> a.date.localeCompare(b.date));
+
+    if(ss.length < 1){
+      ctx.fillStyle = "rgba(241,230,210,.65)";
+      ctx.font = "13px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+      ctx.fillText("Registra sesiones para graficar escalas 0–10.", left+12, top+24);
+      return;
+    }
+
+    // x positions
+    const xAt = (i) => {
+      if(ss.length===1) return left + plotW/2;
+      return left + (i/(ss.length-1))*plotW;
+    };
+    const yAt = (val) => top + plotH - (clamp10(val)/10)*plotH;
+
+    // Series (sin depender de “todo azul”)
+    const series = [
+      { key:"anx",  label:"Ansiedad",     color:"rgba(225,123,123,.95)" }, // rose
+      { key:"mood", label:"Ánimo",        color:"rgba(242,193,91,.95)" },  // amber
+      { key:"imp",  label:"Impulsividad", color:"rgba(219,162,123,.95)" }, // clay
+      { key:"adh",  label:"Adherencia",   color:"rgba(141,183,166,.95)" }, // sage
+    ];
+
+    // draw lines
+    series.forEach((s)=>{
+      ctx.strokeStyle = s.color;
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ss.forEach((pt, i)=>{
+        const x = xAt(i);
+        const y = yAt(pt[s.key]);
+        if(i===0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+
+      // points
+      ctx.fillStyle = s.color;
+      ss.forEach((pt,i)=>{
+        const x=xAt(i), y=yAt(pt[s.key]);
+        ctx.beginPath();
+        ctx.arc(x,y,3.2,0,Math.PI*2);
+        ctx.fill();
+      });
+    });
+
+    // x labels (fechas, pocas para no saturar)
+    ctx.fillStyle = "rgba(241,230,210,.70)";
+    ctx.font = "11px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    const step = Math.ceil(ss.length/5);
+    ss.forEach((pt,i)=>{
+      if(i===0 || i===ss.length-1 || (i%step===0)){
+        const x = xAt(i);
+        ctx.fillText(pt.date.slice(5), x-14, top+plotH+20);
+      }
+    });
+
+    // Legend
+    const lx = left+10, ly = top+10;
+    series.forEach((s, idx)=>{
+      const y = ly + idx*16;
+      ctx.fillStyle = s.color;
+      ctx.fillRect(lx, y-9, 10, 10);
+      ctx.fillStyle = "rgba(241,230,210,.88)";
+      ctx.fillText(s.label, lx+16, y);
+    });
+
+    // Eventos (marcas verticales)
+    const evs = state.events
+      .filter(e=>e.patientId===p.id)
+      .slice()
+      .sort((a,b)=> a.date.localeCompare(b.date));
+
+    if(evs.length){
+      ctx.strokeStyle = "rgba(79,191,167,.22)";
+      ctx.lineWidth = 1.2;
+      evs.forEach(ev=>{
+        // ubicar evento por fecha aproximando al índice de sesión más cercano
+        let idx = 0;
+        let best = Infinity;
+        ss.forEach((pt,i)=>{
+          const d = Math.abs(new Date(pt.date)-new Date(ev.date));
+          if(d<best){ best=d; idx=i; }
+        });
+        const x = xAt(idx);
+        ctx.beginPath();
+        ctx.moveTo(x, top);
+        ctx.lineTo(x, top+plotH);
+        ctx.stroke();
+      });
+    }
+  }
+
+  // ===== Export patient summary to Word (.doc) =====
+  $("btnExportPatient").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    const ss = state.sessions
+      .filter(s=>s.patientId===p.id)
+      .slice()
+      .sort((a,b)=> a.date.localeCompare(b.date));
+
+    const evs = state.events
+      .filter(e=>e.patientId===p.id)
+      .slice()
+      .sort((a,b)=> a.date.localeCompare(b.date));
+
+    const first = ss[0], last = ss[ss.length-1];
+    const pre = first ? avgScore(first) : null;
+    const post = last ? avgScore(last) : null;
+
+    const rowsSessions = ss.length ? ss.map(s=>`
+      <tr>
+        <td style="padding:8px;border:1px solid #ddd">${escapeHtml(s.date)}</td>
+        <td style="padding:8px;border:1px solid #ddd">${escapeHtml(s.tag)}</td>
+        <td style="padding:8px;border:1px solid #ddd">A:${s.anx} | Án:${s.mood} | Imp:${s.imp} | Adh:${s.adh}</td>
+        <td style="padding:8px;border:1px solid #ddd">${escapeHtml(s.note||"")}</td>
+        <td style="padding:8px;border:1px solid #ddd">${escapeHtml(s.task||"")}</td>
+      </tr>`).join("") :
+      `<tr><td colspan="5" style="padding:10px;border:1px solid #ddd;color:#555">Sin sesiones registradas.</td></tr>`;
+
+    const rowsEvents = evs.length ? evs.map(e=>`
+      <tr>
+        <td style="padding:8px;border:1px solid #ddd">${escapeHtml(e.date)}</td>
+        <td style="padding:8px;border:1px solid #ddd">${escapeHtml(e.type)}</td>
+        <td style="padding:8px;border:1px solid #ddd">${escapeHtml(e.note||"")}</td>
+      </tr>`).join("") :
+      `<tr><td colspan="3" style="padding:10px;border:1px solid #ddd;color:#555">Sin eventos registrados.</td></tr>`;
+
+    const html = `
+    <!doctype html><html><head><meta charset="utf-8"><title>Resumen de evolución</title></head>
+    <body style="font-family:Calibri, Arial, sans-serif; font-size:11pt; color:#111;">
+      <h2 style="margin:0 0 8px 0;">Resumen de Evolución Terapéutica</h2>
+      <p style="margin:0 0 12px 0;">
+        <b>Paciente:</b> ${escapeHtml(p.name||"—")} ${p.code ? `(<span>${escapeHtml(p.code)}</span>)` : ""}<br/>
+        <b>Edad:</b> ${escapeHtml(p.age||"—")}<br/>
+        <b>Dx/Condición:</b> ${escapeHtml(p.dx||"—")}<br/>
+        <b>Última cita (operativa):</b> ${escapeHtml(p.lastAppt||"—")}
+      </p>
+
+      <h3 style="margin:12px 0 6px 0;">1) Vista Pre–Post (promedio simple de escalas)</h3>
+      <div style="border:1px solid #ddd; padding:10px; border-radius:6px;">
+        ${pre===null ? "<i>(sin datos)</i>" : `${pre.toFixed(1)} → ${post.toFixed(1)} (${(post-pre)>=0?"+":""}${(post-pre).toFixed(1)})`}
+      </div>
+
+      <h3 style="margin:14px 0 6px 0;">2) Sesiones (línea temporal)</h3>
+      <table style="border-collapse:collapse; width:100%; font-size:10.5pt;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Fecha</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Tipo</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Escalas</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Nota</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Tarea</th>
+          </tr>
+        </thead>
+        <tbody>${rowsSessions}</tbody>
+      </table>
+
+      <h3 style="margin:14px 0 6px 0;">3) Eventos críticos</h3>
+      <table style="border-collapse:collapse; width:100%; font-size:10.5pt;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Fecha</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Tipo</th>
+            <th style="text-align:left;padding:8px;border:1px solid #ddd;background:#f3f4f6;">Nota</th>
+          </tr>
+        </thead>
+        <tbody>${rowsEvents}</tbody>
+      </table>
+
+      <p style="margin-top:14px;color:#666;font-size:10pt;">
+        Documento generado por sistema local de apoyo clínico. No constituye diagnóstico automático.
+      </p>
+      <p style="margin-top:18px;color:#666;font-size:10pt;">
+        Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.
+      </p>
+    </body></html>`;
+
+    const blob = new Blob([html], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    const safeName = `Evolucion_${(p.code||p.name||"Paciente")}_${todayISO()}`.replace(/[^\w\-]+/g, "_");
+    a.download = `${safeName}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  // ===== Workflow (condiciones de la imagen) =====
+  $("btnRunWorkflow").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+    if(!p.phone){ toast("Paciente sin WhatsApp"); return; }
+
+    // Condiciones:
+    // 1) edad +65
+    // 2) dx contiene "HTA" (case-insensitive)
+    // 3) +3 meses sin agendar cita: lastAppt vacío o >=3 meses desde lastAppt a hoy
+    const age = Number(p.age || 0);
+    const dx = (p.dx || "").toUpperCase();
+    const months = monthsDiff(p.lastAppt, todayISO());
+
+    const condAge = age >= 65;
+    const condDx = dx.includes("HTA");
+    const condNoAppt = (!p.lastAppt) ? true : (months >= 3);
+
+    if(!(condAge && condDx && condNoAppt)){
+      // Mensaje claro de por qué no se ejecuta
+      const reasons = [];
+      if(!condAge) reasons.push("Edad < 65");
+      if(!condDx) reasons.push("Dx no contiene HTA");
+      if(!condNoAppt) reasons.push("Aún no pasan 3 meses sin cita");
+      toast("No cumple condiciones: " + reasons.join(" • "));
+      return;
+    }
+
+    // Acciones:
+    // A) Campaña de concientización HTA
+    // B) Oferta de agenda
+    const msg1 =
+`Hola ${p.name||""}. Te comparto un breve recordatorio de cuidado en HTA:
+• Control regular de presión
+• Adherencia al tratamiento indicado
+• Alimentación con menor sodio
+• Actividad física adecuada
+• Señales de alarma y cuándo consultar
+
+Si deseas, puedo ayudarte a organizar un seguimiento breve y práctico.`;
+
+    const msg2 =
+`¿Te gustaría agendar una cita de seguimiento? 
+Puedo ofrecerte opciones esta semana para revisar avances y ajustar el plan.`;
+
+    // Abrimos WhatsApp con un mensaje combinado (dos bloques)
+    const combined = msg1 + "\n\n" + msg2;
+    window.open(waLink(p.phone, combined), "_blank");
+    toast("Workflow ejecutado (WhatsApp)");
+  });
+
+  // ===== Backup =====
+  $("btnBackup").addEventListener("click", ()=>{
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: "panel_evolucion_terapeutica_v1",
+      data: state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `panel_evolucion_backup_${todayISO()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Backup exportado");
+  });
+
+  $("fileImport").addEventListener("change", async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f) return;
+    try{
+      const txt = await f.text();
+      const payload = JSON.parse(txt);
+      const data = payload?.data || payload;
+      if(!data || typeof data !== "object") throw new Error("Formato inválido");
+      state = { ...defaultState(), ...data };
+      save();
+      selectedPatientId = null;
+      renderPatients();
+      renderSelected();
+      drawChart();
+      toast("Backup importado");
+    }catch{
+      alert("No se pudo importar. Verifica que sea un JSON válido del sistema.");
+    }finally{
+      e.target.value = "";
+    }
+  });
+
+  $("btnReset").addEventListener("click", ()=>{
+    const ok = confirm("Esto borrará TODO. ¿Seguro?");
+    if(!ok) return;
+    localStorage.removeItem(KEY);
+    state = defaultState();
+    selectedPatientId = null;
+    renderPatients();
+    renderSelected();
+    drawChart();
+    toast("Sistema reiniciado");
+  });
+
+  // ===== Init =====
+  renderPatients();
+  renderSelected();
+  drawChart();
+
+})();
+</script>
+
+</body>
+</html>

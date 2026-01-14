@@ -1,0 +1,2138 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Panel de Evolución Terapéutica – Psicología (Local V2)</title>
+  <style>
+    :root{
+      --bg0:#0e1411;
+      --bg1:#0a0f0d;
+      --card: rgba(24, 33, 27, .62);
+      --card2: rgba(0,0,0,.18);
+      --text:#f4f1ea;
+      --muted:#c7c1b4;
+
+      /* Paleta cálida institucional */
+      --sand:#f1e6d2;
+      --clay:#dba27b;
+      --amber:#f2c15b;
+      --sage:#8db7a6;
+      --teal:#4fbfa7;
+      --rose:#e17b7b;
+      --ink:#1b2b23;
+
+      --border:rgba(241,230,210,.18);
+      --shadow:0 14px 34px rgba(0,0,0,.38);
+      --radius:18px;
+
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(1000px 520px at 12% -10%, rgba(219,162,123,.22), transparent 62%),
+        radial-gradient(900px 520px at 95% 0%, rgba(141,183,166,.20), transparent 56%),
+        radial-gradient(820px 420px at 60% 120%, rgba(242,193,91,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg1), var(--bg0));
+      min-height:100vh;
+      padding:14px;
+    }
+    .wrap{max-width:1320px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+    header{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), transparent), var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;
+      backdrop-filter: blur(10px);
+    }
+    header h1{margin:0;font-size:18px;letter-spacing:.2px}
+    header p{margin:6px 0 0 0;color:var(--muted);font-size:13px;line-height:1.35;max-width:940px}
+
+    .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
+    .badge{
+      font-size:12px; color:var(--ink);
+      border:1px solid rgba(241,230,210,.35);
+      background:rgba(241,230,210,.88);
+      padding:8px 10px;border-radius:999px; white-space:nowrap;
+    }
+
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background:rgba(241,230,210,.08);
+      color:var(--text);
+      padding:10px 12px; border-radius:12px;
+      font-size:13px; cursor:pointer;
+      display:inline-flex; gap:8px; align-items:center;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{background:rgba(241,230,210,.13);border-color:rgba(241,230,210,.28)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background:rgba(79,191,167,.16);border-color:rgba(79,191,167,.35)}
+    .btn.primary:hover{background:rgba(79,191,167,.22)}
+    .btn.ok{background:rgba(141,183,166,.16);border-color:rgba(141,183,166,.35)}
+    .btn.warn{background:rgba(242,193,91,.14);border-color:rgba(242,193,91,.30)}
+    .btn.danger{background:rgba(225,123,123,.14);border-color:rgba(225,123,123,.28)}
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+
+    .grid{display:grid;gap:12px;grid-template-columns: 1fr}
+    @media(min-width: 1120px){ .grid{grid-template-columns: 360px 1fr 380px;} }
+
+    .card{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent), var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .hd{
+      padding:12px 12px 10px 12px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .hd h2{margin:0;font-size:14px;letter-spacing:.2px}
+    .hd small{color:var(--muted)}
+    .bd{padding:12px}
+
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px 2px}
+    input, textarea, select{
+      width:100%; border:1px solid var(--border);
+      background:rgba(0,0,0,.18);
+      color:var(--text);
+      border-radius:14px;
+      padding:11px 12px;
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height:90px; resize:vertical; line-height:1.45}
+    .mono{font-family:var(--mono)}
+    .hint{color:var(--muted);font-size:12px;line-height:1.35}
+    .sep{height:1px;background:var(--border); margin:12px 0}
+
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .two{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width: 720px){.two{grid-template-columns:1fr 1fr}}
+    .three{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width: 980px){.three{grid-template-columns:1fr 1fr 1fr}}
+
+    .list{display:flex;flex-direction:column;gap:10px;max-height:66vh;overflow:auto;padding-right:4px}
+    .item{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.16);
+      border-radius:14px;
+      padding:10px;
+    }
+    .item.click{cursor:pointer}
+    .item.click:hover{background:rgba(0,0,0,.22)}
+    .item .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .item .name{font-weight:800;font-size:13px}
+    .item .meta{color:var(--muted);font-size:12px;line-height:1.25}
+
+    .pill{
+      font-size:12px; padding:6px 9px; border-radius:999px;
+      border:1px solid var(--border); color:var(--muted);
+      background:rgba(0,0,0,.18); white-space:nowrap;
+    }
+    .pill.teal{border-color:rgba(79,191,167,.45); color:#d2fff4; background:rgba(79,191,167,.10)}
+    .pill.amber{border-color:rgba(242,193,91,.40); color:#fff1c7; background:rgba(242,193,91,.10)}
+    .pill.rose{border-color:rgba(225,123,123,.40); color:#ffd6d6; background:rgba(225,123,123,.10)}
+    .pill.sage{border-color:rgba(141,183,166,.40); color:#d8fff1; background:rgba(141,183,166,.10)}
+    .pill.sand{border-color:rgba(241,230,210,.38); color:rgba(241,230,210,.92); background:rgba(241,230,210,.07)}
+
+    canvas{
+      width:100%;
+      height:260px;
+      background:rgba(0,0,0,.14);
+      border:1px solid rgba(241,230,210,.16);
+      border-radius:16px;
+    }
+
+    /* Tabs */
+    .tabs{display:flex;gap:8px;flex-wrap:wrap}
+    .tab{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.16);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .tab.active{
+      border-color:rgba(79,191,167,.45);
+      background:rgba(79,191,167,.12);
+      color:#d2fff4;
+      font-weight:800;
+    }
+
+    /* Modal */
+    .modalBg{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      display:none; align-items:center; justify-content:center;
+      padding:14px;
+      z-index:50;
+    }
+    .modal{
+      max-width:980px; width:100%;
+      border:1px solid rgba(241,230,210,.22);
+      background:linear-gradient(180deg, rgba(255,255,255,.05), transparent), rgba(18,28,23,.92);
+      border-radius:22px;
+      box-shadow:0 30px 80px rgba(0,0,0,.55);
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+    }
+    .modal .hd{border-bottom:1px solid rgba(241,230,210,.18)}
+    .modal .bd{max-height:70vh; overflow:auto}
+
+    .foot{
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      padding:6px 0 2px;
+    }
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(241,230,210,.22);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      box-shadow: var(--shadow);
+      opacity:0; transition: opacity .2s ease, transform .2s ease;
+      pointer-events:none;
+      z-index:60;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <h1>Panel de Evolución Terapéutica – Psicología (Local V2)</h1>
+      <p>
+        Enfoque clínico-psicológico con estética institucional: <b>agenda</b>, <b>ficha y formulación del caso</b>, <b>evolución longitudinal</b>
+        (0–10), <b>check-in</b> (paciente), <b>tareas</b>, <b>eventos críticos</b> y <b>workflows</b> (recordatorios / campañas / oferta de agenda)
+        con envío por WhatsApp <b>solo con consentimiento</b>.
+      </p>
+    </div>
+    <div class="toolbar">
+      <span class="badge">Modo: Local (LocalStorage)</span>
+      <button class="btn ok" id="btnBackup">⬇️ Exportar backup</button>
+      <label class="btn" style="cursor:pointer">
+        ⬆️ Importar backup
+        <input id="fileImport" type="file" accept="application/json" style="display:none"/>
+      </label>
+      <button class="btn warn" id="btnExportAll">🗂️ Exportar reporte</button>
+      <button class="btn danger" id="btnReset">🧨 Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- IZQUIERDA: Pacientes + Agenda rápida -->
+    <aside class="card">
+      <div class="hd">
+        <div>
+          <h2>Pacientes</h2>
+          <small id="patientCount">0</small>
+        </div>
+        <button class="btn primary" id="btnNewPatient">➕ Nuevo</button>
+      </div>
+      <div class="bd">
+        <label for="q">Buscar</label>
+        <input id="q" placeholder="Nombre, código, Dx, formulación…" />
+
+        <div style="height:10px"></div>
+        <div class="list" id="patientList"></div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between;align-items:flex-end">
+          <div style="flex:1">
+            <label>Agenda del día</label>
+            <div class="hint">Muestra citas de hoy (todos los pacientes).</div>
+          </div>
+          <button class="btn" id="btnToday">📅 Hoy</button>
+        </div>
+        <div style="height:10px"></div>
+        <div class="list" id="todayList" style="max-height:220px"></div>
+
+        <div class="sep"></div>
+        <div class="hint">
+          Seguridad práctica: este sistema es local. Recomendación: usar alias/códigos, y exportar backups en ubicación segura.
+        </div>
+      </div>
+    </aside>
+
+    <!-- CENTRO: Evolución + Tabs -->
+    <main class="card">
+      <div class="hd">
+        <div>
+          <h2 id="centerTitle">Evolución</h2>
+          <small id="centerSub">Selecciona un paciente para ver su progreso</small>
+        </div>
+        <div class="row">
+          <span class="pill teal" id="pillSessions">0 sesiones</span>
+          <span class="pill amber" id="pillAppts">0 citas</span>
+          <span class="pill rose" id="pillEvents">0 eventos</span>
+          <span class="pill sage" id="pillIndex">Índice: —</span>
+        </div>
+      </div>
+
+      <div class="bd">
+        <div class="tabs" id="tabs">
+          <div class="tab active" data-tab="evol">📈 Evolución</div>
+          <div class="tab" data-tab="sesion">📝 Sesión</div>
+          <div class="tab" data-tab="agenda">📅 Agenda</div>
+          <div class="tab" data-tab="checkin">🧩 Check-in</div>
+          <div class="tab" data-tab="tareas">✅ Tareas</div>
+        </div>
+
+        <div class="sep"></div>
+
+        <!-- TAB: Evolución -->
+        <section id="tab-evol">
+          <div class="two">
+            <div>
+              <label>Gráfico longitudinal (0–10)</label>
+              <canvas id="chart" width="980" height="260"></canvas>
+              <div class="hint" style="margin-top:8px">
+                Series (psicología): Ansiedad, Ánimo, Estrés, Ira/Impulsividad, Sueño, Adherencia, Alianza terapéutica.
+                <br/>Índice (0–100): combinación simple orientativa (no diagnóstico automático).
+              </div>
+            </div>
+            <div>
+              <div class="row" style="justify-content:space-between">
+                <span class="pill sand" id="latestInfo">Última sesión: —</span>
+                <button class="btn warn" id="btnExportPatient">📝 Exportar resumen</button>
+              </div>
+
+              <div style="height:10px"></div>
+              <div class="row" style="justify-content:space-between">
+                <span class="pill teal" id="prepostInfo">Pre–Post: —</span>
+                <button class="btn primary" id="btnOpenPortal">👁️ Portal (vista paciente)</button>
+              </div>
+
+              <div class="sep"></div>
+
+              <div class="row" style="justify-content:space-between">
+                <h2 style="margin:0;font-size:14px">Eventos críticos</h2>
+                <button class="btn ok" id="btnAddEvent">➕</button>
+              </div>
+
+              <div style="height:10px"></div>
+              <div class="two">
+                <div>
+                  <label for="eType">Tipo</label>
+                  <select id="eType">
+                    <option value="crisis">Crisis</option>
+                    <option value="recaida">Recaída</option>
+                    <option value="logro">Logro</option>
+                    <option value="evento">Evento</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="eDate">Fecha</label>
+                  <input id="eDate" type="date"/>
+                </div>
+              </div>
+              <div style="margin-top:10px">
+                <label for="eNote">Nota breve</label>
+                <input id="eNote" placeholder="Ej.: desregulación, autolesión NO (registrar sin detalle), avance en exposición, etc."/>
+              </div>
+
+              <div style="height:10px"></div>
+              <div class="list" id="eventList" style="max-height:250px"></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- TAB: Sesión -->
+        <section id="tab-sesion" style="display:none">
+          <div class="row" style="justify-content:space-between; align-items:flex-end">
+            <div style="flex:1">
+              <label>Registrar sesión (estructura psicológica)</label>
+              <div class="hint">Objetivo, técnica, emociones observadas, tarea, escalas 0–10.</div>
+            </div>
+            <button class="btn primary" id="btnSaveSession">💾 Guardar sesión</button>
+          </div>
+
+          <div class="three" style="margin-top:10px">
+            <div>
+              <label for="sDate">Fecha</label>
+              <input id="sDate" type="date"/>
+            </div>
+            <div>
+              <label for="sPhase">Fase</label>
+              <select id="sPhase">
+                <option value="inicial">Inicial</option>
+                <option value="evaluacion">Evaluación</option>
+                <option value="intervencion">Intervención</option>
+                <option value="seguimiento">Seguimiento</option>
+                <option value="cierre">Cierre</option>
+              </select>
+            </div>
+            <div>
+              <label for="sTechnique">Técnica principal</label>
+              <input id="sTechnique" placeholder="Ej.: reestructuración, exposición, validación, habilidades DBT…" />
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px">
+            <div>
+              <label for="sGoal">Objetivo de sesión</label>
+              <input id="sGoal" placeholder="Ej.: identificar disparadores, entrenar respiración, psicoeducación…" />
+            </div>
+            <div>
+              <label for="sEmotion">Emociones observadas (manual)</label>
+              <input id="sEmotion" placeholder="Ej.: ansiedad, tristeza, culpa, irritación, alivio…" />
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px">
+            <div>
+              <label for="sSummary">Resumen clínico (breve)</label>
+              <textarea id="sSummary" placeholder="Puntos claves, narrativa breve, hipótesis que se refuerzan/ajustan…"></textarea>
+            </div>
+            <div>
+              <label for="sPlan">Plan / Próxima sesión</label>
+              <textarea id="sPlan" placeholder="Qué se hará, qué se monitorea, acuerdos…"></textarea>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="three">
+            <div>
+              <label for="scAnx">Ansiedad (0–10)</label>
+              <input id="scAnx" type="number" min="0" max="10" value="5"/>
+            </div>
+            <div>
+              <label for="scMood">Ánimo (0–10)</label>
+              <input id="scMood" type="number" min="0" max="10" value="5"/>
+            </div>
+            <div>
+              <label for="scStress">Estrés (0–10)</label>
+              <input id="scStress" type="number" min="0" max="10" value="5"/>
+            </div>
+          </div>
+
+          <div class="three" style="margin-top:10px">
+            <div>
+              <label for="scAnger">Ira/Impulsividad (0–10)</label>
+              <input id="scAnger" type="number" min="0" max="10" value="5"/>
+            </div>
+            <div>
+              <label for="scSleep">Sueño (0–10)</label>
+              <input id="scSleep" type="number" min="0" max="10" value="5"/>
+            </div>
+            <div>
+              <label for="scAdh">Adherencia (0–10)</label>
+              <input id="scAdh" type="number" min="0" max="10" value="5"/>
+            </div>
+          </div>
+
+          <div class="two" style="margin-top:10px">
+            <div>
+              <label for="scAlliance">Alianza terapéutica percibida (0–10)</label>
+              <input id="scAlliance" type="number" min="0" max="10" value="7"/>
+            </div>
+            <div>
+              <label for="sTask">Tarea para casa</label>
+              <input id="sTask" placeholder="Ej.: registro de pensamientos, exposición graduada, práctica de pausa…" />
+            </div>
+          </div>
+
+          <div class="sep"></div>
+          <div class="row" style="justify-content:space-between">
+            <h2 style="margin:0;font-size:14px">Sesiones registradas</h2>
+            <span class="pill teal" id="sessionCountSmall">0</span>
+          </div>
+          <div style="height:10px"></div>
+          <div class="list" id="sessionList" style="max-height:320px"></div>
+        </section>
+
+        <!-- TAB: Agenda -->
+        <section id="tab-agenda" style="display:none">
+          <div class="row" style="justify-content:space-between;align-items:flex-end">
+            <div style="flex:1">
+              <label>Agenda del paciente</label>
+              <div class="hint">Citas con estado: programada / confirmada / realizada / no asistió.</div>
+            </div>
+            <button class="btn ok" id="btnAddAppt">➕ Agregar cita</button>
+          </div>
+
+          <div class="three" style="margin-top:10px">
+            <div>
+              <label for="aDate">Fecha</label>
+              <input id="aDate" type="date"/>
+            </div>
+            <div>
+              <label for="aTime">Hora</label>
+              <input id="aTime" type="time"/>
+            </div>
+            <div>
+              <label for="aStatus">Estado</label>
+              <select id="aStatus">
+                <option value="programada">Programada</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="realizada">Realizada</option>
+                <option value="no-asistio">No asistió</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <label for="aNote">Nota / motivo</label>
+            <input id="aNote" placeholder="Ej.: seguimiento semanal, crisis, evaluación, etc."/>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row" style="justify-content:space-between">
+            <h2 style="margin:0;font-size:14px">Citas</h2>
+            <div class="row">
+              <button class="btn" id="btnWAConfirm">💬 WhatsApp confirmación</button>
+              <button class="btn primary" id="btnWorkflow">⚙️ Workflows</button>
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+          <div class="list" id="apptList" style="max-height:420px"></div>
+
+          <div class="sep"></div>
+          <div class="hint">
+            Recomendación ética/privacidad: usar WhatsApp solo si el paciente otorgó consentimiento explícito para recordatorios.
+          </div>
+        </section>
+
+        <!-- TAB: Check-in (paciente) -->
+        <section id="tab-checkin" style="display:none">
+          <div class="row" style="justify-content:space-between;align-items:flex-end">
+            <div style="flex:1">
+              <label>Check-in breve (0–10)</label>
+              <div class="hint">Registro rápido entre sesiones (se integra al gráfico como “check-in”).</div>
+            </div>
+            <button class="btn primary" id="btnSaveCheckin">💾 Guardar check-in</button>
+          </div>
+
+          <div class="three" style="margin-top:10px">
+            <div>
+              <label for="cDate">Fecha</label>
+              <input id="cDate" type="date"/>
+            </div>
+            <div>
+              <label for="cSafe">Sensación de seguridad (0–10)</label>
+              <input id="cSafe" type="number" min="0" max="10" value="5"/>
+            </div>
+            <div>
+              <label for="cNeed">Necesidad de apoyo (0–10)</label>
+              <input id="cNeed" type="number" min="0" max="10" value="5"/>
+            </div>
+          </div>
+
+          <div class="three" style="margin-top:10px">
+            <div>
+              <label for="cAnx">Ansiedad (0–10)</label>
+              <input id="cAnx" type="number" min="0" max="10" value="5"/>
+            </div>
+            <div>
+              <label for="cMood">Ánimo (0–10)</label>
+              <input id="cMood" type="number" min="0" max="10" value="5"/>
+            </div>
+            <div>
+              <label for="cStress">Estrés (0–10)</label>
+              <input id="cStress" type="number" min="0" max="10" value="5"/>
+            </div>
+          </div>
+
+          <div style="margin-top:10px">
+            <label for="cNote">Nota breve (opcional)</label>
+            <input id="cNote" placeholder="Ej.: hoy me siento más estable / tuve conflicto / logré tarea…" />
+          </div>
+
+          <div class="sep"></div>
+          <div class="row" style="justify-content:space-between">
+            <h2 style="margin:0;font-size:14px">Historial de check-ins</h2>
+            <span class="pill teal" id="checkinCount">0</span>
+          </div>
+          <div style="height:10px"></div>
+          <div class="list" id="checkinList" style="max-height:360px"></div>
+        </section>
+
+        <!-- TAB: Tareas -->
+        <section id="tab-tareas" style="display:none">
+          <div class="row" style="justify-content:space-between;align-items:flex-end">
+            <div style="flex:1">
+              <label>Tareas terapéuticas</label>
+              <div class="hint">Asignación y adherencia entre sesiones (TCC/DBT/ACT/Integrativo).</div>
+            </div>
+            <button class="btn ok" id="btnAddTask">➕ Agregar tarea</button>
+          </div>
+
+          <div class="two" style="margin-top:10px">
+            <div>
+              <label for="tTitle">Título</label>
+              <input id="tTitle" placeholder="Ej.: registro ABC, exposición leve, higiene del sueño…"/>
+            </div>
+            <div>
+              <label for="tDue">Fecha objetivo</label>
+              <input id="tDue" type="date"/>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <label for="tDesc">Descripción</label>
+            <textarea id="tDesc" placeholder="Instrucciones concretas, frecuencia, duración, criterio de éxito…"></textarea>
+          </div>
+          <div class="two" style="margin-top:10px">
+            <div>
+              <label for="tStatus">Estado</label>
+              <select id="tStatus">
+                <option value="pendiente">Pendiente</option>
+                <option value="en-progreso">En progreso</option>
+                <option value="realizada">Realizada</option>
+                <option value="dificultad">Dificultad</option>
+              </select>
+            </div>
+            <div>
+              <label for="tComment">Comentario breve</label>
+              <input id="tComment" placeholder="Ej.: dificultad por ansiedad, olvidos, mejor adherencia…" />
+            </div>
+          </div>
+
+          <div class="sep"></div>
+          <div class="row" style="justify-content:space-between">
+            <h2 style="margin:0;font-size:14px">Lista de tareas</h2>
+            <span class="pill teal" id="taskCount">0</span>
+          </div>
+          <div style="height:10px"></div>
+          <div class="list" id="taskList" style="max-height:420px"></div>
+        </section>
+      </div>
+    </main>
+
+    <!-- DERECHA: Ficha, formulación, workflows -->
+    <aside class="card">
+      <div class="hd">
+        <div>
+          <h2>Ficha clínica (institucional)</h2>
+          <small>Consentimiento + workflow + export</small>
+        </div>
+        <button class="btn danger" id="btnDeletePatient">🗑️</button>
+      </div>
+
+      <div class="bd">
+        <div class="two">
+          <div>
+            <label for="pName">Nombre / Alias</label>
+            <input id="pName" placeholder="Ej.: P-014 / Sra. M."/>
+          </div>
+          <div>
+            <label for="pCode">Código</label>
+            <input id="pCode" placeholder="Ej.: P-014"/>
+          </div>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="pAge">Edad</label>
+            <input id="pAge" type="number" min="0" max="120" placeholder="Ej.: 32"/>
+          </div>
+          <div>
+            <label for="pPhone">WhatsApp (solo números)</label>
+            <input id="pPhone" placeholder="Ej.: 51999999999"/>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="pDx">Motivo / Dx / condición</label>
+          <input id="pDx" placeholder="Ej.: ansiedad, duelo, TEA, TDAH, conflicto de pareja…" />
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="pStart">Inicio de tratamiento</label>
+            <input id="pStart" type="date"/>
+          </div>
+          <div>
+            <label for="pLastAppt">Última cita (operativa)</label>
+            <input id="pLastAppt" type="date"/>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="pConsent">Consentimiento para recordatorios WhatsApp</label>
+          <select id="pConsent">
+            <option value="no">No</option>
+            <option value="si">Sí</option>
+          </select>
+        </div>
+
+        <div class="sep"></div>
+
+        <label for="pForm">Formulación breve (hipótesis clínica)</label>
+        <textarea id="pForm" placeholder="Hipótesis central, disparadores, factores de mantenimiento, recursos, estilo de afrontamiento…"></textarea>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="pObj">Objetivos terapéuticos</label>
+            <textarea id="pObj" placeholder="Objetivo general + específicos (medibles)."></textarea>
+          </div>
+          <div>
+            <label for="pPlan">Plan / enfoque</label>
+            <textarea id="pPlan" placeholder="TCC/ACT/DBT/Integrativo, fases, técnicas nucleares…"></textarea>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="btnSavePatient">💾 Guardar ficha</button>
+          <button class="btn" id="btnWAHello">💬 WhatsApp saludo</button>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <h2 style="margin:0;font-size:14px">Workflows</h2>
+          <span class="pill sand">Automático (1 click)</span>
+        </div>
+
+        <div class="item" style="margin-top:10px">
+          <div class="name">Workflow 1: +30 días sin sesión</div>
+          <div class="meta">Si no hay cita reciente, propone agenda + recordatorio de continuidad (con consentimiento).</div>
+          <div class="row" style="margin-top:10px; justify-content:flex-end">
+            <button class="btn primary" id="btnWF30">⚙️ Ejecutar</button>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="name">Workflow 2: Check-in alto (alerta clínica)</div>
+          <div class="meta">Si ansiedad/estrés ≥ 8 en check-in, sugiere contacto y micro-plan de afrontamiento.</div>
+          <div class="row" style="margin-top:10px; justify-content:flex-end">
+            <button class="btn primary" id="btnWFAlert">⚙️ Ejecutar</button>
+          </div>
+        </div>
+
+        <div class="item">
+          <div class="name">Workflow 3: Adherencia baja (tareas)</div>
+          <div class="meta">Si tareas en “dificultad” se repiten, propone re-diseño y pasos más pequeños.</div>
+          <div class="row" style="margin-top:10px; justify-content:flex-end">
+            <button class="btn primary" id="btnWFAdh">⚙️ Ejecutar</button>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+        <div class="hint">
+          Nota: este panel <b>no</b> emite diagnósticos automáticos. Es un soporte organizativo y clínico para el profesional.
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <div class="foot">Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.</div>
+</div>
+
+<!-- Modal: Portal (vista paciente) -->
+<div class="modalBg" id="portalBg" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="hd">
+      <div>
+        <h2 id="portalTitle">Portal del paciente (vista de lectura)</h2>
+        <small id="portalSub">Resumen, tareas y próxima cita</small>
+      </div>
+      <div class="row">
+        <button class="btn warn" id="btnPrintPortal">🖨️ Imprimir</button>
+        <button class="btn" id="btnClosePortal">✖️ Cerrar</button>
+      </div>
+    </div>
+    <div class="bd" id="portalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Listo</div>
+
+<script>
+(() => {
+  // ===== Helpers =====
+  const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2,"0");
+  const todayISO = () => {
+    const d=new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  };
+  const uid = () => Math.random().toString(16).slice(2)+Date.now().toString(16);
+  const escapeHtml = (str) => (str||"").replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[s]));
+  const toast = (msg) => {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1800);
+  };
+  const clamp10 = (x) => Math.max(0, Math.min(10, Number(x||0)));
+  const daysDiff = (fromISO, toISO) => {
+    if(!fromISO || !toISO) return 0;
+    const f = new Date(fromISO+"T00:00:00");
+    const t = new Date(toISO+"T00:00:00");
+    return Math.floor((t - f) / (1000*60*60*24));
+  };
+  const waLink = (phoneDigits, text) => {
+    const msg = encodeURIComponent(text||"");
+    return `https://wa.me/${phoneDigits}?text=${msg}`;
+  };
+  const safeDigits = (v) => String(v||"").replace(/\D/g,"");
+
+  // ===== State =====
+  const KEY = "panel_psico_evolucion_v2";
+  const defaultState = () => ({
+    patients: [], // {id,name,code,age,phone,dx,start,lastAppt,consent,form,obj,plan,createdAt}
+    sessions: [], // {id,patientId,date,phase,technique,goal,emotions,summary,plan,task, sc:{anx,mood,stress,anger,sleep,adh,alliance}, createdAt}
+    appts: [],    // {id,patientId,date,time,status,note,createdAt}
+    events: [],   // {id,patientId,type,date,note,createdAt}
+    checkins: [], // {id,patientId,date, safe, need, anx, mood, stress, note, createdAt}
+    tasks: []     // {id,patientId,title,due,desc,status,comment,createdAt}
+  });
+
+  let state = defaultState();
+  let selectedPatientId = null;
+
+  function load(){
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return;
+    try{
+      const d = JSON.parse(raw);
+      if(d && typeof d==="object"){
+        state = { ...defaultState(), ...d };
+      }
+    }catch{}
+  }
+  function save(){
+    localStorage.setItem(KEY, JSON.stringify(state));
+  }
+  load();
+
+  // ===== Defaults =====
+  $("sDate").value = todayISO();
+  $("eDate").value = todayISO();
+  $("aDate").value = todayISO();
+  $("cDate").value = todayISO();
+  $("tDue").value = todayISO();
+
+  // ===== Tabs =====
+  function setTab(tab){
+    document.querySelectorAll(".tab").forEach(x=>{
+      x.classList.toggle("active", x.dataset.tab===tab);
+    });
+    const map = ["evol","sesion","agenda","checkin","tareas"];
+    map.forEach(k=>{
+      const el = $("tab-"+k);
+      if(el) el.style.display = (k===tab) ? "" : "none";
+    });
+    // Redraw chart when returning to evol
+    if(tab==="evol") drawChart();
+  }
+  $("tabs").addEventListener("click",(e)=>{
+    const t = e.target.closest(".tab");
+    if(!t) return;
+    setTab(t.dataset.tab);
+  });
+
+  // ===== Patient helpers =====
+  function getPatient(id){ return state.patients.find(p=>p.id===id) || null; }
+  function byDateAsc(a,b){ return (a.date||"").localeCompare(b.date||""); }
+  function byDateDesc(a,b){ return (b.date||"").localeCompare(a.date||""); }
+
+  function countSessions(pid){ return state.sessions.filter(s=>s.patientId===pid).length; }
+  function countEvents(pid){ return state.events.filter(e=>e.patientId===pid).length; }
+  function countAppts(pid){ return state.appts.filter(a=>a.patientId===pid).length; }
+  function countCheckins(pid){ return state.checkins.filter(c=>c.patientId===pid).length; }
+  function countTasks(pid){ return state.tasks.filter(t=>t.patientId===pid).length; }
+
+  // Índice (0–100) orientativo:
+  // - Mejora si baja ansiedad/estrés/ira y sube ánimo/sueño/adherencia/alianza.
+  function computeIndexFromSession(sc){
+    if(!sc) return null;
+    const anx = clamp10(sc.anx), stress = clamp10(sc.stress), anger = clamp10(sc.anger);
+    const mood = clamp10(sc.mood), sleep = clamp10(sc.sleep), adh = clamp10(sc.adh), alliance = clamp10(sc.alliance);
+
+    // componentes normalizadas (0-1)
+    const goodUp = (mood + sleep + adh + alliance) / 40; // 0-1
+    const goodDown = ( (10-anx) + (10-stress) + (10-anger) ) / 30; // 0-1
+    const idx = Math.round( (goodUp*0.55 + goodDown*0.45) * 100 );
+    return Math.max(0, Math.min(100, idx));
+  }
+
+  // ===== Render patients list =====
+  $("q").addEventListener("input", renderPatients);
+
+  $("btnNewPatient").addEventListener("click", ()=>{
+    const p = {
+      id: uid(), name:"", code:"", age:"", phone:"", dx:"",
+      start:"", lastAppt:"", consent:"no",
+      form:"", obj:"", plan:"",
+      createdAt: Date.now()
+    };
+    state.patients.unshift(p);
+    selectedPatientId = p.id;
+    save();
+    renderPatients();
+    renderSelected();
+    toast("Paciente creado");
+  });
+
+  $("btnDeletePatient").addEventListener("click", ()=>{
+    if(!selectedPatientId){ toast("Selecciona un paciente"); return; }
+    const ok = confirm("¿Eliminar este paciente y todo su historial? (irreversible)");
+    if(!ok) return;
+
+    const pid = selectedPatientId;
+    state.patients = state.patients.filter(p=>p.id!==pid);
+    state.sessions = state.sessions.filter(s=>s.patientId!==pid);
+    state.appts = state.appts.filter(a=>a.patientId!==pid);
+    state.events = state.events.filter(e=>e.patientId!==pid);
+    state.checkins = state.checkins.filter(c=>c.patientId!==pid);
+    state.tasks = state.tasks.filter(t=>t.patientId!==pid);
+
+    selectedPatientId = null;
+    save();
+    renderPatients();
+    renderSelected();
+    drawChart();
+    toast("Paciente eliminado");
+  });
+
+  function renderPatients(){
+    const list = $("patientList");
+    list.innerHTML = "";
+    const q = ($("q").value||"").trim().toLowerCase();
+
+    const ps = state.patients
+      .slice()
+      .sort((a,b)=> (b.createdAt||0)-(a.createdAt||0))
+      .filter(p=>{
+        if(!q) return true;
+        const hay = [p.name,p.code,p.dx,p.form].map(x=>(x||"").toLowerCase());
+        return hay.some(x=>x.includes(q));
+      });
+
+    $("patientCount").textContent = `${ps.length} paciente(s)`;
+
+    ps.forEach(p=>{
+      const div = document.createElement("div");
+      div.className = "item click";
+      const isSel = p.id===selectedPatientId;
+      div.style.borderColor = isSel ? "rgba(79,191,167,.45)" : "";
+      div.style.background = isSel ? "rgba(79,191,167,.10)" : "";
+
+      const lastS = state.sessions
+        .filter(s=>s.patientId===p.id)
+        .slice().sort(byDateDesc)[0];
+
+      const lastA = state.appts
+        .filter(a=>a.patientId===p.id)
+        .slice().sort((x,y)=> (x.date||"").localeCompare(y.date||"")) // future-ish
+        .filter(a => (a.date||"") >= todayISO())[0];
+
+      const idx = lastS ? computeIndexFromSession(lastS.sc) : null;
+
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(p.name||"Sin nombre")}</div>
+            <div class="meta">
+              ${p.code ? `<span class="mono">${escapeHtml(p.code)}</span> • ` : ""}
+              ${p.dx ? `${escapeHtml(p.dx)}` : "Motivo/Dx: —"}
+              ${lastA ? `<br/>Próx. cita: ${escapeHtml(lastA.date)} ${escapeHtml(lastA.time||"")}` : ""}
+              ${lastS ? `<br/>Últ. sesión: ${escapeHtml(lastS.date)} (${escapeHtml(lastS.phase)})` : ""}
+            </div>
+          </div>
+          <div class="row" style="gap:6px;justify-content:flex-end">
+            <span class="pill teal">${countSessions(p.id)} ses.</span>
+            <span class="pill amber">${countAppts(p.id)} citas</span>
+            <span class="pill sage">${idx===null?"Índice —":"Índice "+idx}</span>
+          </div>
+        </div>
+      `;
+      div.addEventListener("click", ()=>{
+        selectedPatientId = p.id;
+        renderPatients();
+        renderSelected();
+        drawChart();
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Today agenda =====
+  $("btnToday").addEventListener("click", renderTodayAgenda);
+
+  function renderTodayAgenda(){
+    const list = $("todayList");
+    list.innerHTML = "";
+    const d = todayISO();
+
+    const appts = state.appts
+      .filter(a => a.date===d)
+      .slice()
+      .sort((a,b)=> (a.time||"").localeCompare(b.time||""));
+
+    if(!appts.length){
+      list.innerHTML = `<div class="item"><div class="name">Sin citas hoy</div><div class="meta">—</div></div>`;
+      return;
+    }
+
+    appts.forEach(a=>{
+      const p = getPatient(a.patientId);
+      const div = document.createElement("div");
+      div.className = "item click";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(a.time||"--:--")} • ${escapeHtml(p?.name||"Paciente")}</div>
+            <div class="meta">${escapeHtml(a.status)} ${a.note?("• "+escapeHtml(a.note)):""}</div>
+          </div>
+          <span class="pill teal">${escapeHtml(p?.code||"")}</span>
+        </div>
+      `;
+      div.addEventListener("click", ()=>{
+        selectedPatientId = a.patientId;
+        renderPatients();
+        renderSelected();
+        drawChart();
+        setTab("agenda");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Render selected patient =====
+  const pName=$("pName"), pCode=$("pCode"), pAge=$("pAge"), pPhone=$("pPhone"), pDx=$("pDx"),
+        pStart=$("pStart"), pLastAppt=$("pLastAppt"), pConsent=$("pConsent"),
+        pForm=$("pForm"), pObj=$("pObj"), pPlan=$("pPlan");
+
+  function renderSelected(){
+    const p = getPatient(selectedPatientId);
+
+    $("centerTitle").textContent = p ? `Evolución: ${p.name || "Paciente"}` : "Evolución";
+    $("centerSub").textContent = p ? "Psicología + institucional: agenda, check-in y progreso" : "Selecciona un paciente";
+
+    $("pillSessions").textContent = `${p ? countSessions(p.id) : 0} sesiones`;
+    $("pillAppts").textContent = `${p ? countAppts(p.id) : 0} citas`;
+    $("pillEvents").textContent = `${p ? countEvents(p.id) : 0} eventos`;
+
+    // Índice según última sesión (si existe)
+    const lastS = p ? state.sessions.filter(s=>s.patientId===p.id).slice().sort(byDateDesc)[0] : null;
+    const idx = lastS ? computeIndexFromSession(lastS.sc) : null;
+    $("pillIndex").textContent = `Índice: ${idx===null?"—":idx}`;
+
+    // Pre-post (índice primera vs última sesión)
+    const ss = p ? state.sessions.filter(s=>s.patientId===p.id).slice().sort(byDateAsc) : [];
+    let prepost = "—";
+    if(ss.length >= 2){
+      const a = computeIndexFromSession(ss[0].sc);
+      const b = computeIndexFromSession(ss[ss.length-1].sc);
+      if(a!==null && b!==null){
+        const delta = b-a;
+        prepost = `${a} → ${b} (${delta>=0?"+":""}${delta})`;
+      }
+    }
+    $("prepostInfo").textContent = `Pre–Post: ${prepost}`;
+
+    // Latest session
+    $("latestInfo").textContent = lastS ? `Última sesión: ${lastS.date}` : "Última sesión: —";
+    $("sessionCountSmall").textContent = String(ss.length);
+
+    // Fill form
+    pName.value = p?.name || "";
+    pCode.value = p?.code || "";
+    pAge.value = p?.age || "";
+    pPhone.value = p?.phone || "";
+    pDx.value = p?.dx || "";
+    pStart.value = p?.start || "";
+    pLastAppt.value = p?.lastAppt || "";
+    pConsent.value = p?.consent || "no";
+    pForm.value = p?.form || "";
+    pObj.value = p?.obj || "";
+    pPlan.value = p?.plan || "";
+
+    // Buttons
+    const hasP = !!p;
+    $("btnSavePatient").disabled = !hasP;
+    $("btnWAHello").disabled = !hasP;
+    $("btnSaveSession").disabled = !hasP;
+    $("btnAddAppt").disabled = !hasP;
+    $("btnAddEvent").disabled = !hasP;
+    $("btnSaveCheckin").disabled = !hasP;
+    $("btnAddTask").disabled = !hasP;
+    $("btnExportPatient").disabled = !hasP;
+    $("btnOpenPortal").disabled = !hasP;
+
+    renderSessions();
+    renderAppts();
+    renderEvents();
+    renderCheckins();
+    renderTasks();
+    renderTodayAgenda();
+  }
+
+  // ===== Save patient =====
+  $("btnSavePatient").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    p.name = (pName.value||"").trim();
+    p.code = (pCode.value||"").trim();
+    p.age  = String(pAge.value||"").trim();
+    p.phone= safeDigits(pPhone.value);
+    p.dx   = (pDx.value||"").trim();
+    p.start= (pStart.value||"").trim();
+    p.lastAppt = (pLastAppt.value||"").trim();
+    p.consent  = (pConsent.value||"no");
+    p.form = (pForm.value||"").trim();
+    p.obj  = (pObj.value||"").trim();
+    p.plan = (pPlan.value||"").trim();
+
+    save();
+    renderPatients();
+    renderSelected();
+    toast("Ficha guardada");
+  });
+
+  $("btnWAHello").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p || !p.phone){ toast("Paciente sin WhatsApp"); return; }
+    if(p.consent!=="si"){ toast("Sin consentimiento WhatsApp"); return; }
+    const msg = `Hola ${p.name||""}. Te escribo para confirmar tu seguimiento y coordinar si necesitas ajustar tu agenda.`;
+    window.open(waLink(p.phone, msg), "_blank");
+  });
+
+  // ===== Sessions =====
+  $("btnSaveSession").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    const s = {
+      id: uid(),
+      patientId: p.id,
+      date: $("sDate").value || todayISO(),
+      phase: $("sPhase").value || "seguimiento",
+      technique: ($("sTechnique").value||"").trim(),
+      goal: ($("sGoal").value||"").trim(),
+      emotions: ($("sEmotion").value||"").trim(),
+      summary: ($("sSummary").value||"").trim(),
+      nextPlan: ($("sPlan").value||"").trim(),
+      task: ($("sTask").value||"").trim(),
+      sc: {
+        anx: clamp10($("scAnx").value),
+        mood: clamp10($("scMood").value),
+        stress: clamp10($("scStress").value),
+        anger: clamp10($("scAnger").value),
+        sleep: clamp10($("scSleep").value),
+        adh: clamp10($("scAdh").value),
+        alliance: clamp10($("scAlliance").value)
+      },
+      createdAt: Date.now()
+    };
+
+    state.sessions.unshift(s);
+    // actualización operativa
+    p.lastAppt = s.date;
+
+    save();
+    renderSelected();
+    drawChart();
+    toast("Sesión registrada");
+  });
+
+  function renderSessions(){
+    const list = $("sessionList");
+    list.innerHTML = "";
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      list.innerHTML = `<div class="item"><div class="name">Sin paciente</div><div class="meta">Selecciona uno.</div></div>`;
+      return;
+    }
+
+    const ss = state.sessions.filter(s=>s.patientId===p.id).slice().sort(byDateDesc);
+    if(!ss.length){
+      list.innerHTML = `<div class="item"><div class="name">Aún no hay sesiones</div><div class="meta">Registra una sesión para ver evolución.</div></div>`;
+      return;
+    }
+
+    ss.forEach(s=>{
+      const idx = computeIndexFromSession(s.sc);
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(s.date)} • <span class="pill teal">${escapeHtml(s.phase)}</span> <span class="pill sage">Índice ${idx===null?"—":idx}</span></div>
+            <div class="meta">
+              <b>Técnica:</b> ${escapeHtml(s.technique||"—")} • <b>Objetivo:</b> ${escapeHtml(s.goal||"—")}
+              ${s.emotions?`<br/><b>Emociones:</b> ${escapeHtml(s.emotions)}`:""}
+              ${s.task?`<br/><b>Tarea:</b> ${escapeHtml(s.task)}`:""}
+              <br/>A:${s.sc.anx} | Án:${s.sc.mood} | Estr:${s.sc.stress} | Ira:${s.sc.anger} | Sueño:${s.sc.sleep} | Adh:${s.sc.adh} | Alianza:${s.sc.alliance}
+            </div>
+          </div>
+          <button class="btn danger" data-del="${s.id}">🗑️</button>
+        </div>
+        ${s.summary?`<div class="sep"></div><div class="meta">${escapeHtml(s.summary)}</div>`:""}
+        ${s.nextPlan?`<div class="meta" style="margin-top:6px"><b>Plan:</b> ${escapeHtml(s.nextPlan)}</div>`:""}
+      `;
+      div.querySelector("button[data-del]").addEventListener("click",()=>{
+        const ok = confirm("¿Eliminar esta sesión?");
+        if(!ok) return;
+        state.sessions = state.sessions.filter(x=>x.id!==s.id);
+        save();
+        renderSelected();
+        drawChart();
+        toast("Sesión eliminada");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Appointments =====
+  $("btnAddAppt").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    const a = {
+      id: uid(),
+      patientId: p.id,
+      date: $("aDate").value || todayISO(),
+      time: $("aTime").value || "",
+      status: $("aStatus").value || "programada",
+      note: ($("aNote").value||"").trim(),
+      createdAt: Date.now()
+    };
+    state.appts.unshift(a);
+    save();
+    renderSelected();
+    toast("Cita agregada");
+  });
+
+  function renderAppts(){
+    const list = $("apptList");
+    list.innerHTML = "";
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      list.innerHTML = `<div class="item"><div class="name">Sin paciente</div><div class="meta">Selecciona uno.</div></div>`;
+      return;
+    }
+
+    const appts = state.appts.filter(a=>a.patientId===p.id).slice().sort(byDateDesc);
+    if(!appts.length){
+      list.innerHTML = `<div class="item"><div class="name">Sin citas</div><div class="meta">Agrega citas para el seguimiento institucional.</div></div>`;
+      return;
+    }
+
+    appts.forEach(a=>{
+      const pillClass =
+        a.status==="confirmada" ? "pill teal" :
+        a.status==="realizada" ? "pill sage" :
+        a.status==="no-asistio" ? "pill rose" : "pill amber";
+
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(a.date)} ${escapeHtml(a.time||"")} • <span class="${pillClass}">${escapeHtml(a.status)}</span></div>
+            <div class="meta">${a.note?escapeHtml(a.note):"—"}</div>
+          </div>
+          <button class="btn danger" data-del="${a.id}">🗑️</button>
+        </div>
+      `;
+      div.querySelector("button[data-del]").addEventListener("click",()=>{
+        const ok = confirm("¿Eliminar esta cita?");
+        if(!ok) return;
+        state.appts = state.appts.filter(x=>x.id!==a.id);
+        save();
+        renderSelected();
+        toast("Cita eliminada");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // WhatsApp confirmación (usa última cita futura)
+  $("btnWAConfirm").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p || !p.phone){ toast("Paciente sin WhatsApp"); return; }
+    if(p.consent!=="si"){ toast("Sin consentimiento WhatsApp"); return; }
+
+    const next = state.appts
+      .filter(a=>a.patientId===p.id)
+      .filter(a => (a.date||"") >= todayISO())
+      .slice()
+      .sort((a,b)=> (a.date||"").localeCompare(b.date||"") || (a.time||"").localeCompare(b.time||""))[0];
+
+    if(!next){ toast("No hay próxima cita"); return; }
+
+    const msg =
+`Hola ${p.name||""}. Te escribo para confirmar tu cita:
+📅 ${next.date} ${next.time||""}
+📝 ${next.note||"Seguimiento"}
+Si necesitas reprogramar, indícame por favor.`;
+
+    window.open(waLink(p.phone, msg), "_blank");
+  });
+
+  // ===== Events =====
+  $("btnAddEvent").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+    const e = {
+      id: uid(),
+      patientId: p.id,
+      type: $("eType").value || "evento",
+      date: $("eDate").value || todayISO(),
+      note: ($("eNote").value||"").trim(),
+      createdAt: Date.now()
+    };
+    state.events.unshift(e);
+    save();
+    renderSelected();
+    drawChart();
+    toast("Evento registrado");
+  });
+
+  function renderEvents(){
+    const list = $("eventList");
+    list.innerHTML = "";
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      list.innerHTML = `<div class="item"><div class="name">Sin paciente</div><div class="meta">Selecciona uno.</div></div>`;
+      return;
+    }
+
+    const evs = state.events.filter(e=>e.patientId===p.id).slice().sort(byDateDesc);
+    if(!evs.length){
+      list.innerHTML = `<div class="item"><div class="name">Sin eventos críticos</div><div class="meta">Registra crisis / recaídas / logros.</div></div>`;
+      return;
+    }
+
+    const label = (t)=>{
+      if(t==="crisis") return `<span class="pill rose">Crisis</span>`;
+      if(t==="recaida") return `<span class="pill amber">Recaída</span>`;
+      if(t==="logro") return `<span class="pill sage">Logro</span>`;
+      return `<span class="pill teal">Evento</span>`;
+    };
+
+    evs.forEach(e=>{
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(e.date)} • ${label(e.type)}</div>
+            <div class="meta">${e.note?escapeHtml(e.note):"—"}</div>
+          </div>
+          <button class="btn danger" data-del="${e.id}">🗑️</button>
+        </div>
+      `;
+      div.querySelector("button[data-del]").addEventListener("click",()=>{
+        const ok = confirm("¿Eliminar este evento?");
+        if(!ok) return;
+        state.events = state.events.filter(x=>x.id!==e.id);
+        save();
+        renderSelected();
+        drawChart();
+        toast("Evento eliminado");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Check-ins =====
+  $("btnSaveCheckin").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    const c = {
+      id: uid(),
+      patientId: p.id,
+      date: $("cDate").value || todayISO(),
+      safe: clamp10($("cSafe").value),
+      need: clamp10($("cNeed").value),
+      anx: clamp10($("cAnx").value),
+      mood: clamp10($("cMood").value),
+      stress: clamp10($("cStress").value),
+      note: ($("cNote").value||"").trim(),
+      createdAt: Date.now()
+    };
+    state.checkins.unshift(c);
+    save();
+    renderSelected();
+    drawChart();
+    toast("Check-in guardado");
+  });
+
+  function renderCheckins(){
+    const list = $("checkinList");
+    list.innerHTML="";
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      list.innerHTML = `<div class="item"><div class="name">Sin paciente</div><div class="meta">Selecciona uno.</div></div>`;
+      $("checkinCount").textContent="0";
+      return;
+    }
+
+    const cs = state.checkins.filter(c=>c.patientId===p.id).slice().sort(byDateDesc);
+    $("checkinCount").textContent = String(cs.length);
+
+    if(!cs.length){
+      list.innerHTML = `<div class="item"><div class="name">Sin check-ins</div><div class="meta">Útil para seguimiento entre sesiones.</div></div>`;
+      return;
+    }
+
+    cs.forEach(c=>{
+      const alert = (c.anx>=8 || c.stress>=8) ? `<span class="pill rose">Alerta</span>` : `<span class="pill teal">OK</span>`;
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(c.date)} • ${alert}</div>
+            <div class="meta">Seg:${c.safe} | Apoyo:${c.need} | A:${c.anx} | Án:${c.mood} | Estr:${c.stress}
+              ${c.note?`<br/>${escapeHtml(c.note)}`:""}
+            </div>
+          </div>
+          <button class="btn danger" data-del="${c.id}">🗑️</button>
+        </div>
+      `;
+      div.querySelector("button[data-del]").addEventListener("click",()=>{
+        const ok = confirm("¿Eliminar este check-in?");
+        if(!ok) return;
+        state.checkins = state.checkins.filter(x=>x.id!==c.id);
+        save();
+        renderSelected();
+        drawChart();
+        toast("Check-in eliminado");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Tasks =====
+  $("btnAddTask").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    const t = {
+      id: uid(),
+      patientId: p.id,
+      title: ($("tTitle").value||"").trim(),
+      due: $("tDue").value || "",
+      desc: ($("tDesc").value||"").trim(),
+      status: $("tStatus").value || "pendiente",
+      comment: ($("tComment").value||"").trim(),
+      createdAt: Date.now()
+    };
+    if(!t.title){ toast("Falta título de tarea"); return; }
+    state.tasks.unshift(t);
+    save();
+    renderSelected();
+    toast("Tarea agregada");
+  });
+
+  function renderTasks(){
+    const list = $("taskList");
+    list.innerHTML="";
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      list.innerHTML = `<div class="item"><div class="name">Sin paciente</div><div class="meta">Selecciona uno.</div></div>`;
+      $("taskCount").textContent="0";
+      return;
+    }
+
+    const ts = state.tasks.filter(t=>t.patientId===p.id).slice().sort((a,b)=> (b.due||"").localeCompare(a.due||"") || (b.createdAt||0)-(a.createdAt||0));
+    $("taskCount").textContent = String(ts.length);
+
+    if(!ts.length){
+      list.innerHTML = `<div class="item"><div class="name">Sin tareas</div><div class="meta">Asigna tareas para mejorar adherencia.</div></div>`;
+      return;
+    }
+
+    const statusPill = (s)=>{
+      if(s==="realizada") return "pill sage";
+      if(s==="dificultad") return "pill rose";
+      if(s==="en-progreso") return "pill teal";
+      return "pill amber";
+    };
+
+    ts.forEach(t=>{
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(t.title)} • <span class="${statusPill(t.status)}">${escapeHtml(t.status)}</span></div>
+            <div class="meta">
+              ${t.due?`<b>Meta:</b> ${escapeHtml(t.due)}<br/>`:""}
+              ${t.desc?escapeHtml(t.desc):"—"}
+              ${t.comment?`<br/><b>Nota:</b> ${escapeHtml(t.comment)}`:""}
+            </div>
+          </div>
+          <div class="row" style="justify-content:flex-end">
+            <button class="btn" data-edit="${t.id}">✏️</button>
+            <button class="btn danger" data-del="${t.id}">🗑️</button>
+          </div>
+        </div>
+      `;
+      div.querySelector("button[data-del]").addEventListener("click",()=>{
+        const ok = confirm("¿Eliminar esta tarea?");
+        if(!ok) return;
+        state.tasks = state.tasks.filter(x=>x.id!==t.id);
+        save();
+        renderSelected();
+        toast("Tarea eliminada");
+      });
+      div.querySelector("button[data-edit]").addEventListener("click",()=>{
+        // edición rápida: ciclo de estados
+        const order = ["pendiente","en-progreso","realizada","dificultad"];
+        const i = order.indexOf(t.status);
+        t.status = order[(i+1+order.length)%order.length];
+        save();
+        renderSelected();
+        toast("Estado actualizado");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Workflows =====
+  $("btnWorkflow").addEventListener("click", ()=> {
+    // salta a panel derecho (visual) — aquí solo feedback
+    toast("Workflows disponibles en la ficha (derecha)");
+  });
+
+  function requireConsent(p){
+    if(p.consent!=="si"){
+      toast("Sin consentimiento WhatsApp");
+      return false;
+    }
+    if(!p.phone){
+      toast("Paciente sin WhatsApp");
+      return false;
+    }
+    return true;
+  }
+
+  // WF 30 días sin sesión/cita
+  $("btnWF30").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p) return toast("Selecciona un paciente");
+    if(!requireConsent(p)) return;
+
+    const last = p.lastAppt || "";
+    if(!last){
+      toast("Sin última cita registrada (puedes registrar una sesión o cita)");
+      return;
+    }
+    const d = daysDiff(last, todayISO());
+    if(d < 30){
+      toast(`Aún no: faltan ${30-d} día(s) para 30`);
+      return;
+    }
+
+    const msg =
+`Hola ${p.name||""}. Noté que ha pasado un tiempo desde la última sesión (${last}). 
+Si te parece, podemos agendar un seguimiento breve para revisar avances y ajustar el plan. 
+¿Te propongo opciones de horario esta semana?`;
+
+    window.open(waLink(p.phone, msg), "_blank");
+    toast("Workflow ejecutado");
+  });
+
+  // WF alerta check-in (ansiedad/estrés >= 8)
+  $("btnWFAlert").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p) return toast("Selecciona un paciente");
+    if(!requireConsent(p)) return;
+
+    const lastC = state.checkins.filter(c=>c.patientId===p.id).slice().sort(byDateDesc)[0];
+    if(!lastC){ toast("No hay check-ins"); return; }
+
+    const alert = (lastC.anx>=8 || lastC.stress>=8);
+    if(!alert){ toast("Último check-in sin alerta"); return; }
+
+    const msg =
+`Hola ${p.name||""}. Vi tu check-in reciente y parece que hoy estás con alta carga (ansiedad/estrés).
+Si estás de acuerdo, podemos hacer un contacto breve para organizar un plan de afrontamiento:
+1) una pausa de respiración 2–3 min,
+2) identificar el disparador principal,
+3) un paso pequeño de regulación,
+4) coordinar sesión si es necesario.
+¿Te parece que conversemos?`;
+
+    window.open(waLink(p.phone, msg), "_blank");
+    toast("Workflow alerta ejecutado");
+  });
+
+  // WF adherencia baja (muchas tareas en dificultad)
+  $("btnWFAdh").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p) return toast("Selecciona un paciente");
+    if(!requireConsent(p)) return;
+
+    const ts = state.tasks.filter(t=>t.patientId===p.id);
+    const diff = ts.filter(t=>t.status==="dificultad").length;
+    if(diff < 2){
+      toast("Aún no hay patrón de dificultad (≥2 tareas)");
+      return;
+    }
+
+    const msg =
+`Hola ${p.name||""}. Quiero que ajustemos las tareas para que sean más logrables.
+Si una tarea se siente pesada, la re-diseñamos en micro-pasos (5–10 min) y con señales recordatorias.
+¿Te parece que en la próxima sesión la simplifiquemos juntos/as?`;
+
+    window.open(waLink(p.phone, msg), "_blank");
+    toast("Workflow adherencia ejecutado");
+  });
+
+  // ===== Chart (Canvas) =====
+  function drawChart(){
+    const canvas = $("chart");
+    const ctx = canvas.getContext("2d");
+    const w = canvas.width, h = canvas.height;
+
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = "rgba(0,0,0,.10)";
+    ctx.fillRect(0,0,w,h);
+
+    const left=50, right=14, top=14, bottom=30;
+    const plotW = w-left-right;
+    const plotH = h-top-bottom;
+
+    // grid
+    ctx.strokeStyle = "rgba(241,230,210,.10)";
+    ctx.lineWidth = 1;
+    for(let i=0;i<=10;i++){
+      const y = top + (plotH)*(i/10);
+      ctx.beginPath();
+      ctx.moveTo(left,y); ctx.lineTo(left+plotW,y);
+      ctx.stroke();
+    }
+
+    // axes
+    ctx.strokeStyle = "rgba(241,230,210,.18)";
+    ctx.beginPath();
+    ctx.moveTo(left,top);
+    ctx.lineTo(left,top+plotH);
+    ctx.lineTo(left+plotW,top+plotH);
+    ctx.stroke();
+
+    // y labels
+    ctx.fillStyle = "rgba(241,230,210,.75)";
+    ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    for(let v=0; v<=10; v+=2){
+      const y = top + plotH - (v/10)*plotH;
+      ctx.fillText(String(v), 12, y+4);
+    }
+
+    // Si no hay paciente seleccionado, muestra placeholder y sale
+    const p = getPatient(selectedPatientId);
+    if(!p){
+      ctx.fillStyle = "rgba(241,230,210,.65)";
+      ctx.font = "14px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+      ctx.fillText("Selecciona un paciente para ver la evolución.", left+10, top+30);
+      return;
+    }
+
+    // Construye serie combinada: sesiones + check-ins (marcados)
+    const sessions = state.sessions
+      .filter(s=>s.patientId===p.id)
+      .slice()
+      .sort(byDateAsc)
+      .map(s => ({
+        kind:"sesion",
+        date:s.date,
+        anx: clamp10(s.sc?.anx),
+        mood: clamp10(s.sc?.mood),
+        stress: clamp10(s.sc?.stress),
+        anger: clamp10(s.sc?.anger),
+        sleep: clamp10(s.sc?.sleep),
+        adh: clamp10(s.sc?.adh),
+        alliance: clamp10(s.sc?.alliance),
+        label: `${s.date} (${s.phase||"sesión"})`
+      }));
+
+    const checkins = state.checkins
+      .filter(c=>c.patientId===p.id)
+      .slice()
+      .sort(byDateAsc)
+      .map(c => ({
+        kind:"checkin",
+        date:c.date,
+        // check-in tiene menos series -> completamos con valores neutros
+        anx: clamp10(c.anx),
+        mood: clamp10(c.mood),
+        stress: clamp10(c.stress),
+        anger: 5,
+        sleep: 5,
+        adh: 5,
+        alliance: 7,
+        label: `${c.date} (check-in)`
+      }));
+
+    // merge por fecha, conservando orden
+    const points = sessions.concat(checkins).sort((a,b)=> (a.date||"").localeCompare(b.date||""));
+
+    if(points.length === 0){
+      ctx.fillStyle = "rgba(241,230,210,.65)";
+      ctx.font = "14px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+      ctx.fillText("Aún no hay sesiones/check-ins registrados para este paciente.", left+10, top+30);
+      return;
+    }
+
+    // Serie a dibujar (psicología core)
+    const series = [
+      {key:"anx", name:"Ansiedad",   stroke:"rgba(225,123,123,.85)"},
+      {key:"mood", name:"Ánimo",     stroke:"rgba(141,183,166,.90)"},
+      {key:"stress", name:"Estrés",  stroke:"rgba(242,193,91,.90)"},
+      {key:"anger", name:"Ira",      stroke:"rgba(219,162,123,.88)"},
+      {key:"sleep", name:"Sueño",    stroke:"rgba(79,191,167,.88)"},
+      {key:"adh", name:"Adherencia", stroke:"rgba(241,230,210,.85)"},
+      {key:"alliance", name:"Alianza", stroke:"rgba(201,160,255,.80)"}
+    ];
+
+    // Escala x
+    const n = points.length;
+    const xAt = (i) => {
+      if(n===1) return left + plotW/2;
+      return left + (plotW)*(i/(n-1));
+    };
+    const yAt = (v) => top + plotH - (clamp10(v)/10)*plotH;
+
+    // Etiquetas del eje X (máximo 6)
+    ctx.fillStyle = "rgba(241,230,210,.62)";
+    ctx.font = "11px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    const maxTicks = 6;
+    for(let i=0;i<n;i++){
+      const show = (n<=maxTicks) || (i===0) || (i===n-1) || (i % Math.ceil((n-1)/(maxTicks-1)) === 0);
+      if(!show) continue;
+      const x = xAt(i);
+      const d = points[i].date || "";
+      ctx.fillText(d.slice(5), Math.max(2, x-16), top+plotH+20);
+    }
+
+    // Dibuja cada serie
+    series.forEach(s=>{
+      ctx.strokeStyle = s.stroke;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      points.forEach((pt,i)=>{
+        const x = xAt(i);
+        const y = yAt(pt[s.key]);
+        if(i===0) ctx.moveTo(x,y);
+        else ctx.lineTo(x,y);
+      });
+      ctx.stroke();
+    });
+
+    // Marcadores (sesión vs check-in)
+    points.forEach((pt,i)=>{
+      const x = xAt(i);
+      // marcador principal con ansiedad (para ubicar)
+      const y = yAt(pt.anx);
+
+      // check-in: círculo; sesión: rombo
+      ctx.fillStyle = (pt.kind==="checkin") ? "rgba(79,191,167,.85)" : "rgba(241,230,210,.85)";
+      ctx.strokeStyle = "rgba(0,0,0,.35)";
+      ctx.lineWidth = 1;
+
+      if(pt.kind==="checkin"){
+        ctx.beginPath();
+        ctx.arc(x,y,4.2,0,Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+      }else{
+        ctx.beginPath();
+        ctx.moveTo(x, y-5);
+        ctx.lineTo(x+5, y);
+        ctx.lineTo(x, y+5);
+        ctx.lineTo(x-5, y);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+      }
+    });
+
+    // Leyenda compacta
+    const legendX = left+10, legendY = top+10;
+    let lx = legendX, ly = legendY;
+    ctx.font = "12px " + getComputedStyle(document.documentElement).getPropertyValue("--sans");
+    series.slice(0,5).forEach((s,idx)=>{
+      ctx.fillStyle = s.stroke;
+      ctx.fillRect(lx, ly+idx*18, 10, 10);
+      ctx.fillStyle = "rgba(241,230,210,.78)";
+      ctx.fillText(s.name, lx+14, ly+9+idx*18);
+    });
+    ctx.fillStyle = "rgba(241,230,210,.55)";
+    ctx.fillText("◇ sesión  ● check-in", left+plotW-140, legendY+9);
+
+    // Tooltip simple: detecta click cerca de punto
+    canvas.onclick = (ev)=>{
+      const rect = canvas.getBoundingClientRect();
+      const mx = (ev.clientX - rect.left) * (canvas.width / rect.width);
+      const my = (ev.clientY - rect.top) * (canvas.height / rect.height);
+
+      let best = {i:-1, d:999999};
+      for(let i=0;i<n;i++){
+        const x = xAt(i);
+        // usamos ansiedad para proximidad (marcador)
+        const y = yAt(points[i].anx);
+        const d = (mx-x)*(mx-x) + (my-y)*(my-y);
+        if(d < best.d){ best = {i, d}; }
+      }
+      if(best.i>=0 && best.d < 900){ // umbral
+        const pt = points[best.i];
+        const msg = `${pt.label}\nA:${pt.anx}  Án:${pt.mood}  Estr:${pt.stress}  Ira:${pt.anger}  Sueño:${pt.sleep}  Adh:${pt.adh}  Alianza:${pt.alliance}`;
+        alert(msg);
+      }
+    };
+
+    // Actualiza indicadores superiores en base a última sesión (no check-in)
+    const lastSession = state.sessions.filter(s=>s.patientId===p.id).slice().sort(byDateDesc)[0];
+    if(lastSession){
+      const idx = computeIndexFromSession(lastSession.sc);
+      $("pillIndex").textContent = `Índice: ${idx===null?"—":idx}`;
+      $("latestInfo").textContent = `Última sesión: ${lastSession.date}`;
+    }
+  }
+
+  // ===== Export: Resumen del paciente (HTML imprimible / Word-friendly) =====
+  function exportPatientSummary(pid){
+    const p = getPatient(pid);
+    if(!p){ toast("Selecciona un paciente"); return; }
+
+    const ss = state.sessions.filter(s=>s.patientId===p.id).slice().sort(byDateAsc);
+    const ev = state.events.filter(e=>e.patientId===p.id).slice().sort(byDateAsc);
+    const ap = state.appts.filter(a=>a.patientId===p.id).slice().sort(byDateAsc);
+    const cs = state.checkins.filter(c=>c.patientId===p.id).slice().sort(byDateAsc);
+    const ts = state.tasks.filter(t=>t.patientId===p.id).slice().sort(byDateAsc);
+
+    const lastS = ss[ss.length-1] || null;
+    const idx = lastS ? computeIndexFromSession(lastS.sc) : null;
+
+    const html = `
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Resumen clínico - ${escapeHtml(p.name||"Paciente")}</title>
+<style>
+  body{font-family:Arial, Helvetica, sans-serif; margin:32px; color:#111}
+  h1{font-size:18px;margin:0 0 10px}
+  h2{font-size:14px;margin:18px 0 8px; border-bottom:1px solid #ddd; padding-bottom:6px}
+  .meta{color:#333;font-size:12px;margin:0 0 14px}
+  .box{border:1px solid #ddd;border-radius:10px;padding:12px;margin:10px 0}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .pill{display:inline-block; padding:4px 8px; border:1px solid #ccc;border-radius:999px; font-size:12px; margin-right:6px}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th,td{border:1px solid #ddd;padding:8px;vertical-align:top}
+  th{background:#f6f6f6;text-align:left}
+  .small{font-size:11px;color:#444}
+</style>
+</head>
+<body>
+  <h1>Resumen clínico (Panel de Evolución Terapéutica)</h1>
+  <div class="meta">
+    Paciente: <b>${escapeHtml(p.name||"")}</b> ${p.code?`(<span>${escapeHtml(p.code)}</span>)`:""}<br/>
+    Edad: ${escapeHtml(p.age||"—")} • Motivo/Dx: ${escapeHtml(p.dx||"—")}<br/>
+    Inicio: ${escapeHtml(p.start||"—")} • Última cita: ${escapeHtml(p.lastAppt||"—")} • Índice actual: <b>${idx===null?"—":idx}</b><br/>
+    Generado: ${new Date().toLocaleString()}
+  </div>
+
+  <div class="box">
+    <h2>Formulación breve</h2>
+    <div>${escapeHtml(p.form||"—").replace(/\n/g,"<br/>")}</div>
+  </div>
+
+  <div class="row">
+    <div class="box" style="flex:1;min-width:280px">
+      <h2>Objetivos</h2>
+      <div>${escapeHtml(p.obj||"—").replace(/\n/g,"<br/>")}</div>
+    </div>
+    <div class="box" style="flex:1;min-width:280px">
+      <h2>Plan / enfoque</h2>
+      <div>${escapeHtml(p.plan||"—").replace(/\n/g,"<br/>")}</div>
+    </div>
+  </div>
+
+  <h2>Sesiones (${ss.length})</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Fecha</th><th>Fase</th><th>Técnica / Objetivo</th><th>Emociones / Tarea</th><th>Escalas (0–10)</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${ss.map(s=>`
+        <tr>
+          <td>${escapeHtml(s.date)}</td>
+          <td>${escapeHtml(s.phase||"")}</td>
+          <td><b>${escapeHtml(s.technique||"—")}</b><br/>${escapeHtml(s.goal||"—")}</td>
+          <td>${escapeHtml(s.emotions||"—")}<br/><span class="small"><b>Tarea:</b> ${escapeHtml(s.task||"—")}</span></td>
+          <td>
+            A:${s.sc.anx} • Án:${s.sc.mood} • Estr:${s.sc.stress}<br/>
+            Ira:${s.sc.anger} • Sueño:${s.sc.sleep} • Adh:${s.sc.adh}<br/>
+            Alianza:${s.sc.alliance} • Índice:${computeIndexFromSession(s.sc)}
+          </td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+
+  <h2>Check-ins (${cs.length})</h2>
+  <table>
+    <thead><tr><th>Fecha</th><th>Seguridad/Apoyo</th><th>Escalas</th><th>Nota</th></tr></thead>
+    <tbody>
+      ${cs.map(c=>`
+        <tr>
+          <td>${escapeHtml(c.date)}</td>
+          <td>Seg:${c.safe} • Apoyo:${c.need}</td>
+          <td>A:${c.anx} • Án:${c.mood} • Estr:${c.stress}</td>
+          <td>${escapeHtml(c.note||"—")}</td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+
+  <h2>Eventos críticos (${ev.length})</h2>
+  <table>
+    <thead><tr><th>Fecha</th><th>Tipo</th><th>Nota</th></tr></thead>
+    <tbody>
+      ${ev.map(e=>`
+        <tr>
+          <td>${escapeHtml(e.date)}</td>
+          <td>${escapeHtml(e.type)}</td>
+          <td>${escapeHtml(e.note||"—")}</td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+
+  <h2>Tareas (${ts.length})</h2>
+  <table>
+    <thead><tr><th>Título</th><th>Meta</th><th>Estado</th><th>Descripción / Nota</th></tr></thead>
+    <tbody>
+      ${ts.map(t=>`
+        <tr>
+          <td><b>${escapeHtml(t.title||"—")}</b></td>
+          <td>${escapeHtml(t.due||"—")}</td>
+          <td>${escapeHtml(t.status||"—")}</td>
+          <td>${escapeHtml(t.desc||"—")}<br/><span class="small"><b>Nota:</b> ${escapeHtml(t.comment||"—")}</span></td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+
+  <h2>Agenda (${ap.length})</h2>
+  <table>
+    <thead><tr><th>Fecha</th><th>Hora</th><th>Estado</th><th>Nota</th></tr></thead>
+    <tbody>
+      ${ap.map(a=>`
+        <tr>
+          <td>${escapeHtml(a.date)}</td>
+          <td>${escapeHtml(a.time||"—")}</td>
+          <td>${escapeHtml(a.status||"—")}</td>
+          <td>${escapeHtml(a.note||"—")}</td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+
+  <div class="meta" style="margin-top:18px">
+    Generado por: Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.
+  </div>
+</body>
+</html>`;
+
+    const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const safeName = (p.name||"paciente").replace(/[^\w\-]+/g,"_").slice(0,40);
+    a.href = url;
+    a.download = `Resumen_${safeName}.html`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+
+    toast("Resumen exportado (HTML imprimible)");
+  }
+
+  $("btnExportPatient").addEventListener("click", ()=>{
+    if(!selectedPatientId) return toast("Selecciona un paciente");
+    exportPatientSummary(selectedPatientId);
+  });
+
+  // Export total
+  $("btnExportAll").addEventListener("click", ()=>{
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      totals:{
+        patients: state.patients.length,
+        sessions: state.sessions.length,
+        appts: state.appts.length,
+        events: state.events.length,
+        checkins: state.checkins.length,
+        tasks: state.tasks.length
+      },
+      data: state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {type:"application/json;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `PanelEvolucion_Backup_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Backup exportado");
+  });
+
+  // ===== Backup Import/Export (toolbar) =====
+  $("btnBackup").addEventListener("click", ()=>{
+    const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `PanelEvolucion_state_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Backup descargado");
+  });
+
+  $("fileImport").addEventListener("change", async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f) return;
+    try{
+      const txt = await f.text();
+      const data = JSON.parse(txt);
+      // acepta si parece state
+      if(!data || typeof data!=="object" || !Array.isArray(data.patients)) throw new Error("Formato no válido");
+      state = { ...defaultState(), ...data };
+      save();
+      selectedPatientId = state.patients[0]?.id || null;
+      renderPatients();
+      renderSelected();
+      drawChart();
+      toast("Backup importado");
+    }catch(err){
+      alert("No se pudo importar el archivo. Verifica que sea un JSON válido del sistema.");
+    }finally{
+      e.target.value = "";
+    }
+  });
+
+  // ===== Reset =====
+  $("btnReset").addEventListener("click", ()=>{
+    const ok = confirm("¿Resetear TODO el sistema local? (irreversible)");
+    if(!ok) return;
+    localStorage.removeItem(KEY);
+    state = defaultState();
+    selectedPatientId = null;
+    renderPatients();
+    renderSelected();
+    drawChart();
+    toast("Reset completo");
+  });
+
+  // ===== Portal (vista paciente) =====
+  function openPortal(){
+    const p = getPatient(selectedPatientId);
+    if(!p) return;
+
+    const next = state.appts
+      .filter(a=>a.patientId===p.id)
+      .filter(a => (a.date||"") >= todayISO())
+      .slice()
+      .sort((a,b)=> (a.date||"").localeCompare(b.date||"") || (a.time||"").localeCompare(b.time||""))[0];
+
+    const tasks = state.tasks
+      .filter(t=>t.patientId===p.id)
+      .slice()
+      .sort((a,b)=> (a.due||"").localeCompare(b.due||""));
+
+    const lastS = state.sessions.filter(s=>s.patientId===p.id).slice().sort(byDateDesc)[0];
+    const idx = lastS ? computeIndexFromSession(lastS.sc) : null;
+
+    $("portalTitle").textContent = `Portal del paciente – ${p.name||"Paciente"}`;
+    $("portalSub").textContent = `Resumen • tareas • próxima cita • Índice ${idx===null?"—":idx}`;
+
+    const body = `
+      <div style="padding:6px 2px">
+        <div class="item">
+          <div class="name">Resumen de continuidad</div>
+          <div class="meta">
+            Motivo/Dx (breve): ${escapeHtml(p.dx||"—")}<br/>
+            Próxima cita: ${next ? `${escapeHtml(next.date)} ${escapeHtml(next.time||"")} (${escapeHtml(next.note||"")})` : "—"}<br/>
+            Recuerda: si una tarea se siente pesada, se puede ajustar en pasos pequeños.
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="item">
+          <div class="name">Tareas actuales</div>
+          <div class="meta">${tasks.length ? "" : "No hay tareas registradas."}</div>
+          ${tasks.slice(0,8).map(t=>`
+            <div class="item" style="margin-top:8px">
+              <div class="top">
+                <div>
+                  <div class="name">${escapeHtml(t.title||"—")}</div>
+                  <div class="meta">${t.due?`Meta: ${escapeHtml(t.due)} • `:""}Estado: ${escapeHtml(t.status||"—")}</div>
+                </div>
+                <span class="pill teal">${escapeHtml(t.status||"")}</span>
+              </div>
+              <div class="meta" style="margin-top:6px">${escapeHtml(t.desc||"—")}</div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="hint">Generado por: Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.</div>
+      </div>
+    `;
+    $("portalBody").innerHTML = body;
+    $("portalBg").style.display = "flex";
+  }
+
+  $("btnOpenPortal").addEventListener("click", openPortal);
+  $("btnClosePortal").addEventListener("click", ()=> $("portalBg").style.display="none");
+  $("portalBg").addEventListener("click", (e)=>{ if(e.target.id==="portalBg") $("portalBg").style.display="none"; });
+  $("btnPrintPortal").addEventListener("click", ()=> window.print());
+
+  // ===== Init =====
+  renderPatients();
+  // auto-select first patient if exists
+  if(!selectedPatientId && state.patients.length) selectedPatientId = state.patients[0].id;
+  renderSelected();
+  drawChart();
+
+})(); 
+</script>
+</body>
+</html>

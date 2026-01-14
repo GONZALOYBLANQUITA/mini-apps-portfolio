@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MiniApp — Escucha y Transcripción</title>
+  <style>
+    :root{
+      --bg:#0f172a;          /* slate-900 */
+      --card:#111c33;        /* custom */
+      --muted:#9aa7bd;
+      --text:#e7eefc;
+      --accent:#5eead4;      /* teal-300 */
+      --accent2:#93c5fd;     /* blue-300 */
+      --danger:#fb7185;      /* rose-400 */
+      --ok:#34d399;          /* green-400 */
+      --shadow: 0 18px 45px rgba(0,0,0,.35);
+      --radius: 18px;
+      --border: 1px solid rgba(255,255,255,.08);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 600px at 20% 10%, rgba(94,234,212,.14), transparent 60%),
+                  radial-gradient(900px 500px at 80% 20%, rgba(147,197,253,.14), transparent 55%),
+                  linear-gradient(180deg, #0b1224, var(--bg));
+      color:var(--text);
+      min-height:100vh;
+      padding:18px;
+    }
+    .wrap{max-width:980px;margin:0 auto}
+    header{
+      display:flex; gap:14px; align-items:center; justify-content:space-between;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, rgba(94,234,212,.9), rgba(147,197,253,.9));
+      box-shadow: var(--shadow);
+      position:relative;
+    }
+    .logo:before{
+      content:"";
+      position:absolute; inset:10px 12px 10px 12px;
+      border-radius:12px;
+      background: rgba(15,23,42,.55);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    h1{font-size:18px;margin:0;letter-spacing:.2px}
+    .sub{font-size:13px;color:var(--muted);margin:2px 0 0 0}
+    .pill{
+      font-size:12px; color:#0b1224;
+      background: rgba(94,234,212,.95);
+      padding:8px 10px; border-radius:999px;
+      font-weight:700; letter-spacing:.2px;
+      box-shadow: 0 10px 25px rgba(94,234,212,.16);
+      border: 1px solid rgba(255,255,255,.2);
+      white-space:nowrap;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:14px;
+    }
+    @media (min-width: 980px){
+      .grid{ grid-template-columns: 380px 1fr; }
+    }
+
+    .card{
+      background: rgba(17,28,51,.72);
+      border: var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .card .hd{
+      padding:14px 14px 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .card .hd h2{
+      font-size:14px; margin:0; letter-spacing:.2px;
+    }
+    .card .hd p{
+      margin:6px 0 0 0; font-size:12.5px; color:var(--muted); line-height:1.35;
+    }
+    .card .bd{ padding:14px; }
+
+    label{
+      display:block; font-size:12px; color:var(--muted); margin:0 0 6px 2px;
+    }
+    input, textarea, select{
+      width:100%;
+      background: rgba(15,23,42,.55);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 14px;
+      padding:12px 12px;
+      outline:none;
+      font-family:var(--sans);
+    }
+    textarea{ min-height: 220px; resize: vertical; }
+    .row{ display:grid; grid-template-columns: 1fr; gap:10px; }
+    @media(min-width: 520px){
+      .row{ grid-template-columns: 1fr 1fr; }
+    }
+
+    .btns{
+      display:grid; grid-template-columns: 1fr 1fr;
+      gap:10px; margin-top:12px;
+    }
+    @media(min-width:520px){
+      .btns{ grid-template-columns: 1fr 1fr 1fr; }
+    }
+    button{
+      width:100%;
+      border:none;
+      border-radius: 14px;
+      padding:12px 12px;
+      font-weight:800;
+      letter-spacing:.2px;
+      cursor:pointer;
+      background: rgba(255,255,255,.10);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.12);
+      transition: transform .06s ease, opacity .2s ease, background .2s ease;
+    }
+    button:active{ transform: scale(.99); }
+    button[disabled]{ opacity:.45; cursor:not-allowed; }
+
+    .primary{
+      background: linear-gradient(135deg, rgba(94,234,212,.95), rgba(147,197,253,.95));
+      color:#0b1224;
+      border: 1px solid rgba(255,255,255,.28);
+    }
+    .danger{
+      background: rgba(251,113,133,.18);
+      border: 1px solid rgba(251,113,133,.35);
+      color: #ffdbe2;
+    }
+    .ghost{ background: rgba(255,255,255,.06); }
+
+    .status{
+      display:flex; gap:10px; align-items:center; justify-content:space-between;
+      padding:10px 12px; border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(15,23,42,.55);
+      margin-top:10px;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px; background: rgba(255,255,255,.20);
+      box-shadow: 0 0 0 6px rgba(255,255,255,.06);
+      flex:0 0 auto;
+    }
+    .dot.live{ background: var(--ok); box-shadow: 0 0 0 6px rgba(52,211,153,.12); }
+    .dot.pause{ background: #fbbf24; box-shadow: 0 0 0 6px rgba(251,191,36,.12); }
+    .dot.err{ background: var(--danger); box-shadow: 0 0 0 6px rgba(251,113,133,.14); }
+    .status small{ color: var(--muted); display:block; }
+    .status b{ font-size:13px; }
+    .mono{ font-family: var(--mono); font-size:12px; color: rgba(231,238,252,.9); }
+
+    .note{
+      font-size:12.5px; color: var(--muted); line-height:1.4;
+      margin:0;
+    }
+    .warn{
+      background: rgba(251,191,36,.10);
+      border: 1px solid rgba(251,191,36,.22);
+      padding:12px; border-radius: 16px;
+    }
+    .kpi{
+      display:grid; grid-template-columns: 1fr 1fr; gap:10px;
+    }
+    .kpi .box{
+      padding:12px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(15,23,42,.45);
+    }
+    .kpi .box .n{ font-size:18px; font-weight:900; margin:0; }
+    .kpi .box .l{ font-size:12px; color:var(--muted); margin:6px 0 0 0; }
+    .footer{
+      margin-top:14px;
+      font-size:12px;
+      color: rgba(231,238,252,.72);
+      text-align:center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Escucha clínica + Transcripción</h1>
+          <p class="sub">Grabación por micrófono y transcripción local (según soporte del navegador).</p>
+        </div>
+      </div>
+      <div class="pill">Uso con consentimiento</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2>Control de sesión</h2>
+            <p>Define un código de paciente (sin nombres) y el idioma. La transcripción se guarda en este dispositivo.</p>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="row">
+            <div>
+              <label for="patientCode">Código de paciente (ej.: PCT-014)</label>
+              <input id="patientCode" placeholder="PCT-001" autocomplete="off" />
+            </div>
+            <div>
+              <label for="lang">Idioma de reconocimiento</label>
+              <select id="lang">
+                <option value="es-PE" selected>Español (Perú) — es-PE</option>
+                <option value="es-ES">Español (España) — es-ES</option>
+                <option value="es-MX">Español (México) — es-MX</option>
+                <option value="en-US">English (US) — en-US</option>
+                <option value="pt-BR">Português (Brasil) — pt-BR</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="btns">
+            <button id="btnStart" class="primary">🎙️ Iniciar</button>
+            <button id="btnPause" class="ghost" disabled>⏸️ Pausar</button>
+            <button id="btnStop" class="ghost" disabled>⏹️ Detener</button>
+          </div>
+
+          <div class="btns" style="margin-top:10px;">
+            <button id="btnExport" class="ghost">⬇️ Exportar .txt</button>
+            <button id="btnCopy" class="ghost">📋 Copiar texto</button>
+            <button id="btnClear" class="danger">🗑️ Borrar</button>
+          </div>
+
+          <div class="status" id="statusBox" role="status" aria-live="polite">
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div class="dot" id="dot"></div>
+              <div>
+                <b id="statusTitle">Listo</b>
+                <small id="statusMsg">Presiona “Iniciar” para comenzar.</small>
+              </div>
+            </div>
+            <div class="mono" id="timer">00:00</div>
+          </div>
+
+          <div class="warn" style="margin-top:12px;">
+            <p class="note">
+              <b>Privacidad:</b> esta mini-app guarda la transcripción en el almacenamiento local del navegador.
+              Evita usar nombres completos. Usa códigos. Si trabajas con información sensible, considera cifrado
+              y políticas institucionales.
+            </p>
+          </div>
+
+          <div style="margin-top:12px;" class="kpi">
+            <div class="box">
+              <p class="n" id="wordCount">0</p>
+              <p class="l">Palabras (aprox.)</p>
+            </div>
+            <div class="box">
+              <p class="n" id="autosave">—</p>
+              <p class="l">Último guardado</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="hd">
+          <div>
+            <h2>Transcripción</h2>
+            <p>Verás texto en vivo. Puedes editar manualmente antes de exportar.</p>
+          </div>
+        </div>
+        <div class="bd">
+          <label for="transcript">Texto transcrito</label>
+          <textarea id="transcript" placeholder="Aquí aparecerá la transcripción..."></textarea>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <span class="note">Consejo: habla claro, sin ruido, y cerca del micrófono.</span>
+          </div>
+
+          <div class="footer" style="margin-top:14px;">
+            Desarrollado por: Lic. Gonzalo Buendía – Psicólogo <b>y Blanquita – Co terapeuta</b>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const elCode = document.getElementById('patientCode');
+  const elLang = document.getElementById('lang');
+  const elText = document.getElementById('transcript');
+
+  const btnStart = document.getElementById('btnStart');
+  const btnPause = document.getElementById('btnPause');
+  const btnStop  = document.getElementById('btnStop');
+  const btnExport= document.getElementById('btnExport');
+  const btnCopy  = document.getElementById('btnCopy');
+  const btnClear = document.getElementById('btnClear');
+
+  const dot = document.getElementById('dot');
+  const statusTitle = document.getElementById('statusTitle');
+  const statusMsg = document.getElementById('statusMsg');
+  const timerEl = document.getElementById('timer');
+  const wordCountEl = document.getElementById('wordCount');
+  const autosaveEl = document.getElementById('autosave');
+
+  const STORAGE_KEY = 'miniapp_transcriber_v1';
+  let recognition = null;
+  let isRunning = false;
+  let isPaused = false;
+
+  let t0 = null;
+  let tick = null;
+
+  function setStatus(mode, title, msg){
+    dot.className = 'dot' + (mode ? ' ' + mode : '');
+    statusTitle.textContent = title;
+    statusMsg.textContent = msg;
+  }
+
+  function fmtTime(ms){
+    const s = Math.floor(ms/1000);
+    const mm = String(Math.floor(s/60)).padStart(2,'0');
+    const ss = String(s%60).padStart(2,'0');
+    return `${mm}:${ss}`;
+  }
+
+  function startTimer(){
+    t0 = Date.now();
+    if (tick) clearInterval(tick);
+    tick = setInterval(() => {
+      const ms = Date.now() - t0;
+      timerEl.textContent = fmtTime(ms);
+    }, 250);
+  }
+  function stopTimer(){
+    if (tick) clearInterval(tick);
+    tick = null;
+    timerEl.textContent = '00:00';
+    t0 = null;
+  }
+
+  function countWords(text){
+    const cleaned = (text || '').trim().replace(/\s+/g,' ');
+    if (!cleaned) return 0;
+    return cleaned.split(' ').length;
+  }
+
+  function updateKPIs(){
+    wordCountEl.textContent = String(countWords(elText.value));
+  }
+
+  function saveLocal(){
+    const payload = {
+      code: elCode.value.trim(),
+      lang: elLang.value,
+      text: elText.value,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    const d = new Date(payload.savedAt);
+    autosaveEl.textContent = d.toLocaleString();
+  }
+
+  function loadLocal(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return;
+      const data = JSON.parse(raw);
+      if(data.code) elCode.value = data.code;
+      if(data.lang) elLang.value = data.lang;
+      if(data.text) elText.value = data.text;
+      if(data.savedAt){
+        const d = new Date(data.savedAt);
+        autosaveEl.textContent = d.toLocaleString();
+      }
+      updateKPIs();
+      setStatus('', 'Recuperado', 'Se cargó la última transcripción guardada en este dispositivo.');
+    }catch(e){
+      // ignore
+    }
+  }
+
+  function ensureCode(){
+    if (elCode.value.trim()) return true;
+    elCode.value = 'PCT-' + String(Math.floor(100 + Math.random()*900));
+    return true;
+  }
+
+  function createRecognition(){
+    if (!SpeechRecognition) return null;
+    const r = new SpeechRecognition();
+    r.lang = elLang.value || 'es-PE';
+    r.interimResults = true;
+    r.continuous = true;
+    r.maxAlternatives = 1;
+
+    let finalBuffer = '';
+
+    r.onstart = () => {
+      isRunning = true;
+      isPaused = false;
+      btnStart.disabled = true;
+      btnPause.disabled = false;
+      btnStop.disabled = false;
+      setStatus('live', 'Grabando', 'Escuchando… transcribiendo en vivo.');
+      startTimer();
+    };
+
+    r.onresult = (event) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const txt = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalBuffer += txt + ' ';
+        } else {
+          interim += txt;
+        }
+      }
+      // Combina final + interim para vista en vivo
+      const current = (finalBuffer + interim).trim();
+      elText.value = current;
+      updateKPIs();
+      // autosave suave
+      saveLocal();
+    };
+
+    r.onerror = (event) => {
+      setStatus('err', 'Error', `Reconocimiento: ${event.error || 'desconocido'}.`);
+      // En algunos casos se corta; dejamos opciones habilitadas para reintentar
+      btnStart.disabled = false;
+      btnPause.disabled = true;
+      btnStop.disabled = true;
+      isRunning = false;
+      isPaused = false;
+      stopTimer();
+    };
+
+    r.onend = () => {
+      // Si estaba corriendo y no fue pausa voluntaria, algunos navegadores cortan; permitimos reintento
+      if (isRunning && !isPaused) {
+        setStatus('', 'Detenido', 'El reconocimiento terminó. Puedes reiniciar.');
+      }
+      btnStart.disabled = false;
+      btnPause.disabled = true;
+      btnStop.disabled = true;
+      isRunning = false;
+      isPaused = false;
+      stopTimer();
+      saveLocal();
+      updateKPIs();
+    };
+
+    return r;
+  }
+
+  function start(){
+    ensureCode();
+
+    if (!SpeechRecognition){
+      setStatus('err', 'No compatible', 'Este navegador no soporta transcripción por voz (Web Speech). Prueba Chrome/Edge.');
+      return;
+    }
+
+    // (re)crear para asegurar lang actualizado
+    recognition = createRecognition();
+    try{
+      recognition.start();
+    }catch(e){
+      // Puede lanzar si se llama dos veces rápido
+      setStatus('err', 'Error al iniciar', 'Intenta nuevamente. Si estás en iPhone/Safari, puede no estar soportado.');
+    }
+  }
+
+  function pause(){
+    if (!recognition) return;
+    isPaused = true;
+    isRunning = false;
+    setStatus('pause', 'Pausado', 'Pausado. Presiona “Iniciar” para continuar.');
+    try{
+      recognition.stop(); // stop finaliza sesión; luego se reanuda con start()
+    }catch(e){}
+    btnStart.disabled = false;
+    btnPause.disabled = true;
+    btnStop.disabled = false; // permitir “detener” (limpieza)
+  }
+
+  function stop(){
+    if (recognition){
+      try{ recognition.stop(); }catch(e){}
+    }
+    setStatus('', 'Listo', 'Sesión detenida. Puedes exportar o iniciar otra.');
+    btnStart.disabled = false;
+    btnPause.disabled = true;
+    btnStop.disabled = true;
+    isRunning = false;
+    isPaused = false;
+    stopTimer();
+    saveLocal();
+  }
+
+  function exportTxt(){
+    ensureCode();
+    const code = elCode.value.trim();
+    const text = elText.value || '';
+    const header = `Código: ${code}\nIdioma: ${elLang.value}\nFecha: ${new Date().toLocaleString()}\n\n`;
+    const blob = new Blob([header + text], {type:'text/plain;charset=utf-8'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `transcripcion_${code}_${new Date().toISOString().slice(0,10)}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+  }
+
+  async function copyText(){
+    try{
+      await navigator.clipboard.writeText(elText.value || '');
+      setStatus('live', 'Copiado', 'Texto copiado al portapapeles.');
+      setTimeout(()=>setStatus('', 'Listo', 'Puedes seguir editando o exportar.'), 1200);
+    }catch(e){
+      setStatus('err', 'No se pudo copiar', 'Tu navegador bloqueó el portapapeles. Exporta como .txt.');
+    }
+  }
+
+  function clearAll(){
+    const ok = confirm('¿Borrar la transcripción y el guardado local?');
+    if(!ok) return;
+    elText.value = '';
+    localStorage.removeItem(STORAGE_KEY);
+    autosaveEl.textContent = '—';
+    updateKPIs();
+    setStatus('', 'Borrado', 'Se borró el contenido y el guardado local.');
+  }
+
+  // Eventos
+  btnStart.addEventListener('click', start);
+  btnPause.addEventListener('click', pause);
+  btnStop.addEventListener('click', stop);
+  btnExport.addEventListener('click', exportTxt);
+  btnCopy.addEventListener('click', copyText);
+  btnClear.addEventListener('click', clearAll);
+
+  elLang.addEventListener('change', () => {
+    saveLocal();
+    if (recognition && isRunning){
+      // reinicio suave para aplicar idioma
+      try{ recognition.stop(); }catch(e){}
+      setTimeout(start, 350);
+    }
+  });
+
+  elCode.addEventListener('input', saveLocal);
+  elText.addEventListener('input', () => { saveLocal(); updateKPIs(); });
+
+  // Inicio
+  loadLocal();
+
+  // Mensaje de compatibilidad
+  if(!SpeechRecognition){
+    setStatus('err', 'Compatibilidad', 'No hay soporte de transcripción en este navegador. Prueba Chrome/Edge.');
+  }
+})();
+</script>
+</body>
+</html>

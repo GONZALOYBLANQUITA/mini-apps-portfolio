@@ -1,0 +1,1230 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Horario de Atención Terapéutica (Local) – L–V 9:00–18:00</title>
+  <style>
+    :root{
+      /* Paleta cálida (inspirada en tu imagen) */
+      --bg:#0f0f10;
+      --card:#141416;
+      --card2:#111112;
+      --line:#2a2a2f;
+
+      --cream:#FFF6DD;       /* crema claro */
+      --mint:#B8F6BE;        /* verde menta */
+      --olive:#7E9B4B;       /* verde oliva */
+      --amber:#FFC23A;       /* amarillo/ámbar */
+      --orange:#FF8A2A;      /* naranja */
+      --brown:#B66B34;       /* marrón */
+
+      --text:#fff6e6;
+      --muted:rgba(255,246,230,.72);
+
+      --ok:#B8F6BE;
+      --warn:#FFC23A;
+      --bad:#FF8A2A;
+
+      --shadow: 0 18px 50px rgba(0,0,0,.45);
+      --r1:18px;
+      --r2:14px;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(900px 520px at 10% -10%, rgba(255,138,42,.20), transparent 55%),
+        radial-gradient(900px 520px at 90% 0%, rgba(184,246,190,.14), transparent 55%),
+        radial-gradient(820px 460px at 60% 110%, rgba(255,194,58,.12), transparent 55%),
+        linear-gradient(180deg, #0b0b0c, var(--bg) 55%, #070707);
+      min-height:100vh;
+      padding:14px;
+    }
+
+    .wrap{max-width:1220px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.06), transparent), rgba(255,255,255,.03);
+      border-radius:var(--r1);
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;
+      backdrop-filter: blur(10px);
+    }
+    header h1{margin:0;font-size:18px;letter-spacing:.2px}
+    header p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.35;max-width:880px}
+
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .btn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;gap:8px;align-items:center;
+      user-select:none;
+      transition:transform .06s ease, background .2s ease, border-color .2s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(255,255,255,.08)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{border-color:rgba(255,194,58,.35); background:rgba(255,194,58,.10)}
+    .btn.good{border-color:rgba(184,246,190,.30); background:rgba(184,246,190,.10)}
+    .btn.warn{border-color:rgba(255,138,42,.35); background:rgba(255,138,42,.10)}
+    .btn.bad{border-color:rgba(182,107,52,.40); background:rgba(182,107,52,.10)}
+
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:rgba(255,255,255,.04);
+      white-space:nowrap;
+    }
+    .pill .dot{width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.25)}
+    .pill.ok{border-color:rgba(184,246,190,.35); color:#ecfff0; background:rgba(184,246,190,.10)}
+    .pill.ok .dot{background:rgba(184,246,190,.90)}
+    .pill.warn{border-color:rgba(255,194,58,.35); color:#fff3d0; background:rgba(255,194,58,.10)}
+    .pill.warn .dot{background:rgba(255,194,58,.92)}
+    .pill.bad{border-color:rgba(255,138,42,.35); color:#ffe7d6; background:rgba(255,138,42,.10)}
+    .pill.bad .dot{background:rgba(255,138,42,.92)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+    @media(min-width: 980px){
+      .grid{grid-template-columns: 430px 1fr}
+    }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.05), transparent), rgba(255,255,255,.03);
+      border-radius:var(--r1);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .hd{
+      padding:12px;
+      border-bottom:1px solid var(--line);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .hd h2{margin:0;font-size:14px}
+    .hd small{color:var(--muted)}
+    .bd{padding:12px}
+
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px 2px}
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.25);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+      outline:none;
+    }
+    textarea{min-height:80px;resize:vertical;line-height:1.4}
+    .two{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:720px){ .two{grid-template-columns:1fr 1fr} }
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .sep{height:1px;background:var(--line);margin:12px 0}
+    .hint{color:var(--muted);font-size:12px;line-height:1.35}
+
+    .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .kpi{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(0,0,0,.30), rgba(0,0,0,.12));
+      border-radius:16px;
+      padding:10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .kpi .label{color:var(--muted);font-size:12px;display:flex;gap:8px;align-items:center}
+    .ico{
+      width:22px;height:22px;border-radius:10px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:13px;
+    }
+    .kpi .value{font-size:20px;font-weight:900;margin-top:6px}
+    .kpi .sub{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.3}
+
+    /* ====== Semana (tabla) ====== */
+    .weekTop{
+      display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+    }
+    .nav{
+      display:flex;gap:8px;align-items:center;flex-wrap:wrap;
+    }
+    .titleWeek{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+      padding:8px 10px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.04);
+    }
+    .titleWeek b{font-size:13px}
+    .titleWeek span{color:var(--muted);font-size:12px}
+
+    .weekGrid{
+      margin-top:12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+      background:rgba(0,0,0,.18);
+    }
+
+    .wgHead{
+      display:grid;
+      grid-template-columns: 84px repeat(5, 1fr);
+      background: rgba(255,255,255,.04);
+      border-bottom:1px solid var(--line);
+    }
+    .wgHead div{
+      padding:10px 10px;
+      font-size:12px;
+      color:var(--muted);
+      display:flex;align-items:center;gap:8px;
+      border-right:1px solid rgba(255,255,255,.06);
+    }
+    .wgHead div:last-child{border-right:none}
+    .dayTag{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:rgba(255,246,230,.85);
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+    .dayTag .miniDot{width:8px;height:8px;border-radius:99px;background:rgba(255,255,255,.22)}
+    .d1 .miniDot{background: rgba(255,194,58,.95)}
+    .d2 .miniDot{background: rgba(184,246,190,.92)}
+    .d3 .miniDot{background: rgba(126,155,75,.92)}
+    .d4 .miniDot{background: rgba(255,138,42,.92)}
+    .d5 .miniDot{background: rgba(182,107,52,.92)}
+
+    .wgBody{
+      display:grid;
+      grid-template-columns: 84px repeat(5, 1fr);
+    }
+
+    .timeCell{
+      padding:10px 10px;
+      font-size:12px;
+      color:rgba(255,246,230,.75);
+      border-right:1px solid rgba(255,255,255,.06);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.18);
+    }
+
+    .slot{
+      min-height:54px;
+      padding:8px;
+      border-right:1px solid rgba(255,255,255,.06);
+      border-bottom:1px solid rgba(255,255,255,.06);
+      position:relative;
+    }
+    .slot:last-child{border-right:none}
+    .slot.dropHover{outline:2px solid rgba(255,194,58,.60); outline-offset:-2px}
+
+    .appt{
+      border:1px solid rgba(255,255,255,.12);
+      border-left:6px solid var(--amber);
+      background: rgba(255,255,255,.05);
+      border-radius:14px;
+      padding:8px 8px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      cursor:grab;
+      user-select:none;
+    }
+    .appt:active{cursor:grabbing}
+    .appt .top{
+      display:flex;justify-content:space-between;gap:8px;align-items:flex-start;
+    }
+    .appt .name{
+      font-weight:900;font-size:13px;line-height:1.15;
+    }
+    .appt .meta{
+      color:var(--muted);
+      font-size:12px;line-height:1.2;
+    }
+    .appt .actions{
+      display:flex;gap:6px;flex-wrap:wrap;
+    }
+    .chip{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.20);
+      font-size:12px;color:rgba(255,246,230,.85);
+      cursor:pointer;
+      transition:transform .06s ease, background .2s ease;
+      white-space:nowrap;
+    }
+    .chip:hover{background: rgba(255,255,255,.06)}
+    .chip:active{transform:translateY(1px)}
+    .chip.whatsapp{border-color: rgba(184,246,190,.30)}
+    .chip.edit{border-color: rgba(255,194,58,.30)}
+    .chip.del{border-color: rgba(255,138,42,.35)}
+
+    /* color por estado */
+    .st-ok{border-left-color: var(--mint)}
+    .st-warn{border-left-color: var(--amber)}
+    .st-bad{border-left-color: var(--orange)}
+    .st-done{border-left-color: var(--olive)}
+    .st-cancel{border-left-color: var(--brown); opacity:.92}
+
+    .legend{
+      display:flex;flex-wrap:wrap;gap:8px;margin-top:10px
+    }
+    .lg{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      color: rgba(255,246,230,.80);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .lg i{width:10px;height:10px;border-radius:99px;display:inline-block;background:rgba(255,255,255,.25)}
+    .lg.ok i{background:var(--mint)}
+    .lg.warn i{background:var(--amber)}
+    .lg.bad i{background:var(--orange)}
+    .lg.done i{background:var(--olive)}
+    .lg.cancel i{background:var(--brown)}
+
+    .list{
+      display:flex;flex-direction:column;gap:10px;max-height:340px;overflow:auto;padding-right:4px
+    }
+    .item{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.12));
+      border-radius:16px;
+      padding:10px;
+    }
+    .item .name{font-weight:900;font-size:13px}
+    .item .meta{color:var(--muted);font-size:12px;line-height:1.3;margin-top:4px}
+
+    .toast{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background:rgba(0,0,0,.60);
+      border:1px solid rgba(255,255,255,.18);
+      color:var(--text);
+      padding:10px 12px;border-radius:999px;font-size:13px;
+      box-shadow:var(--shadow);
+      opacity:0;transition:opacity .2s ease, transform .2s ease;
+      pointer-events:none;z-index:60;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+
+    /* Modal */
+    .modalBg{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.58);
+      display:none; align-items:center; justify-content:center;
+      padding:14px; z-index:80;
+    }
+    .modal{
+      width:min(740px, 100%);
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(0,0,0,.22));
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+    }
+    .mhd{
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .mhd h3{margin:0;font-size:15px}
+    .mbd{padding:12px}
+    .mft{padding:12px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+
+    .foot{
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      padding:6px 0 2px;
+    }
+
+    /* mobile tweaks */
+    @media(max-width:520px){
+      .wgHead{grid-template-columns:72px repeat(5, 1fr)}
+      .wgBody{grid-template-columns:72px repeat(5, 1fr)}
+      .timeCell{padding:10px 8px}
+      .slot{padding:8px 6px}
+      .appt{padding:8px}
+      .appt .name{font-size:12.5px}
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🗓️ Horario de Atención Terapéutica (L–V 09:00–18:00)</h1>
+      <p>
+        Sistema <b>local y seguro</b> (sin servidor): organiza citas semanales, agrega datos del paciente, notas y estado.
+        Incluye <b>WhatsApp directo</b>, <b>arrastrar y soltar</b> para mover citas, y exportación (<b>CSV</b> / <b>Backup JSON</b>).
+      </p>
+    </div>
+    <div class="toolbar">
+      <span class="pill ok" id="pillInfo"><span class="dot"></span> Guardado local activo</span>
+      <button class="btn primary" id="btnNew">➕ Nueva cita</button>
+      <button class="btn good" id="btnToday">📍 Semana actual</button>
+      <button class="btn good" id="btnCSV">📄 Exportar CSV</button>
+      <button class="btn good" id="btnBackup">⬇️ Backup</button>
+      <label class="btn primary" style="cursor:pointer">
+        ⬆️ Importar
+        <input id="fileImport" type="file" accept="application/json" style="display:none">
+      </label>
+      <button class="btn warn" id="btnDemo">✨ Demo</button>
+      <button class="btn bad" id="btnReset">🧨 Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- Panel izquierdo: crear/editar + lista -->
+    <section class="card">
+      <div class="hd">
+        <h2>🧩 Gestión rápida</h2>
+        <small>Crear • editar • buscar</small>
+      </div>
+      <div class="bd">
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label"><span class="ico">📅</span> Citas (semana)</div>
+            <div class="value" id="kpiWeek">0</div>
+            <div class="sub">Total visible (L–V)</div>
+          </div>
+          <div class="kpi">
+            <div class="label"><span class="ico">⏱️</span> Próxima cita</div>
+            <div class="value" id="kpiNext">—</div>
+            <div class="sub" id="kpiNextSub">—</div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="two">
+          <div>
+            <label for="q">Buscar (nombre / nota)</label>
+            <input id="q" placeholder="Ej.: Melina / ansiedad / duelo..."/>
+          </div>
+          <div>
+            <label for="filter">Filtrar estado</label>
+            <select id="filter">
+              <option value="all">Todos</option>
+              <option value="programada">🟨 Programada</option>
+              <option value="confirmada">🟩 Confirmada</option>
+              <option value="en_riesgo">🟧 En riesgo</option>
+              <option value="realizada">🟩 Realizada</option>
+              <option value="cancelada">🟫 Cancelada</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="pill warn"><span class="dot"></span> Citas visibles</span>
+          <span class="pill" id="pillCount"><span class="dot"></span> 0</span>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="list" id="list"></div>
+
+        <div class="sep"></div>
+        <div class="hint">
+          Tip: en el tablero semanal puedes <b>arrastrar</b> una cita y soltarla en otra celda para moverla (día/hora).
+        </div>
+
+        <div class="legend">
+          <span class="lg warn"><i></i> Programada</span>
+          <span class="lg ok"><i></i> Confirmada</span>
+          <span class="lg bad"><i></i> En riesgo</span>
+          <span class="lg done"><i></i> Realizada</span>
+          <span class="lg cancel"><i></i> Cancelada</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Panel derecho: tablero semanal -->
+    <section class="card">
+      <div class="hd">
+        <h2>📋 Tablero semanal (Lunes a Viernes)</h2>
+        <small>09:00 a 18:00 • Click en una celda para agregar</small>
+      </div>
+      <div class="bd">
+        <div class="weekTop">
+          <div class="nav">
+            <button class="btn" id="btnPrev">⬅️ Semana</button>
+            <button class="btn" id="btnNext">Semana ➡️</button>
+          </div>
+          <div class="titleWeek" id="weekLabel">
+            <b>Semana</b> <span>—</span>
+          </div>
+          <div class="nav">
+            <span class="pill" id="pillRange"><span class="dot"></span> —</span>
+          </div>
+        </div>
+
+        <div class="weekGrid" id="weekGrid">
+          <div class="wgHead" id="wgHead"></div>
+          <div class="wgBody" id="wgBody"></div>
+        </div>
+
+        <div class="hint" style="margin-top:10px">
+          Seguridad: todo se guarda en tu navegador (localStorage). Para moverlo a otra PC usa <b>Backup</b> / <b>Importar</b>.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="foot">Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.</div>
+</div>
+
+<!-- Modal: Nueva/Editar cita -->
+<div class="modalBg" id="modalBg">
+  <div class="modal">
+    <div class="mhd">
+      <h3 id="mTitle">Nueva cita</h3>
+      <button class="btn bad" id="mClose">✖ Cerrar</button>
+    </div>
+    <div class="mbd">
+      <div class="two">
+        <div>
+          <label for="mDate">Fecha</label>
+          <input id="mDate" type="date"/>
+        </div>
+        <div>
+          <label for="mTime">Hora</label>
+          <select id="mTime"></select>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:10px">
+        <div>
+          <label for="mName">Paciente</label>
+          <input id="mName" placeholder="Nombre / iniciales"/>
+        </div>
+        <div>
+          <label for="mType">Tipo</label>
+          <select id="mType">
+            <option value="Sesión">🧠 Sesión</option>
+            <option value="Evaluación">📝 Evaluación</option>
+            <option value="Seguimiento">📈 Seguimiento</option>
+            <option value="Coordinación">📞 Coordinación</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:10px">
+        <div>
+          <label for="mPhone">WhatsApp / Teléfono</label>
+          <input id="mPhone" inputmode="tel" placeholder="Ej.: 51987654321"/>
+          <div class="hint" style="margin-top:6px">Tip: usa formato internacional sin espacios (Perú: 51 + número).</div>
+        </div>
+        <div>
+          <label for="mStatus">Estado</label>
+          <select id="mStatus">
+            <option value="programada">🟨 Programada</option>
+            <option value="confirmada">🟩 Confirmada</option>
+            <option value="en_riesgo">🟧 En riesgo</option>
+            <option value="realizada">🟩 Realizada</option>
+            <option value="cancelada">🟫 Cancelada</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <label for="mNotes">Notas breves / foco clínico</label>
+        <textarea id="mNotes" placeholder="Ej.: motivo de consulta, objetivo sesión, tarea, recordatorio..."></textarea>
+      </div>
+
+      <div class="sep"></div>
+      <div class="row" style="justify-content:space-between">
+        <span class="pill" id="mIdPill"><span class="dot"></span> ID: —</span>
+        <span class="pill warn"><span class="dot"></span> Drag & Drop activo</span>
+      </div>
+    </div>
+    <div class="mft">
+      <button class="btn bad" id="mDelete">🗑️ Eliminar</button>
+      <button class="btn primary" id="mSave">💾 Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Listo</div>
+
+<script>
+(() => {
+  const KEY = "horario_terapeutico_local_v1";
+  const $ = (id)=>document.getElementById(id);
+
+  const toastEl = $("toast");
+  const toast = (msg)=>{
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    setTimeout(()=>toastEl.classList.remove("show"), 1700);
+  };
+
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max, v));
+  const uid=()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
+
+  const esc=(s)=>(s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+  const pad2=(n)=>String(n).padStart(2,"0");
+
+  const DAYS = [
+    {k:1, name:"Lunes",   short:"Lun", cls:"d1", ico:"🟡"},
+    {k:2, name:"Martes",  short:"Mar", cls:"d2", ico:"🟢"},
+    {k:3, name:"Miércoles", short:"Mié", cls:"d3", ico:"🌿"},
+    {k:4, name:"Jueves",  short:"Jue", cls:"d4", ico:"🟠"},
+    {k:5, name:"Viernes", short:"Vie", cls:"d5", ico:"🟤"},
+  ];
+
+  const HOURS = [];
+  for(let h=9; h<=18; h++){
+    HOURS.push(`${pad2(h)}:00`);
+  }
+
+  const statusMeta = (st)=>{
+    if(st==="confirmada") return {cls:"st-ok", label:"Confirmada"};
+    if(st==="en_riesgo") return {cls:"st-bad", label:"En riesgo"};
+    if(st==="realizada") return {cls:"st-done", label:"Realizada"};
+    if(st==="cancelada") return {cls:"st-cancel", label:"Cancelada"};
+    return {cls:"st-warn", label:"Programada"};
+  };
+
+  const defaultState = ()=>({
+    weekStartISO: isoDate(startOfWeek(new Date())),
+    appts: [
+      // {id,date:"YYYY-MM-DD", time:"HH:00", day:1..5, name, phone, type, status, notes, createdAt}
+    ]
+  });
+
+  let state = defaultState();
+
+  function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+  function load(){
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return;
+    try{
+      const d = JSON.parse(raw);
+      if(d && typeof d==="object"){
+        state = { ...defaultState(), ...d };
+        if(!Array.isArray(state.appts)) state.appts=[];
+        if(!state.weekStartISO) state.weekStartISO = isoDate(startOfWeek(new Date()));
+      }
+    }catch{}
+  }
+
+  function isoDate(d){
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  }
+  function parseISO(s){
+    const [y,m,d]=s.split("-").map(Number);
+    return new Date(y, m-1, d, 12, 0, 0, 0);
+  }
+  function startOfWeek(date){
+    // Lunes como inicio
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12);
+    const day = d.getDay(); // 0 dom..6 sáb
+    const diff = (day===0 ? -6 : 1-day); // para lunes
+    d.setDate(d.getDate()+diff);
+    return d;
+  }
+  function addDays(d, n){
+    const x = new Date(d.getTime());
+    x.setDate(x.getDate()+n);
+    return x;
+  }
+  function fmtShort(d){
+    const months=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+    return `${pad2(d.getDate())} ${months[d.getMonth()]} ${String(d.getFullYear()).slice(2)}`;
+  }
+
+  function weekRangeLabel(){
+    const ws = parseISO(state.weekStartISO);
+    const we = addDays(ws, 4);
+    return `${fmtShort(ws)} – ${fmtShort(we)}`;
+  }
+
+  // ===== UI build (head/body) =====
+  function buildTimeOptions(){
+    const sel = $("mTime");
+    sel.innerHTML="";
+    HOURS.forEach(t=>{
+      const op = document.createElement("option");
+      op.value=t;
+      op.textContent=t;
+      sel.appendChild(op);
+    });
+  }
+
+  function buildWeekGrid(){
+    const ws = parseISO(state.weekStartISO);
+    $("pillRange").innerHTML = `<span class="dot"></span> ${weekRangeLabel()}`;
+
+    const label = $("weekLabel");
+    label.innerHTML = `<b>Semana</b> <span>${weekRangeLabel()}</span>`;
+
+    const head = $("wgHead");
+    head.innerHTML = `<div>⏰ Hora</div>`;
+    DAYS.forEach((day, idx)=>{
+      const d = addDays(ws, idx);
+      head.innerHTML += `
+        <div class="${day.cls}">
+          <span class="dayTag ${day.cls}">
+            <span class="miniDot"></span> ${day.short} ${pad2(d.getDate())}
+          </span>
+        </div>
+      `;
+    });
+
+    const body = $("wgBody");
+    body.innerHTML = "";
+
+    HOURS.forEach((t)=>{
+      body.innerHTML += `<div class="timeCell">${t}</div>`;
+      DAYS.forEach((day, idx)=>{
+        const d = addDays(ws, idx);
+        const dateISO = isoDate(d);
+        const slotId = `slot_${dateISO}_${t}`;
+        body.innerHTML += `
+          <div class="slot" id="${slotId}"
+               data-date="${dateISO}" data-time="${t}" data-day="${day.k}">
+          </div>
+        `;
+      });
+    });
+
+    // click slot -> create
+    body.querySelectorAll(".slot").forEach(slot=>{
+      slot.addEventListener("click",(e)=>{
+        if(e.target.closest(".appt")) return;
+        openModalForNew(slot.dataset.date, slot.dataset.time);
+      });
+
+      // drag & drop
+      slot.addEventListener("dragover",(e)=>{
+        e.preventDefault();
+        slot.classList.add("dropHover");
+      });
+      slot.addEventListener("dragleave",()=>slot.classList.remove("dropHover"));
+      slot.addEventListener("drop",(e)=>{
+        e.preventDefault();
+        slot.classList.remove("dropHover");
+        const id = e.dataTransfer.getData("text/plain");
+        if(!id) return;
+        moveAppt(id, slot.dataset.date, slot.dataset.time, Number(slot.dataset.day));
+      });
+    });
+  }
+
+  function apptsInWeek(){
+    const ws = parseISO(state.weekStartISO);
+    const we = addDays(ws, 4);
+    const wsISO = isoDate(ws);
+    const weISO = isoDate(we);
+    return state.appts.filter(a => a.date >= wsISO && a.date <= weISO && HOURS.includes(a.time));
+  }
+
+  function sortAppts(arr){
+    return arr.slice().sort((a,b)=>{
+      const x = (a.date+a.time).localeCompare(b.date+b.time);
+      if(x!==0) return x;
+      return (a.name||"").localeCompare(b.name||"");
+    });
+  }
+
+  function renderWeek(){
+    // clear slots
+    document.querySelectorAll(".slot").forEach(s=>s.innerHTML="");
+
+    const week = apptsInWeek();
+    week.forEach(a=>{
+      const slot = document.getElementById(`slot_${a.date}_${a.time}`);
+      if(!slot) return;
+
+      const st = statusMeta(a.status);
+      const phone = (a.phone||"").replace(/\D/g,"");
+      const hasPhone = phone.length>=8;
+
+      const node = document.createElement("div");
+      node.className = `appt ${st.cls}`;
+      node.draggable = true;
+      node.dataset.id = a.id;
+
+      node.addEventListener("dragstart",(e)=>{
+        e.dataTransfer.setData("text/plain", a.id);
+        e.dataTransfer.effectAllowed = "move";
+      });
+
+      const line2 = [
+        a.type ? `🧠 ${esc(a.type)}` : "",
+        a.status ? `• ${esc(st.label)}` : ""
+      ].filter(Boolean).join(" ");
+
+      const note = (a.notes||"").trim();
+      const noteShort = note.length>70 ? note.slice(0,70)+"…" : note;
+
+      node.innerHTML = `
+        <div class="top">
+          <div style="min-width:0">
+            <div class="name">👤 ${esc(a.name||"Paciente")}</div>
+            <div class="meta">${line2}</div>
+            ${note ? `<div class="meta">📝 ${esc(noteShort)}</div>` : ``}
+          </div>
+          <div class="actions">
+            ${hasPhone ? `<button class="chip whatsapp" data-wa="${phone}" title="WhatsApp">🟢 WA</button>` : ``}
+            <button class="chip edit" data-edit="${a.id}" title="Editar">✏️</button>
+            <button class="chip del" data-del="${a.id}" title="Eliminar">🗑️</button>
+          </div>
+        </div>
+      `;
+
+      node.querySelectorAll("[data-wa]").forEach(b=>{
+        b.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          const p = b.getAttribute("data-wa");
+          openWhatsApp(p, a.name, a.date, a.time);
+        });
+      });
+      node.querySelectorAll("[data-edit]").forEach(b=>{
+        b.addEventListener("click",(e)=>{ e.stopPropagation(); openModalForEdit(a.id); });
+      });
+      node.querySelectorAll("[data-del]").forEach(b=>{
+        b.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          if(!confirm("¿Eliminar esta cita?")) return;
+          state.appts = state.appts.filter(x=>x.id!==a.id);
+          save();
+          renderAll();
+          toast("Cita eliminada");
+        });
+      });
+
+      slot.appendChild(node);
+    });
+  }
+
+  function renderList(){
+    const q = ($("q").value||"").trim().toLowerCase();
+    const f = $("filter").value;
+
+    const list = $("list");
+    list.innerHTML = "";
+
+    let items = apptsInWeek();
+
+    if(f!=="all"){
+      items = items.filter(a=>a.status===f);
+    }
+    if(q){
+      items = items.filter(a=>{
+        const blob = `${a.name||""} ${a.notes||""} ${a.type||""}`.toLowerCase();
+        return blob.includes(q);
+      });
+    }
+
+    items = sortAppts(items);
+
+    $("pillCount").innerHTML = `<span class="dot"></span> ${items.length}`;
+
+    if(!items.length){
+      list.innerHTML = `
+        <div class="item">
+          <div class="name">Sin citas en el filtro actual</div>
+          <div class="meta">Crea una cita con <b>➕ Nueva cita</b> o tocando una celda del tablero semanal.</div>
+        </div>
+      `;
+      return;
+    }
+
+    items.slice(0,60).forEach(a=>{
+      const st = statusMeta(a.status);
+      const phone = (a.phone||"").replace(/\D/g,"");
+      const hasPhone = phone.length>=8;
+
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="name">🕒 ${esc(a.date)} ${esc(a.time)} • 👤 ${esc(a.name||"Paciente")}</div>
+        <div class="meta">
+          🧠 ${esc(a.type||"Sesión")} • Estado: <b>${esc(st.label)}</b><br/>
+          ${a.notes ? `📝 ${esc(a.notes)}` : `📝 (sin notas)`}
+        </div>
+        <div class="row" style="margin-top:10px;justify-content:flex-end">
+          ${hasPhone ? `<button class="btn good" data-wa="${phone}">🟢 WhatsApp</button>` : ``}
+          <button class="btn primary" data-edit="${a.id}">✏️ Editar</button>
+          <button class="btn warn" data-jump="${a.id}">📍 Ver</button>
+        </div>
+      `;
+      div.querySelectorAll("[data-wa]").forEach(b=>{
+        b.addEventListener("click",()=>openWhatsApp(phone, a.name, a.date, a.time));
+      });
+      div.querySelectorAll("[data-edit]").forEach(b=>{
+        b.addEventListener("click",()=>openModalForEdit(a.id));
+      });
+      div.querySelectorAll("[data-jump]").forEach(b=>{
+        b.addEventListener("click",()=>{
+          // si la cita no es de la semana, saltar a su semana
+          const d = parseISO(a.date);
+          state.weekStartISO = isoDate(startOfWeek(d));
+          save();
+          buildWeekGrid();
+          renderWeek();
+          renderKpis();
+          toast("Semana enfocada en la cita");
+        });
+      });
+      list.appendChild(div);
+    });
+  }
+
+  function renderKpis(){
+    const week = apptsInWeek();
+    $("kpiWeek").textContent = week.length;
+
+    // próxima cita: la más cercana desde ahora dentro de la semana
+    const now = new Date();
+    const weekSorted = sortAppts(week).map(a=>{
+      const [y,m,d]=a.date.split("-").map(Number);
+      const [hh,mm]=a.time.split(":").map(Number);
+      const dt = new Date(y, m-1, d, hh, mm, 0, 0);
+      return {a, dt};
+    }).filter(x=>!isNaN(x.dt.getTime()));
+
+    let next = weekSorted.find(x=>x.dt.getTime() >= now.getTime());
+    if(!next && weekSorted.length) next = weekSorted[0];
+
+    if(!next){
+      $("kpiNext").textContent = "—";
+      $("kpiNextSub").textContent = "Sin citas próximas";
+      return;
+    }
+    $("kpiNext").textContent = `${next.a.time}`;
+    $("kpiNextSub").textContent = `${next.a.date} • ${next.a.name||"Paciente"}`;
+  }
+
+  function renderAll(){
+    renderWeek();
+    renderList();
+    renderKpis();
+  }
+
+  // ===== Actions =====
+  function openWhatsApp(phone, name, date, time){
+    const msg = encodeURIComponent(`Hola${name ? " " + name : ""}. Te escribo para confirmar tu cita el ${date} a las ${time}.`);
+    // wa.me no necesita "https://api.whatsapp.com/"
+    const url = `https://wa.me/${phone}?text=${msg}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+
+  function moveAppt(id, newDate, newTime, newDay){
+    const a = state.appts.find(x=>x.id===id);
+    if(!a) return;
+
+    // evitar choque exacto en mismo slot con otra cita
+    const conflict = state.appts.some(x=>x.id!==id && x.date===newDate && x.time===newTime);
+    if(conflict){
+      toast("Ese horario ya tiene una cita");
+      return;
+    }
+
+    a.date = newDate;
+    a.time = newTime;
+    a.day = newDay;
+    save();
+    renderAll();
+    toast("Cita movida");
+  }
+
+  // ===== Modal =====
+  let editingId = null;
+
+  function openModalForNew(dateISO, time){
+    editingId = null;
+    $("mTitle").textContent = "➕ Nueva cita";
+    $("mIdPill").innerHTML = `<span class="dot"></span> ID: (nuevo)`;
+    $("mDelete").style.display = "none";
+
+    $("mDate").value = dateISO || isoDate(new Date());
+    $("mTime").value = time || "09:00";
+    $("mName").value = "";
+    $("mPhone").value = "";
+    $("mType").value = "Sesión";
+    $("mStatus").value = "programada";
+    $("mNotes").value = "";
+
+    $("modalBg").style.display = "flex";
+  }
+
+  function openModalForEdit(id){
+    const a = state.appts.find(x=>x.id===id);
+    if(!a) return;
+
+    editingId = id;
+    $("mTitle").textContent = "✏️ Editar cita";
+    $("mIdPill").innerHTML = `<span class="dot"></span> ID: ${esc(id.slice(-10))}`;
+    $("mDelete").style.display = "inline-flex";
+
+    $("mDate").value = a.date;
+    $("mTime").value = a.time;
+    $("mName").value = a.name || "";
+    $("mPhone").value = a.phone || "";
+    $("mType").value = a.type || "Sesión";
+    $("mStatus").value = a.status || "programada";
+    $("mNotes").value = a.notes || "";
+
+    $("modalBg").style.display = "flex";
+  }
+
+  function closeModal(){
+    $("modalBg").style.display = "none";
+    editingId = null;
+  }
+
+  $("mClose").addEventListener("click", closeModal);
+  $("modalBg").addEventListener("click",(e)=>{ if(e.target.id==="modalBg") closeModal(); });
+
+  $("mSave").addEventListener("click",()=>{
+    const date = $("mDate").value;
+    const time = $("mTime").value;
+    const name = ($("mName").value||"").trim();
+    const phone = ($("mPhone").value||"").trim();
+    const type = $("mType").value;
+    const status = $("mStatus").value;
+    const notes = ($("mNotes").value||"").trim();
+
+    if(!date || !time){
+      toast("Completa fecha y hora");
+      return;
+    }
+    if(!name){
+      toast("Coloca el nombre del paciente");
+      return;
+    }
+    if(!HOURS.includes(time)){
+      toast("Hora inválida");
+      return;
+    }
+
+    // conflicto horario
+    const conflict = state.appts.some(x => x.id!==editingId && x.date===date && x.time===time);
+    if(conflict){
+      toast("Ese horario ya tiene una cita");
+      return;
+    }
+
+    const dObj = parseISO(date);
+    const ws = startOfWeek(dObj);
+    const dayIndex = Math.floor((parseISO(date) - ws) / (24*3600*1000)); // 0..?
+    const day = clamp(dayIndex+1, 1, 5);
+
+    if(!editingId){
+      state.appts.push({
+        id: uid(),
+        date, time, day,
+        name, phone, type, status, notes,
+        createdAt: Date.now()
+      });
+      // si creas una cita fuera de semana actual, te lleva a esa semana
+      state.weekStartISO = isoDate(startOfWeek(parseISO(date)));
+      save();
+      buildWeekGrid();
+      renderAll();
+      closeModal();
+      toast("Cita creada");
+      return;
+    }
+
+    const a = state.appts.find(x=>x.id===editingId);
+    if(!a) return;
+
+    a.date=date; a.time=time; a.day=day;
+    a.name=name; a.phone=phone; a.type=type; a.status=status; a.notes=notes;
+    state.weekStartISO = isoDate(startOfWeek(parseISO(date)));
+
+    save();
+    buildWeekGrid();
+    renderAll();
+    closeModal();
+    toast("Cita actualizada");
+  });
+
+  $("mDelete").addEventListener("click",()=>{
+    if(!editingId) return;
+    if(!confirm("¿Eliminar esta cita?")) return;
+    state.appts = state.appts.filter(x=>x.id!==editingId);
+    save();
+    buildWeekGrid();
+    renderAll();
+    closeModal();
+    toast("Cita eliminada");
+  });
+
+  // ===== Navigation week =====
+  function goWeek(delta){
+    const ws = parseISO(state.weekStartISO);
+    const nw = addDays(ws, delta*7);
+    state.weekStartISO = isoDate(nw);
+    save();
+    buildWeekGrid();
+    renderAll();
+  }
+
+  $("btnPrev").addEventListener("click",()=>goWeek(-1));
+  $("btnNext").addEventListener("click",()=>goWeek(1));
+  $("btnToday").addEventListener("click",()=>{
+    state.weekStartISO = isoDate(startOfWeek(new Date()));
+    save();
+    buildWeekGrid();
+    renderAll();
+    toast("Semana actual");
+  });
+
+  // ===== Toolbar actions =====
+  $("btnNew").addEventListener("click",()=>{
+    const ws = parseISO(state.weekStartISO);
+    openModalForNew(isoDate(ws), "09:00");
+  });
+
+  $("q").addEventListener("input", renderList);
+  $("filter").addEventListener("change", renderList);
+
+  // ===== Export/Import =====
+  function exportBackup(){
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href=url;
+    a.download=`HorarioTerapeutico_backup_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Backup descargado");
+  }
+
+  function exportCSV(){
+    const lines = [];
+    lines.push(["Fecha","Hora","Dia","Paciente","Telefono","Tipo","Estado","Notas"].join(","));
+    const all = state.appts.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));
+    all.forEach(a=>{
+      const row = [
+        a.date,
+        a.time,
+        a.day,
+        `"${(a.name||"").replaceAll('"','""')}"`,
+        `"${(a.phone||"").replaceAll('"','""')}"`,
+        `"${(a.type||"").replaceAll('"','""')}"`,
+        `"${(a.status||"").replaceAll('"','""')}"`,
+        `"${(a.notes||"").replaceAll('"','""')}"`
+      ];
+      lines.push(row.join(","));
+    });
+
+    const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href=url;
+    a.download=`HorarioTerapeutico_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("CSV exportado");
+  }
+
+  $("btnBackup").addEventListener("click", exportBackup);
+  $("btnCSV").addEventListener("click", exportCSV);
+
+  $("fileImport").addEventListener("change", async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f) return;
+    try{
+      const txt = await f.text();
+      const d = JSON.parse(txt);
+      if(!d || typeof d!=="object" || !Array.isArray(d.appts)) throw new Error("Formato inválido");
+      state = { ...defaultState(), ...d };
+      if(!Array.isArray(state.appts)) state.appts=[];
+      if(!state.weekStartISO) state.weekStartISO = isoDate(startOfWeek(new Date()));
+      save();
+      buildWeekGrid();
+      renderAll();
+      toast("Importado");
+    }catch{
+      alert("No se pudo importar. Verifica que sea un JSON válido del horario.");
+    }finally{
+      e.target.value="";
+    }
+  });
+
+  $("btnReset").addEventListener("click",()=>{
+    if(!confirm("¿Resetear todo el horario? (irreversible)")) return;
+    localStorage.removeItem(KEY);
+    state = defaultState();
+    save();
+    buildWeekGrid();
+    renderAll();
+    toast("Reset completo");
+  });
+
+  $("btnDemo").addEventListener("click",()=>{
+    const base = startOfWeek(new Date());
+    const d1 = isoDate(addDays(base,0));
+    const d2 = isoDate(addDays(base,1));
+    const d3 = isoDate(addDays(base,2));
+    const d4 = isoDate(addDays(base,3));
+    const d5 = isoDate(addDays(base,4));
+
+    state = defaultState();
+    state.weekStartISO = isoDate(base);
+    state.appts = [
+      {id:uid(), date:d1, time:"09:00", day:1, name:"Paciente A.", phone:"51987654321", type:"Sesión", status:"confirmada", notes:"Objetivo: regulación emocional + tarea breve.", createdAt:Date.now()-50000},
+      {id:uid(), date:d1, time:"11:00", day:1, name:"Paciente B.", phone:"", type:"Evaluación", status:"programada", notes:"Aplicación de escala + entrevista.", createdAt:Date.now()-40000},
+      {id:uid(), date:d2, time:"14:00", day:2, name:"Paciente C.", phone:"51999911122", type:"Seguimiento", status:"en_riesgo", notes:"Revisar adherencia a tareas.", createdAt:Date.now()-30000},
+      {id:uid(), date:d3, time:"10:00", day:3, name:"Paciente D.", phone:"", type:"Sesión", status:"realizada", notes:"Reestructuración cognitiva.", createdAt:Date.now()-20000},
+      {id:uid(), date:d5, time:"16:00", day:5, name:"Paciente E.", phone:"51922233344", type:"Coordinación", status:"cancelada", notes:"Reprogramar para la próxima semana.", createdAt:Date.now()-10000},
+    ];
+    save();
+    buildWeekGrid();
+    renderAll();
+    toast("Demo cargada");
+  });
+
+  // ===== Init =====
+  buildTimeOptions();
+  load();
+  buildWeekGrid();
+  renderAll();
+
+  // Re-render suave al resize
+  let tmr=null;
+  window.addEventListener("resize", ()=>{
+    clearTimeout(tmr);
+    tmr=setTimeout(()=>{
+      buildWeekGrid();
+      renderAll();
+    }, 180);
+  });
+})();
+</script>
+</body>
+</html>

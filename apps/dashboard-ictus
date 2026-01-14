@@ -1,0 +1,1900 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#F6F1EA" />
+  <title>Dashboard Familiar • Ictus (Seguimiento & Decisiones)</title>
+  <style>
+    :root{
+      --bg:#F6F1EA;
+      --card:#FFF9F2;
+      --ink:#2B2A28;
+      --muted:#6B6762;
+      --line:#E6DDD2;
+      --accent:#C86F4E;
+      --accent2:#5B7A6A;
+      --warn:#B45D3C;
+      --ok:#2F7D60;
+      --shadow: 0 12px 26px rgba(40, 32, 22, .10);
+      --radius: 18px;
+      --radius2: 22px;
+      --tap: 52px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 800px at 20% -10%, rgba(200,111,78,.16), transparent 60%),
+        radial-gradient(1000px 700px at 90% 10%, rgba(91,122,106,.18), transparent 55%),
+        var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a{color:inherit}
+    button, input, textarea, select { font: inherit; }
+    .wrap{
+      max-width:1080px;
+      margin:0 auto;
+      padding: 14px 14px calc(92px + env(safe-area-inset-bottom));
+    }
+    header{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      padding: 6px 2px 10px;
+      position: sticky; top: 0;
+      background: linear-gradient(to bottom, rgba(246,241,234,.98), rgba(246,241,234,.78), rgba(246,241,234,0));
+      backdrop-filter: blur(10px);
+      z-index: 20;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      min-width: 0;
+    }
+    .logo{
+      width:46px; height:46px; border-radius: 16px;
+      background: linear-gradient(135deg, rgba(200,111,78,.25), rgba(91,122,106,.20));
+      display:grid; place-items:center;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(230,221,210,.8);
+      flex: 0 0 auto;
+    }
+    .title{
+      min-width:0;
+    }
+    .title h1{
+      margin:0;
+      font-size: 16px;
+      letter-spacing:.2px;
+      line-height:1.2;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .title p{
+      margin:4px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+    .topActions{
+      display:flex; gap:10px; align-items:center;
+      flex: 0 0 auto;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      background: rgba(255,249,242,.75);
+      border:1px solid rgba(230,221,210,.9);
+      box-shadow: 0 8px 18px rgba(40, 32, 22, .08);
+      height: 42px;
+      cursor: pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .pill:active{transform: translateY(1px)}
+    .pill small{color:var(--muted)}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:14px;
+      margin-top: 6px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background: rgba(255,249,242,.86);
+      border:1px solid rgba(230,221,210,.95);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .cardHead{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+      margin-bottom: 10px;
+    }
+    .cardHead h2{
+      margin:0;
+      font-size: 14px;
+      letter-spacing:.2px;
+    }
+    .cardHead p{
+      margin:5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height:1.35;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(230,221,210,.95);
+      background: rgba(246,241,234,.85);
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .row{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+    }
+    .field{
+      grid-column: span 6;
+      background: rgba(246,241,234,.65);
+      border:1px solid rgba(230,221,210,.95);
+      border-radius: 16px;
+      padding: 10px;
+    }
+    .field label{
+      display:flex; align-items:center; gap:8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field input, .field textarea, .field select{
+      width:100%;
+      border:1px solid rgba(230,221,210,.95);
+      background: rgba(255,255,255,.85);
+      border-radius: 14px;
+      padding: 12px 12px;
+      outline:none;
+      font-size: 14px;
+      color: var(--ink);
+    }
+    .field textarea{ min-height: 92px; resize: vertical; }
+    .field .mini{
+      display:flex; gap:10px; align-items:center;
+    }
+    .field .mini input{ flex:1 }
+    .field span.hint{
+      display:block;
+      margin-top:6px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height:1.25;
+    }
+    .span12{grid-column: span 12}
+    .span8{grid-column: span 8}
+    .span6{grid-column: span 6}
+    .span4{grid-column: span 4}
+    .span3{grid-column: span 3}
+    @media (max-width: 560px){
+      .field{grid-column: span 12}
+      .span8,.span6,.span4,.span3{grid-column: span 12}
+      .title h1{font-size: 15px}
+      .title p{display:none}
+    }
+
+    .btnRow{display:flex; flex-wrap:wrap; gap:10px; margin-top: 10px}
+    .btn{
+      height: var(--tap);
+      padding: 0 14px;
+      border-radius: 16px;
+      border:1px solid rgba(230,221,210,.95);
+      background: rgba(255,255,255,.85);
+      box-shadow: 0 10px 18px rgba(40, 32, 22, .08);
+      display:inline-flex; align-items:center; gap:10px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn.primary{
+      background: linear-gradient(135deg, rgba(200,111,78,.20), rgba(200,111,78,.08));
+      border-color: rgba(200,111,78,.32);
+    }
+    .btn.good{
+      background: linear-gradient(135deg, rgba(47,125,96,.20), rgba(47,125,96,.08));
+      border-color: rgba(47,125,96,.32);
+    }
+    .btn.warn{
+      background: linear-gradient(135deg, rgba(180,93,60,.22), rgba(180,93,60,.10));
+      border-color: rgba(180,93,60,.34);
+    }
+    .btn:active{transform: translateY(1px)}
+    .btn small{color:var(--muted)}
+    .kbd{
+      font-size: 11px;
+      padding: 6px 8px;
+      border-radius: 10px;
+      border:1px solid rgba(230,221,210,.95);
+      background: rgba(246,241,234,.85);
+      color: var(--muted);
+      white-space:nowrap;
+    }
+    .twoCol{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 760px){ .twoCol{grid-template-columns:1fr} }
+
+    .canvasWrap{
+      border:1px solid rgba(230,221,210,.95);
+      border-radius: 18px;
+      background: rgba(255,255,255,.65);
+      padding: 10px;
+      overflow:hidden;
+    }
+    canvas{width:100%; height: 220px; display:block}
+    .miniNote{font-size: 12px; color: var(--muted); line-height:1.4; margin-top:8px}
+
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+    }
+    .item{
+      border:1px solid rgba(230,221,210,.95);
+      background: rgba(246,241,234,.55);
+      border-radius: 18px;
+      padding: 10px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+    }
+    .item .meta{
+      display:flex; gap:10px; align-items:flex-start;
+      min-width:0;
+    }
+    .dot{
+      width: 12px; height:12px; border-radius: 99px;
+      background: rgba(200,111,78,.55);
+      margin-top: 4px;
+      flex: 0 0 auto;
+    }
+    .dot.ok{background: rgba(47,125,96,.55)}
+    .dot.warn{background: rgba(180,93,60,.55)}
+    .meta h4{margin:0; font-size: 13px}
+    .meta p{margin:4px 0 0; color: var(--muted); font-size: 12px; line-height:1.3}
+    .item .actions{
+      display:flex; gap:8px; align-items:center; flex:0 0 auto;
+    }
+    .iconBtn{
+      width: 44px; height: 44px; border-radius: 14px;
+      border:1px solid rgba(230,221,210,.95);
+      background: rgba(255,255,255,.8);
+      cursor:pointer;
+      display:grid; place-items:center;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .iconBtn:active{transform: translateY(1px)}
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: calc(92px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      background: rgba(43,42,40,.92);
+      color: rgba(255,255,255,.95);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-size: 12px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.22);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 100;
+      max-width: min(92vw, 520px);
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(-4px);
+    }
+
+    /* Bottom nav (iOS friendly) */
+    nav{
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(246,241,234,.92);
+      backdrop-filter: blur(14px);
+      border-top: 1px solid rgba(230,221,210,.95);
+      z-index: 60;
+    }
+    .navBar{
+      max-width:1080px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap:10px;
+    }
+    .tab{
+      height: 58px;
+      border-radius: 18px;
+      border: 1px solid rgba(230,221,210,.95);
+      background: rgba(255,255,255,.78);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      padding: 8px 6px;
+    }
+    .tab span{
+      font-size: 11px;
+      color: var(--muted);
+      line-height:1;
+    }
+    .tab.active{
+      background: linear-gradient(135deg, rgba(200,111,78,.20), rgba(91,122,106,.10));
+      border-color: rgba(200,111,78,.28);
+    }
+    .tab.active span{color: var(--ink)}
+    .panel{display:none}
+    .panel.active{display:block}
+
+    .riskGrid{
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 560px){ .riskGrid{grid-template-columns:1fr} }
+    .riskCard{
+      border:1px solid rgba(230,221,210,.95);
+      background: rgba(246,241,234,.55);
+      border-radius: 18px;
+      padding: 10px;
+    }
+    .riskCard b{display:block; font-size: 13px}
+    .riskCard small{color:var(--muted)}
+    .softDivider{height:1px; background: rgba(230,221,210,.95); margin: 10px 0}
+
+    .heroIllus{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding: 10px;
+      border-radius: 20px;
+      border:1px solid rgba(230,221,210,.95);
+      background: linear-gradient(135deg, rgba(200,111,78,.12), rgba(91,122,106,.10));
+    }
+    .heroIllus .txt{min-width:0}
+    .heroIllus h3{margin:0; font-size: 14px}
+    .heroIllus p{margin:6px 0 0; color:var(--muted); font-size: 12px; line-height:1.35}
+    .illus{
+      width: 122px; height: 86px; flex: 0 0 auto;
+      filter: drop-shadow(0 8px 16px rgba(40, 32, 22, .10));
+    }
+
+    .footerNote{
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{transition:none !important; scroll-behavior:auto !important}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <!-- simple icon -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path d="M12 21s-7-4.35-9.5-9.2C.7 8.2 3.2 5 6.7 5c2 0 3.2 1.1 5.3 3 2.1-1.9 3.3-3 5.3-3 3.5 0 6 3.2 4.2 6.8C19 16.65 12 21 12 21Z" fill="rgba(200,111,78,.55)"/>
+            <path d="M6.5 13.2h3l1.2-2.4 1.3 4.1 1-1.7H17.5" stroke="rgba(43,42,40,.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="title">
+          <h1>Dashboard Familiar • Ictus</h1>
+          <p>Seguimiento, señales de alarma, adherencia, ánimo y decisiones (offline-friendly).</p>
+        </div>
+      </div>
+
+      <div class="topActions">
+        <div class="pill" id="btnExport" title="Exportar datos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3v10" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M8 9l4 4 4-4" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 21h14a2 2 0 0 0 2-2v-4" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M3 15v4a2 2 0 0 0 2 2" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <small>Exportar</small>
+        </div>
+        <div class="pill" id="btnReset" title="Reiniciar (no recomendado)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-2.64-6.36" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round"/>
+            <path d="M21 3v6h-6" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <small>Reset</small>
+        </div>
+      </div>
+    </header>
+
+    <!-- PANELS -->
+    <section id="panel-home" class="panel active">
+      <div class="grid">
+        <div class="card">
+          <div class="cardHead">
+            <div>
+              <h2>Resumen de hoy</h2>
+              <p>Una vista rápida para la familia (estado, riesgos y próximos pasos).</p>
+            </div>
+            <div class="badge" id="statusBadge">Estado: —</div>
+          </div>
+
+          <div class="heroIllus">
+            <div class="txt">
+              <h3>Señal de alarma = acción rápida</h3>
+              <p>El ictus es una emergencia médica; el tratamiento trombolítico es más eficaz cuando se actúa pronto.</p>
+            </div>
+
+            <!-- Embedded illustration (SVG, no external assets) -->
+            <svg class="illus" viewBox="0 0 220 150" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <defs>
+                <linearGradient id="g1" x1="0" x2="1">
+                  <stop offset="0" stop-color="rgba(200,111,78,.35)"/>
+                  <stop offset="1" stop-color="rgba(91,122,106,.25)"/>
+                </linearGradient>
+              </defs>
+              <rect x="10" y="18" width="200" height="114" rx="22" fill="url(#g1)" stroke="rgba(230,221,210,.95)"/>
+              <circle cx="76" cy="70" r="28" fill="rgba(255,255,255,.75)" stroke="rgba(230,221,210,.95)"/>
+              <path d="M68 69h10l4-8 4 16 4-7h10" stroke="rgba(43,42,40,.8)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="156" cy="60" r="18" fill="rgba(255,255,255,.75)" stroke="rgba(230,221,210,.95)"/>
+              <path d="M156 47v13l10 7" stroke="rgba(43,42,40,.75)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M40 118h140" stroke="rgba(43,42,40,.25)" stroke-width="4" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <div class="softDivider"></div>
+
+          <div class="twoCol">
+            <div class="canvasWrap">
+              <b style="font-size:13px">Ánimo / Motivación / Ansiedad (últimas 6 semanas)</b>
+              <canvas id="chartMood" width="900" height="260"></canvas>
+              <div class="miniNote">Registra 0–10 por semana. Te ayuda a visualizar evolución “pre–post”.</div>
+            </div>
+            <div class="canvasWrap">
+              <b style="font-size:13px">Adherencia al tratamiento (últimos 14 días)</b>
+              <canvas id="chartAdherence" width="900" height="260"></canvas>
+              <div class="miniNote">Marca “tomado / no tomado”. Se calcula porcentaje automáticamente.</div>
+            </div>
+          </div>
+
+          <div class="btnRow">
+            <button class="btn warn" id="goSOS">
+              <span aria-hidden="true">🆘</span>
+              <b>Ir a SOS</b>
+              <span class="kbd">Emergencia</span>
+            </button>
+            <button class="btn primary" id="quickAddMood">
+              <span aria-hidden="true">📈</span>
+              <b>Registrar semana</b>
+              <small>(ánimo/motivación/ansiedad)</small>
+            </button>
+            <button class="btn good" id="quickAddDose">
+              <span aria-hidden="true">💊</span>
+              <b>Registrar toma</b>
+              <small>(hoy)</small>
+            </button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="cardHead">
+            <div>
+              <h2>Decisiones rápidas</h2>
+              <p>Recomendaciones orientativas para la familia.</p>
+            </div>
+            <div class="badge" id="riskBadge">Riesgo: —</div>
+          </div>
+
+          <div class="field span12">
+            <label>⏱️ Hora de inicio de síntomas (si aplica)</label>
+            <div class="mini">
+              <input id="symptomStart" type="datetime-local" />
+              <button class="btn warn" id="btnDecision" style="height:44px;border-radius:14px;">
+                <span aria-hidden="true">🧭</span><b>Orientar</b>
+              </button>
+            </div>
+            <span class="hint">Si hay signos súbitos (cara, brazo, habla), actúa sin esperar. La ventana de tratamiento es crítica.</span>
+          </div>
+
+          <div id="decisionBox" class="riskCard" style="margin-top:10px">
+            <b>Resultado</b>
+            <small>Completa datos y pulsa “Orientar”.</small>
+          </div>
+
+          <div class="softDivider"></div>
+
+          <div class="riskGrid" id="riskGrid"></div>
+
+          <div class="footerNote">
+            Basado en pautas del documento: el ictus es una emergencia; la trombólisis es eficaz en las primeras 3 horas y el manejo protocolizado reduce mortalidad/discapacidad. :contentReference[oaicite:3]{index=3}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-track" class="panel">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h2>Seguimiento</h2>
+            <p>Constantes, síntomas, rehabilitación, y evolución pre–post.</p>
+          </div>
+          <div class="badge" id="kpiBadge">KPIs: —</div>
+        </div>
+
+        <div class="row">
+          <div class="field span4">
+            <label>👤 Paciente (alias)</label>
+            <input id="pName" placeholder="Ej.: Paciente A" />
+          </div>
+          <div class="field span4">
+            <label>🎂 Edad</label>
+            <input id="pAge" type="number" min="0" placeholder="Ej.: 68" />
+          </div>
+          <div class="field span4">
+            <label>📅 Fecha del ictus</label>
+            <input id="strokeDate" type="date" />
+          </div>
+
+          <div class="field span4">
+            <label>🩺 Presión arterial (mmHg)</label>
+            <div class="mini">
+              <input id="bpSys" type="number" min="50" placeholder="Sistólica" />
+              <input id="bpDia" type="number" min="30" placeholder="Diastólica" />
+            </div>
+            <span class="hint">Registra hoy. El control tensional es clave en prevención secundaria. :contentReference[oaicite:4]{index=4}</span>
+          </div>
+
+          <div class="field span4">
+            <label>🩸 Glucosa (mg/dL)</label>
+            <input id="glucose" type="number" min="0" placeholder="Ej.: 110" />
+            <span class="hint">Si hay diabetes, su control reduce recurrencias. :contentReference[oaicite:5]{index=5}</span>
+          </div>
+
+          <div class="field span4">
+            <label>🌡️ Temperatura (°C)</label>
+            <input id="temp" type="number" step="0.1" min="30" max="45" placeholder="Ej.: 36.8" />
+            <span class="hint">Fiebre/hipertermia puede empeorar el pronóstico; regístrala si hay sospecha.</span>
+          </div>
+
+          <div class="field span12">
+            <label>📝 Observaciones de hoy</label>
+            <textarea id="dailyNotes" placeholder="Ej.: caminó 10 min, más cansancio al hablar, ánimo bajo por la tarde..."></textarea>
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn good" id="saveTrack"><span aria-hidden="true">✅</span><b>Guardar hoy</b></button>
+          <button class="btn primary" id="addRehab"><span aria-hidden="true">🏃‍♂️</span><b>Agregar actividad</b><small>(rehabilitación)</small></button>
+          <button class="btn primary" id="addWeek"><span aria-hidden="true">📊</span><b>Agregar semana</b><small>(ánimo/motivación/ansiedad)</small></button>
+        </div>
+
+        <div class="softDivider"></div>
+
+        <div class="twoCol">
+          <div class="canvasWrap">
+            <b style="font-size:13px">Evolución de constantes (últimos 14 registros)</b>
+            <canvas id="chartVitals" width="900" height="260"></canvas>
+            <div class="miniNote">Gráfico simple: PA sistólica, glucosa y temperatura (normalizados para comparar tendencia).</div>
+          </div>
+
+          <div class="canvasWrap">
+            <b style="font-size:13px">Registro de actividades de rehabilitación</b>
+            <div class="list" id="rehabList"></div>
+            <div class="miniNote">Tip: registra “qué”, “duración” y “cómo se sintió”.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-meds" class="panel">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h2>Tratamiento & Adherencia</h2>
+            <p>Lista de fármacos, tomas diarias y porcentaje de adherencia.</p>
+          </div>
+          <div class="badge" id="adhBadge">Adherencia: —</div>
+        </div>
+
+        <div class="row">
+          <div class="field span6">
+            <label>💊 Medicamento</label>
+            <input id="medName" placeholder="Ej.: Aspirina / Anticoagulante / Estatina..." />
+            <span class="hint">La prevención secundaria depende del subtipo y factores (antiagregantes/anticoagulación, control de HTA, etc.). :contentReference[oaicite:6]{index=6}</span>
+          </div>
+          <div class="field span3">
+            <label>🕒 Hora</label>
+            <input id="medTime" type="time" />
+          </div>
+          <div class="field span3">
+            <label>📆 Frecuencia</label>
+            <select id="medFreq">
+              <option value="daily">Diario</option>
+              <option value="alternate">Interdiario</option>
+              <option value="custom">Personalizado</option>
+            </select>
+          </div>
+          <div class="field span12">
+            <label>🧾 Indicaciones</label>
+            <textarea id="medNotes" placeholder="Ej.: con comida / en ayunas / controlar sangrado / etc."></textarea>
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn primary" id="addMed"><span aria-hidden="true">➕</span><b>Agregar medicamento</b></button>
+          <button class="btn good" id="markDose"><span aria-hidden="true">✅</span><b>Marcar toma de hoy</b></button>
+        </div>
+
+        <div class="softDivider"></div>
+
+        <div class="twoCol">
+          <div class="canvasWrap">
+            <b style="font-size:13px">Adherencia (últimos 14 días)</b>
+            <canvas id="chartAdherence2" width="900" height="260"></canvas>
+            <div class="miniNote">Cuadros llenos = toma registrada. El porcentaje se recalcula automáticamente.</div>
+          </div>
+          <div class="canvasWrap">
+            <b style="font-size:13px">Lista de medicamentos</b>
+            <div class="list" id="medList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-events" class="panel">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h2>Eventos críticos / Recaídas</h2>
+            <p>Registro estructurado para comunicar al equipo de salud y orientar decisiones.</p>
+          </div>
+          <div class="badge" id="eventBadge">Eventos: —</div>
+        </div>
+
+        <div class="row">
+          <div class="field span6">
+            <label>📍 Tipo de evento</label>
+            <select id="evType">
+              <option value="fast">FAST (cara/brazo/habla)</option>
+              <option value="treatment">Efecto adverso / medicación</option>
+              <option value="fall">Caída / golpe</option>
+              <option value="infection">Fiebre / infección</option>
+              <option value="mood">Crisis emocional</option>
+              <option value="other">Otro</option>
+            </select>
+          </div>
+          <div class="field span6">
+            <label>⏱️ Fecha y hora</label>
+            <input id="evTime" type="datetime-local" />
+          </div>
+          <div class="field span12">
+            <label>🧩 Descripción breve (qué pasó)</label>
+            <textarea id="evDesc" placeholder="Ej.: debilidad súbita en brazo derecho, habla confusa por 10 min, se recuperó..."></textarea>
+          </div>
+          <div class="field span12">
+            <label>✅ Acción tomada</label>
+            <textarea id="evAction" placeholder="Ej.: se llamó a emergencias, se fue a hospital, se contactó neurólogo..."></textarea>
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn warn" id="saveEvent"><span aria-hidden="true">🧷</span><b>Guardar evento</b></button>
+          <button class="btn primary" id="shareEventWA"><span aria-hidden="true">📲</span><b>Compartir por WhatsApp</b><small>(mensaje)</small></button>
+        </div>
+
+        <div class="softDivider"></div>
+
+        <div class="canvasWrap">
+          <b style="font-size:13px">Timeline (últimos eventos)</b>
+          <div class="list" id="eventList"></div>
+          <div class="miniNote">Tip familiar: mientras más claro el registro (hora, duración, acción), más útil para el equipo clínico.</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="panel-sos" class="panel">
+      <div class="card">
+        <div class="cardHead">
+          <div>
+            <h2>🆘 SOS (WhatsApp + guía breve)</h2>
+            <p>Para familiares: pasos simples, claros y rápidos.</p>
+          </div>
+          <div class="badge">iOS primero</div>
+        </div>
+
+        <div class="row">
+          <div class="field span6">
+            <label>📞 Número WhatsApp (con país)</label>
+            <input id="waNumber" placeholder="Ej.: 51999999999" inputmode="numeric" />
+            <span class="hint">Formato: país + número, sin “+”, sin espacios. (Perú: 51 + número).</span>
+          </div>
+          <div class="field span6">
+            <label>🏥 Centro / referencia</label>
+            <input id="refCenter" placeholder="Ej.: Clínica / Hospital / Neurólogo..." />
+          </div>
+          <div class="field span12">
+            <label>🧾 Mensaje SOS (editable)</label>
+            <textarea id="waMessage"></textarea>
+            <span class="hint">
+              Incluye hora de inicio de síntomas si aplica. El ictus es una emergencia; la ventana terapéutica temprana es crítica. :contentReference[oaicite:7]{index=7}
+            </span>
+          </div>
+        </div>
+
+        <div class="btnRow">
+          <button class="btn warn" id="openWA"><span aria-hidden="true">🟢</span><b>Abrir WhatsApp SOS</b></button>
+          <button class="btn good" id="copyWA"><span aria-hidden="true">📋</span><b>Copiar mensaje</b></button>
+        </div>
+
+        <div class="softDivider"></div>
+
+        <div class="riskGrid">
+          <div class="riskCard">
+            <b>FAST (señales clave)</b>
+            <small>
+              <ul style="margin:8px 0 0; padding-left:18px; color: var(--muted); line-height:1.35">
+                <li><b>F</b>ace: cara desviada</li>
+                <li><b>A</b>rm: debilidad en un brazo</li>
+                <li><b>S</b>peech: habla rara/confusa</li>
+                <li><b>T</b>ime: tiempo = urgencia</li>
+              </ul>
+            </small>
+          </div>
+          <div class="riskCard">
+            <b>Qué hacer (familia)</b>
+            <small>
+              <ol style="margin:8px 0 0; padding-left:18px; color: var(--muted); line-height:1.35">
+                <li>Registrar <b>hora de inicio</b>.</li>
+                <li>Llamar a emergencias / ir a centro con atención a ictus.</li>
+                <li>No conducir si hay empeoramiento.</li>
+                <li>Llevar lista de medicación y eventos recientes.</li>
+              </ol>
+            </small>
+          </div>
+        </div>
+
+        <div class="footerNote">
+          Nota: este dashboard es una ayuda de seguimiento para familiares. No reemplaza evaluación médica.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <nav aria-label="Navegación">
+    <div class="navBar">
+      <div class="tab active" data-tab="home" role="button" tabindex="0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 11.5 12 4l8 7.5V20a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8.5Z" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M9.5 22v-6.2a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2V22" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Inicio</span>
+      </div>
+      <div class="tab" data-tab="track" role="button" tabindex="0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 19V5a2 2 0 0 1 2-2h12" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 17l3-3 2 2 5-5" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M18 22H6a2 2 0 0 1-2-2" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Seguim.</span>
+      </div>
+      <div class="tab" data-tab="meds" role="button" tabindex="0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M10 14 6 10a3 3 0 0 1 4.2-4.2l3.6 3.6" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M14 10 18 14a3 3 0 0 1-4.2 4.2l-3.6-3.6" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M9 15l6-6" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <span>Tratam.</span>
+      </div>
+      <div class="tab" data-tab="events" role="button" tabindex="0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 9v5l3 2" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="rgba(43,42,40,.55)" stroke-width="2"/>
+        </svg>
+        <span>Eventos</span>
+      </div>
+      <div class="tab" data-tab="sos" role="button" tabindex="0">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2 2 20h20L12 2Z" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linejoin="round"/>
+          <path d="M12 9v4" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linecap="round"/>
+          <path d="M12 17h.01" stroke="rgba(43,42,40,.85)" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <span>SOS</span>
+      </div>
+    </div>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /***********************
+     * Stroke Family Dashboard
+     * - No external libs
+     * - Single file (index.html)
+     * - iOS-first: big taps, bottom nav, safe-area, no dependencies
+     ************************/
+
+    const LS_KEY = "GB_ictus_dashboard_v1";
+
+    const nowISODate = () => {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    };
+
+    const defaultState = () => ({
+      patient: { name:"", age:"", strokeDate:"" },
+      today: { date: nowISODate(), bpSys:"", bpDia:"", glucose:"", temp:"", notes:"" },
+      vitalsLog: [], // {date, bpSys, bpDia, glucose, temp}
+      moodWeeks: [
+        // last 6 weeks placeholders
+        // {label:"W-5", anxiety:4, mood:6, motivation:5}
+      ],
+      meds: [], // {id, name, time, freq, notes}
+      adherence: [], // last 14 days array of {date, taken:boolean}
+      rehab: [], // {id, date, activity, minutes, perceived}
+      events: [], // {id, type, time, desc, action}
+      sos: { waNumber:"", refCenter:"", message:"" }
+    });
+
+    function loadState(){
+      try{
+        const raw = localStorage.getItem(LS_KEY);
+        if(!raw) return defaultState();
+        const parsed = JSON.parse(raw);
+        // minimal migrations
+        return Object.assign(defaultState(), parsed);
+      }catch(e){
+        return defaultState();
+      }
+    }
+    function saveState(){
+      localStorage.setItem(LS_KEY, JSON.stringify(state));
+    }
+
+    function uid(){
+      return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16);
+    }
+
+    function toast(msg, icon="ℹ️"){
+      const el = document.getElementById("toast");
+      el.textContent = "";
+      const span = document.createElement("span");
+      span.textContent = icon;
+      const text = document.createElement("span");
+      text.textContent = msg;
+      el.appendChild(span);
+      el.appendChild(text);
+      el.classList.add("show");
+      setTimeout(()=> el.classList.remove("show"), 2400);
+    }
+
+    function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+    // Simple Canvas chart utils (no external libs)
+    function clearCanvas(ctx){
+      ctx.clearRect(0,0,ctx.canvas.width, ctx.canvas.height);
+    }
+    function drawRoundedRect(ctx,x,y,w,h,r){
+      r = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+r, y);
+      ctx.arcTo(x+w, y, x+w, y+h, r);
+      ctx.arcTo(x+w, y+h, x, y+h, r);
+      ctx.arcTo(x, y+h, x, y, r);
+      ctx.arcTo(x, y, x+w, y, r);
+      ctx.closePath();
+    }
+    function getCSSVar(name){
+      return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+    function hexToRgba(hex, a){
+      // supports #RRGGBB
+      const h = hex.replace("#","");
+      if(h.length !== 6) return `rgba(0,0,0,${a})`;
+      const r = parseInt(h.slice(0,2),16);
+      const g = parseInt(h.slice(2,4),16);
+      const b = parseInt(h.slice(4,6),16);
+      return `rgba(${r},${g},${b},${a})`;
+    }
+
+    function baseGrid(ctx, title){
+      const w = ctx.canvas.width, h = ctx.canvas.height;
+      clearCanvas(ctx);
+
+      // Background card
+      drawRoundedRect(ctx, 8, 8, w-16, h-16, 18);
+      ctx.fillStyle = "rgba(255,255,255,.70)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(230,221,210,.95)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // grid lines
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(16, 16, w-32, h-32);
+      ctx.clip();
+      ctx.strokeStyle = "rgba(230,221,210,.75)";
+      ctx.lineWidth = 1;
+      const lines = 5;
+      for(let i=1;i<lines;i++){
+        const y = 16 + ((h-32)/lines)*i;
+        ctx.beginPath();
+        ctx.moveTo(16,y);
+        ctx.lineTo(w-16,y);
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Title
+      if(title){
+        ctx.fillStyle = "rgba(43,42,40,.85)";
+        ctx.font = "600 18px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+        ctx.fillText(title, 22, 38);
+      }
+    }
+
+    function drawMultiLineChart(canvasId, series){
+      // series: [{name, values:[0..10], colorHex, fillAlpha}]
+      const c = document.getElementById(canvasId);
+      const ctx = c.getContext("2d");
+      baseGrid(ctx, "");
+
+      const w = c.width, h = c.height;
+      const padL = 28, padR = 18, padT = 52, padB = 26;
+      const innerW = w - padL - padR;
+      const innerH = h - padT - padB;
+
+      // Axes labels
+      ctx.fillStyle = "rgba(43,42,40,.70)";
+      ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("0", padL-12, padT + innerH + 4);
+      ctx.fillText("10", padL-18, padT + 8);
+
+      const maxLen = Math.max(...series.map(s=>s.values.length), 1);
+      const xFor = (i) => padL + (maxLen<=1 ? 0 : (innerW * (i/(maxLen-1))));
+      const yFor = (v) => padT + innerH - (innerH * (clamp(v,0,10)/10));
+
+      // Legend
+      let lx = padL, ly = 28;
+      series.forEach(s=>{
+        ctx.fillStyle = hexToRgba(s.colorHex, .95);
+        ctx.beginPath();
+        ctx.arc(lx+6, ly-4, 5, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = "rgba(43,42,40,.80)";
+        ctx.fillText(s.name, lx+16, ly);
+        lx += 120;
+      });
+
+      // Draw each line
+      series.forEach(s=>{
+        const col = s.colorHex;
+
+        // fill
+        ctx.beginPath();
+        s.values.forEach((v,i)=>{
+          const x = xFor(i), y = yFor(v);
+          if(i===0) ctx.moveTo(x,y);
+          else ctx.lineTo(x,y);
+        });
+        const lastX = xFor(s.values.length-1);
+        ctx.lineTo(lastX, padT+innerH);
+        ctx.lineTo(xFor(0), padT+innerH);
+        ctx.closePath();
+        ctx.fillStyle = hexToRgba(col, s.fillAlpha ?? 0.10);
+        ctx.fill();
+
+        // line
+        ctx.beginPath();
+        s.values.forEach((v,i)=>{
+          const x = xFor(i), y = yFor(v);
+          if(i===0) ctx.moveTo(x,y);
+          else ctx.lineTo(x,y);
+        });
+        ctx.strokeStyle = hexToRgba(col, .95);
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+
+        // points
+        s.values.forEach((v,i)=>{
+          const x = xFor(i), y = yFor(v);
+          ctx.beginPath();
+          ctx.arc(x,y,4.2,0,Math.PI*2);
+          ctx.fillStyle = "rgba(255,255,255,.9)";
+          ctx.fill();
+          ctx.strokeStyle = hexToRgba(col, .95);
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+      });
+    }
+
+    function drawAdherenceBars(canvasId, days){
+      // days: [{date, taken}]
+      const c = document.getElementById(canvasId);
+      const ctx = c.getContext("2d");
+      baseGrid(ctx, "");
+
+      const w = c.width, h = c.height;
+      const padL=22, padR=18, padT=44, padB=26;
+      const innerW = w - padL - padR;
+      const innerH = h - padT - padB;
+
+      // Title + KPI
+      const takenCount = days.filter(d=>d.taken).length;
+      const pct = days.length ? Math.round((takenCount/days.length)*100) : 0;
+
+      ctx.fillStyle = "rgba(43,42,40,.85)";
+      ctx.font = "600 18px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText("Adherencia", padL, 34);
+
+      ctx.fillStyle = "rgba(43,42,40,.60)";
+      ctx.font = "12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial";
+      ctx.fillText(`${pct}% (últimos ${days.length} días)`, padL+110, 34);
+
+      const barW = innerW / Math.max(days.length, 1);
+      const accent = getCSSVar("--accent");
+      const ok = getCSSVar("--ok");
+      const line = "rgba(230,221,210,.85)";
+
+      // baseline
+      ctx.strokeStyle = line;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(padL, padT+innerH);
+      ctx.lineTo(w-padR, padT+innerH);
+      ctx.stroke();
+
+      days.forEach((d,i)=>{
+        const x = padL + i*barW + 2;
+        const y = padT + 8;
+        const bh = innerH - 10;
+        drawRoundedRect(ctx, x, y, Math.max(barW-5, 6), bh, 10);
+        ctx.fillStyle = d.taken ? hexToRgba(ok, .22) : "rgba(255,255,255,.55)";
+        ctx.fill();
+        ctx.strokeStyle = d.taken ? hexToRgba(ok, .55) : "rgba(230,221,210,.95)";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        // mini mark
+        if(d.taken){
+          ctx.fillStyle = hexToRgba(ok, .95);
+          ctx.beginPath();
+          ctx.arc(x + (Math.max(barW-5,6))/2, y + bh/2, 5.5, 0, Math.PI*2);
+          ctx.fill();
+        }else{
+          ctx.fillStyle = hexToRgba(accent, .45);
+          ctx.beginPath();
+          ctx.arc(x + (Math.max(barW-5,6))/2, y + bh/2, 4.5, 0, Math.PI*2);
+          ctx.fill();
+        }
+      });
+    }
+
+    function ensure14Days(state){
+      const days = [];
+      const today = new Date();
+      for(let i=13;i>=0;i--){
+        const d = new Date(today);
+        d.setDate(today.getDate()-i);
+        const iso = d.toISOString().slice(0,10);
+        const found = state.adherence.find(x=>x.date===iso);
+        days.push(found ?? {date: iso, taken:false});
+      }
+      state.adherence = days;
+    }
+
+    function ensureMoodWeeks(state){
+      // Keep last 6 weeks; labels W-5..W0
+      if(!Array.isArray(state.moodWeeks)) state.moodWeeks = [];
+      while(state.moodWeeks.length < 6){
+        state.moodWeeks.unshift({label:"", anxiety:5, mood:5, motivation:5});
+      }
+      if(state.moodWeeks.length > 6) state.moodWeeks = state.moodWeeks.slice(-6);
+      state.moodWeeks.forEach((w,i)=>{
+        w.label = `W-${5-i}`;
+        w.anxiety = clamp(Number(w.anxiety ?? 5), 0, 10);
+        w.mood = clamp(Number(w.mood ?? 5), 0, 10);
+        w.motivation = clamp(Number(w.motivation ?? 5), 0, 10);
+      });
+    }
+
+    function computeRisk(state){
+      // Simple heuristic (non-medical) based on factors table:
+      // Hypertension, AF, diabetes, smoking, alcohol. :contentReference[oaicite:8]{index=8}
+      const bpSys = Number(state.today.bpSys || 0);
+      const bpDia = Number(state.today.bpDia || 0);
+      const glucose = Number(state.today.glucose || 0);
+
+      let points = 0;
+      if(bpSys >= 140 || bpDia >= 90) points += 2; // HTA
+      if(glucose >= 126) points += 1; // elevated
+      // user-entered flags (stored in patientRisk)
+      const flags = state.patientRisk || { af:false, smoker:false, alcohol:false, heart:false };
+      if(flags.af) points += 2;
+      if(flags.smoker) points += 1;
+      if(flags.alcohol) points += 1;
+      if(flags.heart) points += 1;
+
+      const label = points >= 5 ? "Alto" : points >= 3 ? "Moderado" : "Bajo";
+      return { points, label, flags, bpSys, bpDia, glucose };
+    }
+
+    function setStatusBadges(){
+      const r = computeRisk(state);
+      const riskBadge = document.getElementById("riskBadge");
+      const statusBadge = document.getElementById("statusBadge");
+      const kpiBadge = document.getElementById("kpiBadge");
+      const adh = state.adherence.filter(x=>x.taken).length;
+      const pct = state.adherence.length ? Math.round((adh/state.adherence.length)*100) : 0;
+
+      riskBadge.textContent = `Riesgo: ${r.label}`;
+      statusBadge.textContent = `Adherencia: ${pct}% • Riesgo: ${r.label}`;
+      kpiBadge.textContent = `PA: ${state.today.bpSys||"—"}/${state.today.bpDia||"—"} • Glu: ${state.today.glucose||"—"} • Temp: ${state.today.temp||"—"}`;
+
+      document.getElementById("adhBadge").textContent = `Adherencia: ${pct}%`;
+      document.getElementById("adhBadge").style.borderColor = "rgba(230,221,210,.95)";
+    }
+
+    function renderRiskGrid(){
+      const grid = document.getElementById("riskGrid");
+      grid.innerHTML = "";
+
+      if(!state.patientRisk){
+        state.patientRisk = { af:false, smoker:false, alcohol:false, heart:false };
+      }
+
+      const items = [
+        {key:"af", title:"Fibrilación auricular", note:"Factor importante de recurrencia. (Marca si está diagnosticada)", weight:"alto"},
+        {key:"heart", title:"Cardiopatía", note:"Historia de cardiopatía / eventos previos.", weight:"moderado"},
+        {key:"smoker", title:"Tabaquismo", note:"Si fuma actualmente o dejó hace poco.", weight:"moderado"},
+        {key:"alcohol", title:"Alcohol (abuso)", note:"Consumo elevado o frecuente.", weight:"moderado"},
+      ];
+
+      items.forEach(it=>{
+        const el = document.createElement("div");
+        el.className = "riskCard";
+        const checked = !!state.patientRisk[it.key];
+        el.innerHTML = `
+          <b>${it.title}</b>
+          <div style="display:flex; gap:10px; align-items:center; margin-top:8px;">
+            <button class="btn ${checked ? "good":"primary"}" style="height:44px;border-radius:14px;" data-flag="${it.key}">
+              ${checked ? "Marcado ✓" : "Marcar"}
+            </button>
+            <small style="color:var(--muted); line-height:1.35">${it.note}</small>
+          </div>
+        `;
+        grid.appendChild(el);
+      });
+
+      grid.querySelectorAll("button[data-flag]").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const key = btn.getAttribute("data-flag");
+          state.patientRisk[key] = !state.patientRisk[key];
+          saveState();
+          renderRiskGrid();
+          setStatusBadges();
+          toast("Factores actualizados.", "✅");
+        });
+      });
+    }
+
+    function renderMedList(){
+      const list = document.getElementById("medList");
+      list.innerHTML = "";
+      if(state.meds.length === 0){
+        list.innerHTML = `<div class="riskCard"><b>Sin medicamentos</b><small>Agrega el tratamiento para que la familia lo tenga ordenado.</small></div>`;
+        return;
+      }
+      state.meds.forEach(m=>{
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="meta">
+            <div class="dot ok"></div>
+            <div style="min-width:0">
+              <h4>${escapeHTML(m.name || "Medicamento")}</h4>
+              <p>${escapeHTML(m.time || "—")} • ${escapeHTML(freqLabel(m.freq))}</p>
+              ${m.notes ? `<p style="margin-top:6px">${escapeHTML(m.notes)}</p>` : ""}
+            </div>
+          </div>
+          <div class="actions">
+            <button class="iconBtn" title="Editar" data-edit="${m.id}">${iconPencil()}</button>
+            <button class="iconBtn" title="Eliminar" data-del="${m.id}">${iconTrash()}</button>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+
+      list.querySelectorAll("[data-del]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-del");
+          state.meds = state.meds.filter(x=>x.id !== id);
+          saveState();
+          renderMedList();
+          toast("Medicamento eliminado.", "🗑️");
+        });
+      });
+
+      list.querySelectorAll("[data-edit]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-edit");
+          const m = state.meds.find(x=>x.id === id);
+          if(!m) return;
+          document.getElementById("medName").value = m.name || "";
+          document.getElementById("medTime").value = m.time || "";
+          document.getElementById("medFreq").value = m.freq || "daily";
+          document.getElementById("medNotes").value = m.notes || "";
+          // replace on add
+          state._editingMedId = id;
+          toast("Editando medicamento: guarda con 'Agregar medicamento'.", "✏️");
+        });
+      });
+    }
+
+    function renderRehab(){
+      const list = document.getElementById("rehabList");
+      list.innerHTML = "";
+      if(state.rehab.length === 0){
+        list.innerHTML = `<div class="riskCard"><b>Sin actividades</b><small>Agrega caminata, terapia de lenguaje, movilidad, etc.</small></div>`;
+        return;
+      }
+      const sorted = [...state.rehab].sort((a,b)=> (b.date||"").localeCompare(a.date||""));
+      sorted.slice(0,10).forEach(r=>{
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div class="meta">
+            <div class="dot"></div>
+            <div style="min-width:0">
+              <h4>${escapeHTML(r.activity || "Actividad")}</h4>
+              <p>${escapeHTML(r.date || "—")} • ${escapeHTML(String(r.minutes||"—"))} min • ${escapeHTML(r.perceived || "—")}</p>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="iconBtn" title="Eliminar" data-del-rehab="${r.id}">${iconTrash()}</button>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+
+      list.querySelectorAll("[data-del-rehab]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-del-rehab");
+          state.rehab = state.rehab.filter(x=>x.id !== id);
+          saveState();
+          renderRehab();
+          toast("Actividad eliminada.", "🗑️");
+        });
+      });
+    }
+
+    function renderEvents(){
+      const list = document.getElementById("eventList");
+      list.innerHTML = "";
+      const badge = document.getElementById("eventBadge");
+      badge.textContent = `Eventos: ${state.events.length}`;
+      if(state.events.length === 0){
+        list.innerHTML = `<div class="riskCard"><b>Sin eventos</b><small>Registra episodios para describirlos con claridad al equipo clínico.</small></div>`;
+        return;
+      }
+      const sorted = [...state.events].sort((a,b)=> (b.time||"").localeCompare(a.time||""));
+      sorted.slice(0,12).forEach(ev=>{
+        const el = document.createElement("div");
+        el.className = "item";
+        const sev = ev.type === "fast" ? "warn" : "ok";
+        el.innerHTML = `
+          <div class="meta">
+            <div class="dot ${sev}"></div>
+            <div style="min-width:0">
+              <h4>${typeLabel(ev.type)} • ${formatDT(ev.time)}</h4>
+              <p>${escapeHTML(ev.desc || "")}</p>
+              ${ev.action ? `<p style="margin-top:6px"><b>Acción:</b> ${escapeHTML(ev.action)}</p>` : ""}
+            </div>
+          </div>
+          <div class="actions">
+            <button class="iconBtn" title="WhatsApp" data-wa="${ev.id}">${iconWA()}</button>
+            <button class="iconBtn" title="Eliminar" data-del-ev="${ev.id}">${iconTrash()}</button>
+          </div>
+        `;
+        list.appendChild(el);
+      });
+
+      list.querySelectorAll("[data-del-ev]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-del-ev");
+          state.events = state.events.filter(x=>x.id !== id);
+          saveState();
+          renderEvents();
+          toast("Evento eliminado.", "🗑️");
+        });
+      });
+
+      list.querySelectorAll("[data-wa]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const id = b.getAttribute("data-wa");
+          const ev = state.events.find(x=>x.id===id);
+          if(!ev) return;
+          const msg = buildEventMessage(ev);
+          openWhatsApp(msg);
+        });
+      });
+    }
+
+    function renderCharts(){
+      ensureMoodWeeks(state);
+      ensure14Days(state);
+
+      const accent = getCSSVar("--accent") || "#C86F4E";
+      const accent2 = getCSSVar("--accent2") || "#5B7A6A";
+      const warn = getCSSVar("--warn") || "#B45D3C";
+
+      const anxiety = state.moodWeeks.map(w=>w.anxiety);
+      const mood = state.moodWeeks.map(w=>w.mood);
+      const motivation = state.moodWeeks.map(w=>w.motivation);
+
+      drawMultiLineChart("chartMood", [
+        {name:"Ansiedad", values: anxiety, colorHex: warn, fillAlpha: 0.10},
+        {name:"Ánimo", values: mood, colorHex: accent2, fillAlpha: 0.10},
+        {name:"Motivación", values: motivation, colorHex: accent, fillAlpha: 0.10},
+      ]);
+
+      drawAdherenceBars("chartAdherence", state.adherence);
+      drawAdherenceBars("chartAdherence2", state.adherence);
+
+      // Vitals: normalize to 0-10 for trend comparison
+      const c = document.getElementById("chartVitals");
+      const ctx = c.getContext("2d");
+      baseGrid(ctx, "Constantes (tendencia)");
+
+      const last = [...state.vitalsLog].slice(-14);
+      const sys = last.map(v=>Number(v.bpSys||0));
+      const glu = last.map(v=>Number(v.glucose||0));
+      const tmp = last.map(v=>Number(v.temp||0));
+
+      const norm = (arr, minHint, maxHint)=>{
+        const a = arr.filter(n=>!isNaN(n) && n>0);
+        const min = a.length? Math.min(...a) : minHint;
+        const max = a.length? Math.max(...a) : maxHint;
+        return arr.map(n=>{
+          if(!n) return 0;
+          if(max===min) return 5;
+          return clamp(((n-min)/(max-min))*10,0,10);
+        });
+      };
+
+      const sysN = norm(sys, 100, 160);
+      const gluN = norm(glu, 80, 200);
+      const tmpN = norm(tmp, 36, 39);
+
+      drawMultiLineChart("chartVitals", [
+        {name:"PA sistólica (norm.)", values: sysN, colorHex: accent, fillAlpha: 0.08},
+        {name:"Glucosa (norm.)", values: gluN, colorHex: warn, fillAlpha: 0.08},
+        {name:"Temp (norm.)", values: tmpN, colorHex: accent2, fillAlpha: 0.08},
+      ]);
+    }
+
+    function syncInputsFromState(){
+      document.getElementById("pName").value = state.patient.name || "";
+      document.getElementById("pAge").value = state.patient.age || "";
+      document.getElementById("strokeDate").value = state.patient.strokeDate || "";
+
+      document.getElementById("bpSys").value = state.today.bpSys || "";
+      document.getElementById("bpDia").value = state.today.bpDia || "";
+      document.getElementById("glucose").value = state.today.glucose || "";
+      document.getElementById("temp").value = state.today.temp || "";
+      document.getElementById("dailyNotes").value = state.today.notes || "";
+
+      document.getElementById("waNumber").value = state.sos.waNumber || "";
+      document.getElementById("refCenter").value = state.sos.refCenter || "";
+
+      if(!state.sos.message){
+        state.sos.message = buildDefaultSOSMessage();
+      }
+      document.getElementById("waMessage").value = state.sos.message || "";
+      document.getElementById("symptomStart").value = state.sos.symptomStart || "";
+    }
+
+    function syncStateFromInputs(){
+      state.patient.name = document.getElementById("pName").value.trim();
+      state.patient.age = document.getElementById("pAge").value.trim();
+      state.patient.strokeDate = document.getElementById("strokeDate").value;
+
+      state.today.bpSys = document.getElementById("bpSys").value.trim();
+      state.today.bpDia = document.getElementById("bpDia").value.trim();
+      state.today.glucose = document.getElementById("glucose").value.trim();
+      state.today.temp = document.getElementById("temp").value.trim();
+      state.today.notes = document.getElementById("dailyNotes").value.trim();
+
+      state.sos.waNumber = document.getElementById("waNumber").value.trim();
+      state.sos.refCenter = document.getElementById("refCenter").value.trim();
+      state.sos.message = document.getElementById("waMessage").value;
+      state.sos.symptomStart = document.getElementById("symptomStart").value;
+    }
+
+    function addTodayVitalsToLog(){
+      const date = nowISODate();
+      const entry = {
+        date,
+        bpSys: state.today.bpSys || "",
+        bpDia: state.today.bpDia || "",
+        glucose: state.today.glucose || "",
+        temp: state.today.temp || ""
+      };
+      // replace if same date exists
+      const idx = state.vitalsLog.findIndex(x=>x.date===date);
+      if(idx>=0) state.vitalsLog[idx] = entry;
+      else state.vitalsLog.push(entry);
+      // keep last 60
+      if(state.vitalsLog.length > 60) state.vitalsLog = state.vitalsLog.slice(-60);
+    }
+
+    function openWhatsApp(message){
+      const num = (state.sos.waNumber || "").replace(/\D/g,"");
+      const text = encodeURIComponent(message);
+      // If number is empty, open generic share
+      const url = num ? `https://wa.me/${num}?text=${text}` : `https://wa.me/?text=${text}`;
+      // iOS Safari: open in same tab is often more reliable
+      window.location.href = url;
+    }
+
+    function buildDefaultSOSMessage(){
+      const p = state.patient.name ? `Paciente: ${state.patient.name}\n` : "";
+      const age = state.patient.age ? `Edad: ${state.patient.age}\n` : "";
+      const bp = (state.today.bpSys && state.today.bpDia) ? `PA: ${state.today.bpSys}/${state.today.bpDia} mmHg\n` : "";
+      const glu = state.today.glucose ? `Glucosa: ${state.today.glucose} mg/dL\n` : "";
+      const t = state.today.temp ? `Temp: ${state.today.temp} °C\n` : "";
+      const center = state.sos.refCenter ? `Centro/Referencia: ${state.sos.refCenter}\n` : "";
+
+      return `🆘 SOS • Sospecha/seguimiento de ictus\n` +
+        `${p}${age}${center}` +
+        `Hora inicio síntomas (si aplica): [completar]\n` +
+        `Síntomas: [cara/brazo/habla/visión/equilibrio]\n` +
+        `Acción: solicitamos orientación y/o evaluación urgente.\n\n` +
+        `Datos actuales:\n${bp}${glu}${t}` +
+        `Notas: ${state.today.notes ? state.today.notes.slice(0,220) : "[sin notas]"}\n`;
+    }
+
+    function buildEventMessage(ev){
+      const p = state.patient.name ? `Paciente: ${state.patient.name}\n` : "";
+      const age = state.patient.age ? `Edad: ${state.patient.age}\n` : "";
+      const when = `Fecha/hora: ${formatDT(ev.time)}\n`;
+      const type = `Tipo: ${typeLabel(ev.type)}\n`;
+      const desc = `Descripción: ${ev.desc || ""}\n`;
+      const act = ev.action ? `Acción: ${ev.action}\n` : "";
+      return `📌 Evento registrado\n${p}${age}${when}${type}${desc}${act}`.trim();
+    }
+
+    function formatDT(dt){
+      if(!dt) return "—";
+      try{
+        const d = new Date(dt);
+        if(String(d) === "Invalid Date") return dt;
+        const pad = n => String(n).padStart(2,"0");
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }catch{ return dt; }
+    }
+
+    function typeLabel(t){
+      const map = {
+        fast:"FAST (cara/brazo/habla)",
+        treatment:"Efecto adverso / medicación",
+        fall:"Caída / golpe",
+        infection:"Fiebre / infección",
+        mood:"Crisis emocional",
+        other:"Otro"
+      };
+      return map[t] || "Evento";
+    }
+    function freqLabel(f){
+      return f === "daily" ? "Diario" : f === "alternate" ? "Interdiario" : "Personalizado";
+    }
+
+    function escapeHTML(s){
+      return String(s || "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#39;");
+    }
+
+    // Icons (inline)
+    function iconTrash(){
+      return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 7h16" stroke="rgba(43,42,40,.8)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M10 11v7" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M14 11v7" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M6 7l1 14a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-14" stroke="rgba(43,42,40,.8)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M9 7V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v3" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+      </svg>`;
+    }
+    function iconPencil(){
+      return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 20h9" stroke="rgba(43,42,40,.55)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linejoin="round"/>
+      </svg>`;
+    }
+    function iconWA(){
+      return `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 21a9 9 0 1 0-7.8-4.5L3 21l4.7-1.2A9 9 0 0 0 12 21Z" stroke="rgba(43,42,40,.85)" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M9.2 9.2c.3-.8.6-.9 1.1-.9h.7c.2 0 .4 0 .6.5l.7 1.6c.1.3.1.5 0 .7-.1.2-.2.4-.4.6l-.4.4c-.1.1-.2.3-.1.5.2.5.6 1.2 1.2 1.8.6.6 1.4 1.1 2 .9.2 0 .4-.1.5-.3l.6-.6c.2-.2.4-.2.7-.1l1.5.7c.5.2.5.4.5.6 0 .3-.1.8-.4 1.1-.3.3-1 .9-2.2.5-1.2-.4-2.8-1.3-4.2-2.7-1.4-1.4-2.4-3.2-2.7-4.4-.3-1.2.2-1.8.5-2.1Z" fill="rgba(200,111,78,.30)" stroke="rgba(43,42,40,.35)" stroke-width="1"/>
+      </svg>`;
+    }
+
+    function decisionSupport(){
+      // Non-medical guidance based on time and FAST suspicion.
+      const start = document.getElementById("symptomStart").value;
+      const box = document.getElementById("decisionBox");
+
+      const warnings = [];
+      const notes = [];
+
+      if(!start){
+        box.innerHTML = `<b>Resultado</b><small>Indica la hora de inicio si hay sospecha de síntomas súbitos.</small>`;
+        return;
+      }
+      const startDt = new Date(start);
+      const now = new Date();
+      const diffMin = Math.round((now - startDt)/60000);
+
+      if(diffMin < 0){
+        box.innerHTML = `<b>Resultado</b><small>La hora parece estar en el futuro. Revísala.</small>`;
+        return;
+      }
+
+      // Based on PDF: rtPA effective within first 3 hours. :contentReference[oaicite:9]{index=9}
+      if(diffMin <= 180){
+        warnings.push("Ventana crítica: <b>≤ 3 horas</b> desde inicio. Priorizar evaluación urgente en centro preparado.");
+        notes.push("Registra hora exacta, lista de medicación y eventos recientes.");
+      }else{
+        warnings.push("Tiempo desde inicio: > 3 horas. Aun así, <b>no es para esperar</b>: la evaluación sigue siendo urgente.");
+        notes.push("Mantén registro del inicio, evolución y factores de riesgo.");
+      }
+
+      const r = computeRisk(state);
+      if(r.label === "Alto"){
+        warnings.push("Riesgo general: <b>alto</b>. Reforzar adherencia y control de factores (PA, hábitos, etc.).");
+      }else if(r.label === "Moderado"){
+        warnings.push("Riesgo general: <b>moderado</b>. Vigilar y mantener controles regulares.");
+      }else{
+        warnings.push("Riesgo general: <b>bajo</b> (según datos registrados). Mantener seguimiento.");
+      }
+
+      box.innerHTML = `
+        <b>Orientación</b>
+        <div style="margin-top:8px; color: var(--muted); line-height:1.4">
+          <div style="margin-bottom:6px">${warnings.map(w=>`• ${w}`).join("<br>")}</div>
+          <div style="margin-top:8px"><b>Acciones sugeridas (familia):</b><br>• ${notes.join("<br>• ")}</div>
+        </div>
+      `;
+
+      // update SOS message placeholder with start time
+      const msgEl = document.getElementById("waMessage");
+      let msg = msgEl.value || buildDefaultSOSMessage();
+      msg = msg.replace("Hora inicio síntomas (si aplica): [completar]", `Hora inicio síntomas (si aplica): ${formatDT(start)}`);
+      msgEl.value = msg;
+      syncStateFromInputs();
+      saveState();
+      toast("Orientación actualizada.", "🧭");
+    }
+
+    // Navigation
+    function setPanel(name){
+      document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+      document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+
+      document.getElementById(`panel-${name}`).classList.add("active");
+      document.querySelector(`.tab[data-tab="${name}"]`).classList.add("active");
+
+      // refresh on view
+      renderCharts();
+      setStatusBadges();
+    }
+
+    // Export/Import
+    function exportData(){
+      const dataStr = JSON.stringify(state, null, 2);
+      const blob = new Blob([dataStr], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ictus_dashboard_${nowISODate()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      toast("Exportado.", "📦");
+    }
+
+    function resetAll(){
+      const ok = confirm("¿Reiniciar todo? Se borrarán los registros guardados en este dispositivo.");
+      if(!ok) return;
+      localStorage.removeItem(LS_KEY);
+      state = defaultState();
+      ensureMoodWeeks(state);
+      ensure14Days(state);
+      saveState();
+      initUI();
+      toast("Reiniciado.", "🔄");
+    }
+
+    function addWeekPrompt(){
+      // quick prompts for family
+      const a = clamp(Number(prompt("Ansiedad (0-10):", "5") ?? 5), 0, 10);
+      const m = clamp(Number(prompt("Ánimo (0-10):", "5") ?? 5), 0, 10);
+      const mo = clamp(Number(prompt("Motivación (0-10):", "5") ?? 5), 0, 10);
+
+      ensureMoodWeeks(state);
+      state.moodWeeks.shift();
+      state.moodWeeks.push({label:"W0", anxiety:a, mood:m, motivation:mo});
+      ensureMoodWeeks(state);
+      saveState();
+      renderCharts();
+      toast("Semana registrada.", "📈");
+    }
+
+    function markDoseToday(){
+      const today = nowISODate();
+      const idx = state.adherence.findIndex(x=>x.date===today);
+      if(idx>=0) state.adherence[idx].taken = true;
+      else{
+        ensure14Days(state);
+        const idx2 = state.adherence.findIndex(x=>x.date===today);
+        if(idx2>=0) state.adherence[idx2].taken = true;
+      }
+      saveState();
+      renderCharts();
+      setStatusBadges();
+      toast("Toma registrada (hoy).", "💊");
+    }
+
+    function addRehabPrompt(){
+      const date = nowISODate();
+      const activity = (prompt("Actividad (ej.: caminata / terapia lenguaje / movilidad):", "Caminata") || "").trim();
+      if(!activity){ toast("Actividad cancelada.", "⚠️"); return; }
+      const minutes = Number(prompt("Duración (min):", "10") || "0");
+      const perceived = (prompt("¿Cómo se sintió? (ej.: bien / cansado / mareo / dolor):", "Bien") || "").trim();
+
+      state.rehab.push({id: uid(), date, activity, minutes: isNaN(minutes)? "" : minutes, perceived});
+      if(state.rehab.length > 80) state.rehab = state.rehab.slice(-80);
+      saveState();
+      renderRehab();
+      toast("Actividad agregada.", "🏃‍♂️");
+    }
+
+    function addMed(){
+      const name = document.getElementById("medName").value.trim();
+      const time = document.getElementById("medTime").value;
+      const freq = document.getElementById("medFreq").value;
+      const notes = document.getElementById("medNotes").value.trim();
+
+      if(!name){
+        toast("Escribe el nombre del medicamento.", "⚠️");
+        return;
+      }
+
+      const editing = state._editingMedId;
+      if(editing){
+        const idx = state.meds.findIndex(x=>x.id===editing);
+        if(idx>=0){
+          state.meds[idx] = {id: editing, name, time, freq, notes};
+          state._editingMedId = null;
+          toast("Medicamento actualizado.", "✅");
+        }
+      }else{
+        state.meds.push({id: uid(), name, time, freq, notes});
+        toast("Medicamento agregado.", "➕");
+      }
+
+      // clear inputs
+      document.getElementById("medName").value = "";
+      document.getElementById("medTime").value = "";
+      document.getElementById("medFreq").value = "daily";
+      document.getElementById("medNotes").value = "";
+
+      saveState();
+      renderMedList();
+    }
+
+    function saveToday(){
+      syncStateFromInputs();
+      addTodayVitalsToLog();
+      saveState();
+      renderCharts();
+      setStatusBadges();
+      toast("Guardado (hoy).", "✅");
+    }
+
+    function addEvent(){
+      const type = document.getElementById("evType").value;
+      const time = document.getElementById("evTime").value || new Date().toISOString().slice(0,16);
+      const desc = document.getElementById("evDesc").value.trim();
+      const action = document.getElementById("evAction").value.trim();
+
+      if(!desc){
+        toast("Describe brevemente el evento.", "⚠️");
+        return;
+      }
+      state.events.push({id: uid(), type, time, desc, action});
+      if(state.events.length > 120) state.events = state.events.slice(-120);
+
+      // clear
+      document.getElementById("evDesc").value = "";
+      document.getElementById("evAction").value = "";
+
+      saveState();
+      renderEvents();
+      toast("Evento guardado.", "🧷");
+    }
+
+    function shareLastEvent(){
+      if(state.events.length === 0){
+        toast("No hay eventos para compartir.", "⚠️");
+        return;
+      }
+      const ev = [...state.events].sort((a,b)=> (b.time||"").localeCompare(a.time||""))[0];
+      const msg = buildEventMessage(ev);
+      openWhatsApp(msg);
+    }
+
+    function copyToClipboard(text){
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        return navigator.clipboard.writeText(text);
+      }
+      // fallback
+      const t = document.createElement("textarea");
+      t.value = text;
+      document.body.appendChild(t);
+      t.select();
+      document.execCommand("copy");
+      t.remove();
+      return Promise.resolve();
+    }
+
+    function initUI(){
+      ensure14Days(state);
+      ensureMoodWeeks(state);
+
+      syncInputsFromState();
+      renderRiskGrid();
+      renderMedList();
+      renderRehab();
+      renderEvents();
+      renderCharts();
+      setStatusBadges();
+
+      // bind nav
+      document.querySelectorAll(".tab").forEach(tab=>{
+        const name = tab.getAttribute("data-tab");
+        tab.addEventListener("click", ()=> setPanel(name));
+        tab.addEventListener("keydown", (e)=>{
+          if(e.key === "Enter" || e.key === " "){ e.preventDefault(); setPanel(name); }
+        });
+      });
+
+      // buttons
+      document.getElementById("btnExport").addEventListener("click", exportData);
+      document.getElementById("btnReset").addEventListener("click", resetAll);
+
+      document.getElementById("goSOS").addEventListener("click", ()=> setPanel("sos"));
+      document.getElementById("quickAddMood").addEventListener("click", addWeekPrompt);
+      document.getElementById("quickAddDose").addEventListener("click", markDoseToday);
+
+      document.getElementById("btnDecision").addEventListener("click", decisionSupport);
+
+      document.getElementById("saveTrack").addEventListener("click", saveToday);
+      document.getElementById("addRehab").addEventListener("click", addRehabPrompt);
+      document.getElementById("addWeek").addEventListener("click", addWeekPrompt);
+
+      document.getElementById("addMed").addEventListener("click", addMed);
+      document.getElementById("markDose").addEventListener("click", markDoseToday);
+
+      document.getElementById("saveEvent").addEventListener("click", addEvent);
+      document.getElementById("shareEventWA").addEventListener("click", shareLastEvent);
+
+      document.getElementById("openWA").addEventListener("click", ()=>{
+        syncStateFromInputs();
+        // make sure message has at least something
+        if(!state.sos.message || state.sos.message.trim().length < 10){
+          state.sos.message = buildDefaultSOSMessage();
+          document.getElementById("waMessage").value = state.sos.message;
+        }
+        saveState();
+        openWhatsApp(state.sos.message);
+      });
+
+      document.getElementById("copyWA").addEventListener("click", async ()=>{
+        syncStateFromInputs();
+        saveState();
+        await copyToClipboard(state.sos.message || "");
+        toast("Mensaje copiado.", "📋");
+      });
+
+      // autosave SOS fields
+      ["waNumber","refCenter","waMessage","symptomStart"].forEach(id=>{
+        document.getElementById(id).addEventListener("input", ()=>{
+          syncStateFromInputs();
+          saveState();
+        });
+      });
+
+      // render again on resize (canvas)
+      window.addEventListener("resize", ()=>{
+        // Canvas uses fixed pixel size; keep as-is for simplicity.
+        // Re-draw to avoid blur on some iOS zoom/rotation cases.
+        renderCharts();
+      });
+
+      // Mark online/offline
+      window.addEventListener("offline", ()=> toast("Sin conexión: el dashboard sigue funcionando (datos locales).", "📴"));
+      window.addEventListener("online", ()=> toast("Conexión restaurada.", "📶"));
+
+      // if first time: seed mood weeks nicely
+      if(!state._seeded){
+        state._seeded = true;
+        ensureMoodWeeks(state);
+        saveState();
+      }
+
+      // update derived SOS default if missing
+      if(!state.sos.message){
+        state.sos.message = buildDefaultSOSMessage();
+        document.getElementById("waMessage").value = state.sos.message;
+        saveState();
+      }
+
+      // Decision box initial
+      decisionSupport();
+
+      // initial panel
+      setPanel("home");
+    }
+
+    // GLOBAL STATE
+    let state = loadState();
+
+    // Ensure baseline structures
+    ensure14Days(state);
+    ensureMoodWeeks(state);
+    saveState();
+
+    initUI();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1318 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agenda Clínica (Local)</title>
+  <style>
+    :root{
+      --bg:#0b1022;
+      --panel:rgba(17,28,51,.62);
+      --panel2:rgba(0,0,0,.18);
+      --text:#e5e7eb;
+      --muted:#94a3b8;
+      --accent:#60a5fa;
+      --ok:#34d399;
+      --warn:#fbbf24;
+      --danger:#fb7185;
+      --border:rgba(148,163,184,.18);
+      --shadow:0 12px 30px rgba(0,0,0,.35);
+      --radius:18px;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(1200px 600px at 15% -10%, rgba(96,165,250,.25), transparent 60%),
+        radial-gradient(900px 500px at 100% 0%, rgba(52,211,153,.18), transparent 50%),
+        linear-gradient(180deg, #070b17, var(--bg));
+      min-height:100vh;
+      padding:14px;
+    }
+    .wrap{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+    header{
+      border:1px solid var(--border);
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;
+      backdrop-filter: blur(10px);
+    }
+    header .left h1{margin:0;font-size:18px;letter-spacing:.2px}
+    header .left p{margin:6px 0 0 0;color:var(--muted);font-size:13px;line-height:1.35;max-width:760px}
+    header .right{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
+    .badge{
+      font-size:12px;color:#c7d2fe;border:1px solid rgba(99,102,241,.35);
+      background:rgba(99,102,241,.14); padding:8px 10px;border-radius:999px; white-space:nowrap;
+    }
+
+    .toolbar{
+      display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+    }
+    .btn{
+      appearance:none; border:1px solid var(--border);
+      background:rgba(148,163,184,.08);
+      color:var(--text);
+      padding:10px 12px; border-radius:12px;
+      font-size:13px; cursor:pointer;
+      display:inline-flex; gap:8px; align-items:center;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+    }
+    .btn:hover{background:rgba(148,163,184,.14);border-color:rgba(148,163,184,.28)}
+    .btn:active{transform: translateY(1px)}
+    .btn.primary{background:rgba(96,165,250,.18); border-color: rgba(96,165,250,.35)}
+    .btn.primary:hover{background:rgba(96,165,250,.24)}
+    .btn.ok{background:rgba(52,211,153,.16); border-color: rgba(52,211,153,.32)}
+    .btn.warn{background:rgba(251,191,36,.14); border-color: rgba(251,191,36,.28)}
+    .btn.danger{background:rgba(251,113,133,.14); border-color: rgba(251,113,133,.28)}
+    .btn:disabled{opacity:.55; cursor:not-allowed}
+
+    .grid{
+      display:grid; gap:12px;
+      grid-template-columns: 1fr;
+    }
+    @media(min-width: 980px){
+      .grid{grid-template-columns: 360px 1fr;}
+    }
+    .card{
+      border:1px solid var(--border);
+      background:var(--panel);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .card .hd{
+      padding:12px 12px 10px 12px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:linear-gradient(180deg, rgba(255,255,255,.04), transparent);
+    }
+    .card .hd h2{margin:0;font-size:14px;letter-spacing:.2px}
+    .card .hd small{color:var(--muted)}
+    .card .bd{padding:12px}
+
+    .tabs{display:flex;flex-wrap:wrap;gap:8px}
+    .tab{
+      padding:9px 11px;border-radius:999px;border:1px solid var(--border);
+      background:rgba(0,0,0,.16); color:var(--muted); font-size:13px; cursor:pointer;
+    }
+    .tab.active{
+      color:var(--text);
+      border-color:rgba(96,165,250,.38);
+      background:rgba(96,165,250,.14);
+    }
+
+    input, textarea, select{
+      width:100%; border:1px solid var(--border);
+      background:var(--panel2);
+      color:var(--text);
+      border-radius:14px;
+      padding:11px 12px;
+      outline:none;
+      font-size:13px;
+    }
+    textarea{min-height:96px; resize:vertical; line-height:1.45}
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px 2px}
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .two{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width: 620px){.two{grid-template-columns:1fr 1fr}}
+    .three{display:grid;gap:10px;grid-template-columns:1fr}
+    @media(min-width: 880px){.three{grid-template-columns:1fr 1fr 1fr}}
+
+    .list{display:flex;flex-direction:column;gap:10px;max-height:64vh;overflow:auto;padding-right:4px}
+    .item{
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.16);
+      border-radius:14px;
+      padding:10px;
+      cursor:pointer;
+    }
+    .item:hover{background:rgba(0,0,0,.22)}
+    .item .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .item .name{font-weight:700;font-size:13px}
+    .item .meta{color:var(--muted);font-size:12px;line-height:1.25}
+    .pill{
+      font-size:12px; padding:6px 9px; border-radius:999px;
+      border:1px solid var(--border); color:var(--muted);
+      background:rgba(0,0,0,.16); white-space:nowrap;
+    }
+    .pill.ok{border-color:rgba(52,211,153,.35); color:#a7f3d0; background:rgba(52,211,153,.10)}
+    .pill.warn{border-color:rgba(251,191,36,.35); color:#fde68a; background:rgba(251,191,36,.10)}
+    .pill.danger{border-color:rgba(251,113,133,.35); color:#fecdd3; background:rgba(251,113,133,.10)}
+    .muted{color:var(--muted)}
+    .mono{font-family:var(--mono)}
+    .sep{height:1px;background:var(--border); margin:12px 0}
+    .hint{color:var(--muted);font-size:12px;line-height:1.35}
+    .foot{color:var(--muted); font-size:12px; text-align:center; padding:6px 0 2px 0}
+
+    .mask{
+      filter: blur(7px);
+      user-select:none;
+      pointer-events:none;
+    }
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(148,163,184,.22);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      font-size:13px;
+      box-shadow: var(--shadow);
+      opacity:0; transition: opacity .2s ease, transform .2s ease;
+      pointer-events:none;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="left">
+      <h1>Agenda Clínica (Local)</h1>
+      <p>
+        Sistema local para seguimiento diario: pacientes, citas, contacto WhatsApp, diagnóstico/hipótesis, plan por sesiones,
+        notas y backup. <span class="mono">Sin servidor</span> (guarda en tu dispositivo).
+      </p>
+    </div>
+    <div class="right">
+      <span class="badge" id="modeBadge">Modo: Local (LocalStorage)</span>
+      <div class="toolbar">
+        <button class="btn" id="btnDiscrete">🕶️ Modo discreto: OFF</button>
+        <button class="btn ok" id="btnBackup">⬇️ Exportar backup</button>
+        <label class="btn" style="cursor:pointer">
+          ⬆️ Importar backup
+          <input id="fileImport" type="file" accept="application/json" style="display:none" />
+        </label>
+        <button class="btn danger" id="btnReset">🧨 Reset (solo si es necesario)</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- LATERAL: PACIENTES -->
+    <aside class="card" id="leftPanel">
+      <div class="hd">
+        <div>
+          <h2>Pacientes</h2>
+          <small class="muted" id="patientCount">0</small>
+        </div>
+        <button class="btn primary" id="btnNewPatient">➕ Nuevo</button>
+      </div>
+      <div class="bd">
+        <label for="qPatients">Buscar</label>
+        <input id="qPatients" placeholder="Nombre, código o teléfono…" />
+        <div style="height:10px"></div>
+        <div class="list" id="patientList"></div>
+      </div>
+    </aside>
+
+    <!-- PRINCIPAL -->
+    <main class="card" id="mainPanel">
+      <div class="hd">
+        <div>
+          <h2 id="mainTitle">Panel de hoy</h2>
+          <small id="mainSub" class="muted">Citas del día, confirmaciones y tareas rápidas</small>
+        </div>
+        <div class="tabs">
+          <button class="tab active" data-tab="today">Hoy</button>
+          <button class="tab" data-tab="appointments">Citas</button>
+          <button class="tab" data-tab="patient">Ficha</button>
+          <button class="tab" data-tab="session">Sesión</button>
+        </div>
+      </div>
+
+      <div class="bd" id="tab_today">
+        <div class="two">
+          <div>
+            <label for="todayDate">Fecha</label>
+            <input id="todayDate" />
+          </div>
+          <div>
+            <label>Acciones rápidas</label>
+            <div class="row">
+              <button class="btn ok" id="btnAddApptQuick">➕ Cita</button>
+              <button class="btn" id="btnTodayRefresh">🔄 Refrescar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <div class="row">
+            <span class="pill" id="todayCount">0 citas</span>
+            <span class="pill" id="pendingCount">0 sin confirmar</span>
+          </div>
+          <div class="row">
+            <span class="hint">Tip: usa “Confirmar (WhatsApp)” y luego “Marcar realizada”.</span>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="list" id="todayList" style="max-height:58vh"></div>
+      </div>
+
+      <div class="bd" id="tab_appointments" style="display:none">
+        <div class="three">
+          <div>
+            <label for="apptPatient">Paciente</label>
+            <select id="apptPatient"></select>
+          </div>
+          <div>
+            <label for="apptDate">Fecha</label>
+            <input id="apptDate" type="date" />
+          </div>
+          <div>
+            <label for="apptTime">Hora</label>
+            <input id="apptTime" type="time" />
+          </div>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="apptType">Tipo</label>
+            <select id="apptType">
+              <option>Presencial</option>
+              <option>Virtual</option>
+              <option>Llamada</option>
+            </select>
+          </div>
+          <div>
+            <label for="apptStatus">Estado</label>
+            <select id="apptStatus">
+              <option value="scheduled">Programada</option>
+              <option value="confirmed">Confirmada</option>
+              <option value="done">Realizada</option>
+              <option value="canceled">Cancelada</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="apptNote">Nota / motivo breve</label>
+          <input id="apptNote" placeholder="Ej.: seguimiento, primera entrevista, revisión de tarea…" />
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="btnSaveAppt">💾 Guardar cita</button>
+          <button class="btn" id="btnClearAppt">🧽 Limpiar</button>
+        </div>
+
+        <div class="sep"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="pill" id="apptTotal">0 citas registradas</span>
+          <span class="hint">Ordena por fecha/hora; toca una cita para editarla.</span>
+        </div>
+        <div style="height:10px"></div>
+        <div class="list" id="apptList"></div>
+      </div>
+
+      <div class="bd" id="tab_patient" style="display:none">
+        <div class="row" style="justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="row" style="gap:8px">
+              <span class="pill" id="selPatientPill">Sin paciente</span>
+              <span class="pill" id="selPatientPhone">Tel: —</span>
+            </div>
+            <div style="height:6px"></div>
+            <div class="hint">Selecciona un paciente en la columna izquierda. Aquí se guarda su ficha clínica.</div>
+          </div>
+          <div class="row">
+            <button class="btn" id="btnWA">💬 WhatsApp</button>
+            <button class="btn warn" id="btnCallPrep">📞 Llamada previa</button>
+            <button class="btn danger" id="btnDeletePatient">🗑️ Eliminar</button>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="three">
+          <div>
+            <label for="pName">Nombre (o alias)</label>
+            <input id="pName" placeholder="Ej.: Sra. M. / P-014" />
+          </div>
+          <div>
+            <label for="pCode">Código interno</label>
+            <input id="pCode" placeholder="Ej.: P-014" />
+          </div>
+          <div>
+            <label for="pPhone">Teléfono (WhatsApp)</label>
+            <input id="pPhone" placeholder="Ej.: 51999999999 (sin +, solo números)" />
+          </div>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="pDiag">Diagnóstico / hipótesis clínica (editable)</label>
+            <textarea id="pDiag" placeholder="Ej.: Dificultades en regulación emocional; hipótesis: ansiedad + dependencia…"></textarea>
+          </div>
+          <div>
+            <label for="pGoals">Objetivos terapéuticos (resumen)</label>
+            <textarea id="pGoals" placeholder="Ej.: mejorar control de impulsos; comunicación empática; adherencia a tareas…"></textarea>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="pNotes">Notas relevantes (contexto, red de apoyo, hitos)</label>
+          <textarea id="pNotes" placeholder="Ej.: eventos críticos, factores de riesgo/protección, acuerdos…"></textarea>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="btnSavePatient">💾 Guardar ficha</button>
+          <button class="btn" id="btnNewSessionFromPatient">🧾 Nueva sesión</button>
+        </div>
+
+        <div class="sep"></div>
+        <div class="row" style="justify-content:space-between">
+          <span class="pill" id="sessCount">0 sesiones registradas</span>
+          <span class="hint">Las sesiones se registran por paciente y se pueden exportar a Word.</span>
+        </div>
+        <div style="height:10px"></div>
+        <div class="list" id="sessList"></div>
+      </div>
+
+      <div class="bd" id="tab_session" style="display:none">
+        <div class="row" style="justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="row" style="gap:8px">
+              <span class="pill" id="sessPatientPill">Paciente: —</span>
+              <span class="pill" id="sessDatePill">Fecha: —</span>
+            </div>
+            <div style="height:6px"></div>
+            <div class="hint">
+              Nota estructurada de sesión (rápida y profesional). Se guarda localmente y puede exportarse a Word.
+            </div>
+          </div>
+          <div class="row">
+            <button class="btn ok" id="btnExportWord">📝 Exportar a Word</button>
+            <button class="btn danger" id="btnDeleteSession">🗑️ Eliminar</button>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="three">
+          <div>
+            <label for="sDate">Fecha</label>
+            <input id="sDate" type="date" />
+          </div>
+          <div>
+            <label for="sTime">Hora (opcional)</label>
+            <input id="sTime" type="time" />
+          </div>
+          <div>
+            <label for="sFocus">Foco / objetivo de sesión</label>
+            <input id="sFocus" placeholder="Ej.: reestructuración cognitiva de… / control de ira…" />
+          </div>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="sSummary">Resumen clínico breve</label>
+            <textarea id="sSummary" placeholder="Motivo, contenido central, eventos relevantes…"></textarea>
+          </div>
+          <div>
+            <label for="sIntervention">Intervención / técnicas aplicadas</label>
+            <textarea id="sIntervention" placeholder="Ej.: ABC, reestructuración, role-play, respiración, psicoeducación…"></textarea>
+          </div>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="sResponse">Respuesta del paciente / observaciones</label>
+            <textarea id="sResponse" placeholder="Engagement, insight, resistencias, emociones observadas…"></textarea>
+          </div>
+          <div>
+            <label for="sHomework">Tareas para casa (concretas)</label>
+            <textarea id="sHomework" placeholder="Ej.: registro ABC 3 veces/semana, práctica de pausa, etc."></textarea>
+          </div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label for="sNext">Próxima meta / plan siguiente sesión</label>
+          <textarea id="sNext" placeholder="Qué se hará en la próxima sesión y criterio de avance…"></textarea>
+        </div>
+
+        <div class="row" style="margin-top:10px">
+          <button class="btn primary" id="btnSaveSession">💾 Guardar sesión</button>
+          <button class="btn" id="btnClearSession">🧽 Limpiar</button>
+        </div>
+
+        <div class="sep"></div>
+        <div class="hint">
+          Sugerencia operativa: usa el Panel “Hoy” para confirmar por WhatsApp y luego abre la “Sesión” desde la ficha.
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <div class="foot">Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.</div>
+</div>
+
+<div class="toast" id="toast">Listo</div>
+
+<script>
+(() => {
+  // ===== Utilidades =====
+  const $ = (id) => document.getElementById(id);
+  const pad = (n) => String(n).padStart(2,'0');
+  const todayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  };
+  const nowTime = () => {
+    const d = new Date();
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  const uid = () => Math.random().toString(16).slice(2) + Date.now().toString(16);
+  const escapeHtml = (str) => (str||"").replace(/[&<>"']/g, s => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  }[s]));
+  const toast = (msg) => {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1800);
+  };
+
+  // ===== Estado y persistencia =====
+  const KEY = "agenda_clinica_local_v1";
+  const defaultState = () => ({
+    patients: [],     // {id,name,code,phone,diag,goals,notes,createdAt}
+    appointments: [], // {id,patientId,date,time,type,status,note,createdAt,updatedAt}
+    sessions: [],     // {id,patientId,date,time,focus,summary,intervention,response,homework,next,createdAt,updatedAt}
+    settings: { discrete:false }
+  });
+
+  let state = defaultState();
+
+  function load(){
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return;
+    try{
+      const data = JSON.parse(raw);
+      if(data && typeof data === "object"){
+        state = {
+          ...defaultState(),
+          ...data,
+          settings: { ...defaultState().settings, ...(data.settings||{}) }
+        };
+      }
+    }catch{}
+  }
+  function save(){
+    localStorage.setItem(KEY, JSON.stringify(state));
+  }
+
+  load();
+
+  // ===== UI: modo discreto =====
+  function applyDiscrete(){
+    const on = !!state.settings.discrete;
+    $("btnDiscrete").textContent = on ? "🕶️ Modo discreto: ON" : "🕶️ Modo discreto: OFF";
+    const panels = [$("leftPanel"), $("mainPanel")];
+    panels.forEach(p => {
+      if(on) p.classList.add("mask");
+      else p.classList.remove("mask");
+    });
+    // Para que aún se pueda apagar, no bloqueamos el botón
+    $("btnDiscrete").classList.remove("mask");
+    $("btnDiscrete").style.pointerEvents = "auto";
+    $("btnDiscrete").style.filter = "none";
+  }
+  applyDiscrete();
+
+  $("btnDiscrete").addEventListener("click", () => {
+    state.settings.discrete = !state.settings.discrete;
+    save();
+    applyDiscrete();
+    toast(state.settings.discrete ? "Modo discreto activado" : "Modo discreto desactivado");
+  });
+
+  // ===== Elementos =====
+  const tabs = Array.from(document.querySelectorAll(".tab"));
+  const tabViews = {
+    today: $("tab_today"),
+    appointments: $("tab_appointments"),
+    patient: $("tab_patient"),
+    session: $("tab_session"),
+  };
+
+  // ===== Selección actual =====
+  let selectedPatientId = null;
+  let editingApptId = null;
+  let editingSessionId = null;
+
+  // ===== Tabs =====
+  function switchTab(name){
+    tabs.forEach(t => t.classList.toggle("active", t.dataset.tab === name));
+    Object.entries(tabViews).forEach(([k, el]) => el.style.display = (k===name) ? "" : "none");
+
+    if(name === "today"){
+      $("mainTitle").textContent = "Panel de hoy";
+      $("mainSub").textContent = "Citas del día, confirmaciones y tareas rápidas";
+      renderToday();
+    }
+    if(name === "appointments"){
+      $("mainTitle").textContent = "Citas";
+      $("mainSub").textContent = "Programar y gestionar citas (local)";
+      populatePatientSelect($("apptPatient"));
+      renderAppointments();
+    }
+    if(name === "patient"){
+      $("mainTitle").textContent = "Ficha del paciente";
+      $("mainSub").textContent = "Datos, hipótesis/diagnóstico y plan";
+      renderPatientForm();
+      renderSessionsList();
+    }
+    if(name === "session"){
+      $("mainTitle").textContent = "Nota de sesión";
+      $("mainSub").textContent = "Registro estructurado + exportación Word";
+      renderSessionHeader();
+    }
+  }
+  tabs.forEach(t => t.addEventListener("click", ()=>switchTab(t.dataset.tab)));
+
+  // ===== Pacientes: lista =====
+  const qPatients = $("qPatients");
+  qPatients.addEventListener("input", ()=>renderPatients());
+
+  function renderPatients(){
+    const list = $("patientList");
+    list.innerHTML = "";
+
+    const q = (qPatients.value || "").trim().toLowerCase();
+    const patients = state.patients
+      .slice()
+      .sort((a,b)=> (b.createdAt||0)-(a.createdAt||0))
+      .filter(p => {
+        if(!q) return true;
+        return [p.name,p.code,p.phone].some(x => (x||"").toLowerCase().includes(q));
+      });
+
+    $("patientCount").textContent = `${patients.length} paciente(s)`;
+
+    patients.forEach(p => {
+      const div = document.createElement("div");
+      div.className = "item";
+      const isSel = p.id === selectedPatientId;
+      div.style.borderColor = isSel ? "rgba(96,165,250,.45)" : "";
+      div.style.background = isSel ? "rgba(96,165,250,.10)" : "";
+
+      const apptsUpcoming = state.appointments
+        .filter(a => a.patientId === p.id && ["scheduled","confirmed"].includes(a.status))
+        .sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time))[0];
+
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(p.name || "Sin nombre")}</div>
+            <div class="meta">
+              ${p.code ? `<span class="mono">${escapeHtml(p.code)}</span> • ` : ""}
+              ${p.phone ? `Tel: ${escapeHtml(p.phone)}` : "Tel: —"}
+              ${apptsUpcoming ? `<br/>Próx: ${escapeHtml(apptsUpcoming.date)} ${escapeHtml(apptsUpcoming.time||"")}` : ""}
+            </div>
+          </div>
+          <div class="row" style="gap:6px;justify-content:flex-end">
+            <span class="pill">${countSessions(p.id)} ses.</span>
+          </div>
+        </div>
+      `;
+      div.addEventListener("click", ()=>{
+        selectedPatientId = p.id;
+        editingSessionId = null;
+        editingApptId = null;
+        renderPatients();
+        switchTab("patient");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  function populatePatientSelect(sel){
+    sel.innerHTML = "";
+    const opt0 = document.createElement("option");
+    opt0.value = "";
+    opt0.textContent = "— Selecciona —";
+    sel.appendChild(opt0);
+
+    state.patients
+      .slice()
+      .sort((a,b)=> (a.name||"").localeCompare(b.name||""))
+      .forEach(p => {
+        const o = document.createElement("option");
+        o.value = p.id;
+        o.textContent = `${p.name || "Sin nombre"}${p.code ? " ("+p.code+")" : ""}`;
+        sel.appendChild(o);
+      });
+
+    if(selectedPatientId){
+      sel.value = selectedPatientId;
+    }
+  }
+
+  function getPatient(id){
+    return state.patients.find(p=>p.id===id) || null;
+  }
+
+  // ===== Nuevo paciente =====
+  $("btnNewPatient").addEventListener("click", ()=>{
+    const p = { id: uid(), name:"", code:"", phone:"", diag:"", goals:"", notes:"", createdAt: Date.now() };
+    state.patients.unshift(p);
+    selectedPatientId = p.id;
+    save();
+    renderPatients();
+    switchTab("patient");
+    toast("Paciente creado");
+  });
+
+  // ===== Ficha paciente =====
+  const pName = $("pName"), pCode=$("pCode"), pPhone=$("pPhone"),
+        pDiag=$("pDiag"), pGoals=$("pGoals"), pNotes=$("pNotes");
+
+  function renderPatientForm(){
+    const p = getPatient(selectedPatientId);
+
+    $("selPatientPill").textContent = p ? (p.name || "Paciente (sin nombre)") : "Sin paciente";
+    $("selPatientPhone").textContent = p ? (`Tel: ${p.phone || "—"}`) : "Tel: —";
+
+    $("btnWA").disabled = !p || !p.phone;
+    $("btnCallPrep").disabled = !p || !p.phone;
+    $("btnDeletePatient").disabled = !p;
+
+    pName.value = p?.name || "";
+    pCode.value = p?.code || "";
+    pPhone.value = p?.phone || "";
+    pDiag.value  = p?.diag || "";
+    pGoals.value = p?.goals || "";
+    pNotes.value = p?.notes || "";
+
+    $("sessCount").textContent = `${countSessions(selectedPatientId)} sesiones registradas`;
+  }
+
+  $("btnSavePatient").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p){ toast("Selecciona un paciente"); return; }
+    p.name = (pName.value||"").trim();
+    p.code = (pCode.value||"").trim();
+    p.phone = (pPhone.value||"").trim().replace(/\D/g,''); // solo dígitos
+    p.diag = (pDiag.value||"").trim();
+    p.goals = (pGoals.value||"").trim();
+    p.notes = (pNotes.value||"").trim();
+    save();
+    renderPatients();
+    renderPatientForm();
+    populatePatientSelect($("apptPatient"));
+    toast("Ficha guardada");
+  });
+
+  $("btnDeletePatient").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p) return;
+    const ok = confirm("¿Eliminar este paciente y sus citas/sesiones asociadas? (acción irreversible)");
+    if(!ok) return;
+    state.patients = state.patients.filter(x=>x.id!==p.id);
+    state.appointments = state.appointments.filter(a=>a.patientId!==p.id);
+    state.sessions = state.sessions.filter(s=>s.patientId!==p.id);
+    selectedPatientId = null;
+    editingApptId = null;
+    editingSessionId = null;
+    save();
+    renderPatients();
+    switchTab("today");
+    toast("Paciente eliminado");
+  });
+
+  function waLink(phoneDigits, text){
+    const msg = encodeURIComponent(text||"");
+    return `https://wa.me/${phoneDigits}?text=${msg}`;
+  }
+
+  $("btnWA").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p || !p.phone) return;
+    const msg = `Hola ${p.name || ""}. Te escribo para coordinar/confirmar tu cita.`;
+    window.open(waLink(p.phone, msg), "_blank");
+  });
+
+  $("btnCallPrep").addEventListener("click", ()=>{
+    const p = getPatient(selectedPatientId);
+    if(!p || !p.phone) return;
+    const msg = `Hola ${p.name || ""}. Te escribo para confirmar tu cita y asegurar asistencia.`;
+    window.open(waLink(p.phone, msg), "_blank");
+  });
+
+  // ===== Citas =====
+  const apptPatient=$("apptPatient"), apptDate=$("apptDate"), apptTime=$("apptTime"),
+        apptType=$("apptType"), apptStatus=$("apptStatus"), apptNote=$("apptNote");
+
+  function resetApptForm(){
+    editingApptId = null;
+    apptPatient.value = selectedPatientId || "";
+    apptDate.value = todayISO();
+    apptTime.value = nowTime();
+    apptType.value = "Presencial";
+    apptStatus.value = "scheduled";
+    apptNote.value = "";
+  }
+
+  $("btnClearAppt").addEventListener("click", ()=>{
+    resetApptForm();
+    toast("Formulario limpio");
+  });
+
+  $("btnSaveAppt").addEventListener("click", ()=>{
+    const pid = apptPatient.value;
+    if(!pid){ toast("Selecciona un paciente"); return; }
+    const date = apptDate.value || todayISO();
+    const time = apptTime.value || "00:00";
+    const type = apptType.value;
+    const status = apptStatus.value;
+    const note = (apptNote.value||"").trim();
+
+    if(editingApptId){
+      const a = state.appointments.find(x=>x.id===editingApptId);
+      if(!a){ toast("No se encontró la cita"); return; }
+      Object.assign(a, { patientId: pid, date, time, type, status, note, updatedAt: Date.now() });
+      toast("Cita actualizada");
+    } else {
+      state.appointments.unshift({
+        id: uid(), patientId: pid, date, time, type, status, note,
+        createdAt: Date.now(), updatedAt: Date.now()
+      });
+      toast("Cita guardada");
+    }
+    save();
+    renderAppointments();
+    renderToday();
+  });
+
+  function statusPill(status){
+    if(status==="confirmed") return `<span class="pill ok">Confirmada</span>`;
+    if(status==="done") return `<span class="pill ok">Realizada</span>`;
+    if(status==="canceled") return `<span class="pill danger">Cancelada</span>`;
+    return `<span class="pill warn">Programada</span>`;
+  }
+
+  function renderAppointments(){
+    const list = $("apptList");
+    list.innerHTML = "";
+
+    const appts = state.appointments
+      .slice()
+      .sort((a,b)=> (a.date+a.time).localeCompare(b.date+b.time));
+
+    $("apptTotal").textContent = `${appts.length} citas registradas`;
+
+    appts.forEach(a => {
+      const p = getPatient(a.patientId);
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(a.date)} ${escapeHtml(a.time||"")}</div>
+            <div class="meta">
+              ${escapeHtml(p?.name || "Paciente")} ${p?.code ? `• <span class="mono">${escapeHtml(p.code)}</span>` : ""}
+              <br/>${escapeHtml(a.type)} ${a.note ? `• ${escapeHtml(a.note)}` : ""}
+            </div>
+          </div>
+          <div class="row" style="gap:6px;justify-content:flex-end">
+            ${statusPill(a.status)}
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn" data-act="edit">✏️ Editar</button>
+          <button class="btn ok" data-act="confirm">✅ Confirmar (WA)</button>
+          <button class="btn" data-act="done">✔️ Realizada</button>
+          <button class="btn danger" data-act="del">🗑️</button>
+        </div>
+      `;
+
+      div.querySelectorAll("button[data-act]").forEach(btn=>{
+        btn.addEventListener("click", (ev)=>{
+          ev.stopPropagation();
+          const act = btn.dataset.act;
+
+          if(act==="edit"){
+            editingApptId = a.id;
+            populatePatientSelect(apptPatient);
+            apptPatient.value = a.patientId;
+            apptDate.value = a.date;
+            apptTime.value = a.time || "";
+            apptType.value = a.type || "Presencial";
+            apptStatus.value = a.status || "scheduled";
+            apptNote.value = a.note || "";
+            toast("Editando cita");
+            return;
+          }
+          if(act==="confirm"){
+            const p = getPatient(a.patientId);
+            if(!p?.phone){ toast("Paciente sin teléfono"); return; }
+            a.status = "confirmed";
+            a.updatedAt = Date.now();
+            save();
+            renderAppointments();
+            renderToday();
+            const msg = `Hola ${p.name || ""}. Te confirmo tu cita el ${a.date} a las ${a.time}. ¿Me confirmas tu asistencia, por favor?`;
+            window.open(waLink(p.phone, msg), "_blank");
+            return;
+          }
+          if(act==="done"){
+            a.status = "done";
+            a.updatedAt = Date.now();
+            save();
+            renderAppointments();
+            renderToday();
+            toast("Marcada como realizada");
+            return;
+          }
+          if(act==="del"){
+            const ok = confirm("¿Eliminar esta cita?");
+            if(!ok) return;
+            state.appointments = state.appointments.filter(x=>x.id!==a.id);
+            if(editingApptId===a.id) editingApptId=null;
+            save();
+            renderAppointments();
+            renderToday();
+            toast("Cita eliminada");
+            return;
+          }
+        });
+      });
+
+      div.addEventListener("click", ()=>{
+        // seleccionar paciente al tocar la tarjeta
+        selectedPatientId = a.patientId;
+        renderPatients();
+      });
+
+      list.appendChild(div);
+    });
+
+    if(!editingApptId && apptDate.value===""){
+      resetApptForm();
+    }
+  }
+
+  // ===== Panel HOY =====
+  $("todayDate").value = todayISO();
+  $("btnTodayRefresh").addEventListener("click", ()=>renderToday());
+
+  $("btnAddApptQuick").addEventListener("click", ()=>{
+    switchTab("appointments");
+    resetApptForm();
+    toast("Crea la cita aquí");
+  });
+
+  $("btnAddApptQuick").addEventListener("dblclick", ()=>{});
+
+  function renderToday(){
+    const date = $("todayDate").value || todayISO();
+    const list = $("todayList");
+    list.innerHTML = "";
+
+    const todays = state.appointments
+      .filter(a => a.date === date && a.status !== "canceled")
+      .slice()
+      .sort((a,b)=> (a.time||"").localeCompare(b.time||""));
+
+    $("todayCount").textContent = `${todays.length} citas`;
+    const pending = todays.filter(a => a.status === "scheduled").length;
+    $("pendingCount").textContent = `${pending} sin confirmar`;
+
+    if(!todays.length){
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `<div class="name">No hay citas para hoy</div><div class="meta">Puedes crear una desde “➕ Cita”.</div>`;
+      list.appendChild(div);
+      return;
+    }
+
+    todays.forEach(a => {
+      const p = getPatient(a.patientId);
+      const div = document.createElement("div");
+      div.className = "item";
+
+      const sPill = statusPill(a.status);
+      const phoneOk = !!p?.phone;
+
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(a.time||"")} • ${escapeHtml(p?.name || "Paciente")}</div>
+            <div class="meta">
+              ${p?.code ? `<span class="mono">${escapeHtml(p.code)}</span> • ` : ""}
+              ${escapeHtml(a.type)} ${a.note ? `• ${escapeHtml(a.note)}` : ""}
+              <br/>${phoneOk ? `Tel: ${escapeHtml(p.phone)}` : `Tel: —`}
+            </div>
+          </div>
+          <div class="row" style="gap:6px;justify-content:flex-end">
+            ${sPill}
+          </div>
+        </div>
+        <div class="row" style="margin-top:10px">
+          <button class="btn ok" data-act="confirm" ${phoneOk ? "" : "disabled"}>✅ Confirmar (WA)</button>
+          <button class="btn" data-act="open">📄 Ficha</button>
+          <button class="btn primary" data-act="note">🧾 Nota de sesión</button>
+          <button class="btn" data-act="done">✔️ Realizada</button>
+        </div>
+      `;
+
+      div.querySelectorAll("button[data-act]").forEach(btn=>{
+        btn.addEventListener("click",(ev)=>{
+          ev.stopPropagation();
+          const act = btn.dataset.act;
+
+          if(act==="confirm"){
+            if(!p?.phone){ toast("Sin teléfono"); return; }
+            a.status = "confirmed";
+            a.updatedAt = Date.now();
+            save();
+            renderToday();
+            const msg = `Hola ${p.name || ""}. Te confirmo tu cita hoy (${a.date}) a las ${a.time}. ¿Me confirmas tu asistencia, por favor?`;
+            window.open(waLink(p.phone, msg), "_blank");
+            return;
+          }
+          if(act==="open"){
+            selectedPatientId = a.patientId;
+            renderPatients();
+            switchTab("patient");
+            return;
+          }
+          if(act==="note"){
+            selectedPatientId = a.patientId;
+            renderPatients();
+            startNewSessionFromAppt(a);
+            switchTab("session");
+            return;
+          }
+          if(act==="done"){
+            a.status = "done";
+            a.updatedAt = Date.now();
+            save();
+            renderToday();
+            toast("Marcada como realizada");
+            return;
+          }
+        });
+      });
+
+      list.appendChild(div);
+    });
+  }
+
+  // ===== Sesiones =====
+  function countSessions(pid){
+    if(!pid) return 0;
+    return state.sessions.filter(s=>s.patientId===pid).length;
+  }
+
+  function renderSessionsList(){
+    const list = $("sessList");
+    list.innerHTML = "";
+    const pid = selectedPatientId;
+    if(!pid){
+      $("sessCount").textContent = "0 sesiones registradas";
+      return;
+    }
+
+    const sessions = state.sessions
+      .filter(s=>s.patientId===pid)
+      .slice()
+      .sort((a,b)=> (b.date+b.time).localeCompare(a.date+a.time));
+
+    $("sessCount").textContent = `${sessions.length} sesiones registradas`;
+
+    if(!sessions.length){
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `<div class="name">Aún no hay sesiones</div><div class="meta">Crea una con “🧾 Nueva sesión”.</div>`;
+      list.appendChild(div);
+      return;
+    }
+
+    sessions.forEach(s=>{
+      const div = document.createElement("div");
+      div.className="item";
+      const focus = s.focus ? `• ${escapeHtml(s.focus)}` : "";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${escapeHtml(s.date)} ${escapeHtml(s.time||"")}</div>
+            <div class="meta">${focus}</div>
+          </div>
+          <span class="pill">Abrir</span>
+        </div>
+      `;
+      div.addEventListener("click", ()=>{
+        editingSessionId = s.id;
+        fillSessionForm(s);
+        switchTab("session");
+        toast("Sesión cargada");
+      });
+      list.appendChild(div);
+    });
+  }
+
+  $("btnNewSessionFromPatient").addEventListener("click", ()=>{
+    if(!selectedPatientId){ toast("Selecciona un paciente"); return; }
+    editingSessionId = null;
+    clearSessionForm();
+    // set defaults
+    $("sDate").value = todayISO();
+    $("sTime").value = nowTime();
+    renderSessionHeader();
+    switchTab("session");
+    toast("Nueva sesión");
+  });
+
+  function startNewSessionFromAppt(appt){
+    // crea una nueva sesión (sin guardar aún) con fecha/hora de la cita
+    editingSessionId = null;
+    clearSessionForm();
+    $("sDate").value = appt.date || todayISO();
+    $("sTime").value = appt.time || "";
+    $("sFocus").value = appt.note || "";
+    renderSessionHeader();
+  }
+
+  function renderSessionHeader(){
+    const p = getPatient(selectedPatientId);
+    $("sessPatientPill").textContent = `Paciente: ${p?.name || "—"}`;
+    $("sessDatePill").textContent = `Fecha: ${$("sDate").value || "—"}`;
+    $("btnDeleteSession").disabled = !editingSessionId;
+  }
+
+  // Session form elements
+  const sDate=$("sDate"), sTime=$("sTime"), sFocus=$("sFocus"),
+        sSummary=$("sSummary"), sIntervention=$("sIntervention"),
+        sResponse=$("sResponse"), sHomework=$("sHomework"), sNext=$("sNext");
+
+  sDate.addEventListener("input", ()=>renderSessionHeader());
+
+  function clearSessionForm(){
+    sDate.value = "";
+    sTime.value = "";
+    sFocus.value = "";
+    sSummary.value = "";
+    sIntervention.value = "";
+    sResponse.value = "";
+    sHomework.value = "";
+    sNext.value = "";
+  }
+  $("btnClearSession").addEventListener("click", ()=>{
+    clearSessionForm();
+    editingSessionId = null;
+    renderSessionHeader();
+    toast("Formulario limpio");
+  });
+
+  function fillSessionForm(s){
+    selectedPatientId = s.patientId;
+    renderPatients();
+    sDate.value = s.date || "";
+    sTime.value = s.time || "";
+    sFocus.value = s.focus || "";
+    sSummary.value = s.summary || "";
+    sIntervention.value = s.intervention || "";
+    sResponse.value = s.response || "";
+    sHomework.value = s.homework || "";
+    sNext.value = s.next || "";
+    renderSessionHeader();
+  }
+
+  $("btnSaveSession").addEventListener("click", ()=>{
+    if(!selectedPatientId){ toast("Selecciona un paciente"); return; }
+    const payload = {
+      patientId: selectedPatientId,
+      date: sDate.value || todayISO(),
+      time: sTime.value || "",
+      focus: (sFocus.value||"").trim(),
+      summary: (sSummary.value||"").trim(),
+      intervention: (sIntervention.value||"").trim(),
+      response: (sResponse.value||"").trim(),
+      homework: (sHomework.value||"").trim(),
+      next: (sNext.value||"").trim(),
+      updatedAt: Date.now(),
+    };
+
+    if(editingSessionId){
+      const s = state.sessions.find(x=>x.id===editingSessionId);
+      if(!s){ toast("No se encontró la sesión"); return; }
+      Object.assign(s, payload);
+      toast("Sesión actualizada");
+    } else {
+      const s = { id: uid(), createdAt: Date.now(), ...payload };
+      state.sessions.unshift(s);
+      editingSessionId = s.id;
+      toast("Sesión guardada");
+    }
+    save();
+    renderSessionsList();
+    renderPatients();
+    renderPatientForm();
+    renderSessionHeader();
+  });
+
+  $("btnDeleteSession").addEventListener("click", ()=>{
+    if(!editingSessionId) return;
+    const ok = confirm("¿Eliminar esta sesión?");
+    if(!ok) return;
+    state.sessions = state.sessions.filter(x=>x.id!==editingSessionId);
+    editingSessionId = null;
+    save();
+    renderSessionsList();
+    renderSessionHeader();
+    toast("Sesión eliminada");
+  });
+
+  // ===== Exportar a Word (sesión) =====
+  function exportSessionToWord(){
+    if(!selectedPatientId){ toast("Selecciona un paciente"); return; }
+    const p = getPatient(selectedPatientId);
+    const date = sDate.value || todayISO();
+    const time = sTime.value || "";
+    const safeName = `Sesion_${(p?.code || p?.name || "Paciente")}_${date}`.replace(/[^\w\-]+/g, "_");
+
+    const html = `
+    <!doctype html>
+    <html><head><meta charset="utf-8"><title>Nota de sesión</title></head>
+    <body style="font-family:Calibri, Arial, sans-serif; font-size:11pt; color:#111;">
+      <h2 style="margin:0 0 8px 0;">Nota de Sesión (Registro Clínico)</h2>
+      <p style="margin:0 0 12px 0;">
+        <b>Paciente:</b> ${escapeHtml(p?.name || "—")} ${p?.code ? `(<span>${escapeHtml(p.code)}</span>)` : ""}<br/>
+        <b>Fecha:</b> ${escapeHtml(date)} ${time ? `• <b>Hora:</b> ${escapeHtml(time)}` : ""}<br/>
+        <b>Teléfono:</b> ${escapeHtml(p?.phone || "—")}
+      </p>
+
+      <h3 style="margin:10px 0 6px 0;">1) Foco / objetivo</h3>
+      <div style="border:1px solid #ddd; padding:10px; border-radius:6px;">${escapeHtml((sFocus.value||"").trim()) || "<i>(vacío)</i>"}</div>
+
+      <h3 style="margin:14px 0 6px 0;">2) Resumen clínico</h3>
+      <div style="border:1px solid #ddd; padding:10px; border-radius:6px; line-height:1.4;">${escapeHtml((sSummary.value||"").trim()).replace(/\n/g,"<br/>") || "<i>(vacío)</i>"}</div>
+
+      <h3 style="margin:14px 0 6px 0;">3) Intervención / técnicas</h3>
+      <div style="border:1px solid #ddd; padding:10px; border-radius:6px; line-height:1.4;">${escapeHtml((sIntervention.value||"").trim()).replace(/\n/g,"<br/>") || "<i>(vacío)</i>"}</div>
+
+      <h3 style="margin:14px 0 6px 0;">4) Respuesta / observaciones</h3>
+      <div style="border:1px solid #ddd; padding:10px; border-radius:6px; line-height:1.4;">${escapeHtml((sResponse.value||"").trim()).replace(/\n/g,"<br/>") || "<i>(vacío)</i>"}</div>
+
+      <h3 style="margin:14px 0 6px 0;">5) Tareas para casa</h3>
+      <div style="border:1px solid #ddd; padding:10px; border-radius:6px; line-height:1.4;">${escapeHtml((sHomework.value||"").trim()).replace(/\n/g,"<br/>") || "<i>(vacío)</i>"}</div>
+
+      <h3 style="margin:14px 0 6px 0;">6) Próxima meta / plan</h3>
+      <div style="border:1px solid #ddd; padding:10px; border-radius:6px; line-height:1.4;">${escapeHtml((sNext.value||"").trim()).replace(/\n/g,"<br/>") || "<i>(vacío)</i>"}</div>
+
+      <p style="margin-top:14px;color:#666;font-size:10pt;">
+        Documento generado por sistema local de apoyo clínico. No constituye diagnóstico automático.
+      </p>
+      <p style="margin-top:18px;color:#666;font-size:10pt;">
+        Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.
+      </p>
+    </body></html>`;
+
+    const blob = new Blob([html], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${safeName}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+  $("btnExportWord").addEventListener("click", exportSessionToWord);
+
+  // ===== Backup: export / import =====
+  $("btnBackup").addEventListener("click", ()=>{
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      version: "agenda_clinica_local_v1",
+      data: state
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type:"application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `agenda_clinica_backup_${todayISO()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Backup exportado");
+  });
+
+  $("fileImport").addEventListener("change", async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f) return;
+    try{
+      const txt = await f.text();
+      const payload = JSON.parse(txt);
+      const data = payload?.data || payload; // soporta ambos formatos
+      if(!data || typeof data !== "object") throw new Error("Formato inválido");
+      // Merge suave
+      state = {
+        ...defaultState(),
+        ...data,
+        settings: { ...defaultState().settings, ...(data.settings||{}) }
+      };
+      save();
+      applyDiscrete();
+      selectedPatientId = null;
+      editingApptId = null;
+      editingSessionId = null;
+      // refresh
+      renderPatients();
+      populatePatientSelect($("apptPatient"));
+      switchTab("today");
+      toast("Backup importado");
+    }catch(err){
+      alert("No se pudo importar. Verifica que sea un JSON válido de backup.");
+    }finally{
+      e.target.value = "";
+    }
+  });
+
+  // ===== Reset =====
+  $("btnReset").addEventListener("click", ()=>{
+    const ok = confirm("Esto borrará TODO (pacientes, citas, sesiones). ¿Seguro?");
+    if(!ok) return;
+    localStorage.removeItem(KEY);
+    state = defaultState();
+    selectedPatientId = null;
+    editingApptId = null;
+    editingSessionId = null;
+    applyDiscrete();
+    renderPatients();
+    switchTab("today");
+    toast("Sistema reiniciado");
+  });
+
+  // ===== Inicialización =====
+  $("todayDate").addEventListener("change", renderToday);
+
+  // Default forms
+  resetApptForm();
+
+  // When opening appointments tab, ensure defaults
+  $("apptDate").value = todayISO();
+  $("apptTime").value = nowTime();
+
+  renderPatients();
+  populatePatientSelect($("apptPatient"));
+  switchTab("today");
+
+})();
+</script>
+</body>
+</html>

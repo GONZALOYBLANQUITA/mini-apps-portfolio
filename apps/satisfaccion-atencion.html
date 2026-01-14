@@ -1,0 +1,1433 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Índice de Satisfacción de Atención – Dashboard (Local)</title>
+  <style>
+    :root{
+      /* Paleta cálida + institucional (sin azul dominante) */
+      --bg0:#140f10;          /* vino muy oscuro */
+      --bg1:#1b1516;
+      --card: rgba(255,255,255,.06);
+      --card2: rgba(0,0,0,.16);
+      --border: rgba(255,255,255,.12);
+      --text:#fff4ea;
+      --muted: rgba(255,244,234,.72);
+
+      --sand:#f3e2c7;
+      --amber:#ffb74a;
+      --coral:#ff6f61;
+      --rose:#ff8fa3;
+      --sage:#7ad6b2;
+      --teal:#3dcbb4;
+      --plum:#c8a2ff;
+
+      --ok:#7ad6b2;
+      --warn:#ffcf6a;
+      --bad:#ff6f61;
+
+      --shadow: 0 18px 48px rgba(0,0,0,.45);
+      --radius: 18px;
+      --radius2: 16px;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:var(--sans); color:var(--text);
+      background:
+        radial-gradient(900px 520px at 15% -10%, rgba(255,183,74,.22), transparent 55%),
+        radial-gradient(900px 520px at 90% 0%, rgba(122,214,178,.16), transparent 55%),
+        radial-gradient(820px 460px at 70% 110%, rgba(255,111,97,.14), transparent 55%),
+        linear-gradient(180deg, var(--bg0), #0a0707 70%);
+      min-height:100vh;
+      padding:14px;
+    }
+    .wrap{max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+
+    header{
+      border:1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.10), transparent),
+        rgba(255,255,255,.05);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:14px;
+      display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;
+      backdrop-filter: blur(10px);
+    }
+    header h1{margin:0;font-size:18px;letter-spacing:.2px}
+    header p{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.35;max-width:860px}
+
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:flex-end}
+    .btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:13px;
+      cursor:pointer;
+      display:inline-flex;gap:8px;align-items:center;
+      user-select:none;
+      transition:transform .06s ease, background .2s ease, border-color .2s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{background:rgba(255,255,255,.10)}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{border-color:rgba(255,183,74,.38); background:rgba(255,183,74,.10)}
+    .btn.good{border-color:rgba(122,214,178,.38); background:rgba(122,214,178,.10)}
+    .btn.warn{border-color:rgba(255,207,106,.38); background:rgba(255,207,106,.10)}
+    .btn.bad{border-color:rgba(255,111,97,.38); background:rgba(255,111,97,.10)}
+
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      font-size:12px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      color:var(--muted);
+      background:rgba(255,255,255,.05);
+      white-space:nowrap;
+    }
+    .pill .dot{width:9px;height:9px;border-radius:99px;background:rgba(255,255,255,.35)}
+    .pill.ok{border-color:rgba(122,214,178,.40); color:#e9fff6; background:rgba(122,214,178,.10)}
+    .pill.ok .dot{background:rgba(122,214,178,.95)}
+    .pill.warn{border-color:rgba(255,207,106,.40); color:#fff3d9; background:rgba(255,207,106,.10)}
+    .pill.warn .dot{background:rgba(255,207,106,.95)}
+    .pill.bad{border-color:rgba(255,111,97,.40); color:#ffe2df; background:rgba(255,111,97,.10)}
+    .pill.bad .dot{background:rgba(255,111,97,.95)}
+    .pill.accent{border-color:rgba(255,183,74,.40); color:#fff2df; background:rgba(255,183,74,.10)}
+    .pill.plain{color:var(--muted)}
+
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width: 980px){
+      .grid{grid-template-columns:1fr 1fr 1fr}
+      .span2{grid-column:span 2}
+    }
+
+    .card{
+      border:1px solid var(--border);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.07), transparent),
+        rgba(255,255,255,.05);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(10px);
+    }
+    .hd{
+      padding:12px;
+      border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .hd h2{margin:0;font-size:14px}
+    .hd small{color:var(--muted)}
+    .bd{padding:12px}
+
+    .kpis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .kpi{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.10));
+      border-radius:16px;
+      padding:10px;
+      position:relative;
+      overflow:hidden;
+    }
+    .kpi::after{
+      content:"";
+      position:absolute; inset:-40px -60px auto auto;
+      width:140px; height:140px;
+      border-radius:999px;
+      filter:blur(0px);
+      opacity:.22;
+      background: radial-gradient(circle at 30% 30%, rgba(255,183,74,.9), transparent 65%);
+      pointer-events:none;
+    }
+    .kpi .label{color:var(--muted);font-size:12px;display:flex;gap:8px;align-items:center}
+    .ico{
+      width:22px;height:22px;border-radius:10px;
+      display:inline-flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      font-size:13px;
+    }
+    .kpi .value{font-size:22px;font-weight:900;margin-top:6px}
+    .kpi .sub{color:var(--muted);font-size:12px;margin-top:6px;line-height:1.3}
+    .kpi .mini{
+      margin-top:10px;
+      height:8px;border-radius:999px;background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .kpi .mini > i{
+      display:block;height:100%;width:0%;
+      background: linear-gradient(90deg, rgba(255,111,97,.95), rgba(255,207,106,.95), rgba(122,214,178,.95));
+      border-radius:999px;
+    }
+
+    label{font-size:12px;color:var(--muted);display:block;margin:0 0 6px 2px}
+    input, select, textarea{
+      width:100%;
+      border:1px solid var(--border);
+      background:rgba(0,0,0,.20);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      font-size:13px;
+      outline:none;
+    }
+    textarea{min-height:78px;resize:vertical;line-height:1.4}
+    .two{display:grid;grid-template-columns:1fr;gap:10px}
+    @media(min-width:720px){ .two{grid-template-columns:1fr 1fr} }
+    .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+    .sep{height:1px;background:var(--border);margin:12px 0}
+    .hint{color:var(--muted);font-size:12px;line-height:1.35}
+
+    canvas{
+      width:100%;
+      height:240px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:16px;
+      background:linear-gradient(180deg, rgba(0,0,0,.18), rgba(0,0,0,.10));
+    }
+
+    .list{display:flex;flex-direction:column;gap:10px;max-height:290px;overflow:auto;padding-right:4px}
+    .item{
+      border:1px solid var(--border);
+      background:linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.12));
+      border-radius:16px;
+      padding:10px;
+    }
+    .item .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .item .name{font-weight:900;font-size:13px}
+    .item .meta{color:var(--muted);font-size:12px;line-height:1.25;margin-top:4px}
+    .badge{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:12px;padding:6px 10px;border-radius:999px;border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+    }
+    .badge.ok{border-color:rgba(122,214,178,.40); background:rgba(122,214,178,.10)}
+    .badge.warn{border-color:rgba(255,207,106,.40); background:rgba(255,207,106,.10)}
+    .badge.bad{border-color:rgba(255,111,97,.40); background:rgba(255,111,97,.10)}
+    .badge .dot{width:8px;height:8px;border-radius:99px;background:rgba(255,255,255,.35)}
+    .badge.ok .dot{background:rgba(122,214,178,.95)}
+    .badge.warn .dot{background:rgba(255,207,106,.95)}
+    .badge.bad .dot{background:rgba(255,111,97,.95)}
+
+    .foot{
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      padding:6px 0 2px;
+    }
+    .toast{
+      position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+      background:rgba(0,0,0,.55);
+      border:1px solid rgba(255,255,255,.18);
+      color:var(--text);
+      padding:10px 12px;border-radius:999px;font-size:13px;
+      box-shadow:var(--shadow);
+      opacity:0;transition:opacity .2s ease, transform .2s ease;
+      pointer-events:none;z-index:60;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) translateY(-4px)}
+
+    /* Modal: editar mes */
+    .modalBg{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.55);
+      display:none; align-items:center; justify-content:center;
+      padding:14px; z-index:80;
+    }
+    .modal{
+      width:min(720px, 100%);
+      border:1px solid rgba(255,255,255,.16);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(0,0,0,.18));
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter: blur(12px);
+    }
+    .modal .mhd{
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+    }
+    .modal .mhd h3{margin:0;font-size:15px}
+    .modal .mbd{padding:12px}
+    .modal .mft{padding:12px;border-top:1px solid rgba(255,255,255,.12);display:flex;gap:10px;justify-content:flex-end}
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>🧡 Dashboard – Índice de Satisfacción de Atención</h1>
+      <p>
+        Sistema <b>local y seguro</b> (sin servidor): registra encuestas por mes, calcula indicadores (Satisfacción, NPS, Espera),
+        y genera un <b>Índice global 0–100</b> con tendencia, comparación con meta, distribución por servicio y gestión de comentarios.
+      </p>
+    </div>
+    <div class="toolbar">
+      <span class="pill plain" id="pillStatus"><span class="dot"></span> Estado: listo</span>
+
+      <button class="btn primary" id="btnAddMonth">➕ Mes</button>
+
+      <button class="btn good" id="btnExportCsv">📄 Exportar CSV</button>
+      <button class="btn good" id="btnBackup">⬇️ Backup</button>
+      <label class="btn primary" style="cursor:pointer">
+        ⬆️ Importar
+        <input id="fileImport" type="file" accept="application/json" style="display:none">
+      </label>
+
+      <button class="btn warn" id="btnDemo">✨ Demo</button>
+      <button class="btn bad" id="btnReset">🧨 Reset</button>
+    </div>
+  </header>
+
+  <div class="grid">
+
+    <!-- KPI + Config -->
+    <section class="card">
+      <div class="hd">
+        <h2>📌 KPIs + Configuración</h2>
+        <small id="kpiSubtitle">Cálculo automático</small>
+      </div>
+      <div class="bd">
+        <div class="kpis">
+          <div class="kpi">
+            <div class="label"><span class="ico">🏆</span> Índice global (0–100)</div>
+            <div class="value" id="kpiIndex">—</div>
+            <div class="sub">Meta: <b id="kpiTarget">85</b> • Semáforo institucional</div>
+            <div class="mini"><i id="barIndex"></i></div>
+          </div>
+
+          <div class="kpi">
+            <div class="label"><span class="ico">😊</span> Satisfacción (%)</div>
+            <div class="value" id="kpiSat">—</div>
+            <div class="sub">“Buena o excelente” / total</div>
+            <div class="mini"><i id="barSat"></i></div>
+          </div>
+
+          <div class="kpi">
+            <div class="label"><span class="ico">📣</span> NPS</div>
+            <div class="value" id="kpiNps">—</div>
+            <div class="sub">Promotores – Detractores</div>
+            <div class="mini"><i id="barNps"></i></div>
+          </div>
+
+          <div class="kpi">
+            <div class="label"><span class="ico">⏱️</span> Espera prom. (min)</div>
+            <div class="value" id="kpiWait">—</div>
+            <div class="sub">Se usa en el índice (inverso)</div>
+            <div class="mini"><i id="barWait"></i></div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="two">
+          <div>
+            <label for="target">Meta del índice (0–100)</label>
+            <input id="target" type="number" min="0" max="100" value="85">
+          </div>
+          <div>
+            <label for="period">Periodo visible</label>
+            <select id="period">
+              <option value="12">Últimos 12 meses</option>
+              <option value="8">Últimos 8 meses</option>
+              <option value="6">Últimos 6 meses</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="two">
+          <div>
+            <label for="wSat">Peso Satisfacción (%)</label>
+            <input id="wSat" type="number" min="0" max="100" value="55">
+          </div>
+          <div>
+            <label for="wNps">Peso NPS (%)</label>
+            <input id="wNps" type="number" min="0" max="100" value="25">
+          </div>
+          <div>
+            <label for="wWait">Peso Espera (%)</label>
+            <input id="wWait" type="number" min="0" max="100" value="20">
+          </div>
+          <div>
+            <label for="waitMax">Espera “máxima” para normalizar (min)</label>
+            <input id="waitMax" type="number" min="10" max="240" value="45">
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+        <button class="btn primary" id="btnRecalc">🔄 Recalcular</button>
+
+        <div class="sep"></div>
+        <label>Semáforo</label>
+        <div class="row">
+          <span class="pill ok"><span class="dot"></span> ≥ Meta</span>
+          <span class="pill warn"><span class="dot"></span> Meta −10</span>
+          <span class="pill bad"><span class="dot"></span> &lt; Meta −10</span>
+        </div>
+
+        <div class="sep"></div>
+        <div class="hint">
+          Todo se guarda en tu navegador (localStorage). Puedes exportar CSV o hacer backup JSON para moverlo a otra PC.
+        </div>
+      </div>
+    </section>
+
+    <!-- Tendencia + Editor mensual -->
+    <section class="card span2">
+      <div class="hd">
+        <h2>📈 Tendencia mensual + Editor (click en un punto)</h2>
+        <small>Índice global vs Meta • editable por mes</small>
+      </div>
+      <div class="bd">
+        <canvas id="chartTrend" width="1200" height="240"></canvas>
+        <div class="hint" style="margin-top:8px">
+          ✨ Consejo: usa el botón <b>➕ Mes</b> para crear nuevos periodos y luego edítalos.
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between">
+          <h2 style="margin:0;font-size:14px">📊 Distribución por servicio (Satisfacción %)</h2>
+          <span class="pill accent" id="serviceAvg"><span class="dot" style="background:rgba(255,183,74,.9)"></span> Promedio: —</span>
+        </div>
+        <div style="height:10px"></div>
+        <canvas id="chartBars" width="1200" height="240"></canvas>
+      </div>
+    </section>
+
+    <!-- Comentarios + Registro -->
+    <section class="card">
+      <div class="hd">
+        <h2>💬 Comentarios + NPS</h2>
+        <small>Opiniones + clasificación</small>
+      </div>
+      <div class="bd">
+        <div class="row" style="justify-content:space-between">
+          <span class="pill accent"><span class="dot" style="background:rgba(255,207,106,.95)"></span> Comentarios recientes</span>
+          <span class="pill plain" id="reviewCount"><span class="dot"></span> 0</span>
+        </div>
+
+        <div style="height:10px"></div>
+        <div class="list" id="reviewList"></div>
+
+        <div class="sep"></div>
+
+        <div class="row" style="justify-content:space-between;align-items:flex-end">
+          <div style="flex:1">
+            <label>➕ Agregar comentario (influye en NPS del mes actual)</label>
+            <div class="hint">Selecciona mes + servicio + tipo (promotor/pasivo/detractor).</div>
+          </div>
+          <button class="btn good" id="btnAddReview">Agregar</button>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="rMonth">Mes</label>
+            <select id="rMonth"></select>
+          </div>
+          <div>
+            <label for="rService">Servicio</label>
+            <select id="rService"></select>
+          </div>
+        </div>
+        <div class="two" style="margin-top:10px">
+          <div>
+            <label for="rScore">Tipo NPS</label>
+            <select id="rScore">
+              <option value="promotor">Promotor (9–10)</option>
+              <option value="pasivo">Pasivo (7–8)</option>
+              <option value="detractor">Detractor (0–6)</option>
+            </select>
+          </div>
+          <div>
+            <label for="rStars">Estrellas (1–5)</label>
+            <select id="rStars">
+              <option value="5">5 ⭐⭐⭐⭐⭐</option>
+              <option value="4">4 ⭐⭐⭐⭐</option>
+              <option value="3">3 ⭐⭐⭐</option>
+              <option value="2">2 ⭐⭐</option>
+              <option value="1">1 ⭐</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <label for="rText">Comentario</label>
+          <textarea id="rText" placeholder="Ej.: trato cálido y claro / alta demora / orientación insuficiente / etc."></textarea>
+        </div>
+
+        <div class="sep"></div>
+
+        <label>🎛️ Indicador tipo “velocímetro” (Índice global)</label>
+        <canvas id="gauge" width="1200" height="240"></canvas>
+        <div class="hint" style="margin-top:8px">
+          La aguja refleja el promedio del periodo visible.
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="foot">Todas las mini aplicaciones fueron desarrolladas por Lic. Gonzalo Buendía – Psicólogo, y Blanquita – Co terapeuta.</div>
+</div>
+
+<!-- Modal editor de mes -->
+<div class="modalBg" id="modalBg">
+  <div class="modal">
+    <div class="mhd">
+      <h3 id="mTitle">Editar mes</h3>
+      <button class="btn bad" id="mClose">✖ Cerrar</button>
+    </div>
+    <div class="mbd">
+      <div class="two">
+        <div>
+          <label for="mYm">Mes (YYYY-MM)</label>
+          <input id="mYm" type="text" placeholder="2026-01"/>
+        </div>
+        <div>
+          <label for="mTotal">Encuestas (total)</label>
+          <input id="mTotal" type="number" min="0" max="99999"/>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:10px">
+        <div>
+          <label for="mGood">Buenas/Excelentes</label>
+          <input id="mGood" type="number" min="0" max="99999"/>
+        </div>
+        <div>
+          <label for="mWait">Espera promedio (min)</label>
+          <input id="mWait" type="number" min="0" max="240"/>
+        </div>
+      </div>
+
+      <div class="two" style="margin-top:10px">
+        <div>
+          <label for="mProm">NPS: Promotores (conteo)</label>
+          <input id="mProm" type="number" min="0" max="99999"/>
+        </div>
+        <div>
+          <label for="mDetr">NPS: Detractores (conteo)</label>
+          <input id="mDetr" type="number" min="0" max="99999"/>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+      <div class="hint">
+        El sistema recalcula automáticamente: Satisfacción %, NPS y el Índice global.
+      </div>
+    </div>
+    <div class="mft">
+      <button class="btn warn" id="mDelete">🗑️ Eliminar mes</button>
+      <button class="btn primary" id="mSave">💾 Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Listo</div>
+
+<script>
+(() => {
+  const KEY = "dash_satisfaccion_atencion_local_v2";
+  const $ = (id)=>document.getElementById(id);
+  const toastEl = $("toast");
+  const toast = (msg)=>{
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    setTimeout(()=>toastEl.classList.remove("show"), 1700);
+  };
+
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max, v));
+  const uid=()=>Math.random().toString(16).slice(2)+Date.now().toString(16);
+  const esc=(s)=>(s||"").replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;" }[c]));
+  const now = new Date();
+  const ym = (d)=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+  const monthName = (yyyyMM)=>{
+    const [y,m]=yyyyMM.split("-").map(Number);
+    const names=["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+    return `${names[m-1]} ${String(y).slice(2)}`;
+  };
+  const byYm=(a,b)=> (a.ym||"").localeCompare(b.ym||"");
+
+  const defaultState = () => ({
+    target: 85,
+    period: 12,
+    weights: { sat:55, nps:25, wait:20 },
+    waitMax: 45,
+    services: [
+      {id:"adm", name:"Admisión"},
+      {id:"medgen", name:"Medicina General"},
+      {id:"psico", name:"Psicología"},
+      {id:"pedi", name:"Pediatría"},
+      {id:"lab", name:"Laboratorio"}
+    ],
+    months: [
+      // {ym,total,good,wait,prom, detr, satPct, nps, index}
+    ],
+    reviews: [
+      // {id, ts, ym, serviceId, scoreType, stars, text}
+    ]
+  });
+
+  let state = defaultState();
+
+  function load(){
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return;
+    try{
+      const d = JSON.parse(raw);
+      if(d && typeof d==="object"){
+        state = { ...defaultState(), ...d };
+        // compat weights
+        state.weights = { ...defaultState().weights, ...(state.weights||{}) };
+        if(!Array.isArray(state.months)) state.months=[];
+        if(!Array.isArray(state.reviews)) state.reviews=[];
+      }
+    }catch{}
+  }
+  function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+  function ensureMonths(n=12){
+    const set = new Set(state.months.map(m=>m.ym));
+    for(let i=n-1;i>=0;i--){
+      const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+      const key = ym(d);
+      if(!set.has(key)){
+        // Crea un mes con datos reales (no “bonitos”): se pueden editar
+        const total = clamp(Math.round(40 + Math.random()*110), 15, 260);
+        const good  = clamp(Math.round(total * (0.74 + Math.random()*0.18)), 0, total);
+        const wait  = clamp(Math.round(10 + Math.random()*22), 2, 65);
+        const prom  = clamp(Math.round(total * (0.30 + Math.random()*0.18)), 0, total);
+        const detr  = clamp(Math.round(total * (0.08 + Math.random()*0.14)), 0, total);
+        state.months.push({ym:key,total,good,wait,prom,detr});
+      }
+    }
+    state.months.sort(byYm);
+  }
+
+  // ---------- Cálculos ----------
+  function computeSatPct(m){
+    const t = Math.max(0, Number(m.total||0));
+    const g = clamp(Number(m.good||0), 0, t);
+    return t===0 ? 0 : Math.round((g/t)*100);
+  }
+  function computeNps(m){
+    const t = Math.max(0, Number(m.total||0));
+    const prom = clamp(Number(m.prom||0), 0, t);
+    const detr = clamp(Number(m.detr||0), 0, t);
+    if(t===0) return 0;
+    const nps = Math.round((prom/t)*100 - (detr/t)*100);
+    return clamp(nps, -100, 100);
+  }
+  function computeIndexFrom(m){
+    const wSat = clamp(Number(state.weights.sat||55),0,100);
+    const wNps = clamp(Number(state.weights.nps||25),0,100);
+    const wWait= clamp(Number(state.weights.wait||20),0,100);
+    const sum = wSat + wNps + wWait || 1;
+
+    const sat = clamp(m.satPct ?? computeSatPct(m), 0, 100);
+    const nps = m.nps ?? computeNps(m);
+    const npsNorm = clamp((nps + 100)/2, 0, 100);
+
+    const waitMax = clamp(Number(state.waitMax||45), 10, 240);
+    const wait = clamp(Number(m.wait||0), 0, 240);
+    const waitNorm = clamp(100 - (wait/waitMax)*100, 0, 100);
+
+    const idx = Math.round((sat*wSat + npsNorm*wNps + waitNorm*wWait) / sum);
+    return clamp(idx, 0, 100);
+  }
+
+  function recomputeAll(){
+    state.target = clamp(Number($("target").value||85),0,100);
+    state.period = Number($("period").value||12);
+
+    const wSat = clamp(Number($("wSat").value||55),0,100);
+    const wNps = clamp(Number($("wNps").value||25),0,100);
+    const wWait= clamp(Number($("wWait").value||20),0,100);
+    state.weights = { sat:wSat, nps:wNps, wait:wWait };
+
+    state.waitMax = clamp(Number($("waitMax").value||45), 10, 240);
+
+    state.months = state.months.map(m=>{
+      const satPct = computeSatPct(m);
+      const nps = computeNps(m);
+      const index = computeIndexFrom({ ...m, satPct, nps });
+      return { ...m, satPct, nps, index };
+    }).sort(byYm);
+
+    save();
+  }
+
+  function avg(arr){
+    if(!arr.length) return 0;
+    return arr.reduce((a,b)=>a+b,0) / arr.length;
+  }
+
+  function statusFromIndex(idx){
+    const t = state.target;
+    if(idx >= t) return {cls:"ok", text:"OK (sobre meta)"};
+    if(idx >= t-10) return {cls:"warn", text:"Alerta (cerca de meta)"};
+    return {cls:"bad", text:"Riesgo (bajo meta)"};
+  }
+
+  // ---------- Render ----------
+  function setMiniBar(id, pct){
+    const el = $(id);
+    el.style.width = clamp(pct,0,100) + "%";
+  }
+
+  function renderKpis(){
+    const vis = state.months.slice(-state.period);
+    const idxAvg = Math.round(avg(vis.map(m=>m.index||0)));
+    const satAvg = Math.round(avg(vis.map(m=>m.satPct||0)));
+    const npsAvg = Math.round(avg(vis.map(m=>m.nps||0)));
+    const waitAvg= Math.round(avg(vis.map(m=>m.wait||0)));
+
+    $("kpiIndex").textContent = idxAvg || 0;
+    $("kpiSat").textContent = (satAvg || 0) + "%";
+    $("kpiNps").textContent = (npsAvg || 0);
+    $("kpiWait").textContent = (waitAvg || 0);
+
+    $("kpiTarget").textContent = state.target;
+    $("kpiSubtitle").textContent = `Promedio (${state.period} meses) • Meta ${state.target}`;
+
+    setMiniBar("barIndex", idxAvg);
+    setMiniBar("barSat", satAvg);
+    setMiniBar("barNps", clamp((npsAvg+100)/2, 0, 100));
+    // espera: barra inversa
+    const waitNorm = clamp(100 - (waitAvg/state.waitMax)*100, 0, 100);
+    setMiniBar("barWait", waitNorm);
+
+    const st = statusFromIndex(idxAvg);
+    const pill = $("pillStatus");
+    pill.className = "pill " + st.cls;
+    pill.innerHTML = `<span class="dot"></span> Estado: ${st.text}`;
+  }
+
+  function renderSelects(){
+    const rm = $("rMonth");
+    rm.innerHTML = "";
+    state.months.slice().sort(byYm).forEach(m=>{
+      const op = document.createElement("option");
+      op.value = m.ym;
+      op.textContent = `${m.ym} • ${monthName(m.ym)}`;
+      rm.appendChild(op);
+    });
+    // default: último mes
+    const last = state.months[state.months.length-1]?.ym;
+    if(last) rm.value = last;
+
+    const rs = $("rService");
+    rs.innerHTML = "";
+    state.services.forEach(s=>{
+      const op = document.createElement("option");
+      op.value = s.id;
+      op.textContent = s.name;
+      rs.appendChild(op);
+    });
+  }
+
+  function renderReviews(){
+    const list = $("reviewList");
+    list.innerHTML = "";
+    const arr = state.reviews.slice().sort((a,b)=>b.ts-a.ts);
+
+    $("reviewCount").innerHTML = `<span class="dot"></span> ${arr.length}`;
+
+    if(!arr.length){
+      list.innerHTML = `
+        <div class="item">
+          <div class="name">Aún no hay comentarios</div>
+          <div class="meta">Agrega opiniones para enriquecer el seguimiento de calidad (y alimentar NPS por mes).</div>
+        </div>`;
+      return;
+    }
+
+    arr.slice(0,12).forEach(r=>{
+      const svc = state.services.find(s=>s.id===r.serviceId)?.name || "Servicio";
+      const cls = r.scoreType==="promotor" ? "ok" : (r.scoreType==="pasivo" ? "warn" : "bad");
+      const lab = r.scoreType==="promotor" ? "Promotor" : (r.scoreType==="pasivo" ? "Pasivo" : "Detractor");
+      const dt = new Date(r.ts).toLocaleString();
+      const stars = "★".repeat(Number(r.stars||0)) + "☆".repeat(5-Number(r.stars||0));
+
+      const div = document.createElement("div");
+      div.className="item";
+      div.innerHTML = `
+        <div class="top">
+          <div>
+            <div class="name">${esc(svc)} • ${esc(r.ym)} • <span class="badge ${cls}"><span class="dot"></span>${lab}</span></div>
+            <div class="meta">${stars} <br/>${esc(r.text||"—")}<br/>${dt}</div>
+          </div>
+          <button class="btn bad" data-del="${r.id}">🗑️</button>
+        </div>
+      `;
+      div.querySelector("button[data-del]").onclick=()=>{
+        if(!confirm("¿Eliminar comentario?")) return;
+        state.reviews = state.reviews.filter(x=>x.id!==r.id);
+        save();
+        renderAll();
+        toast("Comentario eliminado");
+      };
+      list.appendChild(div);
+    });
+  }
+
+  // ---------- Charts (Canvas) ----------
+  function drawTrend(){
+    const c = $("chartTrend");
+    const ctx = c.getContext("2d");
+    const W=c.width, H=c.height;
+
+    ctx.clearRect(0,0,W,H);
+
+    // Fondo suave
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0, "rgba(255,183,74,.06)");
+    g.addColorStop(1, "rgba(0,0,0,.20)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,W,H);
+
+    const left=52,right=18,top=18,bottom=34;
+    const w=W-left-right, h=H-top-bottom;
+
+    // grid
+    ctx.strokeStyle="rgba(255,255,255,.10)";
+    ctx.lineWidth=1;
+    for(let i=0;i<=5;i++){
+      const y=top + (h*i/5);
+      ctx.beginPath(); ctx.moveTo(left,y); ctx.lineTo(left+w,y); ctx.stroke();
+    }
+
+    // axes
+    ctx.strokeStyle="rgba(255,255,255,.16)";
+    ctx.beginPath(); ctx.moveTo(left,top); ctx.lineTo(left,top+h); ctx.lineTo(left+w,top+h); ctx.stroke();
+
+    const data = state.months.slice(-state.period);
+    if(!data.length){
+      ctx.fillStyle="rgba(255,244,234,.75)";
+      ctx.fillText("Sin datos", left+10, top+24);
+      return;
+    }
+
+    const xAt=(i)=> data.length===1 ? left+w/2 : left + (w*i/(data.length-1));
+    const yAt=(v)=> top + h - (clamp(v,0,100)/100)*h;
+
+    // y labels
+    ctx.fillStyle="rgba(255,244,234,.70)";
+    ctx.font="12px Arial";
+    [0,25,50,75,100].forEach(v=>{
+      ctx.fillText(String(v), 12, yAt(v)+4);
+    });
+
+    // Target line (amber)
+    ctx.strokeStyle="rgba(255,183,74,.70)";
+    ctx.lineWidth=2;
+    ctx.setLineDash([6,5]);
+    ctx.beginPath();
+    ctx.moveTo(left, yAt(state.target));
+    ctx.lineTo(left+w, yAt(state.target));
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Area fill under index line
+    const areaGrad = ctx.createLinearGradient(0,top,0,top+h);
+    areaGrad.addColorStop(0, "rgba(122,214,178,.22)");
+    areaGrad.addColorStop(1, "rgba(255,111,97,.06)");
+    ctx.fillStyle = areaGrad;
+    ctx.beginPath();
+    data.forEach((m,i)=>{
+      const x=xAt(i), y=yAt(m.index);
+      if(i===0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    });
+    ctx.lineTo(xAt(data.length-1), top+h);
+    ctx.lineTo(xAt(0), top+h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Index line
+    const lineGrad = ctx.createLinearGradient(left,0,left+w,0);
+    lineGrad.addColorStop(0, "rgba(255,111,97,.92)");
+    lineGrad.addColorStop(.5,"rgba(255,207,106,.92)");
+    lineGrad.addColorStop(1, "rgba(122,214,178,.92)");
+
+    ctx.strokeStyle=lineGrad;
+    ctx.lineWidth=3;
+    ctx.beginPath();
+    data.forEach((m,i)=>{
+      const x=xAt(i), y=yAt(m.index);
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+
+    // Dots
+    data.forEach((m,i)=>{
+      const x=xAt(i), y=yAt(m.index);
+      ctx.fillStyle="rgba(0,0,0,.28)";
+      ctx.beginPath(); ctx.arc(x,y,6.4,0,Math.PI*2); ctx.fill();
+
+      ctx.fillStyle="rgba(255,244,234,.92)";
+      ctx.beginPath(); ctx.arc(x,y,4.2,0,Math.PI*2); ctx.fill();
+    });
+
+    // x labels max 6
+    ctx.fillStyle="rgba(255,244,234,.62)";
+    const maxTicks=6;
+    data.forEach((m,i)=>{
+      const show = (data.length<=maxTicks) || i===0 || i===data.length-1 || (i % Math.ceil((data.length-1)/(maxTicks-1))===0);
+      if(!show) return;
+      ctx.fillText(monthName(m.ym), xAt(i)-18, top+h+22);
+    });
+
+    // Click to edit month
+    c.onclick=(ev)=>{
+      const r=c.getBoundingClientRect();
+      const mx=(ev.clientX-r.left)*(W/r.width);
+      const my=(ev.clientY-r.top)*(H/r.height);
+
+      let best={i:-1,d:1e18};
+      data.forEach((m,i)=>{
+        const x=xAt(i), y=yAt(m.index);
+        const d=(mx-x)*(mx-x)+(my-y)*(my-y);
+        if(d<best.d) best={i,d};
+      });
+      if(best.i>=0 && best.d<1200){
+        const chosen = data[best.i];
+        openMonthEditor(chosen.ym);
+      }
+    };
+  }
+
+  function drawBars(){
+    const c = $("chartBars");
+    const ctx = c.getContext("2d");
+    const W=c.width, H=c.height;
+    ctx.clearRect(0,0,W,H);
+
+    const bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,"rgba(255,207,106,.06)");
+    bg.addColorStop(1,"rgba(0,0,0,.20)");
+    ctx.fillStyle=bg;
+    ctx.fillRect(0,0,W,H);
+
+    const left=52,right=18,top=18,bottom=40;
+    const w=W-left-right, h=H-top-bottom;
+
+    ctx.strokeStyle="rgba(255,255,255,.16)";
+    ctx.beginPath(); ctx.moveTo(left,top); ctx.lineTo(left,top+h); ctx.lineTo(left+w,top+h); ctx.stroke();
+
+    // Determina el “mes actual” para mostrar distribución real por servicio
+    const currentYm = state.months[state.months.length-1]?.ym;
+    // base desde comentarios (por servicio)
+    const per = {};
+    state.services.forEach(s=> per[s.id]={sum:0, n:0});
+
+    // si hay reviews del mes, calculamos % satisfacción por estrellas>=4
+    state.reviews.filter(r=>r.ym===currentYm).forEach(r=>{
+      const st = per[r.serviceId];
+      if(!st) return;
+      const sat = Number(r.stars||0) >= 4 ? 1 : 0;
+      st.sum += sat;
+      st.n += 1;
+    });
+
+    // si un servicio no tiene reviews, usamos el satPct del mes como aproximación
+    const monthSat = state.months.find(m=>m.ym===currentYm)?.satPct ?? 80;
+
+    const items = state.services.map(s=>{
+      const st = per[s.id];
+      let satPct;
+      if(st.n>0) satPct = Math.round((st.sum/st.n)*100);
+      else satPct = clamp(monthSat + Math.round((Math.random()*10)-5), 55, 98);
+      return {id:s.id, name:s.name, sat:satPct, n: st.n};
+    });
+
+    const avgSat = Math.round(items.reduce((a,b)=>a+b.sat,0)/items.length);
+    $("serviceAvg").textContent = `Promedio: ${avgSat}%`;
+
+    // grid y labels
+    ctx.fillStyle="rgba(255,244,234,.70)";
+    ctx.font="12px Arial";
+    [0,25,50,75,100].forEach(v=>{
+      const y=top + h - (v/100)*h;
+      ctx.fillText(String(v), 12, y+4);
+      ctx.strokeStyle="rgba(255,255,255,.08)";
+      ctx.beginPath(); ctx.moveTo(left,y); ctx.lineTo(left+w,y); ctx.stroke();
+    });
+
+    const barW = w / (items.length*1.65);
+    const gap = barW*0.65;
+
+    items.forEach((it,i)=>{
+      const x = left + i*(barW+gap) + 10;
+      const barH = (it.sat/100)*h;
+      const y = top + h - barH;
+
+      // gradiente cálido por barra
+      const gg = ctx.createLinearGradient(0,y,0,y+barH);
+      gg.addColorStop(0, "rgba(255,111,97,.92)");
+      gg.addColorStop(.55, "rgba(255,207,106,.92)");
+      gg.addColorStop(1, "rgba(122,214,178,.92)");
+      ctx.fillStyle = gg;
+
+      // barra redondeada
+      roundRect(ctx, x, y, barW, barH, 10);
+      ctx.fill();
+
+      // valor
+      ctx.fillStyle="rgba(255,244,234,.88)";
+      ctx.fillText(it.sat+"%", x-2, y-6);
+
+      // etiqueta
+      ctx.fillStyle="rgba(255,244,234,.62)";
+      const label = it.name.length>12 ? it.name.slice(0,12)+"…" : it.name;
+      ctx.fillText(label, x-6, top+h+22);
+
+      // n reviews
+      if(it.n>0){
+        ctx.fillStyle="rgba(255,244,234,.52)";
+        ctx.fillText(`${it.n} rev`, x-2, top+h+36);
+      }
+    });
+
+    // helper: roundRect
+    function roundRect(ctx,x,y,w,h,r){
+      r = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+r,y);
+      ctx.arcTo(x+w,y,x+w,y+h,r);
+      ctx.arcTo(x+w,y+h,x,y+h,r);
+      ctx.arcTo(x,y+h,x,y,r);
+      ctx.arcTo(x,y,x+w,y,r);
+      ctx.closePath();
+    }
+  }
+
+  function drawGauge(){
+    const c = $("gauge");
+    const ctx = c.getContext("2d");
+    const W=c.width, H=c.height;
+    ctx.clearRect(0,0,W,H);
+
+    const bg = ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,"rgba(122,214,178,.05)");
+    bg.addColorStop(1,"rgba(0,0,0,.20)");
+    ctx.fillStyle=bg;
+    ctx.fillRect(0,0,W,H);
+
+    const vis = state.months.slice(-state.period);
+    const idx = Math.round(avg(vis.map(m=>m.index||0)));
+
+    const cx = W/2, cy = H*0.92;
+    const R = Math.min(W*0.42, H*0.88);
+
+    const start = Math.PI;        // 180°
+    const end   = 2*Math.PI;      // 360°
+    const toRad = (p)=> start + (p/100)*(end-start);
+
+    const t = state.target;
+    const a0 = 0;
+    const a1 = clamp(t-10,0,100);
+    const a2 = clamp(t,0,100);
+    const a3 = 100;
+
+    ctx.lineWidth = 22;
+
+    // bad segment
+    ctx.strokeStyle="rgba(255,111,97,.80)";
+    ctx.beginPath(); ctx.arc(cx, cy, R, toRad(a0), toRad(a1)); ctx.stroke();
+
+    // warn segment
+    ctx.strokeStyle="rgba(255,207,106,.80)";
+    ctx.beginPath(); ctx.arc(cx, cy, R, toRad(a1), toRad(a2)); ctx.stroke();
+
+    // ok segment
+    ctx.strokeStyle="rgba(122,214,178,.80)";
+    ctx.beginPath(); ctx.arc(cx, cy, R, toRad(a2), toRad(a3)); ctx.stroke();
+
+    // ticks
+    ctx.strokeStyle="rgba(255,255,255,.18)";
+    ctx.lineWidth=2;
+    for(let v=0; v<=100; v+=10){
+      const a = toRad(v);
+      const x1=cx + Math.cos(a)*(R-26);
+      const y1=cy + Math.sin(a)*(R-26);
+      const x2=cx + Math.cos(a)*(R-6);
+      const y2=cy + Math.sin(a)*(R-6);
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    }
+
+    // needle
+    const a = toRad(clamp(idx,0,100));
+    const nx = cx + Math.cos(a)*(R-34);
+    const ny = cy + Math.sin(a)*(R-34);
+
+    ctx.strokeStyle="rgba(255,244,234,.92)";
+    ctx.lineWidth=3;
+    ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(nx,ny); ctx.stroke();
+
+    ctx.fillStyle="rgba(255,244,234,.92)";
+    ctx.beginPath(); ctx.arc(cx,cy,7,0,Math.PI*2); ctx.fill();
+
+    // label
+    const st = statusFromIndex(idx);
+    let col = "rgba(122,214,178,.92)";
+    if(st.cls==="warn") col="rgba(255,207,106,.92)";
+    if(st.cls==="bad") col="rgba(255,111,97,.92)";
+
+    ctx.fillStyle="rgba(255,244,234,.86)";
+    ctx.font="18px Arial";
+    ctx.fillText("Índice: " + (idx||0), cx-48, H*0.36);
+
+    ctx.fillStyle="rgba(255,244,234,.62)";
+    ctx.font="12px Arial";
+    ctx.fillText("Meta: " + state.target, cx-34, H*0.43);
+
+    ctx.fillStyle=col;
+    ctx.font="12px Arial";
+    ctx.fillText(st.text, cx-62, H*0.50);
+  }
+
+  // ---------- Editor mensual ----------
+  let editingYm = null;
+
+  function openMonthEditor(yyyyMM){
+    const m = state.months.find(x=>x.ym===yyyyMM);
+    if(!m) return;
+
+    editingYm = yyyyMM;
+    $("mTitle").textContent = `Editar mes: ${yyyyMM} (${monthName(yyyyMM)})`;
+    $("mYm").value = m.ym;
+    $("mTotal").value = m.total ?? 0;
+    $("mGood").value  = m.good ?? 0;
+    $("mWait").value  = m.wait ?? 0;
+    $("mProm").value  = m.prom ?? 0;
+    $("mDetr").value  = m.detr ?? 0;
+
+    $("modalBg").style.display="flex";
+  }
+
+  function closeMonthEditor(){
+    $("modalBg").style.display="none";
+    editingYm = null;
+  }
+
+  $("mClose").onclick = closeMonthEditor;
+  $("modalBg").addEventListener("click",(e)=>{
+    if(e.target.id==="modalBg") closeMonthEditor();
+  });
+
+  $("mSave").onclick = ()=>{
+    if(!editingYm) return;
+
+    const newYm = ($("mYm").value||"").trim();
+    if(!/^\d{4}-\d{2}$/.test(newYm)){
+      alert("Mes inválido. Usa formato YYYY-MM (ej. 2026-01).");
+      return;
+    }
+
+    const total = Math.max(0, Number($("mTotal").value||0));
+    const good  = clamp(Number($("mGood").value||0), 0, total);
+    const wait  = clamp(Number($("mWait").value||0), 0, 240);
+    const prom  = clamp(Number($("mProm").value||0), 0, total);
+    const detr  = clamp(Number($("mDetr").value||0), 0, total);
+
+    // si cambia ym, evita duplicados
+    if(newYm !== editingYm && state.months.some(x=>x.ym===newYm)){
+      alert("Ya existe ese mes. Elige otro.");
+      return;
+    }
+
+    // actualiza el mes
+    state.months = state.months.map(m=>{
+      if(m.ym !== editingYm) return m;
+      return { ...m, ym:newYm, total, good, wait, prom, detr };
+    });
+
+    // si cambió ym, actualizar reviews asociadas
+    if(newYm !== editingYm){
+      state.reviews = state.reviews.map(r=> r.ym===editingYm ? { ...r, ym:newYm } : r);
+    }
+
+    recomputeAll();
+    renderAll();
+    closeMonthEditor();
+    toast("Mes actualizado");
+  };
+
+  $("mDelete").onclick = ()=>{
+    if(!editingYm) return;
+    if(!confirm("¿Eliminar este mes y sus comentarios asociados?")) return;
+    state.months = state.months.filter(m=>m.ym!==editingYm);
+    state.reviews = state.reviews.filter(r=>r.ym!==editingYm);
+    save();
+    renderAll();
+    closeMonthEditor();
+    toast("Mes eliminado");
+  };
+
+  // ---------- Reviews (influyen en NPS del mes) ----------
+  function applyReviewsToMonth(yyyyMM){
+    // recalcula prom/detr desde reviews del mes (sin tocar total/good/espera)
+    const month = state.months.find(m=>m.ym===yyyyMM);
+    if(!month) return;
+
+    const revs = state.reviews.filter(r=>r.ym===yyyyMM);
+    if(!revs.length) return;
+
+    // usamos total como base; si total es 0, lo seteamos a revs.length
+    const total = month.total>0 ? month.total : revs.length;
+
+    let prom=0, detr=0;
+    revs.forEach(r=>{
+      if(r.scoreType==="promotor") prom++;
+      if(r.scoreType==="detractor") detr++;
+    });
+
+    // ajustamos a escala de "conteo" relativo al total (si revs < total, escalamos)
+    const scale = total / revs.length;
+    prom = Math.round(prom * scale);
+    detr = Math.round(detr * scale);
+
+    month.total = total;
+    month.prom = clamp(prom, 0, total);
+    month.detr = clamp(detr, 0, total);
+  }
+
+  $("btnAddReview").onclick = ()=>{
+    const text = ($("rText").value||"").trim();
+    if(!text){ toast("Escribe un comentario"); return; }
+
+    const ymv = $("rMonth").value;
+    const serviceId = $("rService").value;
+    const scoreType = $("rScore").value;
+    const stars = Number($("rStars").value||5);
+
+    state.reviews.unshift({
+      id: uid(),
+      ts: Date.now(),
+      ym: ymv,
+      serviceId,
+      scoreType,
+      stars,
+      text
+    });
+
+    $("rText").value = "";
+
+    // actualiza NPS del mes elegido en base a reviews
+    applyReviewsToMonth(ymv);
+    recomputeAll();
+    renderAll();
+    toast("Comentario agregado");
+  };
+
+  // ---------- Exportaciones ----------
+  function exportBackup(){
+    const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href=url;
+    a.download=`SatisfaccionAtencion_backup_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("Backup descargado");
+  }
+
+  function exportCSV(){
+    // Exporta meses + indicadores; y aparte reviews
+    const lines = [];
+    lines.push(["Mes","Total","Buenas/Excelentes","Satisfaccion_%","Promotores","Detractores","NPS","Espera_min","Indice_0_100"].join(","));
+    state.months.slice().sort(byYm).forEach(m=>{
+      lines.push([
+        m.ym,
+        m.total??0,
+        m.good??0,
+        m.satPct??computeSatPct(m),
+        m.prom??0,
+        m.detr??0,
+        m.nps??computeNps(m),
+        m.wait??0,
+        m.index??computeIndexFrom(m)
+      ].join(","));
+    });
+    lines.push("");
+    lines.push("REVIEWS");
+    lines.push(["Timestamp","Mes","Servicio","TipoNPS","Estrellas","Comentario"].join(","));
+    state.reviews.slice().sort((a,b)=>a.ts-b.ts).forEach(r=>{
+      const svc = state.services.find(s=>s.id===r.serviceId)?.name || r.serviceId;
+      const safeText = (r.text||"").replaceAll('"','""');
+      lines.push([r.ts, r.ym, `"${svc}"`, r.scoreType, r.stars, `"${safeText}"`].join(","));
+    });
+
+    const blob = new Blob([lines.join("\n")], {type:"text/csv;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href=url;
+    a.download=`SatisfaccionAtencion_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast("CSV exportado");
+  }
+
+  // ---------- Distribución por servicio (mes actual) ----------
+  // se calcula en drawBars() con reviews del mes actual + fallback
+
+  // ---------- Demo / Reset / Add month ----------
+  function setFormFromState(){
+    $("target").value = state.target;
+    $("period").value = String(state.period);
+    $("wSat").value = state.weights.sat;
+    $("wNps").value = state.weights.nps;
+    $("wWait").value = state.weights.wait;
+    $("waitMax").value = state.waitMax;
+  }
+
+  $("btnRecalc").onclick = ()=>{
+    recomputeAll();
+    renderAll();
+    toast("Recalculado");
+  };
+
+  $("btnBackup").onclick = exportBackup;
+  $("btnExportCsv").onclick = exportCSV;
+
+  $("fileImport").onchange = async (e)=>{
+    const f = e.target.files?.[0];
+    if(!f) return;
+    try{
+      const txt = await f.text();
+      const d = JSON.parse(txt);
+      if(!d || typeof d!=="object" || !Array.isArray(d.months)) throw new Error("Formato inválido");
+      state = { ...defaultState(), ...d };
+      state.weights = { ...defaultState().weights, ...(state.weights||{}) };
+      if(!Array.isArray(state.reviews)) state.reviews=[];
+      if(!Array.isArray(state.services)) state.services = defaultState().services;
+      save();
+      renderAll();
+      toast("Importado");
+    }catch{
+      alert("No se pudo importar. Verifica que sea un JSON válido del dashboard.");
+    }finally{
+      e.target.value="";
+    }
+  };
+
+  $("btnReset").onclick = ()=>{
+    if(!confirm("¿Resetear todo el dashboard? (irreversible)")) return;
+    localStorage.removeItem(KEY);
+    state = defaultState();
+    ensureMonths(12);
+    recomputeAll();
+    renderAll();
+    toast("Reset completo");
+  };
+
+  $("btnDemo").onclick = ()=>{
+    state = defaultState();
+    ensureMonths(12);
+
+    // reviews demo (por meses)
+    const months = state.months.map(m=>m.ym);
+    const svcIds = state.services.map(s=>s.id);
+    const comments = [
+      ["promotor",5,"Trato muy humano y explicación clara."],
+      ["pasivo",4,"Buena atención, pero la espera podría mejorar."],
+      ["detractor",2,"Demora alta y orientación insuficiente en admisión."],
+      ["promotor",5,"Excelente seguimiento y empatía del profesional."],
+      ["pasivo",3,"Correcto, faltó mayor claridad en el proceso."],
+      ["promotor",5,"Me sentí escuchado/a y acompañado/a."]
+    ];
+    state.reviews = comments.map((c,i)=>({
+      id: uid(),
+      ts: Date.now() - i*86400000,
+      ym: months[months.length-1 - (i%3)],
+      serviceId: svcIds[i % svcIds.length],
+      scoreType: c[0],
+      stars: c[1],
+      text: c[2]
+    }));
+
+    // aplica reviews al mes de cada review (para NPS)
+    [...new Set(state.reviews.map(r=>r.ym))].forEach(applyReviewsToMonth);
+
+    recomputeAll();
+    renderAll();
+    toast("Demo cargada");
+  };
+
+  $("btnAddMonth").onclick = ()=>{
+    // agrega mes siguiente al último si existe; si no, mes actual
+    const last = state.months.slice().sort(byYm)[state.months.length-1];
+    let d;
+    if(last){
+      const [y,m]=last.ym.split("-").map(Number);
+      d = new Date(y, m, 1); // mes siguiente
+    }else{
+      d = new Date(now.getFullYear(), now.getMonth(), 1);
+    }
+    const key = ym(d);
+    if(state.months.some(x=>x.ym===key)){
+      toast("Ese mes ya existe");
+      openMonthEditor(key);
+      return;
+    }
+    state.months.push({ym:key,total:0,good:0,wait:0,prom:0,detr:0});
+    state.months.sort(byYm);
+    recomputeAll();
+    renderAll();
+    openMonthEditor(key);
+  };
+
+  // ---------- Render total ----------
+  function renderAll(){
+    setFormFromState();
+    // recalcula (por si hay cambios desde editor)
+    state.months = state.months.map(m=>{
+      const satPct = computeSatPct(m);
+      const nps = computeNps(m);
+      const index = computeIndexFrom({ ...m, satPct, nps });
+      return { ...m, satPct, nps, index };
+    }).sort(byYm);
+    save();
+
+    renderKpis();
+    renderSelects();
+    renderReviews();
+    drawTrend();
+    drawBars();
+    drawGauge();
+  }
+
+  // ---------- Init ----------
+  load();
+  ensureMonths(12);
+  recomputeAll();
+  renderAll();
+
+  // Re-render on resize (mobile)
+  let tmr=null;
+  window.addEventListener("resize", ()=>{
+    clearTimeout(tmr);
+    tmr=setTimeout(()=>{
+      drawTrend(); drawBars(); drawGauge();
+    }, 180);
+  });
+
+})();
+</script>
+</body>
+</html>

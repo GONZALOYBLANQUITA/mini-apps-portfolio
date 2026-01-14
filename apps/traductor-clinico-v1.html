@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Traductor Clínico (Voz ↔ Texto)</title>
+  <meta name="description" content="Mini-app de traducción clínica voz a texto para sesiones terapéuticas (EN→ES y ES→EN)." />
+  <style>
+    :root{
+      --bg:#fff7f0;
+      --card:#ffffff;
+      --ink:#1f2328;
+      --muted:#5a6675;
+      --line:rgba(31,35,40,.12);
+      --warm1:#ffedd5;
+      --warm2:#fed7aa;
+      --accent:#ea580c;
+      --accent2:#f97316;
+      --good:#0f766e;
+      --warn:#b45309;
+      --bad:#b91c1c;
+      --shadow: 0 10px 30px rgba(31,35,40,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 15% 10%, rgba(249,115,22,.18), transparent 60%),
+        radial-gradient(900px 500px at 85% 5%, rgba(234,88,12,.14), transparent 60%),
+        radial-gradient(900px 700px at 40% 90%, rgba(15,118,110,.10), transparent 60%),
+        var(--bg);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:20px 14px 90px;}
+    header{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;margin-bottom:14px;}
+    .brand{display:flex;gap:12px;align-items:center;}
+    .logo{
+      width:44px;height:44px;border-radius:14px;
+      background: linear-gradient(135deg, var(--accent2), #fb7185);
+      box-shadow: 0 12px 30px rgba(234,88,12,.22);
+      display:grid;place-items:center;flex:0 0 auto;
+    }
+    .title h1{font-size:18px;margin:0;letter-spacing:.2px;}
+    .title p{margin:4px 0 0;color:var(--muted);font-size:13px;line-height:1.35;}
+    .topActions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end;}
+    .btn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.72);
+      color:var(--ink);
+      border-radius:999px;
+      padding:10px 12px;
+      font-weight:600;
+      font-size:13px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      cursor:pointer;
+      transition: transform .08s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: scale(.98); }
+    .btn.primary{
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color:#fff;
+      border-color: rgba(255,255,255,.15);
+      box-shadow: 0 10px 26px rgba(234,88,12,.22);
+    }
+    .btn.ghost{background:transparent;}
+    .btn.danger{
+      background: rgba(185,28,28,.08);
+      border-color: rgba(185,28,28,.22);
+      color: var(--bad);
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:9px 12px;border-radius:999px;border:1px solid var(--line);
+      background: rgba(255,255,255,.65);
+      font-size:12px;color:var(--muted);max-width:520px;
+    }
+    .pill strong{ color:var(--ink); font-weight:700; }
+    .grid{display:grid;grid-template-columns:1.15fr .85fr;gap:14px;align-items:start;}
+    @media (max-width:980px){
+      .grid{grid-template-columns:1fr;}
+      header{flex-direction:column;align-items:stretch;}
+      .topActions{justify-content:flex-start;}
+      .pill{max-width:100%;}
+    }
+    .card{
+      background: rgba(255,255,255,.85);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:14px 14px 10px;
+      display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+      background: linear-gradient(180deg, rgba(255,237,213,.65), rgba(255,255,255,0));
+      border-bottom:1px solid rgba(31,35,40,.06);
+    }
+    .cardHead .h{display:flex;gap:10px;align-items:flex-start;}
+    .badge{
+      width:36px;height:36px;border-radius:14px;
+      display:grid;place-items:center;
+      background: linear-gradient(135deg, rgba(234,88,12,.16), rgba(249,115,22,.10));
+      border:1px solid rgba(234,88,12,.18);
+      flex:0 0 auto;
+    }
+    .cardHead h2{margin:0;font-size:15px;letter-spacing:.2px;}
+    .cardHead p{margin:4px 0 0;font-size:12.5px;color:var(--muted);line-height:1.35;}
+    .section{padding:12px 14px 14px;}
+    .status{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:999px;
+      background: rgba(15,118,110,.08);
+      border:1px solid rgba(15,118,110,.18);
+      color: var(--good);font-weight:700;font-size:12px;
+    }
+    .status.off{
+      background: rgba(90,102,117,.08);
+      border-color: rgba(90,102,117,.20);
+      color: var(--muted);
+    }
+    .status.warn{
+      background: rgba(180,83,9,.08);
+      border-color: rgba(180,83,9,.20);
+      color: var(--warn);
+    }
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    @media (max-width:760px){.cols{grid-template-columns:1fr;}}
+    .box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: rgba(255,255,255,.7);
+      overflow:hidden;
+    }
+    .boxTop{
+      display:flex;gap:10px;align-items:center;justify-content:space-between;
+      padding:10px 12px;
+      background: linear-gradient(180deg, rgba(254,215,170,.55), rgba(255,255,255,0));
+      border-bottom:1px solid rgba(31,35,40,.06);
+    }
+    .meta{display:flex;gap:10px;align-items:center;min-width:0;}
+    .tag{
+      font-size:11px;font-weight:800;letter-spacing:.35px;
+      padding:6px 10px;border-radius:999px;
+      background: rgba(234,88,12,.10);
+      border:1px solid rgba(234,88,12,.18);
+      color: var(--accent);white-space:nowrap;
+    }
+    .tag.blue{
+      background: rgba(37,99,235,.08);
+      border-color: rgba(37,99,235,.18);
+      color:#1d4ed8;
+    }
+    .small{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:260px;}
+    textarea{
+      width:100%;border:0;outline:none;resize:vertical;
+      min-height:120px;padding:12px;font-size:14px;line-height:1.4;
+      background: transparent;color: var(--ink);
+    }
+    textarea::placeholder{ color: rgba(90,102,117,.75); }
+    .tools{
+      display:flex;gap:8px;flex-wrap:wrap;
+      padding:10px 12px 12px;
+      border-top:1px solid rgba(31,35,40,.06);
+      background: rgba(255,255,255,.55);
+    }
+    .mini{padding:9px 11px;font-size:12.5px;}
+    .settings{padding:12px 14px 14px;display:grid;gap:10px;}
+    .field{display:grid;gap:6px;}
+    label{font-size:12px;color:var(--muted);font-weight:700;}
+    input, select{
+      width:100%;padding:11px 12px;border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.75);
+      outline:none;font-size:13.5px;color: var(--ink);
+    }
+    input:focus, select:focus{
+      border-color: rgba(234,88,12,.35);
+      box-shadow: 0 0 0 4px rgba(234,88,12,.12);
+    }
+    .hint{
+      font-size:12px;color: var(--muted);line-height:1.4;
+      background: rgba(255,255,255,.6);
+      border:1px dashed rgba(31,35,40,.16);
+      padding:10px 12px;border-radius:14px;
+    }
+    .toast{
+      position: fixed;left:14px;right:14px;bottom:14px;z-index:999;
+      display:none;padding:12px 14px;border-radius:16px;border:1px solid var(--line);
+      background: rgba(255,255,255,.90);
+      box-shadow: 0 20px 50px rgba(31,35,40,.18);
+      color: var(--ink);font-size:13px;line-height:1.35;
+    }
+    .toast.show{display:block;}
+    .toast .trow{display:flex;gap:10px;align-items:flex-start;justify-content:space-between;}
+    .toast .msg{flex:1;min-width:0;}
+    .toast button{border:0;background:transparent;color:var(--muted);font-weight:800;cursor:pointer;padding:6px 8px;border-radius:10px;}
+    .toast button:active{transform:scale(.98);}
+    .footer{margin-top:14px;color:rgba(90,102,117,.95);font-size:12px;line-height:1.45;padding:0 2px;}
+    svg.icon{width:18px;height:18px;display:block;}
+    svg.icon.lg{width:22px;height:22px;}
+    .splitNote{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:12px 14px;border-top:1px solid rgba(31,35,40,.06);
+      background: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,237,213,.32));
+      color: var(--muted);font-size:12px;line-height:1.4;
+    }
+    .splitNote strong{color:var(--ink);}
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size:11px;padding:1px 6px;border-radius:8px;
+      border:1px solid rgba(31,35,40,.16);
+      background: rgba(255,255,255,.75);color: var(--ink);
+      white-space:nowrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true">
+          <svg class="icon lg" viewBox="0 0 24 24" fill="none">
+            <path d="M7.5 14.5h2.1l-1-2.6-1.1 2.6Zm.7-5.8h.9l3 7h-1.1l-.7-1.8H7.1l-.8 1.8H5.2l3-7Z" fill="white" opacity="0.95"/>
+            <path d="M13.1 8.5h5.4c1.6 0 2.9 1.3 2.9 2.9v4c0 1.6-1.3 2.9-2.9 2.9h-2.2l-2.6 2.2c-.3.3-.8 0-.8-.4v-1.8h-1.8c-1.6 0-2.9-1.3-2.9-2.9v-4c0-1.6 1.3-2.9 2.9-2.9Z" fill="white" opacity="0.32"/>
+            <path d="M5.5 3.5h9c1.7 0 3 1.3 3 3v3.2H13c-2.4 0-4.3 1.9-4.3 4.3v.6H7.2L4.6 18c-.4.3-.9 0-.9-.4v-2.2H5.5c-1.7 0-3-1.3-3-3V6.5c0-1.7 1.3-3 3-3Z" fill="white" opacity="0.55"/>
+          </svg>
+        </div>
+        <div class="title">
+          <h1>Traductor Clínico (Voz ↔ Texto)</h1>
+          <p>Paciente <strong>EN → ES</strong> · Terapeuta <strong>ES → EN</strong> (traducción robusta para GitHub Pages)</p>
+        </div>
+      </div>
+
+      <div class="topActions">
+        <div class="pill" id="supportPill">
+          <span aria-hidden="true">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <path d="M12 22a7.5 7.5 0 1 0 0-15 7.5 7.5 0 0 0 0 15Z" stroke="currentColor" stroke-width="2" opacity=".35"/>
+              <path d="M12 14v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+              <path d="M9.3 3.8A3.8 3.8 0 0 1 16 4.9c.7 1.4.5 3.1-.5 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+            </svg>
+          </span>
+          <span><strong>Motor:</strong> <span id="engineValue">Auto</span> · <span id="engineState">Listo</span></span>
+        </div>
+
+        <button class="btn primary" id="btnQuickStart" title="Iniciar micrófonos (si el navegador lo permite)">
+          <svg class="icon" viewBox="0 0 24 24" fill="none">
+            <path d="M8.5 6.7v10.6c0 .8.8 1.3 1.5.9l8.8-5.3c.7-.4.7-1.4 0-1.8L10 5.8c-.7-.4-1.5.1-1.5.9Z" fill="white"/>
+          </svg>
+          Iniciar sesión
+        </button>
+
+        <button class="btn ghost" id="btnSettings" title="Abrir configuración">
+          <svg class="icon" viewBox="0 0 24 24" fill="none">
+            <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M19.4 13.5a8.4 8.4 0 0 0 .1-3l2-1.1-2-3.5-2.3.6a8.2 8.2 0 0 0-2.6-1.5L12.2 2H8.1l-.4 2.9a8.2 8.2 0 0 0-2.6 1.5l-2.3-.6-2 3.5 2 1.1a8.4 8.4 0 0 0 .1 3l-2 1.1 2 3.5 2.3-.6a8.2 8.2 0 0 0 2.6 1.5l.4 2.9h4.1l.4-2.9a8.2 8.2 0 0 0 2.6-1.5l2.3.6 2-3.5-2-1.1Z" stroke="currentColor" stroke-width="1.6" opacity=".7"/>
+          </svg>
+          Ajustes
+        </button>
+
+        <button class="btn danger" id="btnClearAll" title="Borrar textos (local)">
+          <svg class="icon" viewBox="0 0 24 24" fill="none">
+            <path d="M9 3h6l1 2h4v2H4V5h4l1-2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M7 9v10c0 1.1.9 2 2 2h6c1.1 0 2-.9 2-2V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M10 12v6M14 12v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".8"/>
+          </svg>
+          Limpiar
+        </button>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <div class="cardHead">
+          <div class="h">
+            <div class="badge" aria-hidden="true">
+              <svg class="icon" viewBox="0 0 24 24" fill="none">
+                <path d="M7 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M2.6 20.7c.8-3 2.7-5.2 4.4-5.2S10.6 17.7 11.4 20.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M15 7h6M15 11h6M15 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+              </svg>
+            </div>
+            <div>
+              <h2>Sesión en vivo</h2>
+              <p>Si un motor falla (CORS / caída), el modo <strong>Auto</strong> cambia al otro para evitar “Failed to fetch”.</p>
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+            <span class="status off" id="globalStatus">Estado: en pausa</span>
+            <span style="font-size:12px;color:var(--muted);">Atajo: <span class="kbd">Ctrl</span> + <span class="kbd">K</span></span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="cols">
+            <!-- Paciente -->
+            <div class="box">
+              <div class="boxTop">
+                <div class="meta">
+                  <span class="tag">PACIENTE</span>
+                  <span class="small">Inglés → Español</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span class="status off" id="stPatient">Micrófono: OFF</span>
+                  <button class="btn mini primary" id="btnPatient">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z" fill="white"/>
+                      <path d="M7 11a5 5 0 0 0 10 0" stroke="white" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+                    </svg>
+                    Escuchar
+                  </button>
+                </div>
+              </div>
+              <textarea id="txtPatientEN" placeholder="Transcripción (inglés)…" spellcheck="false"></textarea>
+              <textarea id="txtPatientES" placeholder="Traducción al español…" spellcheck="false"></textarea>
+
+              <div class="tools">
+                <button class="btn mini" id="btnPatientTranslate">Traducir EN→ES</button>
+                <button class="btn mini" id="btnPatientCopyES">Copiar ES</button>
+                <button class="btn mini" id="btnPatientClear">Limpiar</button>
+              </div>
+            </div>
+
+            <!-- Terapeuta -->
+            <div class="box">
+              <div class="boxTop">
+                <div class="meta">
+                  <span class="tag blue">TERAPEUTA</span>
+                  <span class="small">Español → Inglés</span>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;">
+                  <span class="status off" id="stTherapist">Micrófono: OFF</span>
+                  <button class="btn mini primary" id="btnTherapist">Hablar</button>
+                </div>
+              </div>
+              <textarea id="txtTherapistES" placeholder="Tu intervención (español)…" spellcheck="false"></textarea>
+              <textarea id="txtTherapistEN" placeholder="Traducción al inglés…" spellcheck="false"></textarea>
+
+              <div class="tools">
+                <button class="btn mini" id="btnTherapistTranslate">Traducir ES→EN</button>
+                <button class="btn mini" id="btnTherapistCopyEN">Copiar EN</button>
+                <button class="btn mini" id="btnSpeakEN">Leer EN</button>
+                <button class="btn mini" id="btnTherapistClear">Limpiar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="splitNote">
+          <div>
+            <strong>Nota:</strong> “Failed to fetch” suele ser <strong>CORS</strong> o caída del servidor.
+            Con <strong>Auto</strong>, la app cambia de motor automáticamente para que la sesión continúe.
+          </div>
+        </div>
+      </div>
+
+      <!-- Config -->
+      <div class="card" id="settingsCard" style="display:none;">
+        <div class="cardHead">
+          <div class="h">
+            <div class="badge" aria-hidden="true">⚙️</div>
+            <div>
+              <h2>Configuración</h2>
+              <p>Auto evita errores. Si quieres, puedes fijar un motor específico.</p>
+            </div>
+          </div>
+          <button class="btn" id="btnCloseSettings">Cerrar</button>
+        </div>
+
+        <div class="settings">
+          <div class="field">
+            <label for="engine">Motor de traducción</label>
+            <select id="engine">
+              <option value="auto">Auto (recomendado)</option>
+              <option value="mymemory">MyMemory (estable en GitHub Pages)</option>
+              <option value="libre">LibreTranslate (puede fallar por CORS)</option>
+              <option value="none">Sin motor (solo dictado)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="endpointLibre">Endpoint LibreTranslate (si lo usas)</label>
+            <input id="endpointLibre" type="text" value="https://libretranslate.de/translate" />
+          </div>
+
+          <div class="field">
+            <label for="endpointMy">Endpoint MyMemory</label>
+            <input id="endpointMy" type="text" value="https://api.mymemory.translated.net/get" />
+          </div>
+
+          <div class="field">
+            <label for="patientLocale">Reconocimiento de voz (Paciente)</label>
+            <select id="patientLocale">
+              <option value="en-US">English (US)</option>
+              <option value="en-GB">English (UK)</option>
+              <option value="en-AU">English (AU)</option>
+              <option value="en-CA">English (CA)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="therapistLocale">Reconocimiento de voz (Terapeuta)</label>
+            <select id="therapistLocale">
+              <option value="es-PE">Español (Perú)</option>
+              <option value="es-ES">Español (España)</option>
+              <option value="es-MX">Español (México)</option>
+              <option value="es-AR">Español (Argentina)</option>
+              <option value="es-CL">Español (Chile)</option>
+              <option value="es-CO">Español (Colombia)</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="autoTranslate">Traducción automática al finalizar frases</label>
+            <select id="autoTranslate">
+              <option value="on">Activada</option>
+              <option value="off">Desactivada</option>
+            </select>
+          </div>
+
+          <div class="hint">
+            <strong>Privacidad:</strong> la traducción envía texto al motor elegido. Evita datos identificables del paciente.
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn primary" id="btnSaveSettings">Guardar ajustes</button>
+            <button class="btn" id="btnTestTranslate">Probar traducción</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ayuda -->
+      <div class="card" id="helpCard">
+        <div class="cardHead">
+          <div class="h">
+            <div class="badge" aria-hidden="true">🧠</div>
+            <div>
+              <h2>Guía rápida</h2>
+              <p>Si algo falla, usa “Traducir” manual. Auto suele resolverlo.</p>
+            </div>
+          </div>
+        </div>
+        <div class="settings">
+          <div class="hint"><strong>Tip:</strong> frases cortas mejoran precisión y reducen errores.</div>
+          <div class="hint"><strong>iPhone/Safari:</strong> el dictado puede ser limitado. En ese caso, escribe + traduce.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <strong>Uso responsable:</strong> No reemplaza juicio clínico. Evita información identificable.
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <div class="trow">
+      <div class="msg" id="toastMsg">Listo.</div>
+      <button id="toastClose" aria-label="Cerrar">✕</button>
+    </div>
+  </div>
+
+  <script>
+    const el = (id) => document.getElementById(id);
+
+    // UI
+    const btnSettings = el('btnSettings');
+    const btnCloseSettings = el('btnCloseSettings');
+    const settingsCard = el('settingsCard');
+    const helpCard = el('helpCard');
+
+    const btnClearAll = el('btnClearAll');
+    const btnQuickStart = el('btnQuickStart');
+
+    const engineValue = el('engineValue');
+    const engineState = el('engineState');
+    const globalStatus = el('globalStatus');
+
+    // Patient
+    const btnPatient = el('btnPatient');
+    const stPatient = el('stPatient');
+    const txtPatientEN = el('txtPatientEN');
+    const txtPatientES = el('txtPatientES');
+    const btnPatientTranslate = el('btnPatientTranslate');
+    const btnPatientCopyES = el('btnPatientCopyES');
+    const btnPatientClear = el('btnPatientClear');
+
+    // Therapist
+    const btnTherapist = el('btnTherapist');
+    const stTherapist = el('stTherapist');
+    const txtTherapistES = el('txtTherapistES');
+    const txtTherapistEN = el('txtTherapistEN');
+    const btnTherapistTranslate = el('btnTherapistTranslate');
+    const btnTherapistCopyEN = el('btnTherapistCopyEN');
+    const btnTherapistClear = el('btnTherapistClear');
+    const btnSpeakEN = el('btnSpeakEN');
+
+    // Settings
+    const engineSel = el('engine');
+    const endpointLibreInp = el('endpointLibre');
+    const endpointMyInp = el('endpointMy');
+    const patientLocaleSel = el('patientLocale');
+    const therapistLocaleSel = el('therapistLocale');
+    const autoTranslateSel = el('autoTranslate');
+    const btnSaveSettings = el('btnSaveSettings');
+    const btnTestTranslate = el('btnTestTranslate');
+
+    // Toast
+    const toast = el('toast');
+    const toastMsg = el('toastMsg');
+    const toastClose = el('toastClose');
+
+    const KEY = {
+      SETTINGS: 'tx_clinico_settings_v2',
+      PAT_EN: 'tx_patient_en_v2',
+      PAT_ES: 'tx_patient_es_v2',
+      TH_ES: 'tx_therapist_es_v2',
+      TH_EN: 'tx_therapist_en_v2',
+    };
+
+    const defaultSettings = {
+      engine: 'auto', // <- clave para evitar “Failed to fetch”
+      endpointLibre: 'https://libretranslate.de/translate',
+      endpointMy: 'https://api.mymemory.translated.net/get',
+      patientLocale: 'en-US',
+      therapistLocale: 'es-PE',
+      autoTranslate: 'on'
+    };
+
+    function showToast(message, kind='ok'){
+      toastMsg.textContent = message;
+      toast.classList.add('show');
+      toast.style.borderColor = kind === 'bad'
+        ? 'rgba(185,28,28,.25)'
+        : kind === 'warn'
+          ? 'rgba(180,83,9,.25)'
+          : 'rgba(15,118,110,.22)';
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toast.classList.remove('show'), 3800);
+    }
+    toastClose.addEventListener('click', () => toast.classList.remove('show'));
+
+    function loadSettings(){
+      try{
+        const raw = localStorage.getItem(KEY.SETTINGS);
+        if(!raw) return {...defaultSettings};
+        return {...defaultSettings, ...JSON.parse(raw)};
+      }catch{
+        return {...defaultSettings};
+      }
+    }
+    function saveSettings(s){
+      localStorage.setItem(KEY.SETTINGS, JSON.stringify(s));
+    }
+
+    let settings = loadSettings();
+
+    function applySettings(){
+      engineSel.value = settings.engine;
+      endpointLibreInp.value = settings.endpointLibre;
+      endpointMyInp.value = settings.endpointMy;
+      patientLocaleSel.value = settings.patientLocale;
+      therapistLocaleSel.value = settings.therapistLocale;
+      autoTranslateSel.value = settings.autoTranslate;
+
+      const label = settings.engine === 'auto' ? 'Auto'
+                  : settings.engine === 'mymemory' ? 'MyMemory'
+                  : settings.engine === 'libre' ? 'LibreTranslate'
+                  : 'Sin motor';
+      engineValue.textContent = label;
+      engineState.textContent = (settings.engine === 'none') ? 'Solo dictado' : 'Listo';
+    }
+
+    function loadTextAreas(){
+      txtPatientEN.value = localStorage.getItem(KEY.PAT_EN) || '';
+      txtPatientES.value = localStorage.getItem(KEY.PAT_ES) || '';
+      txtTherapistES.value = localStorage.getItem(KEY.TH_ES) || '';
+      txtTherapistEN.value = localStorage.getItem(KEY.TH_EN) || '';
+    }
+    function persistAll(){
+      localStorage.setItem(KEY.PAT_EN, txtPatientEN.value || '');
+      localStorage.setItem(KEY.PAT_ES, txtPatientES.value || '');
+      localStorage.setItem(KEY.TH_ES, txtTherapistES.value || '');
+      localStorage.setItem(KEY.TH_EN, txtTherapistEN.value || '');
+    }
+    [txtPatientEN, txtPatientES, txtTherapistES, txtTherapistEN].forEach(t=>{
+      t.addEventListener('input', persistAll);
+      t.addEventListener('change', persistAll);
+    });
+
+    function openSettings(){
+      settingsCard.style.display = '';
+      helpCard.style.display = 'none';
+    }
+    function closeSettings(){
+      settingsCard.style.display = 'none';
+      helpCard.style.display = '';
+    }
+    btnSettings.addEventListener('click', () => {
+      if(settingsCard.style.display === 'none') openSettings();
+      else closeSettings();
+    });
+    btnCloseSettings.addEventListener('click', closeSettings);
+
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast('Copiado al portapapeles.', 'ok');
+      }catch{
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Copiado (modo alternativo).', 'ok');
+      }
+    }
+
+    // =============== FIX PRINCIPAL: fetch con timeout + fallback ===============
+    async function fetchWithTimeout(url, options={}, ms=9000){
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), ms);
+      try{
+        const res = await fetch(url, { ...options, signal: controller.signal, mode: 'cors' });
+        return res;
+      } finally {
+        clearTimeout(t);
+      }
+    }
+
+    function normalizeError(err){
+      const msg = (err && err.message) ? err.message : String(err || '');
+      // “Failed to fetch” suele ser CORS / endpoint caído / bloqueo de red
+      if(/Failed to fetch/i.test(msg)) {
+        return "No se pudo conectar al motor (CORS o servidor caído). Cambia a MyMemory o usa modo Auto.";
+      }
+      if(/aborted/i.test(msg)) {
+        return "Tiempo de espera agotado (timeout). Verifica conexión o cambia de motor.";
+      }
+      return msg || "Error desconocido.";
+    }
+
+    async function translateLibre(text, from, to){
+      const url = (settings.endpointLibre || defaultSettings.endpointLibre).trim();
+      const payload = { q: text.trim(), source: from, target: to, format: 'text' };
+
+      const res = await fetchWithTimeout(url, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      }, 10000);
+
+      if(!res.ok){
+        const txt = await res.text().catch(()=> '');
+        throw new Error('LibreTranslate: ' + res.status + (txt ? ' · ' + txt.slice(0,120) : ''));
+      }
+      const data = await res.json();
+      if(typeof data?.translatedText !== 'string'){
+        throw new Error('LibreTranslate: respuesta inesperada.');
+      }
+      return data.translatedText;
+    }
+
+    async function translateMyMemory(text, from, to){
+      const base = (settings.endpointMy || defaultSettings.endpointMy).trim();
+      const u = new URL(base);
+      u.searchParams.set('q', text.trim());
+      u.searchParams.set('langpair', `${from}|${to}`);
+
+      const res = await fetchWithTimeout(u.toString(), { method:'GET' }, 10000);
+      if(!res.ok) throw new Error('MyMemory: ' + res.status);
+      const data = await res.json();
+      const out = data?.responseData?.translatedText;
+      if(typeof out !== 'string') throw new Error('MyMemory: respuesta inesperada.');
+      return out;
+    }
+
+    async function translateSmart(text, from, to){
+      const clean = (text || '').trim();
+      if(!clean) return '';
+
+      if(settings.engine === 'none'){
+        throw new Error('Sin motor seleccionado (solo dictado).');
+      }
+
+      engineState.textContent = 'Traduciendo…';
+
+      // Motor fijo
+      if(settings.engine === 'mymemory') return await translateMyMemory(clean, from, to);
+      if(settings.engine === 'libre') return await translateLibre(clean, from, to);
+
+      // AUTO: primero MyMemory (más estable en Pages), si falla prueba Libre
+      try{
+        return await translateMyMemory(clean, from, to);
+      } catch (e1){
+        try{
+          return await translateLibre(clean, from, to);
+        } catch (e2){
+          const msg = normalizeError(e1) + " / " + normalizeError(e2);
+          throw new Error(msg);
+        }
+      }
+    }
+    // ========================================================================
+
+    // Speech Recognition (igual que antes, pero usando translateSmart)
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const hasSpeech = !!SpeechRecognition;
+    let recPatient=null, recTherapist=null;
+    let listeningPatient=false, listeningTherapist=false;
+
+    function setMicStatus(elStatus, on, extra){
+      elStatus.className = 'status ' + (on ? '' : 'off');
+      elStatus.textContent = `Micrófono: ${on ? 'ON' : 'OFF'}${extra ? ' · ' + extra : ''}`;
+    }
+    function setGlobalStatus(){
+      const any = listeningPatient || listeningTherapist;
+      globalStatus.className = 'status ' + (any ? '' : 'off');
+      globalStatus.textContent = any ? 'Estado: escuchando' : 'Estado: en pausa';
+    }
+    function mkRecognizer(lang){
+      const r = new SpeechRecognition();
+      r.lang = lang;
+      r.continuous = true;
+      r.interimResults = true;
+      r.maxAlternatives = 1;
+      return r;
+    }
+    function ensureSpeech(){
+      if(!hasSpeech){
+        showToast('Dictado no soportado en este navegador. Escribe manual y usa “Traducir”.', 'warn');
+        return false;
+      }
+      return true;
+    }
+
+    function safeAppend(base, addition){
+      const b = (base || '').trim();
+      const a = (addition || '').trim();
+      if(!a) return base || '';
+      if(!b) return a;
+      return b.endsWith('\n') ? (b + a) : (b + '\n' + a);
+    }
+
+    function startPatient(){
+      if(!ensureSpeech()) return;
+      if(listeningPatient) return;
+
+      recPatient = mkRecognizer(settings.patientLocale || 'en-US');
+      let finalBuffer=''; let interim='';
+
+      recPatient.onstart = () => {
+        listeningPatient=true; setMicStatus(stPatient,true); setGlobalStatus();
+        showToast('Paciente: escuchando (EN)…','ok');
+      };
+      recPatient.onerror = (e) => {
+        listeningPatient=false; setMicStatus(stPatient,false,'Error'); setGlobalStatus();
+        showToast('Paciente (mic): ' + (e?.error||'error') ,'bad');
+      };
+      recPatient.onend = () => {
+        if(listeningPatient){ try{ recPatient.start(); }catch{} }
+        else { setMicStatus(stPatient,false); setGlobalStatus(); }
+      };
+      recPatient.onresult = async (ev) => {
+        interim=''; let gotFinal=false;
+        for(let i=ev.resultIndex;i<ev.results.length;i++){
+          const res=ev.results[i];
+          const t=res[0]?.transcript||'';
+          if(res.isFinal){ gotFinal=true; finalBuffer=safeAppend(finalBuffer,t); }
+          else { interim += t; }
+        }
+        txtPatientEN.value = ((finalBuffer?finalBuffer+'\n':'')+interim).trim();
+        localStorage.setItem(KEY.PAT_EN, txtPatientEN.value||'');
+
+        if(gotFinal && settings.autoTranslate==='on'){
+          try{
+            const out = await translateSmart(finalBuffer,'en','es');
+            txtPatientES.value = out;
+            localStorage.setItem(KEY.PAT_ES, out||'');
+            engineState.textContent = 'Listo';
+          }catch(err){
+            engineState.textContent = 'Error';
+            showToast('EN→ES: ' + normalizeError(err),'warn');
+          }
+        }
+      };
+
+      try{ recPatient.start(); }catch{ showToast('No se pudo iniciar mic (Paciente).','bad'); }
+    }
+    function stopPatient(){
+      listeningPatient=false; setMicStatus(stPatient,false); setGlobalStatus();
+      if(recPatient){ try{ recPatient.stop(); }catch{} }
+      showToast('Paciente: mic detenido.','ok');
+    }
+
+    function startTherapist(){
+      if(!ensureSpeech()) return;
+      if(listeningTherapist) return;
+
+      recTherapist = mkRecognizer(settings.therapistLocale || 'es-PE');
+      let finalBuffer=''; let interim='';
+
+      recTherapist.onstart = () => {
+        listeningTherapist=true; setMicStatus(stTherapist,true); setGlobalStatus();
+        showToast('Terapeuta: escuchando (ES)…','ok');
+      };
+      recTherapist.onerror = (e) => {
+        listeningTherapist=false; setMicStatus(stTherapist,false,'Error'); setGlobalStatus();
+        showToast('Terapeuta (mic): ' + (e?.error||'error'),'bad');
+      };
+      recTherapist.onend = () => {
+        if(listeningTherapist){ try{ recTherapist.start(); }catch{} }
+        else { setMicStatus(stTherapist,false); setGlobalStatus(); }
+      };
+      recTherapist.onresult = async (ev) => {
+        interim=''; let gotFinal=false;
+        for(let i=ev.resultIndex;i<ev.results.length;i++){
+          const res=ev.results[i];
+          const t=res[0]?.transcript||'';
+          if(res.isFinal){ gotFinal=true; finalBuffer=safeAppend(finalBuffer,t); }
+          else { interim += t; }
+        }
+        txtTherapistES.value = ((finalBuffer?finalBuffer+'\n':'')+interim).trim();
+        localStorage.setItem(KEY.TH_ES, txtTherapistES.value||'');
+
+        if(gotFinal && settings.autoTranslate==='on'){
+          try{
+            const out = await translateSmart(finalBuffer,'es','en');
+            txtTherapistEN.value = out;
+            localStorage.setItem(KEY.TH_EN, out||'');
+            engineState.textContent = 'Listo';
+          }catch(err){
+            engineState.textContent = 'Error';
+            showToast('ES→EN: ' + normalizeError(err),'warn');
+          }
+        }
+      };
+
+      try{ recTherapist.start(); }catch{ showToast('No se pudo iniciar mic (Terapeuta).','bad'); }
+    }
+    function stopTherapist(){
+      listeningTherapist=false; setMicStatus(stTherapist,false); setGlobalStatus();
+      if(recTherapist){ try{ recTherapist.stop(); }catch{} }
+      showToast('Terapeuta: mic detenido.','ok');
+    }
+
+    // Buttons
+    btnPatient.addEventListener('click', ()=> listeningPatient ? stopPatient() : startPatient());
+    btnTherapist.addEventListener('click', ()=> listeningTherapist ? stopTherapist() : startTherapist());
+
+    btnPatientTranslate.addEventListener('click', async ()=>{
+      const src=(txtPatientEN.value||'').trim();
+      if(!src) return showToast('No hay texto EN para traducir.','warn');
+      try{
+        const out = await translateSmart(src,'en','es');
+        txtPatientES.value=out; localStorage.setItem(KEY.PAT_ES,out||'');
+        engineState.textContent='Listo'; showToast('EN→ES actualizado.','ok');
+      }catch(err){
+        engineState.textContent='Error'; showToast('EN→ES: '+normalizeError(err),'warn');
+      }
+    });
+
+    btnTherapistTranslate.addEventListener('click', async ()=>{
+      const src=(txtTherapistES.value||'').trim();
+      if(!src) return showToast('No hay texto ES para traducir.','warn');
+      try{
+        const out = await translateSmart(src,'es','en');
+        txtTherapistEN.value=out; localStorage.setItem(KEY.TH_EN,out||'');
+        engineState.textContent='Listo'; showToast('ES→EN actualizado.','ok');
+      }catch(err){
+        engineState.textContent='Error'; showToast('ES→EN: '+normalizeError(err),'warn');
+      }
+    });
+
+    btnPatientCopyES.addEventListener('click', ()=> copyToClipboard(txtPatientES.value||''));
+    btnTherapistCopyEN.addEventListener('click', ()=> copyToClipboard(txtTherapistEN.value||''));
+
+    btnPatientClear.addEventListener('click', ()=>{
+      txtPatientEN.value=''; txtPatientES.value='';
+      localStorage.setItem(KEY.PAT_EN,''); localStorage.setItem(KEY.PAT_ES,'');
+      showToast('Canal paciente limpiado.','ok');
+    });
+
+    btnTherapistClear.addEventListener('click', ()=>{
+      txtTherapistES.value=''; txtTherapistEN.value='';
+      localStorage.setItem(KEY.TH_ES,''); localStorage.setItem(KEY.TH_EN,'');
+      showToast('Canal terapeuta limpiado.','ok');
+    });
+
+    btnSpeakEN.addEventListener('click', ()=>{
+      const text=(txtTherapistEN.value||'').trim();
+      if(!text) return showToast('No hay texto EN para leer.','warn');
+      if(!('speechSynthesis' in window)) return showToast('TTS no disponible.','warn');
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang='en-US';
+      window.speechSynthesis.speak(u);
+      showToast('Leyendo en inglés…','ok');
+    });
+
+    btnSaveSettings.addEventListener('click', ()=>{
+      settings = {
+        engine: engineSel.value,
+        endpointLibre: endpointLibreInp.value.trim(),
+        endpointMy: endpointMyInp.value.trim(),
+        patientLocale: patientLocaleSel.value,
+        therapistLocale: therapistLocaleSel.value,
+        autoTranslate: autoTranslateSel.value
+      };
+      saveSettings(settings);
+      applySettings();
+      closeSettings();
+      showToast('Ajustes guardados.','ok');
+    });
+
+    btnTestTranslate.addEventListener('click', async ()=>{
+      try{
+        const sample = "Hola, ¿cómo te sientes hoy?";
+        const out = await translateSmart(sample,'es','en');
+        showToast('Test OK: ' + out, 'ok');
+        engineState.textContent='Listo';
+      }catch(err){
+        engineState.textContent='Error';
+        showToast('Test falló: '+normalizeError(err), 'warn');
+      }
+    });
+
+    btnQuickStart.addEventListener('click', ()=>{
+      if(!listeningPatient) startPatient();
+      if(!listeningTherapist) startTherapist();
+      setGlobalStatus();
+    });
+
+    btnClearAll.addEventListener('click', ()=>{
+      if(listeningPatient) stopPatient();
+      if(listeningTherapist) stopTherapist();
+      txtPatientEN.value=''; txtPatientES.value='';
+      txtTherapistES.value=''; txtTherapistEN.value='';
+      localStorage.removeItem(KEY.PAT_EN);
+      localStorage.removeItem(KEY.PAT_ES);
+      localStorage.removeItem(KEY.TH_ES);
+      localStorage.removeItem(KEY.TH_EN);
+      showToast('Textos limpiados.','ok');
+    });
+
+    document.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+        e.preventDefault(); txtPatientEN.focus();
+        showToast('Foco en Paciente (EN).','ok');
+      }
+      if(e.key==='Escape') closeSettings();
+    });
+
+    // Init
+    applySettings();
+    loadTextAreas();
+    persistAll();
+    closeSettings();
+    setGlobalStatus();
+
+    // Warn if no speech
+    if(!hasSpeech){
+      showToast('Aviso: dictado no disponible en este navegador. Puedes escribir y traducir.', 'warn');
+      engineState.textContent = 'Dictado no disponible';
+    }
+  </script>
+</body>
+</html>

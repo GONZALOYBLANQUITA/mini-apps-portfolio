@@ -1,0 +1,1160 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff6fae" />
+  <title>Stephany · Guía Relacional (Mini-app)</title>
+  <style>
+    :root{
+      --bg1:#fff2f7;
+      --bg2:#f4f6ff;
+      --card:#ffffffcc;
+      --text:#1f2430;
+      --muted:#586174;
+      --brand:#ff6fae;
+      --brand2:#7a5cff;
+      --ok:#25c28b;
+      --warn:#ffb020;
+      --bad:#ff4d5a;
+      --shadow: 0 18px 45px rgba(31,36,48,.12);
+      --radius: 20px;
+      --radius2: 14px;
+      --pad: 16px;
+      --tap: 54px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 15% 10%, #ffe3f0 0%, transparent 55%),
+        radial-gradient(900px 700px at 85% 15%, #e8e7ff 0%, transparent 50%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    a{color:inherit}
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 14px 110px;
+    }
+    .top{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin: 6px 0 14px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      min-width:0;
+    }
+    .logo{
+      width:46px;height:46px;border-radius:16px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: 0 10px 26px rgba(122,92,255,.22);
+      display:grid; place-items:center;
+      color:white; font-size:22px; font-weight:800;
+      flex:0 0 auto;
+    }
+    .ttl{min-width:0}
+    .ttl h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+      line-height:1.1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .ttl p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:12.5px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .pill{
+      display:flex; align-items:center; gap:8px;
+      background:#ffffffb3;
+      border:1px solid rgba(255,255,255,.7);
+      padding:10px 12px;
+      border-radius:999px;
+      box-shadow: 0 10px 24px rgba(31,36,48,.08);
+    }
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--ok); box-shadow:0 0 0 6px rgba(37,194,139,.15)}
+    .pill span{font-size:12.5px;color:var(--muted)}
+    .grid{
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 14px;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.8);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding: var(--pad);
+      backdrop-filter: blur(10px);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size:16px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .card h2 .ic{
+      width:34px;height:34px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(255,111,174,.18), rgba(122,92,255,.14));
+      display:grid; place-items:center;
+      font-size:18px;
+    }
+    .muted{color:var(--muted); font-size:13px; line-height:1.35}
+    .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+    .btn{
+      min-height: var(--tap);
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.06);
+      background: #fff;
+      color: var(--text);
+      font-weight: 650;
+      letter-spacing:.1px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      box-shadow: 0 10px 20px rgba(31,36,48,.08);
+      transition: transform .08s ease, box-shadow .08s ease, background .08s ease;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    .btn:active{transform: translateY(1px); box-shadow: 0 7px 16px rgba(31,36,48,.08)}
+    .btn.primary{
+      border:none;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#fff;
+    }
+    .btn.ghost{
+      background: #ffffffa6;
+    }
+    .btn.small{min-height:42px; padding:10px 12px; border-radius:14px; font-size:13px}
+    .btn.danger{
+      background: linear-gradient(135deg, var(--bad), #ff8a8a);
+      color:#fff; border:none;
+    }
+    .tabs{
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      margin: 10px 0 14px;
+    }
+    .tabbar{
+      background: #ffffffb8;
+      border:1px solid rgba(255,255,255,.8);
+      border-radius: 999px;
+      box-shadow: 0 16px 34px rgba(31,36,48,.10);
+      padding: 8px;
+      display:flex;
+      gap:8px;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tab{
+      flex:0 0 auto;
+      min-height: 46px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.06);
+      background: #fff;
+      font-weight: 700;
+      cursor:pointer;
+      display:flex; align-items:center; gap:10px;
+      white-space:nowrap;
+    }
+    .tab.active{
+      border:none;
+      background: linear-gradient(135deg, rgba(255,111,174,.95), rgba(122,92,255,.95));
+      color:#fff;
+      box-shadow: 0 12px 26px rgba(122,92,255,.25);
+    }
+    .section{display:none}
+    .section.active{display:block}
+    .kpi{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    @media (max-width:560px){
+      .kpi{grid-template-columns: 1fr}
+    }
+    .kpi .box{
+      border-radius: 18px;
+      padding: 12px;
+      background: #ffffffb5;
+      border: 1px solid rgba(0,0,0,.05);
+    }
+    .box .label{font-size:12px;color:var(--muted)}
+    .box .value{font-size:18px;font-weight:850;margin-top:4px}
+    .box .sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .divider{height:1px;background:rgba(0,0,0,.06);margin:12px 0}
+    textarea,input,select{
+      width:100%;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+      padding: 12px 12px;
+      font-family:var(--sans);
+      font-size:14px;
+      outline:none;
+    }
+    textarea{min-height:110px; resize:vertical}
+    label{font-size:12.5px;color:var(--muted);display:block;margin:10px 0 6px}
+    .chiprow{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{
+      padding:10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: #fff;
+      cursor:pointer;
+      font-weight:700;
+      font-size:13px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .chip.active{
+      border:none;
+      background: linear-gradient(135deg, rgba(37,194,139,.95), rgba(122,92,255,.85));
+      color:#fff;
+    }
+    .list{
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .item{
+      background:#ffffffb8;
+      border:1px solid rgba(0,0,0,.05);
+      border-radius:18px;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .item .t{font-weight:850}
+    .item .m{color:var(--muted); font-size:12.5px; margin-top:3px; line-height:1.35}
+    .badge{
+      font-size:12px;
+      font-weight:900;
+      padding:8px 10px;
+      border-radius: 999px;
+      white-space:nowrap;
+      border:1px solid rgba(0,0,0,.06);
+      background:#fff;
+    }
+    .badge.ok{background:rgba(37,194,139,.12); border-color:rgba(37,194,139,.25)}
+    .badge.warn{background:rgba(255,176,32,.14); border-color:rgba(255,176,32,.30)}
+    .badge.bad{background:rgba(255,77,90,.12); border-color:rgba(255,77,90,.25)}
+    .footer{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 18px;
+      background: #ffffffb5;
+      border:1px solid rgba(0,0,0,.05);
+      color: var(--muted);
+      font-size: 12.5px;
+      line-height:1.45;
+    }
+    .credits{
+      margin-top: 10px;
+      font-weight: 800;
+      color:#384055;
+    }
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      transform: translateX(-50%);
+      background: rgba(20,22,28,.92);
+      color:#fff;
+      padding: 12px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      display:none;
+      z-index: 50;
+      box-shadow: 0 18px 40px rgba(0,0,0,.25);
+      max-width: calc(100% - 28px);
+      text-align:center;
+    }
+    .hint{
+      padding: 12px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,111,174,.12), rgba(122,92,255,.10));
+      border: 1px dashed rgba(122,92,255,.30);
+      color: #3a3f55;
+      font-size: 13px;
+      line-height:1.45;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="logo">S</div>
+        <div class="ttl">
+          <h1>Stephany · Guía Relacional</h1>
+          <p>Cambios conductuales + límites + comunicación · Diseño mobile-first</p>
+        </div>
+      </div>
+      <div class="pill" title="Estado">
+        <div class="dot" aria-hidden="true"></div>
+        <span id="statusTxt">Lista</span>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tabbar" role="tablist" aria-label="Navegación">
+        <button class="tab active" data-tab="inicio" role="tab" aria-selected="true">🏠 Inicio</button>
+        <button class="tab" data-tab="regulacion" role="tab" aria-selected="false">🫧 Regulación</button>
+        <button class="tab" data-tab="limites" role="tab" aria-selected="false">🧱 Límites</button>
+        <button class="tab" data-tab="comunicacion" role="tab" aria-selected="false">🗣️ Comunicación</button>
+        <button class="tab" data-tab="registro" role="tab" aria-selected="false">📝 Registro</button>
+      </div>
+    </div>
+
+    <!-- INICIO -->
+    <section class="section active" id="inicio">
+      <div class="grid">
+        <div class="card">
+          <h2><span class="ic">💗</span> Enfoque de esta etapa</h2>
+          <div class="hint">
+            <b>Objetivo central:</b> salir del rol de “reguladora del vínculo” y construir <b>corresponsabilidad</b>.
+            <br/><br/>
+            <b>Regla clave:</b> “Yo puedo amar y acompañar… sin cargar con el clima emocional de la relación.”
+          </div>
+
+          <div class="divider"></div>
+
+          <h2><span class="ic">🧭</span> Tus 3 micro-cambios (practicables)</h2>
+          <div class="kpi" id="kpiBoxes"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn primary" id="btnQuickReset">✨ Reinicio de 90 segundos</button>
+            <button class="btn ghost" id="btnSharePlan">📤 Compartir plan (pareja)</button>
+            <button class="btn" id="btnExport">⬇️ Exportar registro</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="ic">🚦</span> Semáforo relacional</h2>
+          <p class="muted">Elige el estado actual y sigue la acción sugerida. Esto entrena conducta (no solo insight).</p>
+
+          <div class="chiprow" style="margin-top:10px">
+            <button class="chip" data-traffic="verde">🟢 Verde</button>
+            <button class="chip" data-traffic="amarillo">🟡 Amarillo</button>
+            <button class="chip" data-traffic="rojo">🔴 Rojo</button>
+          </div>
+
+          <div class="divider"></div>
+
+          <div id="trafficAdvice" class="list"></div>
+
+          <div class="footer">
+            <b>Nota clínica:</b> si percibes escalada, intimidación o riesgo, prioriza tu seguridad y busca apoyo profesional/presencial.
+            Esta mini-app es una guía psicoeducativa y de práctica, no sustituye terapia.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGULACION -->
+    <section class="section" id="regulacion">
+      <div class="grid">
+        <div class="card">
+          <h2><span class="ic">🫧</span> Regulación antes de responder</h2>
+          <p class="muted">El primer cambio conductual es <b>pausar</b>. Pausar NO es ceder; es recuperar control.</p>
+
+          <div class="divider"></div>
+
+          <h2><span class="ic">⏳</span> Protocolo “Pausa 90”</h2>
+          <div class="list">
+            <div class="item">
+              <div>
+                <div class="t">1) Nombra el estado</div>
+                <div class="m">“Estoy en tensión / activación / miedo a perder el vínculo.”</div>
+              </div>
+              <span class="badge warn">10s</span>
+            </div>
+            <div class="item">
+              <div>
+                <div class="t">2) Exhala largo (x6)</div>
+                <div class="m">Exhala 6–8 segundos. Repite 6 veces. Baja el impulso.</div>
+              </div>
+              <span class="badge ok">60s</span>
+            </div>
+            <div class="item">
+              <div>
+                <div class="t">3) Pregunta guía</div>
+                <div class="m">“¿Qué respuesta cuida mi dignidad y mi límite, sin entrar a la guerra?”</div>
+              </div>
+              <span class="badge">20s</span>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn primary" id="btnTimer90">⏱️ Iniciar 90s</button>
+            <button class="btn" id="btnLogReg">📝 Registrar práctica</button>
+          </div>
+
+          <div id="timerBox" class="footer" style="display:none"></div>
+        </div>
+
+        <div class="card">
+          <h2><span class="ic">🧠</span> Chequeo de fusión emocional</h2>
+          <p class="muted">Marca lo que se activó hoy. La meta es pasar de fusión → diferenciación (yo + vínculo).</p>
+
+          <div class="divider"></div>
+
+          <div id="fusionChecklist" class="list"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn primary" id="btnFusionScore">📊 Ver resultado</button>
+            <button class="btn" id="btnFusionClear">🧽 Limpiar</button>
+          </div>
+
+          <div id="fusionResult" class="footer" style="display:none"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIMITES -->
+    <section class="section" id="limites">
+      <div class="grid">
+        <div class="card">
+          <h2><span class="ic">🧱</span> Guion de límite claro</h2>
+          <p class="muted">Límite = conducta observable + petición + consecuencia. Sin insulto, sin rescate.</p>
+
+          <label>Situación (¿qué pasa?)</label>
+          <input id="bSituacion" placeholder="Ej: alzar la voz / ironías / descalificar / discutir sin pausa..." />
+
+          <label>Mi límite (qué NO acepto)</label>
+          <input id="bLimite" placeholder="Ej: No continúo la conversación si hay gritos o insultos." />
+
+          <label>Petición concreta (qué SÍ necesito)</label>
+          <input id="bPeticion" placeholder="Ej: Hablemos con tono bajo y turnos. Si no, lo retomamos luego." />
+
+          <label>Consecuencia saludable (qué haré yo)</label>
+          <input id="bConsecuencia" placeholder="Ej: Me retiro 20 min y vuelvo cuando estemos regulados." />
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn primary" id="btnBuildBoundary">🧩 Generar guion</button>
+            <button class="btn" id="btnCopyBoundary">📋 Copiar</button>
+            <button class="btn" id="btnSaveBoundary">💾 Guardar</button>
+          </div>
+
+          <label>Guion final</label>
+          <textarea id="bOutput" placeholder="Aquí aparecerá tu guion..."></textarea>
+
+          <div class="footer">
+            <b>Tip:</b> decir el límite <b>una vez</b>, con calma, y actuar la consecuencia. Evita explicar 10 veces (eso re-engancha la fusión).
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="ic">🧰</span> Biblioteca de límites rápidos</h2>
+          <p class="muted">Plantillas para situaciones frecuentes. Toca una y ajusta.</p>
+
+          <div class="divider"></div>
+
+          <div class="list" id="boundaryLibrary"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn" id="btnCopyLibrary">📋 Copiar plantilla seleccionada</button>
+            <button class="btn danger" id="btnClearBoundaries">🗑️ Borrar límites guardados</button>
+          </div>
+
+          <div id="savedBoundariesBox" class="footer"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMUNICACION -->
+    <section class="section" id="comunicacion">
+      <div class="grid">
+        <div class="card">
+          <h2><span class="ic">🗣️</span> Mensaje “YO” (conducta que cambia vínculo)</h2>
+          <p class="muted">Reduce escalada y evita el rol de “mediadora silenciosa”. Hablas desde ti, sin acusar.</p>
+
+          <label>Hecho observable (sin juicio)</label>
+          <input id="cHecho" placeholder="Ej: Ayer elevaste el tono y me interrumpiste." />
+
+          <label>Emoción (1 palabra)</label>
+          <input id="cEmocion" placeholder="Ej: ansiosa / triste / frustrada / asustada" />
+
+          <label>Necesidad (qué es importante para mí)</label>
+          <input id="cNecesidad" placeholder="Ej: respeto, calma, turnos, seguridad, acuerdos." />
+
+          <label>Petición concreta</label>
+          <input id="cPeticion" placeholder="Ej: Te pido que hagamos pausa si sube el tono, y retomemos con calma." />
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn primary" id="btnBuildYo">🧩 Construir mensaje</button>
+            <button class="btn" id="btnCopyYo">📋 Copiar</button>
+            <button class="btn" id="btnLogYo">📝 Registrar uso</button>
+          </div>
+
+          <label>Mensaje final</label>
+          <textarea id="cOutput" placeholder="Aquí aparecerá tu mensaje YO..."></textarea>
+
+          <div class="footer">
+            <b>Micro-meta:</b> 1 mensaje “YO” por semana + 1 límite actuado. Eso cambia el patrón más que discutir “quién tiene razón”.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="ic">🧊</span> “Si hay ira, yo no me quedo” (plan de pausa)</h2>
+          <p class="muted">Un acuerdo simple: pausa + retorno. Evita entrar a la escalada para “calmarlo”.</p>
+
+          <div class="list">
+            <div class="item">
+              <div>
+                <div class="t">Acuerdo 20/20</div>
+                <div class="m">Si sube el tono, yo digo “pausa” y me retiro 20 min. Luego vuelvo 20 min a conversar.</div>
+              </div>
+              <span class="badge ok">Practicable</span>
+            </div>
+            <div class="item">
+              <div>
+                <div class="t">Frase de salida (neutral)</div>
+                <div class="m">“Quiero resolverlo. Ahora no. Vuelvo en 20 minutos con calma.”</div>
+              </div>
+              <span class="badge warn">Clave</span>
+            </div>
+            <div class="item">
+              <div>
+                <div class="t">Regla anti-enganche</div>
+                <div class="m">Durante la pausa: no mensajes, no explicar, no justificar. Solo regular.</div>
+              </div>
+              <span class="badge">Disciplina</span>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn primary" id="btnCopyExit">📋 Copiar frase de salida</button>
+            <button class="btn" id="btnLogPause">📝 Registrar pausa</button>
+          </div>
+
+          <div class="footer">
+            <b>Nota:</b> si la otra parte no respeta la pausa y persigue/insiste, se eleva el nivel de protección (espacio, apoyo, terapia de pareja solo con condiciones).
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTRO -->
+    <section class="section" id="registro">
+      <div class="grid">
+        <div class="card">
+          <h2><span class="ic">📝</span> Registro breve (para cambio real)</h2>
+          <p class="muted">2 minutos. Enfocado en conducta: pausa, límite, mensaje YO, salida de escalada.</p>
+
+          <label>¿Qué pasó hoy? (hecho breve)</label>
+          <textarea id="rHecho" placeholder="Ej: discusión por X; subió el tono; me activé..."></textarea>
+
+          <label>¿Qué elegí hacer diferente?</label>
+          <select id="rCambio">
+            <option value="Pausa 90s">🫧 Pausa 90s</option>
+            <option value="Límite claro">🧱 Límite claro</option>
+            <option value="Mensaje YO">🗣️ Mensaje YO</option>
+            <option value="Pausa 20/20">🧊 Pausa 20/20</option>
+            <option value="No rescate / no mediación">🧭 No rescate</option>
+          </select>
+
+          <label>Resultado (1 frase)</label>
+          <input id="rResultado" placeholder="Ej: no escaló / me retiré a tiempo / pude sostenerme..." />
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn primary" id="btnAddLog">➕ Guardar entrada</button>
+            <button class="btn" id="btnClearForm">🧽 Limpiar</button>
+          </div>
+
+          <div class="footer">
+            <b>Tip clínico:</b> el registro entrena identidad: “yo me sostengo”, en vez de “yo sostengo la relación”.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2><span class="ic">📚</span> Historial</h2>
+          <p class="muted">Tus prácticas quedan guardadas en este dispositivo (local).</p>
+          <div class="divider"></div>
+          <div class="list" id="logList"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <button class="btn" id="btnCopyLast">📋 Copiar última entrada</button>
+            <button class="btn danger" id="btnWipeAll">🗑️ Borrar todo</button>
+          </div>
+
+          <div class="footer">
+            <div class="credits">Créditos: Lic. Gonzalo Buendía – Psicólogo · Blanquita – Co terapeuta</div>
+            <div style="margin-top:6px">
+              Esta mini-app es una herramienta psicoeducativa/terapéutica de apoyo. No reemplaza evaluación clínica ni terapia.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---------- Helpers ----------
+    const $ = (sel, parent=document) => parent.querySelector(sel);
+    const $$ = (sel, parent=document) => [...parent.querySelectorAll(sel)];
+    const nowISO = () => new Date().toISOString();
+    const fmt = (iso) => {
+      const d = new Date(iso);
+      const pad = (n)=> String(n).padStart(2,'0');
+      return `${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    };
+    const ls = {
+      get(k, fallback){
+        try{
+          const v = localStorage.getItem(k);
+          return v ? JSON.parse(v) : fallback;
+        }catch{ return fallback; }
+      },
+      set(k, v){ localStorage.setItem(k, JSON.stringify(v)); }
+    };
+    function toast(msg){
+      const el = $("#toast");
+      el.textContent = msg;
+      el.style.display = "block";
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=> el.style.display="none", 2200);
+    }
+    async function copyToClipboard(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        toast("Copiado ✅");
+      }catch{
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        toast("Copiado ✅");
+      }
+    }
+    function download(filename, content){
+      const blob = new Blob([content], {type:"application/json;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ---------- Tabs ----------
+    const tabs = $$(".tab");
+    function setTab(id){
+      tabs.forEach(t=>{
+        const on = t.dataset.tab === id;
+        t.classList.toggle("active", on);
+        t.setAttribute("aria-selected", on ? "true":"false");
+      });
+      $$(".section").forEach(s=> s.classList.toggle("active", s.id === id));
+      // slight status
+      $("#statusTxt").textContent = (id==="registro") ? "Registrando" : "Lista";
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+    tabs.forEach(t=> t.addEventListener("click", ()=> setTab(t.dataset.tab)));
+
+    // ---------- Micro-changes (KPIs) ----------
+    const microHabits = [
+      { key:"h_pause90", icon:"🫧", name:"Pausa 90s", desc:"Pauso antes de responder", target:"3/semana" },
+      { key:"h_limit", icon:"🧱", name:"Límite claro", desc:"Un límite actuado", target:"1/semana" },
+      { key:"h_yo", icon:"🗣️", name:"Mensaje YO", desc:"Pido sin acusar", target:"1/semana" },
+    ];
+    function incHabit(key){
+      const stats = ls.get("stephany_stats", {});
+      stats[key] = (stats[key]||0) + 1;
+      stats.updatedAt = nowISO();
+      ls.set("stephany_stats", stats);
+      renderKPIs();
+    }
+    function resetHabits(){
+      const stats = { updatedAt: nowISO() };
+      ls.set("stephany_stats", stats);
+      renderKPIs();
+      toast("Contadores reiniciados ✨");
+    }
+    function renderKPIs(){
+      const stats = ls.get("stephany_stats", {});
+      const box = $("#kpiBoxes");
+      box.innerHTML = "";
+      microHabits.forEach(h=>{
+        const count = stats[h.key] || 0;
+        const div = document.createElement("div");
+        div.className = "box";
+        div.innerHTML = `
+          <div class="label">${h.icon} ${h.name}</div>
+          <div class="value">${count}</div>
+          <div class="sub">${h.desc} · meta ${h.target}</div>
+        `;
+        box.appendChild(div);
+      });
+    }
+    renderKPIs();
+
+    // ---------- Semáforo relacional ----------
+    const traffic = {
+      verde: [
+        { t:"Conectar sin rescatar", m:"Presencia + afecto, sin hacerte responsable del estado del otro." , b:"ok" },
+        { t:"Refuerzo positivo", m:"Nombra una conducta concreta que valoras (no elogios generales).", b:"ok" },
+        { t:"Pequeño acuerdo", m:"Una regla simple: turnos, tono, pausa si sube la emoción.", b:"" },
+      ],
+      amarillo: [
+        { t:"Pausa 90s", m:"Antes de hablar: exhala largo x6 y vuelve a tu eje.", b:"warn" },
+        { t:"Mensaje YO", m:"Hecho + emoción + necesidad + petición. Sin acusar.", b:"warn" },
+        { t:"No negociar tu límite", m:"Si hay ironía/gritos: anuncia pausa y ejecuta.", b:"" },
+      ],
+      rojo: [
+        { t:"Salida neutral", m:"“Quiero resolverlo. Ahora no. Vuelvo en 20 minutos con calma.”", b:"bad" },
+        { t:"Protección del vínculo + de ti", m:"No te quedes para calmarlo. Retírate, regula, y solo vuelves si hay condiciones.", b:"bad" },
+        { t:"Si hay riesgo", m:"Prioriza seguridad y apoyo presencial/profesional. No sostener sola la crisis.", b:"bad" },
+      ]
+    };
+    function renderTraffic(mode){
+      const chips = $$("[data-traffic]");
+      chips.forEach(c=> c.classList.toggle("active", c.dataset.traffic===mode));
+      const el = $("#trafficAdvice");
+      el.innerHTML = "";
+      traffic[mode].forEach(x=>{
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+          <div>
+            <div class="t">${x.t}</div>
+            <div class="m">${x.m}</div>
+          </div>
+          <span class="badge ${x.b||""}">${mode.toUpperCase()}</span>
+        `;
+        el.appendChild(item);
+      });
+    }
+    renderTraffic("verde");
+    $$("[data-traffic]").forEach(btn=>{
+      btn.addEventListener("click", ()=> renderTraffic(btn.dataset.traffic));
+    });
+
+    // ---------- Timer 90 ----------
+    let timerInt = null;
+    $("#btnTimer90").addEventListener("click", ()=>{
+      let remaining = 90;
+      const box = $("#timerBox");
+      box.style.display = "block";
+      const tick = ()=>{
+        const mm = String(Math.floor(remaining/60)).padStart(2,"0");
+        const ss = String(remaining%60).padStart(2,"0");
+        box.innerHTML = `<b>⏱️ Pausa 90:</b> ${mm}:${ss}<br/><span class="muted">Exhala largo. Suelta hombros. Vuelve a tu eje.</span>`;
+        if(remaining<=0){
+          clearInterval(timerInt); timerInt=null;
+          box.innerHTML = `<b>✅ Listo:</b> Ahora elige una respuesta que cuide tu dignidad y tu límite.`;
+          toast("Pausa completada ✅");
+        }
+        remaining--;
+      };
+      if(timerInt) { clearInterval(timerInt); timerInt=null; }
+      tick();
+      timerInt = setInterval(tick, 1000);
+    });
+    $("#btnLogReg").addEventListener("click", ()=>{
+      incHabit("h_pause90");
+      addLog("Práctica: Pausa 90s", "Elegí regularme antes de responder.", "Me sostuve mejor.");
+      toast("Registrado 🫧");
+    });
+    $("#btnQuickReset").addEventListener("click", ()=>{
+      setTab("regulacion");
+      $("#btnTimer90").click();
+    });
+
+    // ---------- Fusión checklist ----------
+    const fusionItems = [
+      { id:"f1", t:"“Si él no está bien, yo tampoco.”", m:"Mi estado depende del suyo." },
+      { id:"f2", t:"Intenté calmarlo para que la relación “no se rompa”.", m:"Rescate / mediación automática." },
+      { id:"f3", t:"Me sentí culpable por poner un límite.", m:"Culpa por cuidarme." },
+      { id:"f4", t:"Expliqué 3+ veces lo mismo.", m:"Sobre-explicación para ser comprendida." },
+      { id:"f5", t:"Negocié mi dignidad por paz momentánea.", m:"Ceder para evitar conflicto." },
+      { id:"f6", t:"Me costó retirarme cuando subió el tono.", m:"Me quedé “para arreglarlo”." },
+    ];
+    function renderFusion(){
+      const saved = ls.get("stephany_fusion", {});
+      const box = $("#fusionChecklist");
+      box.innerHTML = "";
+      fusionItems.forEach(it=>{
+        const on = !!saved[it.id];
+        const row = document.createElement("div");
+        row.className = "item";
+        row.innerHTML = `
+          <div>
+            <div class="t">${it.t}</div>
+            <div class="m">${it.m}</div>
+          </div>
+          <button class="btn small ${on ? "primary":""}" data-fid="${it.id}">${on ? "✅" : "Marcar"}</button>
+        `;
+        box.appendChild(row);
+      });
+      $$("[data-fid]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          const fid = b.dataset.fid;
+          const cur = ls.get("stephany_fusion", {});
+          cur[fid] = !cur[fid];
+          ls.set("stephany_fusion", cur);
+          renderFusion();
+        });
+      });
+    }
+    renderFusion();
+
+    $("#btnFusionScore").addEventListener("click", ()=>{
+      const cur = ls.get("stephany_fusion", {});
+      const score = Object.values(cur).filter(Boolean).length;
+      const r = $("#fusionResult");
+      r.style.display = "block";
+      let msg = "";
+      if(score<=1){
+        msg = `🟢 <b>Bajo</b> (${score}/6): buena diferenciación hoy. Mantén “pausa + mensaje YO”.`;
+      }else if(score<=3){
+        msg = `🟡 <b>Moderado</b> (${score}/6): se activó el rol de reguladora. Hoy: 1 límite actuado + pausa 20/20 si sube el tono.`;
+      }else{
+        msg = `🔴 <b>Alto</b> (${score}/6): fusión intensa. Prioriza protección: pausa, límite y retirada. No te quedes a “calmar” la escalada.`;
+      }
+      r.innerHTML = msg + `<div style="margin-top:8px;color:var(--muted)">Meta: que tu bienestar no dependa de su estado. “Yo me sostengo.”</div>`;
+    });
+    $("#btnFusionClear").addEventListener("click", ()=>{
+      ls.set("stephany_fusion", {});
+      renderFusion();
+      $("#fusionResult").style.display="none";
+      toast("Checklist limpiado 🧽");
+    });
+
+    // ---------- Límites (builder + library) ----------
+    function buildBoundary(){
+      const s = $("#bSituacion").value.trim();
+      const l = $("#bLimite").value.trim();
+      const p = $("#bPeticion").value.trim();
+      const c = $("#bConsecuencia").value.trim();
+      const out =
+`Cuando ocurre: ${s || "(define la situación)"}.
+Mi límite es: ${l || "(define tu límite)"}.
+Lo que te pido es: ${p || "(petición concreta)"}.
+Si no se cumple, yo haré: ${c || "(consecuencia saludable)"}.
+
+Quiero resolverlo, pero con respeto y calma.`;
+      $("#bOutput").value = out;
+      return out;
+    }
+    $("#btnBuildBoundary").addEventListener("click", ()=>{
+      buildBoundary();
+      toast("Guion generado 🧱");
+    });
+    $("#btnCopyBoundary").addEventListener("click", ()=> copyToClipboard($("#bOutput").value || buildBoundary()));
+    $("#btnSaveBoundary").addEventListener("click", ()=>{
+      const txt = $("#bOutput").value || buildBoundary();
+      const arr = ls.get("stephany_boundaries_saved", []);
+      arr.unshift({ at: nowISO(), text: txt });
+      ls.set("stephany_boundaries_saved", arr.slice(0, 25));
+      renderSavedBoundaries();
+      incHabit("h_limit");
+      toast("Límite guardado 💾");
+    });
+
+    const library = [
+      {
+        title:"Gritos / tono alto",
+        text:"Si sube el tono, yo hago pausa. Quiero resolverlo, pero no converso con gritos. Me retiro 20 minutos y vuelvo con calma."
+      },
+      {
+        title:"Insultos / descalificación",
+        text:"No acepto insultos. Si aparece descalificación, termino la conversación y la retomamos solo con respeto."
+      },
+      {
+        title:"Interrupciones constantes",
+        text:"Necesito turnos. Si me interrumpes, paro y lo retomamos cuando podamos escucharnos por turnos."
+      },
+      {
+        title:"Ironías / sarcasmo",
+        text:"Con ironía no puedo conversar. Te pido tono directo y respetuoso; si no, hago pausa y vuelvo luego."
+      },
+      {
+        title:"Culpa / manipulación",
+        text:"Entiendo tu emoción, pero no tomaré culpas que no son mías. Puedo conversar cuando hablemos de hechos y acuerdos."
+      }
+    ];
+    let selectedTpl = null;
+
+    function renderLibrary(){
+      const box = $("#boundaryLibrary");
+      box.innerHTML = "";
+      library.forEach((x, idx)=>{
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div>
+            <div class="t">🧱 ${x.title}</div>
+            <div class="m">${x.text}</div>
+          </div>
+          <button class="btn small ${selectedTpl===idx ? "primary":""}" data-tpl="${idx}">${selectedTpl===idx ? "Seleccionada" : "Elegir"}</button>
+        `;
+        box.appendChild(el);
+      });
+      $$("[data-tpl]").forEach(b=>{
+        b.addEventListener("click", ()=>{
+          selectedTpl = Number(b.dataset.tpl);
+          renderLibrary();
+          toast("Plantilla seleccionada ✅");
+        });
+      });
+    }
+    renderLibrary();
+
+    $("#btnCopyLibrary").addEventListener("click", ()=>{
+      if(selectedTpl===null) return toast("Elige una plantilla primero 🙂");
+      copyToClipboard(library[selectedTpl].text);
+    });
+
+    function renderSavedBoundaries(){
+      const arr = ls.get("stephany_boundaries_saved", []);
+      const box = $("#savedBoundariesBox");
+      if(!arr.length){
+        box.innerHTML = `<b>Guardados:</b> aún no hay límites guardados.`;
+        return;
+      }
+      const last = arr[0];
+      box.innerHTML = `<b>Guardados:</b> ${arr.length} · <span class="muted">Último: ${fmt(last.at)}</span><br/><div style="margin-top:6px">${last.text.replaceAll("\n","<br/>")}</div>`;
+    }
+    renderSavedBoundaries();
+
+    $("#btnClearBoundaries").addEventListener("click", ()=>{
+      if(!confirm("¿Borrar límites guardados en este dispositivo?")) return;
+      ls.set("stephany_boundaries_saved", []);
+      renderSavedBoundaries();
+      toast("Borrado 🗑️");
+    });
+
+    // ---------- Mensaje YO ----------
+    function buildYo(){
+      const h = $("#cHecho").value.trim();
+      const e = $("#cEmocion").value.trim();
+      const n = $("#cNecesidad").value.trim();
+      const p = $("#cPeticion").value.trim();
+      const out =
+`Cuando pasa: ${h || "(hecho observable)"},
+yo me siento ${e || "(emoción)"} porque necesito ${n || "(necesidad)"}.
+Te pido: ${p || "(petición concreta)"}.
+Quiero resolverlo contigo, con calma y respeto.`;
+      $("#cOutput").value = out;
+      return out;
+    }
+    $("#btnBuildYo").addEventListener("click", ()=>{
+      buildYo();
+      toast("Mensaje creado 🗣️");
+    });
+    $("#btnCopyYo").addEventListener("click", ()=> copyToClipboard($("#cOutput").value || buildYo()));
+    $("#btnLogYo").addEventListener("click", ()=>{
+      incHabit("h_yo");
+      addLog("Uso de Mensaje YO", $("#cOutput").value || buildYo(), "Elegí pedir sin acusar.");
+    });
+
+    // ---------- Pausa/Salida ----------
+    $("#btnCopyExit").addEventListener("click", ()=>{
+      copyToClipboard("Quiero resolverlo. Ahora no. Vuelvo en 20 minutos con calma.");
+    });
+    $("#btnLogPause").addEventListener("click", ()=>{
+      addLog("Pausa 20/20", "Ejecuté pausa ante escalada.", "Protegí mi límite y el vínculo.");
+      toast("Registrado 🧊");
+    });
+
+    // ---------- Registro ----------
+    function addLog(title, hecho, resultado){
+      const logs = ls.get("stephany_logs", []);
+      logs.unshift({
+        at: nowISO(),
+        title,
+        hecho,
+        cambio: ($("#rCambio")?.value) || "",
+        resultado
+      });
+      ls.set("stephany_logs", logs.slice(0, 80));
+      renderLogs();
+    }
+    function renderLogs(){
+      const logs = ls.get("stephany_logs", []);
+      const box = $("#logList");
+      box.innerHTML = "";
+      if(!logs.length){
+        box.innerHTML = `<div class="footer">Aún no hay registros. Guarda una entrada para ver tu historial aquí.</div>`;
+        return;
+      }
+      logs.forEach((x, i)=>{
+        const badgeClass = x.title.includes("Límite") ? "warn" :
+                          x.title.includes("Pausa") ? "ok" :
+                          x.title.includes("Mensaje") ? "warn" : "";
+        const el = document.createElement("div");
+        el.className = "item";
+        el.innerHTML = `
+          <div>
+            <div class="t">${x.title}</div>
+            <div class="m"><span class="muted">${fmt(x.at)}</span><br/>
+              <b>Hecho:</b> ${escapeHtml(x.hecho || "")}<br/>
+              <b>Resultado:</b> ${escapeHtml(x.resultado || "")}
+            </div>
+          </div>
+          <span class="badge ${badgeClass}">#${i+1}</span>
+        `;
+        box.appendChild(el);
+      });
+    }
+    function escapeHtml(s){
+      return String(s).replace(/[&<>"']/g, (m)=>({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[m]));
+    }
+    renderLogs();
+
+    $("#btnAddLog").addEventListener("click", ()=>{
+      const hecho = $("#rHecho").value.trim();
+      const cambio = $("#rCambio").value;
+      const res = $("#rResultado").value.trim();
+      if(!hecho || !res){
+        return toast("Completa “qué pasó” y “resultado” 🙂");
+      }
+      addLog(cambio, hecho, res);
+
+      if(cambio.includes("Pausa 90")) incHabit("h_pause90");
+      if(cambio.includes("Límite")) incHabit("h_limit");
+      if(cambio.includes("Mensaje")) incHabit("h_yo");
+
+      $("#rHecho").value = "";
+      $("#rResultado").value = "";
+      toast("Entrada guardada ✅");
+    });
+
+    $("#btnClearForm").addEventListener("click", ()=>{
+      $("#rHecho").value = "";
+      $("#rResultado").value = "";
+      toast("Formulario limpio 🧽");
+    });
+
+    $("#btnCopyLast").addEventListener("click", ()=>{
+      const logs = ls.get("stephany_logs", []);
+      if(!logs.length) return toast("Aún no hay registros 🙂");
+      const x = logs[0];
+      const txt =
+`Stephany · Registro
+Fecha: ${fmt(x.at)}
+Tipo: ${x.title}
+Hecho: ${x.hecho}
+Resultado: ${x.resultado}`;
+      copyToClipboard(txt);
+    });
+
+    $("#btnWipeAll").addEventListener("click", ()=>{
+      if(!confirm("¿Borrar todo el historial y contadores en este dispositivo?")) return;
+      localStorage.removeItem("stephany_logs");
+      localStorage.removeItem("stephany_stats");
+      localStorage.removeItem("stephany_fusion");
+      localStorage.removeItem("stephany_boundaries_saved");
+      renderLogs();
+      renderKPIs();
+      renderFusion();
+      renderSavedBoundaries();
+      toast("Todo borrado 🗑️");
+    });
+
+    // ---------- Share plan (pareja) ----------
+    $("#btnSharePlan").addEventListener("click", async ()=>{
+      const msg =
+`Plan breve para cuidarnos (Stephany)
+1) Si sube el tono o hay descalificación: PAUSA 20 min.
+2) Retomamos con respeto y turnos.
+3) Yo hablaré con “Mensaje YO” (hecho + emoción + necesidad + petición).
+4) Si no hay condiciones, retomamos luego (no en escalada).
+Meta: resolver sin dañarnos y sin que yo cargue el clima emocional.`;
+      // Try native share (mobile)
+      if(navigator.share){
+        try{
+          await navigator.share({ title:"Plan breve de conversación", text: msg });
+          toast("Compartido ✅");
+          return;
+        }catch{}
+      }
+      await copyToClipboard(msg);
+      toast("Plan copiado para enviar 📤");
+    });
+
+    // ---------- Export ----------
+    $("#btnExport").addEventListener("click", ()=>{
+      const payload = {
+        app: "Stephany · Guía Relacional",
+        exportedAt: nowISO(),
+        stats: ls.get("stephany_stats", {}),
+        fusion: ls.get("stephany_fusion", {}),
+        boundariesSaved: ls.get("stephany_boundaries_saved", []),
+        logs: ls.get("stephany_logs", []),
+      };
+      download("stephany_guia_relacional_export.json", JSON.stringify(payload, null, 2));
+      toast("Exportado ⬇️");
+    });
+
+    // ---------- Reset counters only ----------
+    $("#btnQuickReset").addEventListener("dblclick", resetHabits); // extra: double-tap
+    $("#btnQuickReset").addEventListener("contextmenu", (e)=>{ e.preventDefault(); resetHabits(); });
+
+    // ---------- Small quality-of-life ----------
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape"){
+        $("#timerBox").style.display="none";
+      }
+    });
+
+    // Ensure saved boundaries shown at load
+    renderSavedBoundaries();
+  </script>
+</body>
+</html>

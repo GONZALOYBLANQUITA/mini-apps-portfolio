@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ff5ea8" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>EllenV02 · Comer con calma</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="description" content="Mini-app clínica para ansiedad asociada a la alimentación. Offline-first, iPhone/Android." />
+
+  <style>
+    :root{
+      /* Paleta femenina elegante */
+      --bgA:#fff0f7;
+      --bgB:#f6f3ff;
+      --card:#ffffffcc;
+      --cardSolid:#ffffff;
+      --text:#222;
+      --muted:#6b6b77;
+
+      --pink:#ff5ea8;
+      --rose:#ff8ac0;
+      --lila:#bfa8ff;
+      --violet:#7c5cff;
+      --coral:#ff7e79;
+      --mint:#26c6a8;
+      --sky:#3dd5ff;
+
+      --shadow: 0 10px 28px rgba(12,10,20,.10);
+      --radius: 22px;
+      --radiusSm: 14px;
+
+      --safeT: env(safe-area-inset-top);
+      --safeR: env(safe-area-inset-right);
+      --safeB: env(safe-area-inset-bottom);
+      --safeL: env(safe-area-inset-left);
+
+      --maxW: 430px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 20% 10%, #ffe1ee 0%, transparent 45%),
+                  radial-gradient(1100px 650px at 80% 20%, #e8e2ff 0%, transparent 40%),
+                  linear-gradient(180deg, var(--bgA), var(--bgB));
+      padding: calc(12px + var(--safeT)) calc(12px + var(--safeR)) calc(14px + var(--safeB)) calc(12px + var(--safeL));
+      overflow-x:hidden;
+    }
+
+    .app{
+      max-width: var(--maxW);
+      margin: 0 auto;
+      min-height: calc(100dvh - (12px + var(--safeT)) - (14px + var(--safeB)));
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 6px 6px 0;
+    }
+
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      line-height:1.1;
+    }
+    .brand .t1{font-weight:800; font-size:18px; letter-spacing:.2px}
+    .brand .t2{font-size:12px; color:var(--muted)}
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: #ffffffb8;
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      backdrop-filter: blur(10px);
+      font-size:12px;
+      color:#333;
+      user-select:none;
+    }
+    .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--mint);
+      box-shadow: 0 0 0 4px rgba(38,198,168,.20);
+    }
+
+    .nav{
+      display:flex;
+      gap:8px;
+      padding: 0 6px;
+      flex-wrap:wrap;
+    }
+
+    .tab{
+      border:none;
+      background:#ffffffb8;
+      border-radius:999px;
+      padding:10px 12px;
+      font-weight:700;
+      font-size:13px;
+      color:#2a2a33;
+      box-shadow: 0 8px 18px rgba(0,0,0,.06);
+      backdrop-filter: blur(10px);
+      cursor:pointer;
+    }
+    .tab[aria-selected="true"]{
+      background: linear-gradient(90deg, rgba(255,94,168,.95), rgba(191,168,255,.95));
+      color:#fff;
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      backdrop-filter: blur(12px);
+    }
+    .cardSolid{
+      background: var(--cardSolid);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .h{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .h .title{
+      font-weight:900;
+      font-size:15px;
+      letter-spacing:.2px;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .badge{
+      font-size:12px;
+      font-weight:800;
+      padding:6px 10px;
+      border-radius:999px;
+      background: #ffffffcc;
+      color:#333;
+      border:1px solid rgba(0,0,0,.05);
+    }
+
+    .txt{
+      margin:0;
+      font-size:14px;
+      line-height:1.35;
+      color:#2a2a33;
+    }
+    .muted{color:var(--muted)}
+    .sp8{height:8px}
+    .sp10{height:10px}
+
+    .btn{
+      width:100%;
+      border:none;
+      border-radius: 16px;
+      padding: 14px 14px;
+      font-weight:900;
+      font-size:15px;
+      cursor:pointer;
+      user-select:none;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      box-shadow: 0 12px 22px rgba(0,0,0,.10);
+      transition: transform .06s ease, filter .2s ease;
+    }
+    .btn:active{ transform: scale(.99) }
+    .btnPrimary{
+      color:#fff;
+      background: linear-gradient(90deg, var(--pink), var(--lila));
+    }
+    .btnMint{
+      color:#fff;
+      background: linear-gradient(90deg, var(--mint), var(--sky));
+    }
+    .btnWarm{
+      color:#1f1f25;
+      background: linear-gradient(90deg, #ffd18a, #ffb36b);
+    }
+    .btnEat{
+      color:#fff;
+      background: linear-gradient(90deg, var(--coral), #ff4fa0);
+    }
+    .btnGhost{
+      color:#2a2a33;
+      background:#ffffffcc;
+      box-shadow:none;
+      border:1px solid rgba(0,0,0,.07);
+    }
+
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+
+    .phraseBox{
+      border-radius: 18px;
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(255,94,168,.10), rgba(191,168,255,.10));
+      border:1px solid rgba(0,0,0,.05);
+    }
+    .phrase{
+      font-weight:800;
+      font-size:14px;
+    }
+
+    /* Respiración */
+    .breathWrap{
+      display:grid;
+      gap:10px;
+    }
+    .breathRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .meter{
+      width:100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,.06);
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.05);
+    }
+    .meter > div{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, var(--mint), var(--sky));
+      transition: width .25s ease;
+    }
+    .timer{
+      font-weight:900;
+      font-size:14px;
+      padding:8px 10px;
+      border-radius:999px;
+      background:#ffffffcc;
+      border:1px solid rgba(0,0,0,.06);
+      min-width:120px;
+      text-align:center;
+    }
+
+    /* Micro-plan */
+    .opt{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:12px;
+      border-radius: 16px;
+      background:#ffffffcc;
+      border:1px solid rgba(0,0,0,.06);
+      cursor:pointer;
+      user-select:none;
+    }
+    .opt input{accent-color: var(--pink)}
+    .opt .ico{font-size:18px; width:26px; text-align:center}
+    .opt .lab{font-weight:800; font-size:14px}
+    .opt .sub{font-size:12px; color:var(--muted); margin-top:2px}
+    .opt .col{display:flex; flex-direction:column}
+
+    /* Pantallas */
+    .screen{display:none}
+    .screen.active{display:block}
+
+    /* Modo comer */
+    .steps{
+      display:grid;
+      gap:10px;
+    }
+    .step{
+      padding:12px;
+      border-radius: 18px;
+      border:1px solid rgba(0,0,0,.06);
+      background:#ffffffcc;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .step .n{
+      width:34px; height:34px; border-radius: 12px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900;
+      color:#fff;
+      background: linear-gradient(90deg, var(--pink), var(--lila));
+      flex:0 0 auto;
+    }
+    .step .c{display:flex; flex-direction:column; gap:3px}
+    .step .c .a{font-weight:900}
+    .step .c .b{font-size:12px; color:var(--muted); line-height:1.25}
+
+    .miniRow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:#ffffffcc;
+      border:1px solid rgba(0,0,0,.06);
+      font-weight:900;
+      font-size:13px;
+    }
+
+    /* Crisis */
+    .crisisBtn{
+      position: sticky;
+      bottom: 10px;
+      z-index: 5;
+      margin-top: 6px;
+    }
+
+    textarea, input[type="text"]{
+      width:100%;
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      padding: 12px;
+      font-size:14px;
+      outline:none;
+      background:#fff;
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .footer{
+      text-align:center;
+      font-size:12px;
+      color:#6d6d78;
+      padding: 8px 6px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" role="application" aria-label="EllenV02 Comer con calma">
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="t1">🌷 EllenV02</div>
+        <div class="t2">Comer con calma · iPhone/Android · Offline-first</div>
+      </div>
+
+      <div class="pill" title="Estado de conexión (informativo)">
+        <span class="dot" id="netDot" aria-hidden="true"></span>
+        <span id="netTxt">Listo</span>
+      </div>
+    </div>
+
+    <div class="nav" role="tablist" aria-label="Navegación">
+      <button class="tab" id="tab-home" aria-selected="true" role="tab" onclick="go('home')">🏠 Inicio</button>
+      <button class="tab" id="tab-eat" aria-selected="false" role="tab" onclick="go('eat')">🍽 Comer</button>
+      <button class="tab" id="tab-log" aria-selected="false" role="tab" onclick="go('log')">📝 Registro</button>
+      <button class="tab" id="tab-history" aria-selected="false" role="tab" onclick="go('history')">📚 Historial</button>
+    </div>
+
+    <!-- HOME -->
+    <section class="screen active" id="home" role="tabpanel" aria-label="Inicio">
+      <div class="card">
+        <div class="h">
+          <div class="title">💗 1) Frase de permiso</div>
+          <span class="badge">calma</span>
+        </div>
+
+        <div class="phraseBox">
+          <div class="phrase" id="phraseText">Estoy a salvo. Puedo comer a mi ritmo. No necesito hacerlo perfecto.</div>
+          <div class="sp10"></div>
+          <p class="txt muted">Úsala antes de sentarte o al primer signo de tensión.</p>
+        </div>
+
+        <div class="sp10"></div>
+
+        <div class="grid2">
+          <button class="btn btnPrimary" onclick="copyPhrase()">📋 Copiar</button>
+          <button class="btn btnGhost" onclick="speakPhrase()">🔊 Escuchar</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="h">
+          <div class="title">🫁 2) Respiración guiada</div>
+          <span class="badge" id="breathMode">60s</span>
+        </div>
+
+        <p class="txt">Inhala <b>4</b> · Exhala <b>6</b> · Repite suave. (Sin forzar)</p>
+
+        <div class="sp10"></div>
+
+        <div class="breathWrap">
+          <div class="breathRow">
+            <div class="timer" id="timerTxt">Timer: —</div>
+            <div class="miniRow">
+              <span class="chip" id="phaseChip">🌿 Preparada</span>
+            </div>
+          </div>
+
+          <div class="meter" aria-label="Progreso de respiración">
+            <div id="meterBar"></div>
+          </div>
+
+          <div class="grid2">
+            <button class="btn btnMint" onclick="startBreath(60)">⏱ Iniciar 60s</button>
+            <button class="btn btnWarm" onclick="stopBreath()">⏹ Detener</button>
+          </div>
+
+          <button class="btn btnGhost" onclick="startBreath(120)">✨ Hacerlo 120s</button>
+
+          <p class="small">
+            Tip iPhone: si estás en un navegador dentro de WhatsApp, mejor ábrelo en Safari/Chrome o instálalo en “Añadir a pantalla de inicio”.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="h">
+          <div class="title">🌸 3) Micro-plan (elige 1)</div>
+          <span class="badge">fácil</span>
+        </div>
+
+        <div id="microPlan">
+          <label class="opt">
+            <input type="radio" name="plan" value="sorbo" />
+            <div class="ico">🥄</div>
+            <div class="col">
+              <div class="lab">Un sorbo primero</div>
+              <div class="sub">Inicio gentil para bajar la alerta.</div>
+            </div>
+          </label>
+
+          <label class="opt">
+            <input type="radio" name="plan" value="bocado" />
+            <div class="ico">🍽️</div>
+            <div class="col">
+              <div class="lab">Un bocado mínimo</div>
+              <div class="sub">Micro-paso, sin presionarte.</div>
+            </div>
+          </label>
+
+          <label class="opt">
+            <input type="radio" name="plan" value="segmentar" />
+            <div class="ico">🧩</div>
+            <div class="col">
+              <div class="lab">Segmentar en 3 partes</div>
+              <div class="sub">Reducir “tarea grande” a “tarea pequeña”.</div>
+            </div>
+          </label>
+
+          <label class="opt">
+            <input type="radio" name="plan" value="ambiente" />
+            <div class="ico">🎧</div>
+            <div class="col">
+              <div class="lab">Ambiente suave</div>
+              <div class="sub">Luz baja, música calma, sin apuro.</div>
+            </div>
+          </label>
+        </div>
+
+        <div class="sp10"></div>
+
+        <button class="btn btnPrimary" onclick="confirmPlan()">💗 Listo</button>
+        <div class="sp10"></div>
+        <button class="btn btnEat" onclick="goEatFromHome()">🍴 Ir a comer</button>
+      </div>
+
+      <div class="cardSolid">
+        <div class="h">
+          <div class="title">🧠 Señal rápida</div>
+          <span class="badge">mini-ancla</span>
+        </div>
+        <p class="txt">
+          <b>“Un paso pequeño cuenta.”</b> Si aparece tensión, no pelees con ella: baja el ritmo, vuelve a la respiración y retoma con suavidad.
+        </p>
+      </div>
+    </section>
+
+    <!-- EAT -->
+    <section class="screen" id="eat" role="tabpanel" aria-label="Comer">
+      <div class="card">
+        <div class="h">
+          <div class="title">🍽 Modo “Ir a comer”</div>
+          <span class="badge" id="planBadge">plan: —</span>
+        </div>
+
+        <p class="txt muted" id="eatIntro">
+          Vamos paso a paso. Objetivo: <b>seguridad</b>, no perfección.
+        </p>
+
+        <div class="sp10"></div>
+
+        <div class="steps" id="eatSteps"></div>
+
+        <div class="sp10"></div>
+
+        <div class="grid2">
+          <button class="btn btnMint" onclick="startPace()">⏱ Ritmo suave</button>
+          <button class="btn btnWarm" onclick="stopPace()">⏹ Pausar</button>
+        </div>
+
+        <div class="sp10"></div>
+
+        <div class="miniRow">
+          <span class="chip" id="paceChip">⏳ Sin ritmo</span>
+          <span class="chip" id="paceTimer">—</span>
+        </div>
+
+        <div class="sp10"></div>
+
+        <button class="btn btnPrimary" onclick="finishMeal()">✅ Terminé (cierre)</button>
+      </div>
+
+      <div class="crisisBtn">
+        <button class="btn btnGhost" onclick="openCrisis()">🧯 Modo crisis (si sube la ansiedad)</button>
+      </div>
+
+      <div class="cardSolid" id="crisisCard" style="display:none;">
+        <div class="h">
+          <div class="title">🧯 Modo crisis</div>
+          <span class="badge">bajar alarma</span>
+        </div>
+
+        <p class="txt"><b>1) Detén el ritmo.</b> Pon ambas manos sobre el abdomen. Exhala más largo que lo que inhalas.</p>
+        <div class="sp10"></div>
+
+        <div class="steps">
+          <div class="step">
+            <div class="n">1</div>
+            <div class="c">
+              <div class="a">Orientación 5-4-3-2-1</div>
+              <div class="b">Mira 5 cosas · toca 4 · escucha 3 · huele 2 · saborea 1. Sin prisa.</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">2</div>
+            <div class="c">
+              <div class="a">Permiso</div>
+              <div class="b">“Puedo detenerme. Puedo volver a empezar. Estoy a salvo.”</div>
+            </div>
+          </div>
+          <div class="step">
+            <div class="n">3</div>
+            <div class="c">
+              <div class="a">Micro-acción</div>
+              <div class="b">Elige una: sorbo / bocado mínimo / pausa de 30s / cambiar textura.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sp10"></div>
+
+        <div class="grid2">
+          <button class="btn btnMint" onclick="startBreath(60)">🫁 Respirar 60s</button>
+          <button class="btn btnWarm" onclick="closeCrisis()">🔙 Volver</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOG -->
+    <section class="screen" id="log" role="tabpanel" aria-label="Registro">
+      <div class="card">
+        <div class="h">
+          <div class="title">📝 Cierre post-comida</div>
+          <span class="badge">sin juicio</span>
+        </div>
+
+        <p class="txt muted">No se mide cantidad. Solo registramos experiencia y seguridad.</p>
+        <div class="sp10"></div>
+
+        <div class="cardSolid" style="padding:12px;">
+          <p class="txt"><b>¿Cómo estuvo tu ansiedad?</b> (elige)</p>
+          <div class="sp10"></div>
+          <div class="grid2">
+            <button class="btn btnGhost" onclick="setAnx(1)">🌿 Baja</button>
+            <button class="btn btnGhost" onclick="setAnx(2)">🌸 Media</button>
+            <button class="btn btnGhost" onclick="setAnx(3)">🔥 Alta</button>
+            <button class="btn btnGhost" onclick="setAnx(4)">🌪 Muy alta</button>
+          </div>
+
+          <div class="sp10"></div>
+          <p class="txt"><b>¿Qué ayudó más hoy?</b></p>
+          <textarea id="helped" rows="4" placeholder="Ej.: segmentar el plato, respirar, música suave, sorbo primero..."></textarea>
+
+          <div class="sp10"></div>
+          <p class="txt"><b>Frase de cierre</b> (puedes editarla)</p>
+          <input id="closing" type="text" value="Hoy hice lo que pude. Eso ya cuenta. Mañana puedo hacerlo más amable." />
+
+          <div class="sp10"></div>
+          <button class="btn btnPrimary" onclick="saveLog()">💾 Guardar registro</button>
+          <div class="sp10"></div>
+          <button class="btn btnGhost" onclick="copyLastLog()">📋 Copiar último registro</button>
+        </div>
+      </div>
+
+      <div class="cardSolid">
+        <div class="h">
+          <div class="title">🧾 Exportar</div>
+          <span class="badge">privado</span>
+        </div>
+        <p class="small">Tu historial queda en este teléfono (localStorage). Puedes exportarlo como texto para compartirlo contigo/tu terapeuta.</p>
+        <button class="btn btnMint" onclick="exportData()">⬇️ Exportar datos</button>
+        <div class="sp10"></div>
+        <button class="btn btnWarm" onclick="resetAll()">🧹 Borrar todo (con cuidado)</button>
+      </div>
+    </section>
+
+    <!-- HISTORY -->
+    <section class="screen" id="history" role="tabpanel" aria-label="Historial">
+      <div class="card">
+        <div class="h">
+          <div class="title">📚 Historial de registros</div>
+          <span class="badge" id="countBadge">0</span>
+        </div>
+        <div id="historyList"></div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Desarrollado por: <b>Lic. Gonzalo Buendía – Psicólogo</b> · <b>Blanquita – Co terapeuta</b>
+      <div class="small">EllenV02 · Offline-first · No reemplaza atención profesional.</div>
+    </div>
+
+  </div>
+
+<script>
+/* =========================
+   Estado y utilidades
+========================= */
+const KEY = "ellenv02_logs_v1";
+const KEY_PLAN = "ellenv02_plan_v1";
+const KEY_LAST_ANX = "ellenv02_last_anx_v1";
+
+let breathInterval = null;
+let breathTotal = 0;
+let breathLeft = 0;
+let breathPhase = "prep"; // inhale/exhale
+let breathTick = 0;
+
+let paceInterval = null;
+let paceLeft = 0;
+let paceStep = 0;
+let selectedAnx = 0;
+
+const $ = (id)=>document.getElementById(id);
+
+function nowISO(){
+  const d = new Date();
+  return d.toISOString();
+}
+
+function fmtDate(iso){
+  try{
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {year:"numeric",month:"short",day:"2-digit",hour:"2-digit",minute:"2-digit"});
+  }catch(e){ return iso; }
+}
+
+function haptic(ms=20){
+  try{
+    if (navigator.vibrate) navigator.vibrate(ms);
+  }catch(e){}
+}
+
+function toast(msg){
+  // Minimalista (sin dependencias). Alert es más estable en iOS.
+  alert(msg);
+}
+
+function safeCopy(text){
+  // iOS/Safari a veces falla con clipboard si no es HTTPS: fallback con textarea.
+  const tryClipboard = async ()=>{
+    try{
+      if (navigator.clipboard && window.isSecureContext){
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    }catch(e){}
+    return false;
+  };
+
+  return tryClipboard().then(ok=>{
+    if(ok) return true;
+    // fallback
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position="fixed";
+    ta.style.left="-9999px";
+    ta.setAttribute("readonly", "");
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    let success = false;
+    try{ success = document.execCommand("copy"); }catch(e){ success=false; }
+    document.body.removeChild(ta);
+    return success;
+  });
+}
+
+/* =========================
+   Conexión (solo informativo)
+   No genera el banner del navegador.
+========================= */
+function updateNet(){
+  const online = navigator.onLine;
+  $("netDot").style.background = online ? "var(--mint)" : "var(--coral)";
+  $("netDot").style.boxShadow = online ? "0 0 0 4px rgba(38,198,168,.20)" : "0 0 0 4px rgba(255,126,121,.20)";
+  $("netTxt").textContent = online ? "Listo" : "Sin red (ok)";
+}
+window.addEventListener("online", updateNet);
+window.addEventListener("offline", updateNet);
+
+/* =========================
+   Navegación
+========================= */
+function setTab(id){
+  const tabs = ["home","eat","log","history"];
+  tabs.forEach(t=>{
+    $("tab-"+t).setAttribute("aria-selected", t===id ? "true":"false");
+    $(t).classList.toggle("active", t===id);
+  });
+}
+
+function go(id){
+  stopPace(); // por seguridad UX
+  if(id==="history") renderHistory();
+  setTab(id);
+}
+
+function goEatFromHome(){
+  const plan = getPlan();
+  if(!plan){
+    toast("Elige un micro-plan primero 🌸");
+    return;
+  }
+  buildEatSteps(plan);
+  setTab("eat");
+}
+
+/* =========================
+   Frase
+========================= */
+async function copyPhrase(){
+  const t = $("phraseText").textContent.trim();
+  const ok = await safeCopy(t);
+  toast(ok ? "Frase copiada 💗" : "No se pudo copiar. Mantén pulsado y copia manual.");
+}
+
+function speakPhrase(){
+  const t = $("phraseText").textContent.trim();
+  try{
+    if(!("speechSynthesis" in window)) return toast("Tu dispositivo no soporta voz.");
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = "es-ES";
+    u.rate = 0.92;
+    u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+    haptic(25);
+  }catch(e){
+    toast("No se pudo reproducir la voz en este navegador.");
+  }
+}
+
+/* =========================
+   Respiración (4-6)
+========================= */
+function setBreathUI(){
+  $("breathMode").textContent = breathTotal ? (breathTotal+"s") : "—";
+  $("timerTxt").textContent = breathTotal ? `Timer: ${breathLeft}s` : "Timer: —";
+  const pct = breathTotal ? Math.round(((breathTotal - breathLeft)/breathTotal)*100) : 0;
+  $("meterBar").style.width = pct + "%";
+
+  let chip = "🌿 Preparada";
+  if(breathTotal){
+    if(breathPhase==="inhale") chip = "🌬️ Inhala 4";
+    if(breathPhase==="exhale") chip = "🌷 Exhala 6";
+  }
+  $("phaseChip").textContent = chip;
+}
+
+function startBreath(seconds){
+  stopBreath();
+  breathTotal = seconds;
+  breathLeft  = seconds;
+  breathPhase = "inhale";
+  breathTick  = 0;
+  setBreathUI();
+  haptic(30);
+
+  // ciclo 10s (4+6). Actualiza cada 1s.
+  breathInterval = setInterval(()=>{
+    breathLeft--;
+    breathTick++;
+
+    const cyclePos = breathTick % 10; // 0..9
+    breathPhase = (cyclePos < 4) ? "inhale" : "exhale";
+
+    // haptic suave al cambio de fase
+    if(cyclePos===0 || cyclePos===4) haptic(18);
+
+    setBreathUI();
+
+    if(breathLeft<=0){
+      stopBreath(true);
+      toast("Listo 💗");
+      haptic(60);
+    }
+  }, 1000);
+}
+
+function stopBreath(done=false){
+  if(breathInterval){
+    clearInterval(breathInterval);
+    breathInterval = null;
+  }
+  if(!done){
+    breathTotal = 0;
+    breathLeft  = 0;
+    breathPhase = "prep";
+    breathTick  = 0;
+    $("meterBar").style.width = "0%";
+    $("timerTxt").textContent = "Timer: —";
+    $("phaseChip").textContent = "🌿 Preparada";
+  }
+}
+
+/* =========================
+   Micro-plan
+========================= */
+function getPlan(){
+  try{
+    const v = localStorage.getItem(KEY_PLAN);
+    return v ? v : "";
+  }catch(e){ return ""; }
+}
+
+function setPlan(v){
+  try{ localStorage.setItem(KEY_PLAN, v); }catch(e){}
+}
+
+function confirmPlan(){
+  const sel = document.querySelector('input[name="plan"]:checked');
+  if(!sel){
+    toast("Elige un micro-plan 🌸");
+    return;
+  }
+  setPlan(sel.value);
+  haptic(35);
+  toast("Micro-plan guardado 💗");
+}
+
+function planLabel(v){
+  switch(v){
+    case "sorbo": return "🥄 sorbo primero";
+    case "bocado": return "🍽️ bocado mínimo";
+    case "segmentar": return "🧩 segmentar";
+    case "ambiente": return "🎧 ambiente suave";
+    default: return "—";
+  }
+}
+
+/* =========================
+   Modo comer
+========================= */
+function buildEatSteps(plan){
+  $("planBadge").textContent = "plan: " + planLabel(plan);
+
+  const base = [
+    {a:"Me ubico", b:"Pies al suelo, hombros sueltos, exhalo largo 2 veces."},
+    {a:"Un inicio pequeño", b:"Aplico mi micro-plan sin discutir con la ansiedad."},
+    {a:"Textura y ritmo", b:"Masticación suave. Pausas micro. Sin apuro."},
+    {a:"Señal de seguridad", b:"“Estoy a salvo. Puedo ir lento.”"},
+    {a:"Cierre amable", b:"Cuando sea suficiente para hoy, cierro sin culpa."},
+  ];
+
+  // Ajustes por plan
+  const extra = {
+    sorbo: {a:"🥄 Sorbo primero", b:"Un sorbo. Pausa 10 segundos. Observa: el cuerpo baja."},
+    bocado: {a:"🍽️ Bocado mínimo", b:"Un bocado pequeño. Pausa. Respira. Repite si se siente posible."},
+    segmentar: {a:"🧩 Segmentar", b:"Divide visualmente el plato en 3. Solo atiende la parte 1."},
+    ambiente: {a:"🎧 Ambiente suave", b:"Luz baja + música calmada. Reduce estímulos."},
+  };
+
+  const steps = [...base];
+  if(extra[plan]) steps.splice(1,0, extra[plan]);
+
+  const wrap = $("eatSteps");
+  wrap.innerHTML = "";
+  steps.forEach((s,i)=>{
+    const d = document.createElement("div");
+    d.className="step";
+    d.innerHTML = `
+      <div class="n">${i+1}</div>
+      <div class="c">
+        <div class="a">${s.a}</div>
+        <div class="b">${s.b}</div>
+      </div>
+    `;
+    wrap.appendChild(d);
+  });
+
+  $("eatIntro").textContent = "Vamos paso a paso. Objetivo: seguridad, no perfección.";
+}
+
+function startPace(){
+  stopPace();
+  paceStep = 0;
+  paceLeft = 90; // 90s por ciclo suave
+  $("paceChip").textContent = "⏱ Ritmo suave activo";
+  $("paceTimer").textContent = `90s`;
+
+  // Cada 1s. Haptic corto cada 30s.
+  paceInterval = setInterval(()=>{
+    paceLeft--;
+    $("paceTimer").textContent = `${paceLeft}s`;
+
+    if(paceLeft===60 || paceLeft===30) haptic(18);
+
+    if(paceLeft<=0){
+      paceStep++;
+      paceLeft=90;
+      haptic(45);
+      // Mensaje suave por ciclo
+      const msgs = [
+        "🌷 Pausa micro. Exhala largo.",
+        "🫧 Suelta hombros. Un paso pequeño.",
+        "💗 Si aparece tensión: baja el ritmo.",
+        "🌿 Repite tu frase de permiso."
+      ];
+      toast(msgs[paceStep % msgs.length]);
+    }
+  },1000);
+
+  haptic(30);
+}
+
+function stopPace(){
+  if(paceInterval){
+    clearInterval(paceInterval);
+    paceInterval = null;
+  }
+  $("paceChip").textContent = "⏳ Sin ritmo";
+  $("paceTimer").textContent = "—";
+}
+
+function openCrisis(){
+  stopPace();
+  $("crisisCard").style.display = "block";
+  haptic(40);
+}
+
+function closeCrisis(){
+  $("crisisCard").style.display = "none";
+  haptic(20);
+}
+
+function finishMeal(){
+  stopPace();
+  closeCrisis();
+  // precargar cierre
+  const plan = getPlan();
+  const last = getLastLog();
+  $("closing").value = "Hoy hice lo que pude. Eso ya cuenta. Mañana puedo hacerlo más amable.";
+  $("helped").value = plan ? `Plan usado: ${planLabel(plan)}. ` : "";
+  selectedAnx = 0;
+  toast("Vamos al cierre post-comida 📝");
+  setTab("log");
+}
+
+/* =========================
+   Registro e historial
+========================= */
+function setAnx(n){
+  selectedAnx = n;
+  try{ localStorage.setItem(KEY_LAST_ANX, String(n)); }catch(e){}
+  const map = {1:"Baja 🌿",2:"Media 🌸",3:"Alta 🔥",4:"Muy alta 🌪"};
+  toast("Ansiedad: " + (map[n] || "—"));
+  haptic(25);
+}
+
+function getLogs(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return [];
+    const arr = JSON.parse(raw);
+    return Array.isArray(arr) ? arr : [];
+  }catch(e){ return []; }
+}
+
+function setLogs(arr){
+  try{ localStorage.setItem(KEY, JSON.stringify(arr)); }catch(e){}
+}
+
+function getLastLog(){
+  const logs = getLogs();
+  return logs.length ? logs[0] : null;
+}
+
+function saveLog(){
+  const plan = getPlan();
+  const helped = $("helped").value.trim();
+  const closing = $("closing").value.trim();
+
+  if(!selectedAnx){
+    toast("Selecciona el nivel de ansiedad (🌿/🌸/🔥/🌪)");
+    return;
+  }
+  if(!closing){
+    toast("Escribe una frase de cierre (aunque sea corta).");
+    return;
+  }
+
+  const log = {
+    at: nowISO(),
+    plan: plan || "",
+    anxiety: selectedAnx,
+    helped,
+    closing
+  };
+
+  const logs = getLogs();
+  logs.unshift(log);            // más reciente primero
+  setLogs(logs.slice(0, 200));  // límite razonable
+
+  haptic(50);
+  toast("Registro guardado 💗");
+  renderHistory();
+  setTab("history");
+}
+
+async function copyLastLog(){
+  const last = getLastLog();
+  if(!last){
+    toast("Aún no hay registros.");
+    return;
+  }
+  const map = {1:"Baja",2:"Media",3:"Alta",4:"Muy alta"};
+  const text =
+`EllenV02 · Registro
+Fecha: ${fmtDate(last.at)}
+Plan: ${last.plan ? planLabel(last.plan) : "—"}
+Ansiedad: ${map[last.anxiety] || "—"}
+Qué ayudó: ${last.helped || "—"}
+Cierre: ${last.closing || "—"}`;
+
+  const ok = await safeCopy(text);
+  toast(ok ? "Registro copiado 📋" : "No se pudo copiar. Selecciona y copia manual.");
+}
+
+async function exportData(){
+  const logs = getLogs();
+  const payload = {
+    app: "EllenV02",
+    exportedAt: nowISO(),
+    logs
+  };
+  const text = JSON.stringify(payload, null, 2);
+  const ok = await safeCopy(text);
+  toast(ok ? "Datos exportados (copiados al portapapeles) 📋" : "No se pudo copiar. Intenta en Safari/Chrome.");
+}
+
+function resetAll(){
+  const sure = confirm("¿Seguro? Esto borrará plan e historial en este teléfono.");
+  if(!sure) return;
+  try{
+    localStorage.removeItem(KEY);
+    localStorage.removeItem(KEY_PLAN);
+    localStorage.removeItem(KEY_LAST_ANX);
+  }catch(e){}
+  toast("Listo. Datos borrados.");
+  renderHistory();
+  // reset UI
+  document.querySelectorAll('input[name="plan"]').forEach(r=>r.checked=false);
+  $("helped").value="";
+  selectedAnx=0;
+  setTab("home");
+}
+
+function renderHistory(){
+  const logs = getLogs();
+  $("countBadge").textContent = String(logs.length);
+  const wrap = $("historyList");
+  wrap.innerHTML = "";
+
+  if(!logs.length){
+    const d = document.createElement("div");
+    d.className="cardSolid";
+    d.innerHTML = `<p class="txt"><b>Aún no hay registros.</b></p><p class="small">Cuando completes un cierre post-comida, aparecerán aquí.</p>`;
+    wrap.appendChild(d);
+    return;
+  }
+
+  logs.slice(0, 25).forEach((l, idx)=>{
+    const map = {1:"🌿 Baja",2:"🌸 Media",3:"🔥 Alta",4:"🌪 Muy alta"};
+    const d = document.createElement("div");
+    d.className="cardSolid";
+    d.style.marginBottom="10px";
+    d.innerHTML = `
+      <div class="h" style="margin-bottom:8px;">
+        <div class="title">📝 ${fmtDate(l.at)}</div>
+        <span class="badge">${map[l.anxiety] || "—"}</span>
+      </div>
+      <p class="small"><b>Plan:</b> ${l.plan ? planLabel(l.plan) : "—"}</p>
+      <p class="small"><b>Qué ayudó:</b> ${escapeHTML(l.helped || "—")}</p>
+      <p class="small"><b>Cierre:</b> ${escapeHTML(l.closing || "—")}</p>
+      <div class="sp8"></div>
+      <button class="btn btnGhost" onclick="copyLogByIndex(${idx})">📋 Copiar este</button>
+    `;
+    wrap.appendChild(d);
+  });
+
+  const tail = document.createElement("div");
+  tail.className="card";
+  tail.innerHTML = `<p class="small">Mostrando últimos 25. El resto queda guardado localmente.</p>`;
+  wrap.appendChild(tail);
+}
+
+async function copyLogByIndex(i){
+  const logs = getLogs();
+  const l = logs[i];
+  if(!l) return;
+  const map = {1:"Baja",2:"Media",3:"Alta",4:"Muy alta"};
+  const text =
+`EllenV02 · Registro
+Fecha: ${fmtDate(l.at)}
+Plan: ${l.plan ? planLabel(l.plan) : "—"}
+Ansiedad: ${map[l.anxiety] || "—"}
+Qué ayudó: ${l.helped || "—"}
+Cierre: ${l.closing || "—"}`;
+
+  const ok = await safeCopy(text);
+  toast(ok ? "Copiado 📋" : "No se pudo copiar.");
+}
+
+function escapeHTML(s){
+  return String(s).replace(/[&<>"']/g, (m)=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[m]));
+}
+
+/* =========================
+   Init
+========================= */
+function init(){
+  updateNet();
+
+  // Cargar plan previo si existe
+  const p = getPlan();
+  if(p){
+    const r = document.querySelector(`input[name="plan"][value="${p}"]`);
+    if(r) r.checked = true;
+  }
+
+  // Construir pasos por defecto si ya hay plan
+  if(p) buildEatSteps(p);
+
+  // Historial
+  renderHistory();
+
+  // Service Worker (offline-first)
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js").catch(()=>{ /* silencio */ });
+  }
+}
+
+init();
+</script>
+</body>
+</html>

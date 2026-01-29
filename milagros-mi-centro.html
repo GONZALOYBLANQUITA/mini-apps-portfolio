@@ -1,0 +1,1596 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#F8C8D8" />
+  <title>Milagros • Mi Centro</title>
+  <style>
+    :root{
+      --bg: #FFF7FB;
+      --card: #FFFFFF;
+      --ink: #221A26;
+      --muted: rgba(34,26,38,.68);
+      --line: rgba(34,26,38,.10);
+
+      --p1:#F8C8D8; /* rosa suave */
+      --p2:#F6D6EE; /* lila pastel */
+      --p3:#DDEBFF; /* celeste suave */
+      --p4:#E6FFF6; /* menta suave */
+      --good:#1F8A70;
+      --warn:#C97C1A;
+      --bad:#B23A3A;
+
+      --shadow: 0 14px 40px rgba(34,26,38,.10);
+      --radius: 20px;
+
+      --navH: 76px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", system-ui, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, var(--p2), transparent 55%),
+                  radial-gradient(900px 700px at 85% 10%, var(--p3), transparent 60%),
+                  linear-gradient(180deg, var(--bg), #fff);
+      color:var(--ink);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow:hidden; /* evita doble scroll */
+    }
+
+    .app{
+      height:100vh;
+      height:100dvh; /* iOS moderno */
+      display:flex;
+      flex-direction:column;
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: calc(env(safe-area-inset-bottom) + var(--navH));
+      overflow:hidden;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      padding: 14px 16px 10px;
+      backdrop-filter: blur(14px);
+      background: rgba(255,255,255,.65);
+      border-bottom: 1px solid var(--line);
+    }
+    .topRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
+    }
+    .title h1{
+      margin:0;
+      font-size: clamp(18px, 4.6vw, 22px);
+      letter-spacing:-.2px;
+      line-height:1.15;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .title p{
+      margin:0;
+      font-size: 13px;
+      color:var(--muted);
+    }
+
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: linear-gradient(135deg, rgba(248,200,216,.9), rgba(246,214,238,.9));
+      border: 1px solid rgba(34,26,38,.08);
+      box-shadow: 0 10px 22px rgba(34,26,38,.08);
+      font-size: 13px;
+      font-weight: 650;
+      white-space:nowrap;
+      flex:0 0 auto;
+      cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+      user-select:none;
+    }
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    main{
+      flex:1;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 14px 16px 18px;
+    }
+
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+
+    .card{
+      background: rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+    .card h2{margin:0 0 8px;font-size:16px;letter-spacing:-.2px}
+    .sub{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.35}
+
+    .btn{
+      appearance:none;border:none;cursor:pointer;
+      width:100%;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding: 14px 14px;border-radius: 18px;
+      background:#fff;border:1px solid rgba(34,26,38,.10);
+      box-shadow: 0 10px 24px rgba(34,26,38,.08);
+      color:var(--ink);font-weight:700;font-size:15px;text-align:left;
+      transition: transform .06s ease;
+      user-select:none;-webkit-tap-highlight-color: transparent;
+    }
+    .btn:active{ transform: scale(.99); }
+    .btn .left{display:flex;align-items:center;gap:12px;min-width:0}
+    .icon{
+      width:44px;height:44px;border-radius:14px;
+      display:grid;place-items:center;font-size:22px;
+      flex:0 0 auto;border:1px solid rgba(34,26,38,.08);
+      box-shadow: 0 10px 18px rgba(34,26,38,.06);
+      background: linear-gradient(135deg, rgba(248,200,216,.85), rgba(221,235,255,.85));
+    }
+    .btn .txt{min-width:0}
+    .btn .txt .t{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .btn .txt .d{display:block;font-size:12.5px;color:var(--muted);font-weight:600;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chev{opacity:.45;font-size:18px}
+
+    .pillBar{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:999px;
+      border:1px solid rgba(34,26,38,.10);
+      background: rgba(255,255,255,.9);
+      font-size: 13px;font-weight:650;color:var(--ink);
+      cursor:pointer;-webkit-tap-highlight-color: transparent;
+      user-select:none;
+    }
+    .pill:active{transform:scale(.99)}
+    .pill small{color:var(--muted); font-weight:700}
+
+    textarea, input, select{
+      width:100%;
+      border-radius: 16px;
+      border: 1px solid rgba(34,26,38,.12);
+      background: rgba(255,255,255,.94);
+      padding: 12px 12px;
+      font-size: 15px;
+      outline:none;
+      box-shadow: 0 12px 26px rgba(34,26,38,.08);
+      color:var(--ink);
+    }
+    textarea{min-height: 110px; resize: vertical}
+    label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px;font-weight:750}
+
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 360px){ .two{grid-template-columns:1fr} .icon{width:42px;height:42px} }
+
+    .mini{font-size:12.5px;color:var(--muted);line-height:1.35}
+    .hr{height:1px;background:var(--line);margin:10px 0}
+
+    nav{
+      position:fixed;left:0;right:0;bottom:0;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.72);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid var(--line);
+      z-index: 30;
+    }
+    .navRow{display:flex;gap:10px;max-width:820px;margin:0 auto}
+    .navBtn{
+      flex:1;border:none;border-radius:18px;padding:12px 10px;
+      background:#fff;border:1px solid rgba(34,26,38,.10);
+      box-shadow: 0 10px 20px rgba(34,26,38,.08);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+      cursor:pointer;-webkit-tap-highlight-color: transparent;user-select:none;min-height:56px;
+    }
+    .navBtn:active{transform:scale(.99)}
+    .navBtn .nI{font-size:20px}
+    .navBtn .nT{font-size:12px;font-weight:800;color:rgba(34,26,38,.75)}
+    .navBtn.active{
+      background: linear-gradient(135deg, rgba(248,200,216,.95), rgba(221,235,255,.95));
+      border-color: rgba(34,26,38,.08);
+    }
+
+    .toast{
+      position: fixed; left: 50%; transform: translateX(-50%);
+      bottom: calc(env(safe-area-inset-bottom) + var(--navH) + 16px);
+      background: rgba(34,26,38,.88); color:#fff;
+      padding: 10px 12px; border-radius:999px;
+      font-size: 13px; font-weight: 700;
+      opacity: 0; pointer-events:none;
+      transition: opacity .25s ease;
+      z-index: 60;
+      max-width: min(92vw, 520px);
+      text-align:center;
+    }
+    .toast.show{opacity:1}
+
+    .timerBox{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:12px 12px;border-radius:18px;
+      border:1px solid rgba(34,26,38,.10);
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 10px 22px rgba(34,26,38,.08);
+      margin-top:10px;
+    }
+    .timerBox b{font-size:15px}
+    .timerBox span{color:var(--muted);font-weight:750;font-size:12.5px}
+    .timerBtn{
+      border:none; border-radius:14px; padding:10px 12px;
+      background: linear-gradient(135deg, rgba(248,200,216,.95), rgba(221,235,255,.95));
+      border:1px solid rgba(34,26,38,.08);
+      box-shadow: 0 10px 18px rgba(34,26,38,.08);
+      font-weight:850; cursor:pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" role="application" aria-label="Milagros - Mi Centro">
+    <header>
+      <div class="topRow">
+        <div class="title">
+          <h1>Milagros • Mi Centro</h1>
+          <p>Autocuidado, límites y reintegración productiva</p>
+        </div>
+        <div class="chip" id="moodChip" title="Toca para abrir Check-in">
+          <span class="dot warn" id="moodDot"></span>
+          <span id="moodText">En pausa</span>
+        </div>
+      </div>
+    </header>
+
+    <main id="main"></main>
+
+    <nav aria-label="Navegación">
+      <div class="navRow">
+        <button class="navBtn active" data-tab="inicio"><div class="nI">🏠</div><div class="nT">Inicio</div></button>
+        <button class="navBtn" data-tab="agenda"><div class="nI">🗓️</div><div class="nT">Agenda</div></button>
+        <button class="navBtn" data-tab="compartir"><div class="nI">📲</div><div class="nT">Compartir</div></button>
+        <button class="navBtn" data-tab="plan"><div class="nI">🌷</div><div class="nT">Plan</div></button>
+      </div>
+    </nav>
+
+    <div class="toast" id="toast">Guardado</div>
+  </div>
+
+<script>
+(() => {
+  const $ = (q, el=document)=> el.querySelector(q);
+  const $$ = (q, el=document)=> Array.from(el.querySelectorAll(q));
+  const STORAGE_KEY = "milagros_iphone_app_v3";
+
+  // ===== State =====
+  const state = load() || {
+    profile: { name: "Milagros", apoyo: "Persona de apoyo" },
+
+    mood: { level: "warn", label: "En pausa", score: 5, dateISO: todayISO() },
+    checkins: [],
+    journal: [],
+
+    plan: {
+      focus: "Reintegración gradual",
+      tasks: [
+        { id: id(), title:"Rutina breve (10–15 min)", done:false },
+        { id: id(), title:"1 acción productiva pequeña", done:false },
+        { id: id(), title:"1 límite sano hoy", done:false },
+      ],
+      microSteps: [
+        "Hoy no necesito resolver la vida: solo dar un paso pequeño.",
+        "Mi valor no depende de salvar a otros.",
+        "Puedo ayudar sin cargar con todo el peso."
+      ]
+    },
+
+    hooks: {
+      // frases de enganche (cortas, memorables)
+      guilt: [
+        "Puedo amar sin rescatar.",
+        "No soy egoísta por priorizarme.",
+        "Ayudar no significa cargar.",
+        "Mi límite protege mi paz."
+      ],
+      productivity: [
+        "Un paso pequeño rompe el estancamiento.",
+        "Hecho > perfecto.",
+        "Hoy gano por constancia.",
+        "25 minutos valen más que 2 horas de culpa."
+      ],
+      relationship: [
+        "No vuelvo donde me desvalorizaron.",
+        "Mi criterio interno manda.",
+        "El afecto no exige sacrificio.",
+        "Paz primero, nostalgia después."
+      ]
+    },
+
+    visualization: {
+      // técnicas breves guiadas
+      scripts: [
+        {
+          title: "Lugar seguro (2 min)",
+          icon: "🌸",
+          steps: [
+            "Cierra los ojos suavemente. Inhala 4 segundos, exhala 6.",
+            "Imagina un lugar seguro: real o inventado. Observa colores, luz y temperatura.",
+            "Siente el apoyo del suelo y relaja hombros y mandíbula.",
+            "Repite: “Aquí estoy a salvo. Puedo volver a mí”.",
+            "Elige un gesto ancla: mano en el pecho o en el abdomen.",
+            "Cuando quieras, abre los ojos lentamente."
+          ],
+          durationMin: 2
+        },
+        {
+          title: "Visualización de límite sin culpa (3 min)",
+          icon: "🛡️",
+          steps: [
+            "Imagina una situación donde alguien te pide algo y sientes impulso de resolverlo.",
+            "Visualiza un “muro de cristal”: transparente, amable, firme. Tú te mantienes de tu lado.",
+            "Ensaya una frase corta: “Te escucho, pero hoy no puedo hacerme cargo”.",
+            "Siente la culpa como una ola: sube, se sostiene y baja. Respira mientras pasa.",
+            "Cierra con: “Mi límite cuida mi vida productiva y mi paz”."
+          ],
+          durationMin: 3
+        },
+        {
+          title: "Día productivo posible (4 min)",
+          icon: "🌷",
+          steps: [
+            "Imagina tu mañana con estructura mínima: 1 rutina + 1 bloque breve (10–25 min).",
+            "Mírate haciendo solo lo esencial: abrir laptop, ordenar, enviar 1 mensaje, avanzar 1 tarea.",
+            "Visualiza una pausa saludable: agua, estiramiento, respiración 60 segundos.",
+            "Siente autoeficacia: “Puedo sostener esto, paso a paso”.",
+            "Cierra con un plan: “Hoy elijo una acción pequeña y la termino”."
+          ],
+          durationMin: 4
+        }
+      ],
+      lastPlayedId: null
+    },
+
+    boundaries: {
+      scripts: [
+        { title:"Pausa antes de intervenir", text:"Te escucho. Antes de decidir, necesito un momento para pensar con calma." },
+        { title:"Límite con cariño", text:"Me importas, pero hoy no puedo hacerme cargo de eso. Puedo acompañarte a buscar una alternativa." },
+        { title:"No rescate", text:"Confío en que puedes manejarlo. Si quieres, te apoyo con una idea concreta, no con todo el peso." },
+      ],
+      redFlags: [
+        "Siento culpa si no ayudo.",
+        "Me angustia que el otro se moleste.",
+        "Me olvido de mis planes por resolver lo de otros."
+      ]
+    },
+
+    relapse: {
+      signs: [
+        "Aislamiento o desconexión prolongada",
+        "Rumiación, culpa o autoexigencia extrema",
+        "Evitar actividades productivas por miedo/agotamiento",
+        "Sobrecarga por demandas familiares"
+      ],
+      actions: [
+        "Reducir exigencia y volver a lo básico (descanso + comida + agua).",
+        "Contactar una persona de apoyo y pedir acompañamiento específico.",
+        "Hacer un ‘paso mínimo’ (5–10 min) para romper la inercia.",
+        "Aplicar un límite claro a demandas externas hoy."
+      ]
+    },
+
+    agenda: {
+      weekStartISO: mondayOfThisWeekISO(),
+      weeks: [
+        makeWeek("Semana 1 • Re-arranque suave", [
+          "Preparar rutina (hora de despertar + 1 bloque breve)",
+          "Actualizar/ordenar CV o documentos (15–25 min)",
+          "Hacer 1 trámite pequeño (mensaje/correo/llamada)"
+        ]),
+        makeWeek("Semana 2 • Enfoque y constancia", [
+          "Definir 2 horarios fijos de 25 min (Pomodoro simple)",
+          "Enviar 2 postulaciones o contactos laborales",
+          "Practicar 2 límites (familia/demandas)"
+        ]),
+        makeWeek("Semana 3 • Exposición gradual", [
+          "Simular 1 mañana productiva (60–90 min total con pausas)",
+          "Revisar 1 opción concreta (curso/empleo/actividad)",
+          "Planear 1 salida breve (rutina + energía)"
+        ]),
+        makeWeek("Semana 4 • Consolidación", [
+          "Mantener 3 días con bloque productivo fijo",
+          "Evaluar progreso (qué funcionó / qué ajustar)",
+          "Definir siguiente mes (metas pequeñas)"
+        ])
+      ]
+    },
+
+    timers: {
+      // micro-exposición para productividad
+      running: false,
+      remainingSec: 0,
+      label: ""
+    }
+  };
+
+  // ===== UI =====
+  const main = $("#main");
+  const moodDot = $("#moodDot");
+  const moodText = $("#moodText");
+  const toast = $("#toast");
+
+  function setMoodChip(level, label){
+    moodDot.className = "dot " + level;
+    moodText.textContent = label;
+  }
+
+  function render(tab){
+    if(state.mood?.label) setMoodChip(state.mood.level, state.mood.label);
+
+    if(tab==="inicio") return renderInicio();
+    if(tab==="agenda") return renderAgenda();
+    if(tab==="compartir") return renderCompartir();
+    if(tab==="plan") return renderPlan();
+    if(tab==="checkin") return renderCheckin();
+    if(tab==="limites") return renderLimites();
+    if(tab==="crisis") return renderCrisis();
+    if(tab==="diario") return renderDiario();
+    if(tab==="visualizacion") return renderVisualizacion();
+    if(tab==="enganche") return renderEnganche();
+    if(tab==="ajustes") return renderAjustes();
+    renderInicio();
+  }
+
+  // ===== Inicio =====
+  function renderInicio(){
+    const name = escapeHTML(state.profile.name || "Milagros");
+    const doneCount = state.plan.tasks.filter(t=>t.done).length;
+    const totalCount = state.plan.tasks.length;
+
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Hola, ${name} 💗</h2>
+          <p class="sub">Este espacio es para volver a ti: calma, límites y un paso productivo a la vez.</p>
+
+          <button class="btn" data-go="checkin">
+            <span class="left">
+              <span class="icon">💗</span>
+              <span class="txt">
+                <span class="t">Check-in emocional</span>
+                <span class="d">Cómo estás hoy, sin juicio</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <div class="pillBar">
+            <div class="pill" data-go="crisis">🧯 Crisis <small>plan rápido</small></div>
+            <div class="pill" data-go="limites">🛡️ Límites <small>sin culpa</small></div>
+            <div class="pill" data-go="visualizacion">🌸 Visualización <small>calma</small></div>
+            <div class="pill" data-go="enganche">✨ Enganche <small>frases</small></div>
+            <div class="pill" data-go="diario">📝 Diario <small>descargar</small></div>
+            <div class="pill" data-go="ajustes">⚙️ Ajustes <small>respaldo</small></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Tu paso productivo de hoy 🌷</h2>
+          <p class="sub">Pequeño, realista y suficiente. Avances = constancia, no perfección.</p>
+
+          <button class="btn" data-go="plan">
+            <span class="left">
+              <span class="icon">✅</span>
+              <span class="txt">
+                <span class="t">Checklist diario</span>
+                <span class="d">${doneCount} de ${totalCount} completados</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <button class="btn" data-go="agenda" style="margin-top:10px">
+            <span class="left">
+              <span class="icon">🗓️</span>
+              <span class="txt">
+                <span class="t">Agenda semanal</span>
+                <span class="d">metas pequeñas + exposición gradual</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <div class="hr"></div>
+          <p class="mini">
+            <b>Recordatorio clave:</b> si aparece la culpa por no “salvar” a otros,
+            vuelve al objetivo: <b>reintegración gradual</b> + <b>límites</b>.
+          </p>
+        </div>
+
+        <div class="card">
+          <h2>Mantra breve 🕊️</h2>
+          <p class="sub">Toca uno y repítelo 3 veces, lento.</p>
+          <div class="pillBar">
+            ${state.plan.microSteps.map(s=>`<div class="pill" data-mantra="${escapeHTML(s)}">✨ ${escapeHTML(shorten(s, 34))}</div>`).join("")}
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Créditos</h2>
+          <p class="mini">
+            Todas las mini aplicaciones fueron desarrolladas por <b>Lic. Gonzalo Buendía – Psicólogo</b>
+            y <b>Blanquita – Co terapeuta</b>, como herramientas psicoeducativas digitales de apoyo clínico.
+          </p>
+        </div>
+      </div>
+    `;
+    bindCommon();
+  }
+
+  // ===== Agenda =====
+  function renderAgenda(){
+    const ws = state.agenda.weekStartISO;
+    const currentIdx = getCurrentWeekIndex();
+
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Agenda de reinserción 🗓️</h2>
+          <p class="sub">Metas semanales pequeñas. La clave es <b>constancia sin sobrecarga</b>.</p>
+
+          <div class="pillBar">
+            <div class="pill" id="setWeekStart">📅 Reiniciar semana <small>(lunes)</small></div>
+            <div class="pill" data-go="compartir">📲 Enviar resumen</div>
+            <div class="pill" data-go="visualizacion">🌸 Visualización</div>
+          </div>
+
+          <div class="hr"></div>
+          <p class="mini"><b>Semana base:</b> ${escapeHTML(formatDate(ws))} (lunes de inicio)</p>
+        </div>
+
+        ${state.agenda.weeks.map((w, i)=>`
+          <div class="card">
+            <h2>${escapeHTML(w.title)} ${i===currentIdx ? "✨" : ""}</h2>
+            <p class="sub">Toca cada item para marcarlo.</p>
+            ${w.items.map(it=>`
+              <button class="btn" data-week="${i}" data-item="${it.id}">
+                <span class="left">
+                  <span class="icon">${it.done ? "✅" : "⬜️"}</span>
+                  <span class="txt">
+                    <span class="t">${escapeHTML(it.text)}</span>
+                    <span class="d">${it.done ? "Listo por hoy/semana" : "Hazlo pequeño (10–25 min)"}</span>
+                  </span>
+                </span>
+                <span class="chev">›</span>
+              </button>
+            `).join("")}
+            <div class="pillBar">
+              <div class="pill" data-resetweek="${i}">🔄 Reiniciar semana</div>
+              <div class="pill" data-go="plan">🌷 Checklist diario</div>
+            </div>
+          </div>
+        `).join("")}
+      </div>
+    `;
+
+    $$("[data-week][data-item]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const wi = parseInt(b.getAttribute("data-week"), 10);
+        const iid = b.getAttribute("data-item");
+        const week = state.agenda.weeks[wi];
+        const item = week.items.find(x=>x.id===iid);
+        if(!item) return;
+        item.done = !item.done;
+        save();
+        render("agenda");
+      });
+    });
+
+    $$("[data-resetweek]").forEach(p=>{
+      p.addEventListener("click", ()=>{
+        const wi = parseInt(p.getAttribute("data-resetweek"), 10);
+        state.agenda.weeks[wi].items.forEach(x=>x.done=false);
+        save();
+        toastMsg("Semana reiniciada 🌿");
+        render("agenda");
+      });
+    });
+
+    $("#setWeekStart").addEventListener("click", ()=>{
+      state.agenda.weekStartISO = mondayOfThisWeekISO();
+      state.agenda.weeks.forEach(w=> w.items.forEach(x=>x.done=false));
+      save();
+      toastMsg("Agenda reiniciada 📅");
+      render("agenda");
+    });
+
+    bindCommon();
+  }
+
+  // ===== Compartir =====
+  function renderCompartir(){
+    const apoyo = state.profile.apoyo || "Persona de apoyo";
+    const last = state.checkins[0];
+    const moodLine = last
+      ? `${last.score}/10 • ${last.label} • Necesidad: ${last.need}`
+      : `${state.mood.score}/10 • ${state.mood.label}`;
+
+    const dailyDone = state.plan.tasks.filter(t=>t.done).length;
+    const weekly = summarizeAgenda();
+
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Modo Compartir 📲</h2>
+          <p class="sub">Texto listo para WhatsApp. Puedes editarlo antes de copiar.</p>
+
+          <label>Persona de apoyo (nombre)</label>
+          <input id="apoyoName" value="${escapeHTML(apoyo)}" placeholder="Ej: Mamá, hermana, amiga, terapeuta…" />
+
+          <label>¿Qué quiero pedir hoy? (1 línea)</label>
+          <input id="ask" placeholder="Ej: Acompáñame con una llamada breve / recuérdame descansar / ayúdame a sostener un límite…" />
+
+          <label>Texto para WhatsApp (editable)</label>
+          <textarea id="shareText"></textarea>
+
+          <div class="pillBar">
+            <div class="pill" id="genShare">✨ Generar</div>
+            <div class="pill" id="copyShare">📋 Copiar</div>
+            <div class="pill" id="saveApoyo">💾 Guardar</div>
+            <div class="pill" data-go="inicio">🏠 Volver</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Resumen automático 🌷</h2>
+          <p class="mini">
+            <b>Estado:</b> ${escapeHTML(moodLine)}<br/>
+            <b>Checklist hoy:</b> ${dailyDone}/${state.plan.tasks.length}<br/>
+            <b>Agenda:</b> ${escapeHTML(weekly)}
+          </p>
+
+          <div class="hr"></div>
+          <button class="btn" data-go="visualizacion">
+            <span class="left">
+              <span class="icon">🌸</span>
+              <span class="txt">
+                <span class="t">Visualización (calma)</span>
+                <span class="d">2–4 minutos guiados</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    const shareBox = $("#shareText");
+
+    function buildMessage(){
+      const apoyoName = ($("#apoyoName").value||"Persona de apoyo").trim();
+      const ask = ($("#ask").value||"").trim();
+      const askLine = ask ? `\n• Pedido concreto: ${ask}` : "";
+
+      const boundaryLine = "Hoy estoy trabajando límites (sin culpa) para no cargar con problemas ajenos.";
+      const micro = "Paso pequeño de hoy: 1 acción breve (10–25 min) + descanso.";
+
+      return `Hola ${apoyoName}. Te comparto mi estado hoy.\n` +
+             `• Estado: ${moodLine}\n` +
+             `• Checklist (hoy): ${dailyDone}/${state.plan.tasks.length}\n` +
+             `• Agenda (semana): ${weekly}\n` +
+             `${askLine}\n\n` +
+             `${boundaryLine}\n` +
+             `${micro}\n\n` +
+             `Gracias por acompañarme 💗`;
+    }
+
+    shareBox.value = buildMessage();
+
+    $("#genShare").addEventListener("click", ()=>{
+      shareBox.value = buildMessage();
+      toastMsg("Texto generado ✨");
+    });
+
+    $("#copyShare").addEventListener("click", async ()=>{
+      await copyText(shareBox.value);
+      toastMsg("Copiado 📋");
+    });
+
+    $("#saveApoyo").addEventListener("click", ()=>{
+      state.profile.apoyo = ($("#apoyoName").value||"Persona de apoyo").trim() || "Persona de apoyo";
+      save();
+      toastMsg("Guardado ✅");
+    });
+
+    bindCommon();
+  }
+
+  // ===== Plan (diario) + Micro-exposición =====
+  function renderPlan(){
+    const tasks = state.plan.tasks;
+
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Checklist diario 🌷</h2>
+          <p class="sub">Pequeño, realista, suficiente. Toca para marcar.</p>
+
+          ${tasks.map(t=>`
+            <button class="btn" data-toggle="${t.id}">
+              <span class="left">
+                <span class="icon">${t.done ? "✅" : "⬜️"}</span>
+                <span class="txt">
+                  <span class="t">${escapeHTML(t.title)}</span>
+                  <span class="d">${t.done ? "Completado" : "Pendiente (hazlo pequeño)"}</span>
+                </span>
+              </span>
+              <span class="chev">›</span>
+            </button>
+          `).join("")}
+
+          <div class="hr"></div>
+          <label>Agregar tarea (micro-paso)</label>
+          <input id="newTask" placeholder="Ej: 10 min ordenar, 1 correo, 1 llamada…" />
+
+          <div class="pillBar">
+            <div class="pill" id="addTask">➕ Agregar</div>
+            <div class="pill" id="resetDay">🔄 Reiniciar día</div>
+            <div class="pill" data-go="enganche">✨ Frases</div>
+            <div class="pill" data-go="visualizacion">🌸 Visualización</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Micro-exposición productiva ⏱️</h2>
+          <p class="sub">Un bloque corto para vencer la inercia. El objetivo es <b>empezar</b>, no “hacerlo perfecto”.</p>
+
+          <div class="two">
+            <div>
+              <label>Duración</label>
+              <select id="dur">
+                <option value="10">10 minutos</option>
+                <option value="15">15 minutos</option>
+                <option value="25" selected>25 minutos</option>
+              </select>
+            </div>
+            <div>
+              <label>Etiqueta</label>
+              <input id="lab" placeholder="Ej: CV / correo / orden / trámite" />
+            </div>
+          </div>
+
+          <div class="timerBox">
+            <div>
+              <b id="tLabel">Sin temporizador</b><br/>
+              <span id="tRemain">00:00</span>
+            </div>
+            <button class="timerBtn" id="tBtn">Iniciar</button>
+          </div>
+
+          <div class="pillBar">
+            <div class="pill" id="tStop">⏹️ Detener</div>
+            <div class="pill" id="tReset">🔄 Reiniciar</div>
+          </div>
+
+          <div class="hr"></div>
+          <p class="mini"><b>Regla de oro:</b> si aparece culpa o ansiedad, vuelve al cuerpo (respira 4/6) y continúa 2 minutos más.</p>
+        </div>
+      </div>
+    `;
+
+    // toggle tasks
+    $$("[data-toggle]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const tid = b.getAttribute("data-toggle");
+        const t = state.plan.tasks.find(x=>x.id===tid);
+        if(!t) return;
+        t.done = !t.done;
+        save();
+        render("plan");
+      });
+    });
+
+    // add task
+    $("#addTask").addEventListener("click", ()=>{
+      const v = ($("#newTask").value||"").trim();
+      if(!v) return toastMsg("Escribe una tarea pequeña ✍️");
+      state.plan.tasks.unshift({ id:id(), title:v, done:false });
+      $("#newTask").value = "";
+      save();
+      toastMsg("Tarea añadida ✅");
+      render("plan");
+    });
+
+    // reset day
+    $("#resetDay").addEventListener("click", ()=>{
+      state.plan.tasks.forEach(t=>t.done=false);
+      save();
+      toastMsg("Día reiniciado 🌿");
+      render("plan");
+    });
+
+    // timer wiring
+    syncTimerUI();
+    $("#tBtn").addEventListener("click", ()=>{
+      if(state.timers.running){
+        pauseTimer();
+      }else{
+        const mins = parseInt($("#dur").value, 10);
+        const label = ($("#lab").value||"Bloque productivo").trim() || "Bloque productivo";
+        startTimer(mins*60, label);
+      }
+      syncTimerUI();
+    });
+    $("#tStop").addEventListener("click", ()=>{
+      stopTimer();
+      syncTimerUI();
+      toastMsg("Detenido ⏹️");
+    });
+    $("#tReset").addEventListener("click", ()=>{
+      resetTimer();
+      syncTimerUI();
+      toastMsg("Reiniciado 🔄");
+    });
+
+    bindCommon();
+  }
+
+  function syncTimerUI(){
+    const tLabel = $("#tLabel");
+    const tRemain = $("#tRemain");
+    const tBtn = $("#tBtn");
+    if(!tLabel) return;
+
+    tLabel.textContent = state.timers.label || "Sin temporizador";
+    tRemain.textContent = fmtTime(state.timers.remainingSec || 0);
+    tBtn.textContent = state.timers.running ? "Pausar" : "Iniciar";
+  }
+
+  let timerHandle = null;
+  function startTimer(sec, label){
+    stopTimer(); // clear any previous handle
+    state.timers.running = true;
+    state.timers.remainingSec = sec;
+    state.timers.label = label;
+    save();
+
+    timerHandle = setInterval(()=>{
+      if(!state.timers.running) return;
+      state.timers.remainingSec = Math.max(0, (state.timers.remainingSec||0) - 1);
+      save();
+      // update UI if on plan
+      if($("[data-tab].active")?.dataset?.tab === "plan"){
+        const tRemain = $("#tRemain");
+        if(tRemain) tRemain.textContent = fmtTime(state.timers.remainingSec);
+      }
+      if(state.timers.remainingSec<=0){
+        state.timers.running = false;
+        save();
+        clearInterval(timerHandle);
+        timerHandle = null;
+        toastMsg("¡Bloque completado! ✅ Respira y reconoce el logro.");
+        // auto-mark a task if exists "1 acción productiva pequeña"
+        const auto = state.plan.tasks.find(t=>/acción productiva/i.test(t.title));
+        if(auto) auto.done = true;
+        save();
+        // refresh screen if currently in plan
+        if(currentTab() === "plan") render("plan");
+      }
+    }, 1000);
+  }
+  function pauseTimer(){
+    state.timers.running = false;
+    save();
+    toastMsg("Pausado ⏸️");
+  }
+  function stopTimer(){
+    if(timerHandle){ clearInterval(timerHandle); timerHandle=null; }
+    state.timers.running = false;
+    save();
+  }
+  function resetTimer(){
+    stopTimer();
+    state.timers.remainingSec = 0;
+    state.timers.label = "";
+    save();
+  }
+
+  // ===== Check-in =====
+  function renderCheckin(){
+    const last = state.checkins[0];
+    const note = last?.note || "";
+
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Check-in emocional 💗</h2>
+          <p class="sub">Nombrar lo que sientes reduce presión interna. No es para “arreglar”, es para reconocer.</p>
+
+          <label>Hoy me siento (0–10)</label>
+          <input id="moodScore" type="number" inputmode="numeric" min="0" max="10" value="${state.mood.score ?? 5}" />
+
+          <div class="two">
+            <div>
+              <label>Emoción principal</label>
+              <select id="moodLabel">
+                ${option("En calma")} ${option("En pausa")} ${option("Ansiosa")} ${option("Triste")}
+                ${option("Culpable")} ${option("Cansada")} ${option("Motivada")}
+              </select>
+            </div>
+            <div>
+              <label>Necesidad real hoy</label>
+              <select id="need">
+                ${option("Descanso")} ${option("Orden")} ${option("Acompañamiento")} ${option("Límites")}
+                ${option("Claridad")} ${option("Movimiento")} ${option("Paso productivo")}
+              </select>
+            </div>
+          </div>
+
+          <label>Nota breve (30–60 segundos)</label>
+          <textarea id="moodNote" placeholder="Ej: Siento culpa porque quiero ayudar, pero hoy necesito cuidarme...">${escapeHTML(note)}</textarea>
+
+          <div class="pillBar">
+            <div class="pill" id="saveCheckin">💾 Guardar</div>
+            <div class="pill" data-go="crisis">🧯 Si estoy sobrepasada</div>
+            <div class="pill" data-go="enganche">✨ Frases</div>
+            <div class="pill" data-go="visualizacion">🌸 Visualización</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    $("#moodLabel").value = state.mood.label || "En pausa";
+    $("#need").value = last?.need || "Límites";
+
+    $("#saveCheckin").addEventListener("click", ()=>{
+      const score = clamp(parseInt($("#moodScore").value||"5",10),0,10);
+      const label = $("#moodLabel").value;
+      const need = $("#need").value;
+      const note = ($("#moodNote").value||"").trim();
+
+      const level = score>=7 ? "good" : (score>=4 ? "warn" : "bad");
+      state.mood = { level, label, score, dateISO: todayISO() };
+      state.checkins.unshift({ id:id(), dateISO: todayISO(), score, label, need, note });
+
+      save();
+      toastMsg("Check-in guardado ✅");
+      render("checkin");
+    });
+
+    bindCommon();
+  }
+
+  // ===== Límites =====
+  function renderLimites(){
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Límites saludables 🛡️</h2>
+          <p class="sub">Para cuando aparece la culpa y el impulso de rescatar. Aquí eliges respuestas claras y amables.</p>
+
+          ${state.boundaries.scripts.map((s, i)=>`
+            <button class="btn" data-copy="script-${i}">
+              <span class="left">
+                <span class="icon">🗣️</span>
+                <span class="txt">
+                  <span class="t">${escapeHTML(s.title)}</span>
+                  <span class="d">${escapeHTML(shorten(s.text, 44))}</span>
+                </span>
+              </span>
+              <span class="chev">⧉</span>
+            </button>
+            <div style="display:none" id="script-${i}">${escapeHTML(s.text)}</div>
+          `).join("")}
+
+          <div class="hr"></div>
+          <p class="mini"><b>Señales de alerta:</b></p>
+          <ul class="mini" style="margin:8px 0 0 18px; padding:0;">
+            ${state.boundaries.redFlags.map(x=>`<li>${escapeHTML(x)}</li>`).join("")}
+          </ul>
+
+          <div class="pillBar">
+            <div class="pill" data-go="enganche">✨ Frases</div>
+            <div class="pill" data-go="visualizacion">🌸 Visualización</div>
+            <div class="pill" data-go="plan">🌷 Ir a plan</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    $$("[data-copy]").forEach(b=>{
+      b.addEventListener("click", async ()=>{
+        const id = b.getAttribute("data-copy");
+        const txt = $("#"+CSS.escape(id)).textContent;
+        await copyText(txt);
+        toastMsg("Guion copiado 📋");
+      });
+    });
+
+    bindCommon();
+  }
+
+  // ===== Crisis =====
+  function renderCrisis(){
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Plan rápido de crisis 🧯</h2>
+          <p class="sub">No se decide nada grande en crisis. Volvemos a lo básico.</p>
+
+          <button class="btn" id="basicBtn">
+            <span class="left">
+              <span class="icon">🧊</span>
+              <span class="txt">
+                <span class="t">Volver a lo básico</span>
+                <span class="d">agua • comida • pausa • descanso</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <button class="btn" data-go="visualizacion" style="margin-top:10px">
+            <span class="left">
+              <span class="icon">🌸</span>
+              <span class="txt">
+                <span class="t">Lugar seguro (2 min)</span>
+                <span class="d">visualización guiada</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <div class="hr"></div>
+          <p class="mini"><b>Señales de alerta:</b></p>
+          <ul class="mini" style="margin:8px 0 0 18px; padding:0;">
+            ${state.relapse.signs.map(x=>`<li>${escapeHTML(x)}</li>`).join("")}
+          </ul>
+
+          <div class="hr"></div>
+          <p class="mini"><b>Acciones hoy (elige 1–2):</b></p>
+          <ul class="mini" style="margin:8px 0 0 18px; padding:0;">
+            ${state.relapse.actions.map(x=>`<li>${escapeHTML(x)}</li>`).join("")}
+          </ul>
+
+          <div class="pillBar">
+            <div class="pill" data-go="checkin">💗 Check-in</div>
+            <div class="pill" data-go="compartir">📲 Pedir apoyo</div>
+            <div class="pill" data-go="enganche">✨ Frases</div>
+            <div class="pill" data-go="plan">🌷 Paso mínimo</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    $("#basicBtn").addEventListener("click", ()=>{
+      toastMsg("Básico: agua + 1 comida simple + respiración 60s + descanso.");
+    });
+
+    bindCommon();
+  }
+
+  // ===== Diario (corregido) =====
+  function renderDiario(){
+    const last5 = state.journal.slice(0,5);
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Diario breve 📝</h2>
+          <p class="sub">3 minutos. Escribir reduce rumiación.</p>
+
+          <label>¿Qué me está pesando hoy?</label>
+          <textarea id="j1" placeholder="Escribe sin filtros…"></textarea>
+
+          <label>¿Qué necesito para cuidarme hoy?</label>
+          <textarea id="j2" placeholder="Ej: descanso, límite, orden, apoyo…"></textarea>
+
+          <label>Un paso pequeño (realista)</label>
+          <input id="j3" placeholder="Ej: 10 min ordenar, 1 mensaje, 1 trámite…" />
+
+          <div class="pillBar">
+            <div class="pill" id="saveJ">💾 Guardar</div>
+            <div class="pill" data-go="enganche">✨ Frases</div>
+            <div class="pill" data-go="visualizacion">🌸 Visualización</div>
+            <div class="pill" data-go="compartir">📲 Compartir</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Últimas notas 📚</h2>
+          <p class="sub">Toca una para copiarla.</p>
+          ${last5.length ? last5.map(e=>`
+            <button class="btn" data-copy="j-${e.id}">
+              <span class="left">
+                <span class="icon">📝</span>
+                <span class="txt">
+                  <span class="t">${escapeHTML(formatDate(e.dateISO))}</span>
+                  <span class="d">${escapeHTML(shorten(e.summary, 44))}</span>
+                </span>
+              </span>
+              <span class="chev">⧉</span>
+            </button>
+            <div style="display:none" id="j-${e.id}">${escapeHTML(e.full)}</div>
+          `).join("") : `<p class="mini">Aún no hay entradas guardadas.</p>`}
+        </div>
+      </div>
+    `;
+
+    $("#saveJ").addEventListener("click", ()=>{
+      const a = ($("#j1").value||"").trim();
+      const b = ($("#j2").value||"").trim();
+      const c = ($("#j3").value||"").trim();
+      if(!a && !b && !c) return toastMsg("Escribe al menos una línea ✍️");
+
+      const full = `¿Qué me está pesando hoy?\n${a || "-"}\n\n¿Qué necesito?\n${b || "-"}\n\nPaso pequeño:\n${c || "-"}`;
+      const summary = (a || b || c || "").slice(0,120);
+
+      state.journal.unshift({ id:id(), dateISO: todayISO(), summary, full });
+      save();
+      toastMsg("Entrada guardada ✅");
+      render("diario");
+    });
+
+    $$("[data-copy]").forEach(b=>{
+      b.addEventListener("click", async ()=>{
+        const id = b.getAttribute("data-copy");
+        const txt = $("#"+CSS.escape(id)).textContent;
+        await copyText(txt);
+        toastMsg("Copiado 📋");
+      });
+    });
+
+    bindCommon();
+  }
+
+  // ===== Visualización + Grounding =====
+  function renderVisualizacion(){
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Visualización 🌸</h2>
+          <p class="sub">Técnicas breves para bajar carga y reforzar límites + autoeficacia.</p>
+
+          ${state.visualization.scripts.map(s=>`
+            <button class="btn" data-viz="${s.title}">
+              <span class="left">
+                <span class="icon">${s.icon}</span>
+                <span class="txt">
+                  <span class="t">${escapeHTML(s.title)}</span>
+                  <span class="d">${s.durationMin} min • guiada</span>
+                </span>
+              </span>
+              <span class="chev">›</span>
+            </button>
+          `).join("")}
+
+          <div class="hr"></div>
+          <button class="btn" id="groundingBtn">
+            <span class="left">
+              <span class="icon">🧩</span>
+              <span class="txt">
+                <span class="t">Grounding 5-4-3-2-1</span>
+                <span class="d">volver al presente (60–90s)</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <div class="pillBar">
+            <div class="pill" data-go="enganche">✨ Frases</div>
+            <div class="pill" data-go="plan">🌷 Plan</div>
+            <div class="pill" data-go="inicio">🏠 Inicio</div>
+          </div>
+        </div>
+
+        <div class="card" id="vizCard" style="display:none">
+          <h2 id="vizTitle">—</h2>
+          <p class="sub" id="vizSub">Sigue los pasos, despacio.</p>
+          <div id="vizSteps"></div>
+
+          <div class="timerBox">
+            <div>
+              <b id="vizTLabel">Temporizador</b><br/>
+              <span id="vizRemain">00:00</span>
+            </div>
+            <button class="timerBtn" id="vizBtn">Iniciar</button>
+          </div>
+
+          <div class="pillBar">
+            <div class="pill" id="vizCopy">📋 Copiar guía</div>
+            <div class="pill" id="vizClose">✖️ Cerrar</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const vizCard = $("#vizCard");
+    const vizTitle = $("#vizTitle");
+    const vizSteps = $("#vizSteps");
+    const vizRemain = $("#vizRemain");
+    const vizBtn = $("#vizBtn");
+    const vizCopy = $("#vizCopy");
+    const vizClose = $("#vizClose");
+
+    let localViz = { running:false, remainingSec:0, handle:null, text:"" };
+
+    function setViz(script){
+      vizCard.style.display = "";
+      vizTitle.textContent = script.title;
+      const stepsHTML = script.steps.map((t,i)=>`
+        <div class="timerBox" style="margin-top:10px">
+          <div>
+            <b>Paso ${i+1}</b><br/>
+            <span>${escapeHTML(t)}</span>
+          </div>
+        </div>
+      `).join("");
+      vizSteps.innerHTML = stepsHTML;
+
+      localViz.remainingSec = script.durationMin * 60;
+      localViz.running = false;
+      vizRemain.textContent = fmtTime(localViz.remainingSec);
+      vizBtn.textContent = "Iniciar";
+
+      localViz.text = `${script.title}\n\n` + script.steps.map((x,i)=>`Paso ${i+1}: ${x}`).join("\n");
+    }
+
+    function tick(){
+      if(!localViz.running) return;
+      localViz.remainingSec = Math.max(0, localViz.remainingSec - 1);
+      vizRemain.textContent = fmtTime(localViz.remainingSec);
+      if(localViz.remainingSec<=0){
+        localViz.running = false;
+        clearInterval(localViz.handle); localViz.handle=null;
+        vizBtn.textContent = "Iniciar";
+        toastMsg("Listo 🌸 Respira y vuelve suave.");
+      }
+    }
+
+    $$("[data-viz]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const title = b.getAttribute("data-viz");
+        const script = state.visualization.scripts.find(s=>s.title===title);
+        if(!script) return;
+        setViz(script);
+      });
+    });
+
+    vizBtn.addEventListener("click", ()=>{
+      if(localViz.running){
+        localViz.running = false;
+        vizBtn.textContent = "Reanudar";
+        toastMsg("Pausado ⏸️");
+      }else{
+        localViz.running = true;
+        vizBtn.textContent = "Pausar";
+        if(!localViz.handle){
+          localViz.handle = setInterval(tick, 1000);
+        }
+        toastMsg("Iniciado ▶️");
+      }
+    });
+
+    vizCopy.addEventListener("click", async ()=>{
+      await copyText(localViz.text || "");
+      toastMsg("Guía copiada 📋");
+    });
+
+    vizClose.addEventListener("click", ()=>{
+      if(localViz.handle){ clearInterval(localViz.handle); localViz.handle=null; }
+      localViz.running=false;
+      vizCard.style.display = "none";
+    });
+
+    $("#groundingBtn").addEventListener("click", ()=>{
+      toastMsg("5 cosas que ves • 4 que sientes • 3 que oyes • 2 que hueles • 1 que saboreas.");
+    });
+
+    bindCommon();
+  }
+
+  // ===== Enganche (frases por tema) =====
+  function renderEnganche(){
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Frases de enganche ✨</h2>
+          <p class="sub">Frases cortas para sostener límites, reducir culpa y activar acción productiva.</p>
+
+          <button class="btn" id="randGuilt">
+            <span class="left">
+              <span class="icon">🛡️</span>
+              <span class="txt">
+                <span class="t">Cuando aparece culpa</span>
+                <span class="d">toca para una frase</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <button class="btn" id="randProd" style="margin-top:10px">
+            <span class="left">
+              <span class="icon">⏱️</span>
+              <span class="txt">
+                <span class="t">Cuando hay estancamiento</span>
+                <span class="d">toca para una frase</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <button class="btn" id="randRel" style="margin-top:10px">
+            <span class="left">
+              <span class="icon">🧭</span>
+              <span class="txt">
+                <span class="t">Cuando aparece nostalgia / recontacto</span>
+                <span class="d">toca para una frase</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <div class="hr"></div>
+          <label>Frase actual</label>
+          <textarea id="hookBox" readonly></textarea>
+
+          <div class="pillBar">
+            <div class="pill" id="copyHook">📋 Copiar</div>
+            <div class="pill" data-go="visualizacion">🌸 Visualización</div>
+            <div class="pill" data-go="plan">🌷 Plan</div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const hookBox = $("#hookBox");
+    const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+
+    function setHook(t){ hookBox.value = t; }
+
+    $("#randGuilt").addEventListener("click", ()=> setHook(pick(state.hooks.guilt)));
+    $("#randProd").addEventListener("click", ()=> setHook(pick(state.hooks.productivity)));
+    $("#randRel").addEventListener("click", ()=> setHook(pick(state.hooks.relationship)));
+
+    // preload
+    setHook(pick(state.hooks.guilt));
+
+    $("#copyHook").addEventListener("click", async ()=>{
+      await copyText(hookBox.value || "");
+      toastMsg("Copiado 📋");
+    });
+
+    bindCommon();
+  }
+
+  // ===== Ajustes =====
+  function renderAjustes(){
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Ajustes ⚙️</h2>
+          <p class="sub">Nombre, respaldo y control del contenido en este teléfono.</p>
+
+          <label>Nombre mostrado</label>
+          <input id="nm" value="${escapeHTML(state.profile?.name || "Milagros")}" />
+
+          <label>Persona de apoyo (nombre)</label>
+          <input id="ap" value="${escapeHTML(state.profile?.apoyo || "Persona de apoyo")}" />
+
+          <div class="pillBar">
+            <div class="pill" id="saveProfile">💾 Guardar</div>
+            <div class="pill" id="exportBtn">📤 Exportar</div>
+            <div class="pill" id="wipeBtn">🧹 Borrar datos</div>
+          </div>
+
+          <div class="hr"></div>
+          <p class="mini">
+            <b>Créditos:</b> Lic. Gonzalo Buendía – Psicólogo y Blanquita – Co terapeuta.
+          </p>
+        </div>
+      </div>
+    `;
+
+    $("#saveProfile").addEventListener("click", ()=>{
+      state.profile.name = ($("#nm").value||"Milagros").trim() || "Milagros";
+      state.profile.apoyo = ($("#ap").value||"Persona de apoyo").trim() || "Persona de apoyo";
+      save();
+      toastMsg("Guardado ✅");
+    });
+
+    $("#exportBtn").addEventListener("click", async ()=>{
+      const txt = exportText();
+      await copyText(txt);
+      toastMsg("Exportación copiada 📋");
+    });
+
+    $("#wipeBtn").addEventListener("click", ()=>{
+      const ok = confirm("¿Seguro? Esto borra los datos guardados en este teléfono.");
+      if(!ok) return;
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
+    });
+
+    bindCommon();
+  }
+
+  // ===== Common =====
+  function bindCommon(){
+    $$("[data-go]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const to = b.getAttribute("data-go");
+        setActiveTab(to);
+        render(to);
+      });
+    });
+
+    $$("[data-mantra]").forEach(p=>{
+      p.addEventListener("click", ()=>{
+        const t = p.getAttribute("data-mantra");
+        toastMsg(t);
+      });
+    });
+  }
+
+  // ===== Nav =====
+  function setActiveTab(tab){
+    if(["inicio","agenda","compartir","plan"].includes(tab)){
+      $$(".navBtn").forEach(x=> x.classList.toggle("active", x.dataset.tab===tab));
+    }
+  }
+  function currentTab(){
+    const a = $$(".navBtn").find(b=>b.classList.contains("active"));
+    return a?.dataset?.tab || "inicio";
+  }
+
+  $$(".navBtn").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const tab = b.dataset.tab;
+      setActiveTab(tab);
+      render(tab);
+    });
+  });
+
+  $("#moodChip").addEventListener("click", ()=>{
+    render("checkin");
+  });
+
+  // ===== Agenda helpers =====
+  function makeWeek(title, texts){
+    return { title, items: texts.map(t => ({ id:id(), text:t, done:false })) };
+  }
+  function getCurrentWeekIndex(){
+    const base = parseISO(state.agenda.weekStartISO);
+    const now = new Date();
+    const diffDays = Math.floor((startOfDay(now) - startOfDay(base)) / 86400000);
+    const w = Math.floor(diffDays / 7);
+    return clamp(w, 0, state.agenda.weeks.length - 1);
+  }
+  function summarizeAgenda(){
+    const idx = getCurrentWeekIndex();
+    const w = state.agenda.weeks[idx];
+    const done = w.items.filter(x=>x.done).length;
+    return `${w.title}: ${done}/${w.items.length} completados`;
+  }
+
+  // ===== Storage =====
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+
+  // ===== Utils =====
+  function id(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+  function todayISO(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${da}`;
+  }
+  function mondayOfThisWeekISO(){
+    const d = new Date();
+    const day = d.getDay(); // 0 domingo, 1 lunes
+    const diff = (day===0 ? -6 : 1-day);
+    d.setDate(d.getDate() + diff);
+    return isoFromDate(d);
+  }
+  function isoFromDate(d){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const da = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${da}`;
+  }
+  function parseISO(iso){
+    const [y,m,d] = iso.split("-").map(n=>parseInt(n,10));
+    return new Date(y, m-1, d);
+  }
+  function startOfDay(d){
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+  function formatDate(iso){
+    if(!iso) return "";
+    const [y,m,d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+  }
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+  function shorten(s, n){ return (s.length>n) ? s.slice(0,n-1)+"…" : s; }
+  function escapeHTML(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;")
+      .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+  function fmtTime(sec){
+    const s = Math.max(0, sec|0);
+    const mm = String(Math.floor(s/60)).padStart(2,"0");
+    const ss = String(s%60).padStart(2,"0");
+    return `${mm}:${ss}`;
+  }
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+    }catch(e){
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position="fixed";
+      ta.style.left="-9999px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try{ document.execCommand("copy"); }catch(err){}
+      document.body.removeChild(ta);
+    }
+  }
+  function toastMsg(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=> toast.classList.remove("show"), 1800);
+  }
+
+  function exportText(){
+    const lines = [];
+    lines.push("MILAGROS • MI CENTRO (Exportación)");
+    lines.push("Fecha: " + todayISO());
+    lines.push("");
+    lines.push("Estado hoy: " + (state.mood?.score ?? "-") + "/10 • " + (state.mood?.label ?? "-"));
+    lines.push("");
+    lines.push("Agenda: " + summarizeAgenda());
+    lines.push("");
+    lines.push("Checklist diario:");
+    state.plan.tasks.forEach(t=> lines.push(`- [${t.done ? "x":" "}] ${t.title}`));
+    lines.push("");
+    lines.push("Créditos: Lic. Gonzalo Buendía – Psicólogo y Blanquita – Co terapeuta");
+    return lines.join("\n");
+  }
+
+  function option(v){ return `<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`; }
+
+  // ===== Boot =====
+  save();
+  render("inicio");
+})();
+</script>
+</body>
+</html>

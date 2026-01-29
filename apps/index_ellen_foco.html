@@ -1,0 +1,1443 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#F7C7D9" />
+  <title>Ellen • Focus & Eat</title>
+  <style>
+    :root{
+      --bg:#FFF7FB;
+      --card:rgba(255,255,255,.92);
+      --ink:#221A26;
+      --muted:rgba(34,26,38,.66);
+      --line:rgba(34,26,38,.10);
+
+      --p1:#F7C7D9; /* rosa */
+      --p2:#F3D8F0; /* lila */
+      --p3:#DCEBFF; /* celeste */
+      --p4:#E6FFF6; /* menta */
+
+      --good:#1F8A70;
+      --warn:#C97C1A;
+
+      --radius:22px;
+      --shadow:0 14px 40px rgba(34,26,38,.10);
+      --navH:78px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,Segoe UI,Roboto,Arial,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 800px at 15% 0%, var(--p2), transparent 55%),
+        radial-gradient(900px 700px at 85% 10%, var(--p3), transparent 60%),
+        linear-gradient(180deg, var(--bg), #fff);
+      overflow:hidden;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    .app{
+      height:100vh;
+      height:100dvh;
+      display:flex;
+      flex-direction:column;
+      padding-top:env(safe-area-inset-top);
+      padding-bottom:calc(env(safe-area-inset-bottom) + var(--navH));
+      overflow:hidden;
+    }
+
+    header{
+      position:sticky; top:0; z-index:10;
+      padding:14px 16px 10px;
+      backdrop-filter: blur(16px);
+      background: rgba(255,255,255,.70);
+      border-bottom:1px solid var(--line);
+    }
+    .top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .title{min-width:0}
+    .title h1{
+      margin:0;
+      font-size: clamp(18px, 4.8vw, 22px);
+      letter-spacing:-.2px;
+      line-height:1.15;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .title p{margin:2px 0 0; font-size:13px; color:var(--muted)}
+
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px;
+      border-radius:999px;
+      background: linear-gradient(135deg, rgba(247,199,217,.92), rgba(220,235,255,.92));
+      border:1px solid rgba(34,26,38,.08);
+      box-shadow: 0 10px 22px rgba(34,26,38,.08);
+      font-size:13px; font-weight:800;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      cursor:pointer;
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+
+    main{
+      flex:1;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      padding:14px 16px 18px;
+    }
+
+    .grid{display:grid;grid-template-columns:1fr;gap:12px}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:14px;
+    }
+    .card h2{margin:0 0 8px;font-size:16px;letter-spacing:-.2px}
+    .sub{margin:0 0 10px;color:var(--muted);font-size:13px;line-height:1.35}
+
+    .btn{
+      appearance:none;border:none;cursor:pointer;width:100%;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:14px 14px;border-radius:18px;
+      background:#fff;border:1px solid rgba(34,26,38,.10);
+      box-shadow: 0 10px 24px rgba(34,26,38,.08);
+      color:var(--ink);font-weight:850;font-size:15px;text-align:left;
+      transition:transform .06s ease;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .btn:active{transform:scale(.99)}
+    .left{display:flex;align-items:center;gap:12px;min-width:0}
+    .icon{
+      width:46px;height:46px;border-radius:16px;
+      display:grid;place-items:center;font-size:22px;flex:0 0 auto;
+      border:1px solid rgba(34,26,38,.08);
+      box-shadow:0 10px 18px rgba(34,26,38,.06);
+      background: linear-gradient(135deg, rgba(247,199,217,.88), rgba(230,255,246,.88));
+    }
+    .txt{min-width:0}
+    .t{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .d{display:block;font-size:12.5px;color:var(--muted);font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chev{opacity:.45;font-size:18px}
+
+    .pillBar{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:10px 12px;border-radius:999px;
+      border:1px solid rgba(34,26,38,.10);
+      background: rgba(255,255,255,.92);
+      font-size:13px;font-weight:800;color:var(--ink);
+      cursor:pointer; user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .pill:active{transform:scale(.99)}
+    .pill small{color:var(--muted);font-weight:850}
+
+    label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px;font-weight:850}
+    input,select,textarea{
+      width:100%;
+      border-radius:16px;
+      border:1px solid rgba(34,26,38,.12);
+      background: rgba(255,255,255,.95);
+      padding:12px 12px;
+      font-size:15px;
+      outline:none;
+      box-shadow:0 12px 26px rgba(34,26,38,.08);
+      color:var(--ink);
+    }
+    textarea{min-height:110px;resize:vertical}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width: 360px){
+      .two{grid-template-columns:1fr}
+      .icon{width:44px;height:44px}
+    }
+
+    .hr{height:1px;background:var(--line);margin:10px 0}
+    .mini{font-size:12.5px;color:var(--muted);line-height:1.35}
+
+    nav{
+      position:fixed;left:0;right:0;bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background: rgba(255,255,255,.74);
+      backdrop-filter: blur(16px);
+      border-top:1px solid var(--line);
+      z-index:30;
+    }
+    .navRow{display:flex;gap:10px;max-width:860px;margin:0 auto}
+    .navBtn{
+      flex:1;border:none;border-radius:18px;padding:12px 10px;
+      background:#fff;border:1px solid rgba(34,26,38,.10);
+      box-shadow:0 10px 20px rgba(34,26,38,.08);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+      cursor:pointer; user-select:none; -webkit-tap-highlight-color:transparent;
+      min-height:56px;
+    }
+    .navBtn:active{transform:scale(.99)}
+    .navBtn .nI{font-size:20px}
+    .navBtn .nT{font-size:12px;font-weight:900;color:rgba(34,26,38,.72)}
+    .navBtn.active{
+      background: linear-gradient(135deg, rgba(247,199,217,.95), rgba(220,235,255,.95));
+      border-color: rgba(34,26,38,.08);
+    }
+
+    .toast{
+      position:fixed; left:50%; transform:translateX(-50%);
+      bottom: calc(env(safe-area-inset-bottom) + var(--navH) + 16px);
+      background: rgba(34,26,38,.88); color:#fff;
+      padding:10px 12px; border-radius:999px;
+      font-size:13px; font-weight:900;
+      opacity:0; pointer-events:none;
+      transition:opacity .25s ease;
+      z-index:60;
+      max-width:min(92vw, 520px);
+      text-align:center;
+    }
+    .toast.show{opacity:1}
+
+    /* ===== Exercise UI blocks ===== */
+    .exerciseBox{
+      border:1px solid rgba(34,26,38,.10);
+      background: rgba(255,255,255,.92);
+      border-radius:18px;
+      box-shadow:0 10px 22px rgba(34,26,38,.08);
+      padding:12px;
+      margin-top:10px;
+    }
+
+    /* Maze */
+    .mazeWrap{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+    .maze{
+      width:min(320px, 88vw);
+      aspect-ratio:1 / 1;
+      border-radius:18px;
+      overflow:hidden;
+      border:1px solid rgba(34,26,38,.10);
+      background:#fff;
+      box-shadow:0 12px 26px rgba(34,26,38,.08);
+      touch-action: none;
+    }
+    .maze svg{width:100%;height:100%;display:block}
+    .controls{
+      display:grid;grid-template-columns:64px 64px 64px;gap:8px;
+      justify-content:center;
+      margin:8px auto 0;
+      width: fit-content;
+    }
+    .padBtn{
+      border:none; border-radius:16px; padding:14px 0;
+      background: linear-gradient(135deg, rgba(247,199,217,.95), rgba(230,255,246,.95));
+      border:1px solid rgba(34,26,38,.08);
+      box-shadow:0 10px 18px rgba(34,26,38,.08);
+      font-weight:950; cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+    }
+    .padBtn:active{transform:scale(.99)}
+    .padBtn.small{padding:10px 0}
+
+    /* Memory */
+    .memGrid{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    .cardTile{
+      aspect-ratio: 1 / 1;
+      border-radius:18px;
+      border:1px solid rgba(34,26,38,.10);
+      background: rgba(255,255,255,.95);
+      box-shadow:0 10px 18px rgba(34,26,38,.08);
+      display:grid; place-items:center;
+      font-size:26px;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      position:relative;
+      overflow:hidden;
+    }
+    .cardTile:active{transform:scale(.99)}
+    .cardBack{
+      font-size:18px;
+      color:rgba(34,26,38,.55);
+      font-weight:950;
+    }
+    .matched{
+      outline: 3px solid rgba(31,138,112,.25);
+      background: rgba(230,255,246,.95);
+    }
+
+    /* Session box */
+    .sessionRow{
+      display:flex; gap:10px; flex-wrap:wrap;
+      align-items:center; justify-content:space-between;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:10px 12px; border-radius:999px;
+      border:1px solid rgba(34,26,38,.10);
+      background: rgba(255,255,255,.92);
+      font-size:13px; font-weight:900;
+    }
+    .timerBtn{
+      border:none; border-radius:16px; padding:12px 14px;
+      background: linear-gradient(135deg, rgba(247,199,217,.95), rgba(220,235,255,.95));
+      border:1px solid rgba(34,26,38,.08);
+      box-shadow:0 10px 18px rgba(34,26,38,.08);
+      font-weight:950; cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+    }
+    .timerBtn:active{transform:scale(.99)}
+  </style>
+</head>
+
+<body>
+<div class="app" role="application" aria-label="Ellen Focus & Eat">
+  <header>
+    <div class="top">
+      <div class="title">
+        <h1>Ellen • Focus & Eat</h1>
+        <p>Distracción estructurada + imaginación guiada (modo iPhone)</p>
+      </div>
+      <div class="chip" id="stateChip" title="Toca para Check-in rápido">
+        <span class="dot warn" id="chipDot"></span>
+        <span id="chipText">Modo apoyo</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="main"></main>
+
+  <nav aria-label="Navegación">
+    <div class="navRow">
+      <button class="navBtn active" data-tab="home"><div class="nI">🏠</div><div class="nT">Inicio</div></button>
+      <button class="navBtn" data-tab="session"><div class="nI">🍽️</div><div class="nT">Comida</div></button>
+      <button class="navBtn" data-tab="exercises"><div class="nI">🧠</div><div class="nT">Ejercicios</div></button>
+      <button class="navBtn" data-tab="tools"><div class="nI">🌸</div><div class="nT">Guía</div></button>
+    </div>
+  </nav>
+
+  <div class="toast" id="toast">Listo</div>
+</div>
+
+<script>
+(() => {
+  const $ = (q, el=document)=> el.querySelector(q);
+  const $$ = (q, el=document)=> Array.from(el.querySelectorAll(q));
+  const KEY = "ellen_focus_eat_v1";
+
+  const state = load() || {
+    profile:{ name:"Ellen" },
+    chip:{ level:"warn", text:"Modo apoyo" },
+    session:{
+      running:false,
+      remainingSec:0,
+      totalSec: 600,
+      exercise:"imagery", // imagery | maze | memory
+      bites:0,
+      lastNote:"",
+      lastDateISO: todayISO()
+    },
+    logs: [],
+    imagery:{
+      lastScene:"",
+      scenes: buildScenes()
+    },
+    maze:{
+      size: 12,
+      grid:null,
+      start:{x:0,y:0},
+      goal:{x:11,y:11},
+      player:{x:0,y:0},
+      moves:0,
+      best: null
+    },
+    memory:{
+      tiles: [],
+      first: null,
+      lock:false,
+      matches:0,
+      attempts:0,
+      best:null
+    }
+  };
+
+  const main = $("#main");
+  const toast = $("#toast");
+  const chipDot = $("#chipDot");
+  const chipText = $("#chipText");
+
+  // ===== Boot UI =====
+  setChip(state.chip.level, state.chip.text);
+  render("home");
+
+  $$(".navBtn").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const tab = b.dataset.tab;
+      setActiveTab(tab);
+      render(tab);
+    });
+  });
+
+  $("#stateChip").addEventListener("click", ()=> quickCheckin());
+
+  // ===== Render =====
+  function render(tab){
+    if(tab==="home") return renderHome();
+    if(tab==="session") return renderSession();
+    if(tab==="exercises") return renderExercises();
+    if(tab==="tools") return renderTools();
+    renderHome();
+  }
+
+  function renderHome(){
+    const nm = esc(state.profile.name || "Ellen");
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Hola, ${nm} 💗</h2>
+          <p class="sub">
+            Esta app te ayuda a <b>cambiar el foco atencional</b> durante la comida usando
+            ejercicios breves (laberinto, memoria, escena guiada). La idea es que el cuerpo aprenda:
+            <b>“puedo comer aunque haya miedo”</b>.
+          </p>
+
+          <button class="btn" data-go="session">
+            <span class="left">
+              <span class="icon">🍽️</span>
+              <span class="txt">
+                <span class="t">Iniciar sesión de comida</span>
+                <span class="d">modo guiado, suave, sin presión</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <button class="btn" data-go="exercises" style="margin-top:10px">
+            <span class="left">
+              <span class="icon">🧠</span>
+              <span class="txt">
+                <span class="t">Ejercicios</span>
+                <span class="d">elige el que más te calma</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <div class="pillBar">
+            <div class="pill" data-go="tools">🌸 Guía <small>frase + respiración</small></div>
+            <div class="pill" id="copyMantra">📋 Copiar <small>frase ancla</small></div>
+            <div class="pill" id="resetAll">🧹 Reiniciar <small>juegos</small></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Frase ancla (blindada) 🕊️</h2>
+          <p class="sub">Úsala 1 vez cada 2–3 bocados (no más). No buscamos perfección: buscamos práctica.</p>
+          <div class="exerciseBox">
+            <div class="mini"><b>“Puedo tragar aunque haya miedo. Mi cuerpo sabe hacerlo.”</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Créditos</h2>
+          <p class="mini">
+            Todas las mini aplicaciones fueron desarrolladas por <b>Lic. Gonzalo Buendía – Psicólogo</b>
+            y <b>Blanquita – Co terapeuta</b>, como herramientas psicoeducativas digitales de apoyo clínico.
+          </p>
+        </div>
+      </div>
+    `;
+
+    $$("[data-go]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const t = b.getAttribute("data-go");
+        setActiveTab(t);
+        render(t);
+      });
+    });
+
+    $("#copyMantra").addEventListener("click", async ()=>{
+      await copyText("Puedo tragar aunque haya miedo. Mi cuerpo sabe hacerlo.");
+      toastMsg("Copiado 📋");
+    });
+
+    $("#resetAll").addEventListener("click", ()=>{
+      resetMaze(true);
+      resetMemory(true);
+      save();
+      toastMsg("Reiniciado ✅");
+    });
+  }
+
+  // ===== Session (meal companion) =====
+  let sessionHandle = null;
+
+  function renderSession(){
+    const s = state.session;
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Sesión de comida 🍽️</h2>
+          <p class="sub">
+            Aquí no “luchamos” contra el miedo: lo dejamos estar mientras comes y
+            entrenamos el foco en una tarea. <b>Un paso breve es suficiente.</b>
+          </p>
+
+          <div class="two">
+            <div>
+              <label>Duración</label>
+              <select id="durSel">
+                <option value="300">5 min</option>
+                <option value="600" selected>10 min</option>
+                <option value="900">15 min</option>
+              </select>
+            </div>
+            <div>
+              <label>Ejercicio principal</label>
+              <select id="exSel">
+                <option value="imagery">Imaginación guiada</option>
+                <option value="maze">Laberinto</option>
+                <option value="memory">Memoria</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="exerciseBox">
+            <div class="sessionRow">
+              <div class="badge">⏱️ <span id="tRemain">${fmtTime(s.remainingSec)}</span></div>
+              <div class="badge">🍴 Bocaditos: <span id="bCount">${s.bites}</span></div>
+              <button class="timerBtn" id="tBtn">${s.running ? "Pausar" : "Iniciar"}</button>
+            </div>
+
+            <div class="pillBar" style="margin-top:12px">
+              <div class="pill" id="biteBtn">🍴 +1 bocado</div>
+              <div class="pill" id="anchorBtn">🕊️ Frase ancla</div>
+              <div class="pill" id="stopBtn">⏹️ Finalizar</div>
+            </div>
+
+            <div class="hr"></div>
+            <label>Nota breve (opcional)</label>
+            <input id="note" placeholder="Ej: miedo 6/10 pero pude seguir..." value="${esc(s.lastNote||"")}"/>
+            <div class="pillBar">
+              <div class="pill" id="saveNote">💾 Guardar nota</div>
+              <div class="pill" id="openEx">🧠 Abrir ejercicio</div>
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <p class="mini">
+            <b>Regla clínica:</b> si aparece la sensación, no la analices demasiado.
+            Respira (4 inhala / 6 exhala) y vuelve a la tarea 60–90 segundos.
+          </p>
+        </div>
+
+        <div class="card" id="sessionExercise"></div>
+
+        <div class="card">
+          <h2>Registro</h2>
+          <p class="sub">Las últimas sesiones guardadas.</p>
+          ${renderLogs()}
+        </div>
+      </div>
+    `;
+
+    // default selections
+    $("#durSel").value = String(s.totalSec || 600);
+    $("#exSel").value = s.exercise || "imagery";
+
+    $("#durSel").addEventListener("change", ()=>{
+      s.totalSec = parseInt($("#durSel").value,10);
+      if(!s.running){
+        s.remainingSec = s.totalSec;
+        save();
+        updateTimerUI();
+      }
+    });
+
+    $("#exSel").addEventListener("change", ()=>{
+      s.exercise = $("#exSel").value;
+      save();
+      renderSessionExercise();
+    });
+
+    $("#tBtn").addEventListener("click", ()=>{
+      if(s.running) pauseSession();
+      else startSession();
+      updateTimerUI();
+    });
+
+    $("#biteBtn").addEventListener("click", ()=>{
+      s.bites += 1;
+      save();
+      $("#bCount").textContent = String(s.bites);
+      // micro-refuerzo suave (no coercitivo)
+      if(s.bites % 3 === 0) toastMsg("Bien. Un paso a la vez 🌷");
+    });
+
+    $("#anchorBtn").addEventListener("click", ()=>{
+      toastMsg("Puedo tragar aunque haya miedo. Mi cuerpo sabe hacerlo.");
+    });
+
+    $("#saveNote").addEventListener("click", ()=>{
+      s.lastNote = ($("#note").value||"").trim();
+      save();
+      toastMsg("Nota guardada ✅");
+    });
+
+    $("#openEx").addEventListener("click", ()=>{
+      renderSessionExercise(true);
+      toastMsg("Ejercicio abierto 🧠");
+    });
+
+    $("#stopBtn").addEventListener("click", ()=> finalizeSession(true));
+
+    renderSessionExercise(false);
+    updateTimerUI();
+
+    function updateTimerUI(){
+      $("#tRemain").textContent = fmtTime(s.remainingSec || 0);
+      $("#tBtn").textContent = s.running ? "Pausar" : "Iniciar";
+    }
+
+    function startSession(){
+      if(s.remainingSec<=0) s.remainingSec = s.totalSec || 600;
+      s.running = true;
+      s.lastDateISO = todayISO();
+      save();
+
+      if(sessionHandle) clearInterval(sessionHandle);
+      sessionHandle = setInterval(()=>{
+        if(!state.session.running) return;
+        state.session.remainingSec = Math.max(0, state.session.remainingSec - 1);
+        save();
+        const el = $("#tRemain"); if(el) el.textContent = fmtTime(state.session.remainingSec);
+
+        // “ping” suave cada 90s (no intrusivo)
+        const rem = state.session.remainingSec;
+        if(rem>0 && rem % 90 === 0){
+          toastMsg("Vuelve a la tarea 60s 💗");
+        }
+
+        if(state.session.remainingSec<=0){
+          finalizeSession(false);
+        }
+      }, 1000);
+
+      // show exercise instantly
+      renderSessionExercise(true);
+      toastMsg("Sesión iniciada ▶️");
+    }
+
+    function pauseSession(){
+      s.running = false;
+      save();
+      toastMsg("Pausado ⏸️");
+    }
+
+    function finalizeSession(showToast){
+      const s = state.session;
+      if(sessionHandle){ clearInterval(sessionHandle); sessionHandle=null; }
+      s.running = false;
+
+      // save log
+      const log = {
+        id: id(),
+        dateISO: todayISO(),
+        duration: s.totalSec,
+        bites: s.bites,
+        exercise: s.exercise,
+        note: s.lastNote || ""
+      };
+      state.logs.unshift(log);
+      state.logs = state.logs.slice(0, 12);
+
+      // reset counters for next time (sin borrar nota)
+      s.remainingSec = s.totalSec || 600;
+      s.bites = 0;
+      save();
+
+      if(showToast) toastMsg("Sesión guardada ✅");
+      render("session");
+    }
+
+    function renderSessionExercise(expand){
+      const box = $("#sessionExercise");
+      if(!box) return;
+
+      const ex = state.session.exercise || "imagery";
+      if(!expand){
+        box.innerHTML = `
+          <h2>Ejercicio (durante la comida) 🧠</h2>
+          <p class="sub">Toca “Abrir ejercicio” para verlo aquí mientras comes.</p>
+          <button class="btn" id="openNow">
+            <span class="left">
+              <span class="icon">✨</span>
+              <span class="txt"><span class="t">Abrir ahora</span><span class="d">sin salir de esta pantalla</span></span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+        `;
+        $("#openNow").addEventListener("click", ()=> renderSessionExercise(true));
+        return;
+      }
+
+      if(ex==="imagery"){
+        box.innerHTML = renderImagery(true);
+        bindImagery(true);
+      } else if(ex==="maze"){
+        box.innerHTML = renderMaze(true);
+        bindMaze(true);
+      } else {
+        box.innerHTML = renderMemory(true);
+        bindMemory(true);
+      }
+    }
+  }
+
+  function renderLogs(){
+    if(!state.logs.length) return `<p class="mini">Aún no hay sesiones registradas.</p>`;
+    return state.logs.map(l=>{
+      const exName = l.exercise==="imagery" ? "Imaginación" : (l.exercise==="maze" ? "Laberinto" : "Memoria");
+      return `
+        <div class="exerciseBox">
+          <div class="mini"><b>${fmtDate(l.dateISO)}</b> • ${Math.round(l.duration/60)} min • ${exName} • Bocaditos: ${l.bites}</div>
+          ${l.note ? `<div class="mini" style="margin-top:6px">📝 ${esc(l.note)}</div>` : ``}
+        </div>
+      `;
+    }).join("");
+  }
+
+  // ===== Exercises hub =====
+  function renderExercises(){
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Ejercicios 🧠</h2>
+          <p class="sub">Elige uno. La idea es “ocupar” el foco atencional mientras el cuerpo aprende que comer no es amenazante.</p>
+
+          <button class="btn" data-ex="imagery">
+            <span class="left">
+              <span class="icon">🌷</span>
+              <span class="txt">
+                <span class="t">Imaginación guiada</span>
+                <span class="d">escena + preguntas (2–3 min)</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <button class="btn" data-ex="maze" style="margin-top:10px">
+            <span class="left">
+              <span class="icon">🧩</span>
+              <span class="txt">
+                <span class="t">Laberinto</span>
+                <span class="d">mueve el punto hasta la meta</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <button class="btn" data-ex="memory" style="margin-top:10px">
+            <span class="left">
+              <span class="icon">🧠</span>
+              <span class="txt">
+                <span class="t">Memoria (parejas)</span>
+                <span class="d">encuentra las coincidencias</span>
+              </span>
+            </span>
+            <span class="chev">›</span>
+          </button>
+
+          <div class="pillBar">
+            <div class="pill" id="resetMazeBtn">🔄 Reiniciar <small>laberinto</small></div>
+            <div class="pill" id="resetMemBtn">🔄 Reiniciar <small>memoria</small></div>
+            <div class="pill" data-go="session">🍽️ Ir a comida</div>
+          </div>
+        </div>
+
+        <div class="card" id="exPane"></div>
+      </div>
+    `;
+
+    // default pane
+    $("#exPane").innerHTML = renderImagery(false);
+    bindImagery(false);
+
+    $$("[data-ex]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const ex = b.getAttribute("data-ex");
+        const pane = $("#exPane");
+        if(ex==="imagery"){
+          pane.innerHTML = renderImagery(false);
+          bindImagery(false);
+        } else if(ex==="maze"){
+          pane.innerHTML = renderMaze(false);
+          bindMaze(false);
+        } else {
+          pane.innerHTML = renderMemory(false);
+          bindMemory(false);
+        }
+      });
+    });
+
+    $("#resetMazeBtn").addEventListener("click", ()=>{
+      resetMaze(false);
+      save();
+      toastMsg("Laberinto reiniciado 🧩");
+      const pane = $("#exPane");
+      pane.innerHTML = renderMaze(false);
+      bindMaze(false);
+    });
+
+    $("#resetMemBtn").addEventListener("click", ()=>{
+      resetMemory(false);
+      save();
+      toastMsg("Memoria reiniciada 🧠");
+      const pane = $("#exPane");
+      pane.innerHTML = renderMemory(false);
+      bindMemory(false);
+    });
+
+    $$("[data-go]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const t = b.getAttribute("data-go");
+        setActiveTab(t);
+        render(t);
+      });
+    });
+  }
+
+  // ===== Tools / Guide =====
+  function renderTools(){
+    main.innerHTML = `
+      <div class="grid">
+        <div class="card">
+          <h2>Guía rápida 🌸</h2>
+          <p class="sub">Usa esto si aparece miedo durante la cena. No “pelees” con la sensación: vuelve al presente.</p>
+
+          <div class="exerciseBox">
+            <div class="mini"><b>1) Respiración (60–90s)</b><br/>
+              Inhala 4 • Exhala 6 (x6 veces). Suelta hombros y mandíbula.
+            </div>
+          </div>
+
+          <div class="exerciseBox">
+            <div class="mini"><b>2) Frase ancla (1 vez)</b><br/>
+              “Puedo tragar aunque haya miedo. Mi cuerpo sabe hacerlo.”
+            </div>
+          </div>
+
+          <div class="exerciseBox">
+            <div class="mini"><b>3) Volver a la tarea (60s)</b><br/>
+              Abre un ejercicio (laberinto/memoria/escena) y mantén foco 1 minuto.
+            </div>
+          </div>
+
+          <div class="hr"></div>
+          <p class="mini">
+            <b>Nota clínica:</b> Estos ejercicios son un <b>andamio</b>.
+            Con el tiempo se retiran gradualmente para que Ellen coma sin depender del celular.
+          </p>
+
+          <div class="pillBar">
+            <div class="pill" id="copyGuide">📋 Copiar guía</div>
+            <div class="pill" data-go="session">🍽️ Comida</div>
+            <div class="pill" data-go="exercises">🧠 Ejercicios</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Créditos</h2>
+          <p class="mini">
+            Todas las mini aplicaciones fueron desarrolladas por <b>Lic. Gonzalo Buendía – Psicólogo</b>
+            y <b>Blanquita – Co terapeuta</b>, como herramientas psicoeducativas digitales de apoyo clínico.
+          </p>
+        </div>
+      </div>
+    `;
+
+    $("#copyGuide").addEventListener("click", async ()=>{
+      const t =
+`GUÍA RÁPIDA (Ellen)
+1) Respiración: Inhala 4 / Exhala 6 (x6).
+2) Frase ancla (1 vez): “Puedo tragar aunque haya miedo. Mi cuerpo sabe hacerlo.”
+3) Volver a la tarea 60s: laberinto / memoria / escena guiada.
+Nota: es un andamio, se retira gradualmente.`;
+      await copyText(t);
+      toastMsg("Guía copiada 📋");
+    });
+
+    $$("[data-go]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        const t = b.getAttribute("data-go");
+        setActiveTab(t);
+        render(t);
+      });
+    });
+  }
+
+  // ===== Imagery =====
+  function renderImagery(compact){
+    const last = state.imagery.lastScene || "Toca “Generar escena” para empezar.";
+    return `
+      <h2>Imaginación guiada 🌷</h2>
+      <p class="sub">Escena + preguntas para ocupar foco. Ideal al inicio de la cena.</p>
+
+      <div class="exerciseBox">
+        <div class="mini"><b>Escena actual</b></div>
+        <div class="mini" id="sceneText" style="margin-top:6px">${esc(last)}</div>
+      </div>
+
+      <div class="pillBar">
+        <div class="pill" id="${compact ? "genSceneS" : "genScene"}">✨ Generar escena</div>
+        <div class="pill" id="${compact ? "copySceneS" : "copyScene"}">📋 Copiar</div>
+        <div class="pill" id="${compact ? "timerSceneS" : "timerScene"}">⏱️ 2 min</div>
+      </div>
+
+      <div class="exerciseBox" style="margin-top:10px">
+        <div class="mini"><b>Preguntas (elige 3)</b></div>
+        <ul class="mini" style="margin:8px 0 0 18px; padding:0;">
+          <li>¿Qué ves por la ventana? (3 detalles)</li>
+          <li>¿Qué sonido aparece de fondo?</li>
+          <li>¿Qué color domina la escena?</li>
+          <li>¿Qué está ocurriendo “ahora mismo”?</li>
+          <li>¿Hacia dónde va y por qué?</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  function bindImagery(compact){
+    const idGen = compact ? "#genSceneS" : "#genScene";
+    const idCopy = compact ? "#copySceneS" : "#copyScene";
+    const idTimer = compact ? "#timerSceneS" : "#timerScene";
+
+    $(idGen)?.addEventListener("click", ()=>{
+      const s = generateScene();
+      state.imagery.lastScene = s;
+      save();
+      const el = $("#sceneText");
+      if(el) el.textContent = s;
+      toastMsg("Escena lista ✨");
+    });
+
+    $(idCopy)?.addEventListener("click", async ()=>{
+      await copyText(state.imagery.lastScene || "");
+      toastMsg("Copiado 📋");
+    });
+
+    $(idTimer)?.addEventListener("click", ()=>{
+      toastMsg("2 minutos: vuelve a la escena + 3 detalles 🌷");
+    });
+  }
+
+  function buildScenes(){
+    const chars = ["un perrito", "una gatita", "una viajera", "una científica", "una artista", "una niña curiosa"];
+    const vehicles = ["un auto pequeño", "un convertible", "un tren", "una bicicleta", "un bus", "un barco"];
+    const roads = ["la Panamericana", "una carretera costera", "un camino de bosque", "una avenida luminosa", "una calle empedrada", "un puente largo"];
+    const goals = ["la playa", "un jardín", "un mirador", "una cafetería", "una biblioteca", "una feria"];
+    const moods = ["con calma", "con curiosidad", "con alegría", "con serenidad", "con confianza", "con ternura"];
+    return { chars, vehicles, roads, goals, moods };
+  }
+
+  function generateScene(){
+    const s = state.imagery.scenes;
+    const a = pick(s.chars);
+    const b = pick(s.vehicles);
+    const c = pick(s.roads);
+    const d = pick(s.goals);
+    const e = pick(s.moods);
+    const extra = pick([
+      "Hay luz suave y el aire se siente liviano.",
+      "Suena música tranquila y el paisaje se ve amplio.",
+      "El cielo está claro y el viaje se siente seguro.",
+      "A lo lejos aparece algo bonito que llama la atención."
+    ]);
+    return `${cap(a)} va en ${b} por ${c} hacia ${d}, ${e}. ${extra}`;
+  }
+
+  // ===== Maze =====
+  function renderMaze(compact){
+    ensureMaze();
+
+    return `
+      <h2>Laberinto 🧩</h2>
+      <p class="sub">Mueve el punto rosa hasta la meta. En iPhone puedes deslizar (swipe).</p>
+
+      <div class="exerciseBox">
+        <div class="mini">
+          Movimientos: <b id="mzMoves">${state.maze.moves}</b>
+          ${state.maze.best!=null ? ` • Mejor: <b>${state.maze.best}</b>` : ``}
+        </div>
+      </div>
+
+      <div class="mazeWrap">
+        <div class="maze" id="${compact ? "mazeS" : "maze"}" aria-label="Laberinto"></div>
+      </div>
+
+      <div class="controls">
+        <div></div>
+        <button class="padBtn" data-move="U">▲</button>
+        <div></div>
+        <button class="padBtn" data-move="L">◀</button>
+        <button class="padBtn" data-move="D">▼</button>
+        <button class="padBtn" data-move="R">▶</button>
+      </div>
+
+      <div class="pillBar">
+        <div class="pill" id="${compact ? "newMazeS" : "newMaze"}">✨ Nuevo</div>
+        <div class="pill" id="${compact ? "resetMazeS" : "resetMaze"}">🔄 Reiniciar</div>
+      </div>
+
+      <div class="exerciseBox">
+        <div class="mini"><b>Tip clínico:</b> si aparece miedo al tragar, vuelve al laberinto 60s y luego continúa.</div>
+      </div>
+    `;
+  }
+
+  function bindMaze(compact){
+    const wrapId = compact ? "#mazeS" : "#maze";
+    const newId  = compact ? "#newMazeS" : "#newMaze";
+    const resId  = compact ? "#resetMazeS" : "#resetMaze";
+
+    renderMazeSVG($(wrapId));
+
+    $$("[data-move]").forEach(b=>{
+      b.addEventListener("click", ()=>{
+        moveMaze(b.getAttribute("data-move"));
+        updateMazeUI(wrapId);
+      });
+    });
+
+    // Swipe
+    const el = $(wrapId);
+    if(el){
+      let sx=0, sy=0;
+      el.addEventListener("touchstart", (e)=>{
+        const t = e.changedTouches[0]; sx=t.clientX; sy=t.clientY;
+      }, {passive:true});
+      el.addEventListener("touchend", (e)=>{
+        const t = e.changedTouches[0];
+        const dx = t.clientX - sx, dy = t.clientY - sy;
+        const ax = Math.abs(dx), ay = Math.abs(dy);
+        if(Math.max(ax,ay) < 22) return;
+        if(ax>ay) moveMaze(dx>0 ? "R" : "L");
+        else moveMaze(dy>0 ? "D" : "U");
+        updateMazeUI(wrapId);
+      }, {passive:true});
+    }
+
+    $(newId)?.addEventListener("click", ()=>{
+      newMaze();
+      save();
+      updateMazeUI(wrapId);
+      toastMsg("Nuevo laberinto ✨");
+    });
+
+    $(resId)?.addEventListener("click", ()=>{
+      resetMaze(false);
+      save();
+      updateMazeUI(wrapId);
+      toastMsg("Reiniciado 🔄");
+    });
+  }
+
+  function ensureMaze(){
+    if(state.maze.grid) return;
+    newMaze();
+  }
+
+  function newMaze(){
+    const n = clamp(state.maze.size || 12, 8, 18);
+    state.maze.size = n;
+    const grid = makeMaze(n);
+    state.maze.grid = grid;
+    state.maze.start = {x:0,y:0};
+    state.maze.goal  = {x:n-1,y:n-1};
+    state.maze.player= {x:0,y:0};
+    state.maze.moves = 0;
+  }
+
+  function resetMaze(keepBest){
+    if(!keepBest) state.maze.best = state.maze.best; // no-op, keep best by default
+    state.maze.player = {x:0,y:0};
+    state.maze.moves = 0;
+  }
+
+  // Maze representation: each cell has walls [top,right,bottom,left] boolean
+  function makeMaze(n){
+    const cells = Array.from({length:n}, ()=> Array.from({length:n}, ()=> ({v:false, w:[true,true,true,true]})));
+    const stack = [];
+    let cx=0, cy=0;
+    cells[cy][cx].v=true;
+    stack.push([cx,cy]);
+
+    const dirs = [
+      [0,-1,0,2], // up: remove top of current, bottom of next
+      [1,0,1,3],  // right
+      [0,1,2,0],  // down
+      [-1,0,3,1]  // left
+    ];
+
+    while(stack.length){
+      const [x,y] = stack[stack.length-1];
+      const neighbors = [];
+      for(const [dx,dy,wi,wo] of dirs){
+        const nx=x+dx, ny=y+dy;
+        if(nx>=0 && nx<n && ny>=0 && ny<n && !cells[ny][nx].v){
+          neighbors.push([nx,ny,wi,wo]);
+        }
+      }
+      if(!neighbors.length){
+        stack.pop();
+        continue;
+      }
+      const [nx,ny,wi,wo] = pick(neighbors);
+      // knock walls
+      cells[y][x].w[wi]=false;
+      cells[ny][nx].w[wo]=false;
+      cells[ny][nx].v=true;
+      stack.push([nx,ny]);
+    }
+    // cleanup visited
+    for(let y=0;y<n;y++) for(let x=0;x<n;x++) cells[y][x].v=false;
+    return cells;
+  }
+
+  function moveMaze(dir){
+    const n = state.maze.size;
+    const g = state.maze.grid;
+    const p = state.maze.player;
+    const cell = g[p.y][p.x];
+
+    const can = (d)=>{
+      if(d==="U") return !cell.w[0] && p.y>0;
+      if(d==="R") return !cell.w[1] && p.x<n-1;
+      if(d==="D") return !cell.w[2] && p.y<n-1;
+      if(d==="L") return !cell.w[3] && p.x>0;
+      return false;
+    };
+    if(!can(dir)) return;
+
+    if(dir==="U") p.y--;
+    if(dir==="R") p.x++;
+    if(dir==="D") p.y++;
+    if(dir==="L") p.x--;
+    state.maze.moves++;
+    save();
+
+    if(p.x===state.maze.goal.x && p.y===state.maze.goal.y){
+      const m = state.maze.moves;
+      if(state.maze.best==null || m < state.maze.best) state.maze.best = m;
+      toastMsg("¡Meta! ✅ Respira y vuelve suave.");
+    }
+  }
+
+  function updateMazeUI(wrapId){
+    const movesEl = $("#mzMoves");
+    if(movesEl) movesEl.textContent = String(state.maze.moves);
+    renderMazeSVG($(wrapId));
+  }
+
+  function renderMazeSVG(container){
+    if(!container) return;
+    const n = state.maze.size;
+    const g = state.maze.grid;
+    const p = state.maze.player;
+    const goal = state.maze.goal;
+
+    const S = 1000; // viewBox size
+    const cell = S / n;
+
+    let lines = "";
+    const stroke = "rgba(34,26,38,.35)";
+    const sw = Math.max(3, 12/n);
+
+    for(let y=0;y<n;y++){
+      for(let x=0;x<n;x++){
+        const w = g[y][x].w;
+        const x0 = x*cell, y0=y*cell, x1=x0+cell, y1=y0+cell;
+        if(w[0]) lines += `<line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}" />`;
+        if(w[1]) lines += `<line x1="${x1}" y1="${y0}" x2="${x1}" y2="${y1}" />`;
+        if(w[2]) lines += `<line x1="${x0}" y1="${y1}" x2="${x1}" y2="${y1}" />`;
+        if(w[3]) lines += `<line x1="${x0}" y1="${y0}" x2="${x0}" y2="${y1}" />`;
+      }
+    }
+
+    const px = (p.x+0.5)*cell, py=(p.y+0.5)*cell;
+    const gx = (goal.x+0.5)*cell, gy=(goal.y+0.5)*cell;
+
+    container.innerHTML = `
+      <svg viewBox="0 0 ${S} ${S}" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="bgG" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="rgba(247,199,217,.45)"/>
+            <stop offset="1" stop-color="rgba(220,235,255,.45)"/>
+          </linearGradient>
+        </defs>
+        <rect x="0" y="0" width="${S}" height="${S}" fill="url(#bgG)"/>
+        <g stroke="${stroke}" stroke-width="${sw}" stroke-linecap="round">
+          ${lines}
+        </g>
+
+        <!-- Goal -->
+        <circle cx="${gx}" cy="${gy}" r="${cell*0.18}" fill="rgba(31,138,112,.30)"/>
+        <circle cx="${gx}" cy="${gy}" r="${cell*0.11}" fill="rgba(31,138,112,.55)"/>
+
+        <!-- Player -->
+        <circle cx="${px}" cy="${py}" r="${cell*0.18}" fill="rgba(247,199,217,.75)"/>
+        <circle cx="${px}" cy="${py}" r="${cell*0.11}" fill="rgba(34,26,38,.35)"/>
+      </svg>
+    `;
+  }
+
+  // ===== Memory =====
+  function renderMemory(compact){
+    ensureMemory();
+    const m = state.memory;
+    return `
+      <h2>Memoria (parejas) 🧠</h2>
+      <p class="sub">Voltea cartas y encuentra las parejas. Mantén el foco 60–120s.</p>
+
+      <div class="exerciseBox">
+        <div class="mini">
+          Aciertos: <b id="mm">${m.matches}</b>/8 • Intentos: <b id="ma">${m.attempts}</b>
+          ${m.best!=null ? ` • Mejor: <b>${m.best}</b> intentos` : ``}
+        </div>
+      </div>
+
+      <div class="memGrid" id="${compact ? "memS" : "mem"}"></div>
+
+      <div class="pillBar">
+        <div class="pill" id="${compact ? "newMemS" : "newMem"}">✨ Nuevo</div>
+        <div class="pill" id="${compact ? "resetMemS" : "resetMem"}">🔄 Reiniciar</div>
+      </div>
+
+      <div class="exerciseBox">
+        <div class="mini"><b>Tip clínico:</b> si la mente se va a “tragar”, vuelve a buscar una pareja.</div>
+      </div>
+    `;
+  }
+
+  function bindMemory(compact){
+    const wrapId = compact ? "#memS" : "#mem";
+    const newId  = compact ? "#newMemS" : "#newMem";
+    const resId  = compact ? "#resetMemS" : "#resetMem";
+
+    renderMemoryGrid($(wrapId));
+
+    $(newId)?.addEventListener("click", ()=>{
+      newMemory();
+      save();
+      renderMemoryGrid($(wrapId));
+      toastMsg("Nuevo juego ✨");
+    });
+
+    $(resId)?.addEventListener("click", ()=>{
+      resetMemory(false);
+      save();
+      renderMemoryGrid($(wrapId));
+      toastMsg("Reiniciado 🔄");
+    });
+  }
+
+  function ensureMemory(){
+    if(state.memory.tiles && state.memory.tiles.length) return;
+    newMemory();
+  }
+
+  function newMemory(){
+    const icons = ["🌸","🌷","🧁","🫧","🎀","🐶","🌙","🍓"];
+    const deck = shuffle([...icons, ...icons]).map((v,i)=>({ id:id(), v, open:false, matched:false }));
+    state.memory.tiles = deck;
+    state.memory.first = null;
+    state.memory.lock = false;
+    state.memory.matches = 0;
+    state.memory.attempts = 0;
+  }
+
+  function resetMemory(keepBest){
+    if(!keepBest) state.memory.best = state.memory.best; // keep best by default
+    // close all non-matched; keep deck
+    state.memory.tiles.forEach(t=>{ t.open=false; t.matched=false; });
+    state.memory.first = null;
+    state.memory.lock = false;
+    state.memory.matches = 0;
+    state.memory.attempts = 0;
+  }
+
+  function renderMemoryGrid(container){
+    if(!container) return;
+    const m = state.memory;
+    container.innerHTML = m.tiles.map((t, idx)=>{
+      const show = t.open || t.matched;
+      return `
+        <div class="cardTile ${t.matched ? "matched":""}" data-idx="${idx}">
+          ${show ? `<span aria-label="carta">${t.v}</span>` : `<span class="cardBack">⋯</span>`}
+        </div>
+      `;
+    }).join("");
+
+    $$("[data-idx]", container).forEach(el=>{
+      el.addEventListener("click", ()=> onFlip(parseInt(el.getAttribute("data-idx"),10), container));
+    });
+
+    const mm = $("#mm"); if(mm) mm.textContent = String(m.matches);
+    const ma = $("#ma"); if(ma) ma.textContent = String(m.attempts);
+  }
+
+  function onFlip(i, container){
+    const m = state.memory;
+    if(m.lock) return;
+    const t = m.tiles[i];
+    if(!t || t.open || t.matched) return;
+
+    t.open = true;
+    save();
+    renderMemoryGrid(container);
+
+    if(m.first==null){
+      m.first = i;
+      return;
+    }
+
+    // second flip
+    m.lock = true;
+    m.attempts += 1;
+
+    const a = m.tiles[m.first];
+    const b = t;
+
+    if(a.v === b.v){
+      a.matched = true; b.matched = true;
+      m.matches += 1;
+      m.first = null;
+      m.lock = false;
+      save();
+      renderMemoryGrid(container);
+
+      if(m.matches>=8){
+        if(m.best==null || m.attempts < m.best) m.best = m.attempts;
+        toastMsg("¡Completado! ✅ Respira y continúa suave.");
+      } else {
+        toastMsg("Pareja ✅");
+      }
+      return;
+    }
+
+    // mismatch: close after a short delay
+    setTimeout(()=>{
+      a.open = false;
+      b.open = false;
+      m.first = null;
+      m.lock = false;
+      save();
+      renderMemoryGrid(container);
+    }, 650);
+  }
+
+  // ===== Quick checkin =====
+  function quickCheckin(){
+    const current = state.chip.level === "warn";
+    state.chip.level = current ? "good" : "warn";
+    state.chip.text = current ? "Más calma" : "Modo apoyo";
+    save();
+    setChip(state.chip.level, state.chip.text);
+    toastMsg(current ? "Ok, más calma 🌿" : "Ok, modo apoyo 💗");
+  }
+
+  function setChip(level, text){
+    chipDot.className = "dot " + level;
+    chipText.textContent = text;
+  }
+
+  // ===== Helpers =====
+  function setActiveTab(tab){
+    $$(".navBtn").forEach(x=> x.classList.toggle("active", x.dataset.tab===tab));
+  }
+
+  function toastMsg(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(()=> toast.classList.remove("show"), 1800);
+  }
+
+  function save(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+  }
+  function load(){
+    try{
+      const raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){ return null; }
+  }
+
+  function id(){ return Math.random().toString(16).slice(2) + Date.now().toString(16); }
+  function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+  function todayISO(){
+    const d=new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  }
+  function fmtDate(iso){
+    if(!iso) return "";
+    const [y,m,d]=iso.split("-");
+    return `${d}/${m}/${y}`;
+  }
+  function fmtTime(sec){
+    const s=Math.max(0, sec|0);
+    const mm=String(Math.floor(s/60)).padStart(2,"0");
+    const ss=String(s%60).padStart(2,"0");
+    return `${mm}:${ss}`;
+  }
+  function cap(s){ return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+  function esc(s){
+    return String(s??"")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;")
+      .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+      .replaceAll("'","&#039;");
+  }
+  async function copyText(text){
+    try{ await navigator.clipboard.writeText(text); }
+    catch(e){
+      const ta=document.createElement("textarea");
+      ta.value=text;
+      ta.style.position="fixed"; ta.style.left="-9999px";
+      document.body.appendChild(ta);
+      ta.focus(); ta.select();
+      try{ document.execCommand("copy"); }catch(err){}
+      document.body.removeChild(ta);
+    }
+  }
+
+  // persist
+  save();
+
+})();
+</script>
+</body>
+</html>

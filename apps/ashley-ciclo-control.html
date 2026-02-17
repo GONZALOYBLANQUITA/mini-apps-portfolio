@@ -1,0 +1,1018 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ashley — Control del Ciclo (Pausa · Elección · Respeto)</title>
+  <style>
+    :root{
+      /* Warm + feminine palette */
+      --bg1:#fff2f6;     /* blush */
+      --bg2:#fff7ee;     /* peach milk */
+      --card:#ffffffcc;
+      --ink:#2b2230;     /* deep plum */
+      --muted:#6b5866;
+      --line:rgba(43,34,48,.10);
+
+      --rose:#ff6fa8;
+      --coral:#ff7c6e;
+      --peach:#ffb27a;
+      --gold:#ffd36b;
+      --mint:#7ee7c7;
+
+      --shadow: 0 18px 50px rgba(43,34,48,.12);
+      --r:18px;
+
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      color:var(--ink);
+      background:
+        radial-gradient(900px 600px at 10% 0%, rgba(255,111,168,.18), transparent 60%),
+        radial-gradient(800px 520px at 100% 20%, rgba(255,178,122,.18), transparent 55%),
+        radial-gradient(700px 600px at 45% 110%, rgba(126,231,199,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+    }
+
+    /* Layout */
+    header{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px 16px 10px;
+    }
+    .hero{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+    .hero h1{
+      margin:0;
+      font-size:20px;
+      letter-spacing:-.2px;
+    }
+    .sub{
+      margin-top:6px;
+      color:var(--muted);
+      font-size:13px;
+      max-width:760px;
+      line-height:1.35;
+    }
+    .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px}
+    .chip{
+      padding:8px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.65);
+      border:1px solid var(--line);
+      box-shadow: 0 8px 22px rgba(43,34,48,.06);
+      font-size:12px;
+      color:var(--muted);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .chip b{color:var(--ink); font-weight:700}
+    .chip .dot{
+      width:9px; height:9px; border-radius:999px; display:inline-block;
+      background:linear-gradient(90deg, var(--rose), var(--peach));
+    }
+
+    .tools{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    .pillbtn{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.78);
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:12px;
+      cursor:pointer;
+      box-shadow: 0 8px 22px rgba(43,34,48,.06);
+      transition:transform .06s ease, background .2s ease;
+    }
+    .pillbtn:hover{background:rgba(255,255,255,.9)}
+    .pillbtn:active{transform:translateY(1px)}
+    .pillbtn strong{font-weight:800}
+
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:10px 16px 22px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 980px){
+      main{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:var(--card);
+      backdrop-filter: blur(8px);
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .hd{
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .hd h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:-.1px;
+    }
+    .bd{padding:14px}
+
+    /* Tabs */
+    .tabs{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .tab{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.70);
+      padding:10px 12px;
+      border-radius:14px;
+      font-size:12px;
+      cursor:pointer;
+      transition: transform .06s ease, background .2s ease, border-color .2s ease;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .tab .ico{font-size:14px}
+    .tab:hover{background:rgba(255,255,255,.86)}
+    .tab:active{transform:translateY(1px)}
+    .tab.active{
+      border-color: rgba(255,111,168,.35);
+      background: linear-gradient(90deg, rgba(255,111,168,.18), rgba(255,178,122,.18));
+      font-weight:800;
+    }
+
+    /* Form elements */
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px}
+    select, input[type="text"], textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(255,255,255,.78);
+      padding:10px 12px;
+      font-size:13px;
+      outline:none;
+      color:var(--ink);
+    }
+    textarea{min-height:92px; resize:vertical}
+    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width: 640px){ .grid2{grid-template-columns:1fr} }
+
+    /* Buttons */
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px}
+    button{
+      appearance:none;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.86);
+      color:var(--ink);
+      padding:10px 12px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:13px;
+      transition:transform .06s ease, background .2s ease, border-color .2s ease;
+    }
+    button:hover{background:rgba(255,255,255,.95)}
+    button:active{transform:translateY(1px)}
+    .primary{
+      border-color: rgba(255,111,168,.35);
+      background: rgba(255,111,168,.16);
+    }
+    .primary:hover{background: rgba(255,111,168,.22)}
+    .good{
+      border-color: rgba(126,231,199,.35);
+      background: rgba(126,231,199,.18);
+    }
+    .warn{
+      border-color: rgba(255,211,107,.35);
+      background: rgba(255,211,107,.18);
+    }
+    .danger{
+      border-color: rgba(255,124,110,.35);
+      background: rgba(255,124,110,.16);
+    }
+
+    /* KPI / progress */
+    .kpis{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 640px){ .kpis{grid-template-columns:1fr} }
+    .kpi{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.72);
+      padding:10px;
+    }
+    .kpi .num{font-family:var(--mono); font-size:18px; font-weight:900}
+    .kpi .lbl{margin-top:3px; font-size:12px; color:var(--muted)}
+    .sep{height:1px; background:var(--line); margin:12px 0}
+
+    .bar{
+      height:12px;
+      border-radius:999px;
+      background:rgba(43,34,48,.06);
+      overflow:hidden;
+      border:1px solid var(--line);
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, var(--rose), var(--peach), var(--gold));
+      transition: width .2s ease;
+    }
+    .hint{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    /* Timer */
+    .timer{
+      font-family:var(--mono);
+      font-size:44px;
+      font-weight:950;
+      letter-spacing:-1px;
+    }
+    .badge{
+      font-size:11px;
+      color:var(--muted);
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.74);
+    }
+
+    /* Logs */
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:520px;
+      overflow:auto;
+      padding-right:6px;
+    }
+    .item{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:rgba(255,255,255,.74);
+      padding:10px;
+    }
+    .item .top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .item .main{margin-top:6px; font-size:13px}
+
+    /* Footer */
+    footer{
+      max-width:1100px;
+      margin:0 auto;
+      padding:0 16px 18px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .credits{
+      border-top:1px solid var(--line);
+      padding-top:12px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .linkish{
+      text-decoration:underline;
+      text-underline-offset:3px;
+      cursor:pointer;
+      font-weight:900;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="hero">
+    <div>
+      <h1>🌸 Ashley — Control del Ciclo</h1>
+      <div class="sub">
+        Una mini-app para cortar el ciclo: <b>crítica/amenaza de control</b> → <b>autoafirmación</b> → <b>oposición</b> → <b>rudeza</b> → <b>conflicto</b>.
+        Aquí entrenas: <b>Pausa</b> + <b>Elección</b> + <b>Respeto</b>. (Rápido, fácil, y sin sermones).
+      </div>
+      <div class="chips">
+        <div class="chip"><span class="dot"></span> Meta: <b>responder con control</b></div>
+        <div class="chip"><span class="dot"></span> Regla: <b>10 segundos</b> antes de hablar</div>
+        <div class="chip"><span class="dot"></span> Si frustración <b>7+</b>: pausa y retoma</div>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="pillbtn" id="editName">Nombre: <strong id="nameOut">Ashley</strong></button>
+      <button class="pillbtn" id="exportBtn">Exportar</button>
+      <button class="pillbtn" id="wipeBtn"><strong>Borrar</strong></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT: Main interactive -->
+  <section class="card">
+    <div class="hd">
+      <h2>Panel principal</h2>
+      <div class="tabs" id="tabs">
+        <div class="tab active" data-tab="checkin"><span class="ico">🧡</span>Check-in</div>
+        <div class="tab" data-tab="pausa"><span class="ico">⏳</span>Pausa</div>
+        <div class="tab" data-tab="acuerdo"><span class="ico">🤝</span>Acuerdo</div>
+        <div class="tab" data-tab="frases"><span class="ico">💬</span>Frases</div>
+      </div>
+    </div>
+
+    <div class="bd">
+      <!-- KPIs -->
+      <div class="kpis">
+        <div class="kpi">
+          <div class="num" id="kpiPauses">0</div>
+          <div class="lbl">Pausas (hoy)</div>
+        </div>
+        <div class="kpi">
+          <div class="num" id="kpiCalm">0</div>
+          <div class="lbl">Respuestas calmadas (7 días)</div>
+        </div>
+        <div class="kpi">
+          <div class="num" id="kpiLogs">0</div>
+          <div class="lbl">Registros (7 días)</div>
+        </div>
+      </div>
+
+      <div class="sep"></div>
+
+      <!-- CHECKIN -->
+      <div id="tab-checkin">
+        <div class="grid2">
+          <div>
+            <label>¿Qué te activó?</label>
+            <select id="trigger">
+              <option>Me corrigieron / crítica</option>
+              <option>Me dijeron NO / límite</option>
+              <option>Me sentí controlada</option>
+              <option>Me hablaron feo</option>
+              <option>Me pidieron esperar</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div>
+            <label>Frustración (0–10)</label>
+            <input id="intensity" type="text" inputmode="numeric" placeholder="Ej: 6" />
+            <div class="bar" style="margin-top:10px;"><div id="barFill"></div></div>
+            <div class="hint">
+              Si estás en <b>7+</b>, tu cerebro quiere pelear para recuperar control. Tu meta aquí es: <b>pausa</b> y luego <b>frase</b>.
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div>
+            <label>¿Qué te sale hacer?</label>
+            <select id="urge">
+              <option>Contestar fuerte</option>
+              <option>Discutir para ganar</option>
+              <option>Irme / cortar</option>
+              <option>Insistir hasta que cedan</option>
+              <option>Provocar</option>
+            </select>
+          </div>
+          <div>
+            <label>¿Qué quieres de verdad?</label>
+            <select id="goal">
+              <option>Que me respeten sin pelear</option>
+              <option>Que me escuchen</option>
+              <option>No perder el control</option>
+              <option>Poner mi límite con calma</option>
+              <option>Resolver sin drama</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <label>Tu frase interna (1 línea)</label>
+        <input id="reframe" type="text" placeholder="Ej: 'No me controlan; puedo elegir mi respuesta'." />
+
+        <label style="margin-top:10px;">Nota (opcional)</label>
+        <textarea id="note" placeholder="Ej: 'Sentí vergüenza/enojo y me puse dura para que no me ganen'..."></textarea>
+
+        <div class="btnrow">
+          <button class="primary" id="saveCheckin">Guardar</button>
+          <button class="warn" id="goPause">Ir a Pausa</button>
+          <button id="clearCheckin">Limpiar</button>
+        </div>
+
+        <div class="hint">
+          Idea clave: <b>Egocentrismo</b> aquí suele ser defensa (“si me muestro fuerte, no me hieren”).
+          No tienes que “ser blanda”: tienes que <b>ser dueña</b>.
+        </div>
+      </div>
+
+      <!-- PAUSA -->
+      <div id="tab-pausa" style="display:none">
+        <div class="grid2">
+          <div class="item" style="background:rgba(255,255,255,.74); border:1px solid var(--line); border-radius:16px; padding:12px">
+            <div class="top" style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; color:var(--muted); font-size:12px">
+              <div><b>Regla 10 segundos</b></div>
+              <div class="badge" id="pauseStatus">lista</div>
+            </div>
+            <div style="margin-top:8px">
+              <div class="timer" id="pauseTimer">10</div>
+              <div class="hint">
+                Objetivo mínimo: bajar <b>1 punto</b> de frustración antes de hablar.
+              </div>
+              <div class="btnrow">
+                <button class="good" id="startPause">Iniciar</button>
+                <button id="resetPause">Reset</button>
+                <button class="primary" id="logPause">Registrar pausa hecha</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="item" style="background:rgba(255,255,255,.74); border:1px solid var(--line); border-radius:16px; padding:12px">
+            <label>Mini-acción durante la pausa (elige 1)</label>
+            <select id="miniAction">
+              <option>Respirar 4-4-6 (4 inhala, 4 sostén, 6 exhala)</option>
+              <option>Tomar agua</option>
+              <option>Caminar 1 minuto</option>
+              <option>Manos al pecho (bajar tensión)</option>
+              <option>Escribir 1 frase y volver</option>
+            </select>
+            <div class="sep"></div>
+            <label>Después de la pausa: ¿cómo quieres responder?</label>
+            <select id="afterStyle">
+              <option>Firme y calmada</option>
+              <option>Directa sin atacar</option>
+              <option>Con pausa y acuerdo</option>
+              <option>Me retiro y retomo luego</option>
+            </select>
+            <div class="btnrow">
+              <button class="primary" id="logCalm">Marcar “respondí calmada”</button>
+            </div>
+            <div class="hint">
+              Esto entrena: <b>autonomía real</b>. No es “hacer caso”; es <b>elegir</b>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACUERDO (anti-reactancia) -->
+      <div id="tab-acuerdo" style="display:none">
+        <div class="hint" style="margin-bottom:10px">
+          Para <b>rebeldía/reactancia</b> funciona mejor: límites <b>negociados</b>, <b>claros</b> y con <b>razón</b>.
+          Aquí armas un “acuerdo” rápido para que no sientas imposición.
+        </div>
+
+        <div class="grid2">
+          <div>
+            <label>Situación donde chocamos</label>
+            <input id="situation" type="text" placeholder="Ej: 'horario', 'celular', 'tareas', 'salidas'..." />
+          </div>
+          <div>
+            <label>Lo que yo necesito (autonomía)</label>
+            <input id="myNeed" type="text" placeholder="Ej: 'que me expliquen', 'decidir', 'no gritos'..." />
+          </div>
+        </div>
+
+        <div class="grid2" style="margin-top:10px">
+          <div>
+            <label>Lo que la otra persona necesita (orden/seguridad)</label>
+            <input id="theirNeed" type="text" placeholder="Ej: 'que avise', 'que cumpla', 'que no falte'..." />
+          </div>
+          <div>
+            <label>Propuesta de acuerdo (clara y justa)</label>
+            <input id="deal" type="text" placeholder="Ej: 'Si salgo, aviso 2 veces y vuelvo a X hora'." />
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div>
+            <label>Consecuencia si no cumplo (realista)</label>
+            <input id="consequence" type="text" placeholder="Ej: 'No salgo el fin de semana'." />
+          </div>
+          <div>
+            <label>Cómo se revisa (sin pelea)</label>
+            <input id="review" type="text" placeholder="Ej: 'Hablamos domingo 10 min'." />
+          </div>
+        </div>
+
+        <div class="btnrow">
+          <button class="primary" id="saveDeal">Guardar acuerdo</button>
+          <button id="clearDeal">Limpiar</button>
+        </div>
+
+        <div class="hint">
+          Esto reduce el “me controlan” y aumenta “yo decido dentro de reglas”.
+        </div>
+      </div>
+
+      <!-- FRASES (anti-rudeza) -->
+      <div id="tab-frases" style="display:none">
+        <div class="hint">
+          La <b>rudeza</b> muchas veces es armadura: protege la vulnerabilidad.
+          Estas frases mantienen firmeza sin atacar.
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="grid2">
+          <div class="item" style="background:rgba(255,255,255,.74); border:1px solid var(--line); border-radius:16px; padding:12px">
+            <div class="badge">Elige 1 frase</div>
+            <div class="btnrow" style="margin-top:10px">
+              <button data-phrase="Dame 2 minutos y te respondo mejor.">Pedir pausa</button>
+              <button data-phrase="No estoy de acuerdo. Hablemos sin atacarnos.">Firme</button>
+              <button data-phrase="Entiendo lo que dices. Yo necesito respeto también.">Equilibrio</button>
+              <button data-phrase="Si sube el tono, lo hablamos después.">Cortar sin pelear</button>
+              <button data-phrase="No me controles. Explícame la razón y lo negociamos.">Anti-control</button>
+              <button data-phrase="Estoy molesta, pero no quiero herirte.">Vulnerabilidad segura</button>
+            </div>
+          </div>
+
+          <div class="item" style="background:rgba(255,255,255,.74); border:1px solid var(--line); border-radius:16px; padding:12px">
+            <label>Frase elegida</label>
+            <input id="phraseOut" type="text" readonly />
+            <div class="btnrow">
+              <button id="copyPhrase" class="good">Copiar</button>
+              <button id="logPhrase" class="primary">Registrar que la usé</button>
+            </div>
+            <div class="hint">
+              Usar una frase así es <b>poder</b>, no debilidad.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT: History + saved deals -->
+  <section class="card">
+    <div class="hd">
+      <h2>Historial (7 días)</h2>
+      <span class="badge" id="todayBadge"></span>
+    </div>
+    <div class="bd">
+      <div class="list" id="logList"></div>
+
+      <div class="sep"></div>
+
+      <h2 style="margin:0; font-size:14px">Acuerdos guardados</h2>
+      <div class="hint">Tus acuerdos son “autonomía con estructura”.</div>
+      <div class="list" id="dealList" style="max-height:260px"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="credits">
+    <div><b>Créditos:</b> Lic. Gonzalo Buendía – Psicólogo · Blanquita – Co terapeuta</div>
+    <div>Guardado local (localStorage) · Versión v1</div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const KEY = "ASHLEY_CICLO_CONTROL_V1";
+  const todayKey = () => new Date().toISOString().slice(0,10);
+
+  const state = load();
+
+  // UI refs
+  const nameOut = document.getElementById("nameOut");
+  const todayBadge = document.getElementById("todayBadge");
+  const editNameBtn = document.getElementById("editName");
+
+  const tabs = document.getElementById("tabs");
+  const tabPanels = {
+    checkin: document.getElementById("tab-checkin"),
+    pausa: document.getElementById("tab-pausa"),
+    acuerdo: document.getElementById("tab-acuerdo"),
+    frases: document.getElementById("tab-frases"),
+  };
+
+  // KPIs
+  const kpiPauses = document.getElementById("kpiPauses");
+  const kpiCalm = document.getElementById("kpiCalm");
+  const kpiLogs = document.getElementById("kpiLogs");
+
+  // Check-in
+  const trigger = document.getElementById("trigger");
+  const intensity = document.getElementById("intensity");
+  const barFill = document.getElementById("barFill");
+  const urge = document.getElementById("urge");
+  const goal = document.getElementById("goal");
+  const reframe = document.getElementById("reframe");
+  const note = document.getElementById("note");
+  const saveCheckin = document.getElementById("saveCheckin");
+  const clearCheckin = document.getElementById("clearCheckin");
+  const goPause = document.getElementById("goPause");
+
+  // Pause
+  const pauseTimer = document.getElementById("pauseTimer");
+  const pauseStatus = document.getElementById("pauseStatus");
+  const startPause = document.getElementById("startPause");
+  const resetPause = document.getElementById("resetPause");
+  const logPause = document.getElementById("logPause");
+  const miniAction = document.getElementById("miniAction");
+  const afterStyle = document.getElementById("afterStyle");
+  const logCalm = document.getElementById("logCalm");
+
+  // Deal
+  const situation = document.getElementById("situation");
+  const myNeed = document.getElementById("myNeed");
+  const theirNeed = document.getElementById("theirNeed");
+  const deal = document.getElementById("deal");
+  const consequence = document.getElementById("consequence");
+  const review = document.getElementById("review");
+  const saveDeal = document.getElementById("saveDeal");
+  const clearDeal = document.getElementById("clearDeal");
+
+  // Phrases
+  const phraseOut = document.getElementById("phraseOut");
+  const copyPhrase = document.getElementById("copyPhrase");
+  const logPhrase = document.getElementById("logPhrase");
+
+  // Lists
+  const logList = document.getElementById("logList");
+  const dealList = document.getElementById("dealList");
+
+  // Export/wipe
+  const exportBtn = document.getElementById("exportBtn");
+  const wipeBtn = document.getElementById("wipeBtn");
+
+  // ---------- Helpers ----------
+  function load(){
+    try{
+      return JSON.parse(localStorage.getItem(KEY)) || {
+        name: "Ashley",
+        pausesByDay: {},
+        calmByDay: {},
+        logs: [],    // {ts,type,...}
+        deals: []    // {ts,situation,myNeed,theirNeed,deal,consequence,review}
+      };
+    } catch(e){
+      return {name:"Ashley", pausesByDay:{}, calmByDay:{}, logs:[], deals:[]};
+    }
+  }
+  function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+  function parseIntensity(){
+    const n = parseInt(String(intensity.value).trim(), 10);
+    if(Number.isNaN(n)) return null;
+    return clamp(n,0,10);
+  }
+  function fmt(ts){
+    const d = new Date(ts);
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    const hh = String(d.getHours()).padStart(2,"0");
+    const mm = String(d.getMinutes()).padStart(2,"0");
+    return `${y}-${m}-${day} ${hh}:${mm}`;
+  }
+  function escapeHtml(str){
+    return String(str ?? "").replace(/[&<>"']/g, s => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[s]));
+  }
+  function last7DaysLogs(){
+    const now = Date.now();
+    const seven = 7*24*60*60*1000;
+    return state.logs.filter(x => (now - x.ts) <= seven)
+                     .sort((a,b)=>b.ts-a.ts);
+  }
+  function ensureDay(){
+    const d = todayKey();
+    if(state.pausesByDay[d] == null) state.pausesByDay[d] = 0;
+    if(state.calmByDay[d] == null) state.calmByDay[d] = 0;
+  }
+
+  // ---------- Tabs ----------
+  function showTab(key){
+    document.querySelectorAll(".tab").forEach(t => {
+      t.classList.toggle("active", t.dataset.tab === key);
+    });
+    Object.entries(tabPanels).forEach(([k,el]) => {
+      el.style.display = (k === key) ? "" : "none";
+    });
+  }
+  tabs.addEventListener("click", (e)=>{
+    const t = e.target.closest(".tab");
+    if(!t) return;
+    showTab(t.dataset.tab);
+  });
+
+  // ---------- Name ----------
+  function updateHeader(){
+    nameOut.textContent = state.name || "Ashley";
+    todayBadge.textContent = `Hoy: ${todayKey()}`;
+  }
+  editNameBtn.addEventListener("click", ()=>{
+    const n = prompt("Nombre:", state.name || "Ashley");
+    if(n && n.trim()){
+      state.name = n.trim();
+      save();
+      updateUI();
+    }
+  });
+
+  // ---------- Check-in bar ----------
+  function updateBar(){
+    const n = parseIntensity();
+    const pct = n===null ? 0 : (n/10)*100;
+    barFill.style.width = `${pct}%`;
+  }
+  intensity.addEventListener("input", updateBar);
+
+  saveCheckin.addEventListener("click", ()=>{
+    const n = parseIntensity();
+    if(n === null){
+      alert("Ingresa una frustración válida (0–10).");
+      return;
+    }
+    state.logs.push({
+      ts: Date.now(),
+      type: "check-in",
+      trigger: trigger.value,
+      intensity: n,
+      urge: urge.value,
+      goal: goal.value,
+      reframe: reframe.value.trim(),
+      note: note.value.trim()
+    });
+    save();
+    updateUI();
+  });
+
+  clearCheckin.addEventListener("click", ()=>{
+    trigger.value = "Me corrigieron / crítica";
+    intensity.value = "";
+    urge.value = "Contestar fuerte";
+    goal.value = "Que me respeten sin pelear";
+    reframe.value = "";
+    note.value = "";
+    updateBar();
+  });
+
+  goPause.addEventListener("click", ()=> showTab("pausa"));
+
+  // ---------- Pause timer ----------
+  let pauseLeft = 10;
+  let pauseInt = null;
+
+  function resetPauseTimer(){
+    if(pauseInt){ clearInterval(pauseInt); pauseInt=null; }
+    pauseLeft = 10;
+    pauseTimer.textContent = pauseLeft;
+    pauseStatus.textContent = "lista";
+  }
+  startPause.addEventListener("click", ()=>{
+    if(pauseInt) return;
+    pauseStatus.textContent = "corriendo";
+    pauseInt = setInterval(()=>{
+      pauseLeft -= 1;
+      pauseTimer.textContent = pauseLeft;
+      if(pauseLeft <= 0){
+        clearInterval(pauseInt);
+        pauseInt = null;
+        pauseTimer.textContent = "0";
+        pauseStatus.textContent = "hecho";
+      }
+    }, 1000);
+  });
+  resetPause.addEventListener("click", resetPauseTimer);
+
+  logPause.addEventListener("click", ()=>{
+    ensureDay();
+    const d = todayKey();
+    state.pausesByDay[d] = (state.pausesByDay[d] || 0) + 1;
+    state.logs.push({ ts: Date.now(), type:"pausa", action: miniAction.value });
+    save();
+    updateUI();
+  });
+
+  logCalm.addEventListener("click", ()=>{
+    ensureDay();
+    const d = todayKey();
+    state.calmByDay[d] = (state.calmByDay[d] || 0) + 1;
+    state.logs.push({ ts: Date.now(), type:"respuesta_calmada", style: afterStyle.value });
+    save();
+    updateUI();
+  });
+
+  // ---------- Deals ----------
+  saveDeal.addEventListener("click", ()=>{
+    const obj = {
+      ts: Date.now(),
+      situation: situation.value.trim(),
+      myNeed: myNeed.value.trim(),
+      theirNeed: theirNeed.value.trim(),
+      deal: deal.value.trim(),
+      consequence: consequence.value.trim(),
+      review: review.value.trim(),
+    };
+    // minimal validation for usability
+    if(!obj.situation || !obj.deal){
+      alert("Completa al menos: 'Situación' y 'Propuesta de acuerdo'.");
+      return;
+    }
+    state.deals.push(obj);
+    state.logs.push({ ts: Date.now(), type:"acuerdo", situation: obj.situation, deal: obj.deal });
+    save();
+    updateUI();
+  });
+
+  clearDeal.addEventListener("click", ()=>{
+    situation.value=""; myNeed.value=""; theirNeed.value="";
+    deal.value=""; consequence.value=""; review.value="";
+  });
+
+  // ---------- Phrases ----------
+  document.querySelectorAll("[data-phrase]").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      phraseOut.value = btn.getAttribute("data-phrase") || "";
+    });
+  });
+
+  copyPhrase.addEventListener("click", async ()=>{
+    try{
+      await navigator.clipboard.writeText(phraseOut.value || "");
+      alert("Frase copiada ✅");
+    } catch(e){
+      alert("No se pudo copiar. Copia manualmente.");
+    }
+  });
+
+  logPhrase.addEventListener("click", ()=>{
+    const p = (phraseOut.value || "").trim();
+    if(!p){ alert("Elige una frase primero."); return; }
+    state.logs.push({ ts: Date.now(), type:"frase", phrase:p });
+    save();
+    updateUI();
+  });
+
+  // ---------- Export / wipe ----------
+  exportBtn.addEventListener("click", ()=>{
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      name: state.name,
+      last7Days: last7DaysLogs(),
+      pausesByDay: state.pausesByDay,
+      calmByDay: state.calmByDay,
+      deals: state.deals
+    };
+    const blob = new Blob([JSON.stringify(payload,null,2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${(state.name||"Ashley").replace(/\s+/g,"_")}_ciclo_control_export.json`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  });
+
+  wipeBtn.addEventListener("click", ()=>{
+    const ok = confirm("Esto borrará TODOS los datos guardados en este dispositivo. ¿Continuar?");
+    if(!ok) return;
+    localStorage.removeItem(KEY);
+    location.reload();
+  });
+
+  // ---------- Render logs + deals ----------
+  function renderLogs(){
+    const logs = last7DaysLogs();
+    logList.innerHTML = "";
+    if(!logs.length){
+      logList.innerHTML = `<div class="hint">Aún no hay registros. Empieza con un check-in 🧡</div>`;
+      return;
+    }
+    logs.forEach(x=>{
+      const div = document.createElement("div");
+      div.className = "item";
+      const top = document.createElement("div");
+      top.className = "top";
+      top.innerHTML = `<div>${fmt(x.ts)}</div><div class="badge">${escapeHtml(x.type)}</div>`;
+      const main = document.createElement("div");
+      main.className = "main";
+
+      if(x.type === "check-in"){
+        main.innerHTML =
+          `<div><b>Gatillo:</b> ${escapeHtml(x.trigger)} · <b>Frustración:</b> ${x.intensity}/10</div>
+           <div style="margin-top:4px;color:var(--muted);font-size:12px"><b>Impulso:</b> ${escapeHtml(x.urge)} · <b>Meta:</b> ${escapeHtml(x.goal)}</div>
+           ${x.reframe ? `<div style="margin-top:6px"><b>Frase interna:</b> ${escapeHtml(x.reframe)}</div>` : ``}
+           ${x.note ? `<div style="margin-top:6px">${escapeHtml(x.note)}</div>` : ``}`;
+      } else if(x.type === "pausa"){
+        main.innerHTML = `<div><b>Pausa registrada</b> · Acción: ${escapeHtml(x.action||"")}</div>`;
+      } else if(x.type === "respuesta_calmada"){
+        main.innerHTML = `<div><b>Respondí calmada</b> · Estilo: ${escapeHtml(x.style||"")}</div>`;
+      } else if(x.type === "acuerdo"){
+        main.innerHTML = `<div><b>Acuerdo</b> · ${escapeHtml(x.situation||"")}</div><div style="margin-top:4px;color:var(--muted);font-size:12px">${escapeHtml(x.deal||"")}</div>`;
+      } else if(x.type === "frase"){
+        main.innerHTML = `<div><b>Frase usada:</b> “${escapeHtml(x.phrase||"")}”</div>`;
+      } else {
+        main.innerHTML = `<div>${escapeHtml(JSON.stringify(x))}</div>`;
+      }
+
+      div.appendChild(top);
+      div.appendChild(main);
+      logList.appendChild(div);
+    });
+  }
+
+  function renderDeals(){
+    dealList.innerHTML = "";
+    const deals = (state.deals || []).slice().sort((a,b)=>b.ts-a.ts).slice(0,10);
+    if(!deals.length){
+      dealList.innerHTML = `<div class="hint">Aún no hay acuerdos guardados.</div>`;
+      return;
+    }
+    deals.forEach(d=>{
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `
+        <div class="top">
+          <div>${fmt(d.ts)}</div>
+          <div class="badge">acuerdo</div>
+        </div>
+        <div class="main">
+          <div><b>Situación:</b> ${escapeHtml(d.situation)}</div>
+          <div style="margin-top:6px"><b>Propuesta:</b> ${escapeHtml(d.deal)}</div>
+          ${d.consequence ? `<div style="margin-top:6px;color:var(--muted);font-size:12px"><b>Consecuencia:</b> ${escapeHtml(d.consequence)}</div>` : ``}
+          ${d.review ? `<div style="margin-top:4px;color:var(--muted);font-size:12px"><b>Revisión:</b> ${escapeHtml(d.review)}</div>` : ``}
+        </div>`;
+      dealList.appendChild(div);
+    });
+  }
+
+  function updateKPIs(){
+    ensureDay();
+    const d = todayKey();
+    kpiPauses.textContent = state.pausesByDay[d] || 0;
+    const calm7 = Object.entries(state.calmByDay || {}).reduce((acc,[day,val])=>{
+      // sum only last 7 keys by date string comparison (safe enough for ISO yyyy-mm-dd)
+      return acc + (val||0);
+    }, 0);
+    kpiCalm.textContent = calm7;
+    kpiLogs.textContent = last7DaysLogs().length;
+  }
+
+  function updateUI(){
+    updateHeader();
+    updateKPIs();
+    renderLogs();
+    renderDeals();
+    updateBar();
+  }
+
+  // Init
+  ensureDay();
+  save();
+  updateUI();
+  resetPauseTimer();
+})();
+</script>
+</body>
+</html>
+
+</script>
+</body>
+</html>

@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  />
+  <title>Espacio en Calma</title>
+  <meta name="theme-color" content="#d99ab7" />
+  <style>
+    :root{
+      --bg-1:#fff7fb;
+      --bg-2:#fff0f6;
+      --bg-3:#fdf7ff;
+      --card:#ffffff;
+      --card-soft:#fffafc;
+      --text:#5c4b57;
+      --text-soft:#8a7180;
+      --rose:#e9b7cb;
+      --rose-2:#f2cad8;
+      --pink:#f6dbe7;
+      --lilac:#e7dcf8;
+      --lavender:#d9d2f5;
+      --peach:#fde1d3;
+      --mint:#dff2ea;
+      --sky:#dfefff;
+      --line:rgba(150,116,136,.16);
+      --shadow:0 14px 34px rgba(167,129,150,.15);
+      --radius-xl:28px;
+      --radius-lg:22px;
+      --radius-md:16px;
+      --radius-sm:12px;
+      --danger:#d989a3;
+      --ok:#7da89a;
+      --gold:#d8b66e;
+    }
+
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{
+      margin:0;
+      padding:0;
+      min-height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, #ffe8f1 0%, transparent 28%),
+        radial-gradient(circle at top right, #efe6ff 0%, transparent 26%),
+        linear-gradient(180deg,var(--bg-1),var(--bg-2) 48%,var(--bg-3));
+    }
+
+    body{
+      padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+    }
+
+    .app{
+      max-width:560px;
+      margin:0 auto;
+      min-height:100vh;
+      padding:16px 14px 24px;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-radius:30px;
+      padding:18px;
+      background:linear-gradient(145deg, rgba(255,255,255,.92), rgba(255,248,252,.88));
+      border:1px solid rgba(255,255,255,.6);
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:999px;
+      filter:blur(2px);
+    }
+
+    .hero::before{
+      width:130px;height:130px;
+      background:rgba(233,183,203,.22);
+      right:-30px;top:-24px;
+    }
+
+    .hero::after{
+      width:100px;height:100px;
+      background:rgba(217,210,245,.24);
+      left:-24px;bottom:-28px;
+    }
+
+    .top-row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      position:relative;
+      z-index:1;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+
+    .logo{
+      width:54px;height:54px;
+      border-radius:18px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(145deg,var(--rose-2),var(--lilac));
+      font-size:28px;
+      box-shadow:0 10px 24px rgba(196,149,173,.22);
+    }
+
+    h1{
+      font-size:1.4rem;
+      line-height:1.1;
+      margin:2px 0 4px;
+      letter-spacing:.1px;
+    }
+
+    .subtitle{
+      color:var(--text-soft);
+      font-size:.94rem;
+      line-height:1.45;
+      margin:0;
+    }
+
+    .badge{
+      white-space:nowrap;
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:.8rem;
+      font-weight:800;
+      background:linear-gradient(145deg,var(--peach),var(--pink));
+      color:#7a5a65;
+      border:1px solid rgba(255,255,255,.65);
+    }
+
+    .welcome{
+      margin-top:14px;
+      position:relative;
+      z-index:1;
+      color:#7a6471;
+      font-size:.94rem;
+      line-height:1.5;
+    }
+
+    .quick-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .quick-card{
+      border:none;
+      border-radius:24px;
+      padding:16px;
+      min-height:120px;
+      text-align:left;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      color:var(--text);
+      transition:transform .15s ease;
+    }
+
+    .quick-card:active{transform:scale(.985)}
+    .quick-1{background:linear-gradient(145deg,#fff,#fcecf3)}
+    .quick-2{background:linear-gradient(145deg,#fff,#f3ecff)}
+    .quick-3{background:linear-gradient(145deg,#fff,#fff0e9)}
+    .quick-4{background:linear-gradient(145deg,#fff,#edf7f3)}
+
+    .quick-title{
+      font-size:1rem;
+      font-weight:900;
+      margin:8px 0 6px;
+    }
+
+    .quick-text{
+      color:var(--text-soft);
+      font-size:.88rem;
+      line-height:1.4;
+    }
+
+    .screen{display:none}
+    .screen.active{display:block}
+
+    .card{
+      background:rgba(255,255,255,.86);
+      border:1px solid rgba(255,255,255,.7);
+      border-radius:var(--radius-xl);
+      padding:16px;
+      box-shadow:var(--shadow);
+      margin-bottom:12px;
+      backdrop-filter:blur(12px);
+    }
+
+    .card h2{
+      margin:0 0 8px;
+      font-size:1.06rem;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--text-soft);
+      line-height:1.48;
+      font-size:.93rem;
+    }
+
+    .mini{
+      font-size:.84rem;
+      color:var(--text-soft);
+      line-height:1.4;
+      margin-top:6px;
+    }
+
+    .section{
+      margin-top:14px;
+    }
+
+    .label{
+      display:block;
+      margin:12px 0 6px;
+      font-size:.9rem;
+      font-weight:800;
+      color:#7a6170;
+    }
+
+    input, textarea, select{
+      width:100%;
+      border:none;
+      outline:none;
+      background:linear-gradient(180deg,#fff,#fff8fb);
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:13px 14px;
+      font-size:.95rem;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+    }
+
+    textarea{
+      resize:vertical;
+      min-height:100px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:12px 16px;
+      font-size:.92rem;
+      font-weight:900;
+      cursor:pointer;
+      transition:transform .15s ease, opacity .15s ease;
+    }
+
+    .btn:active{transform:scale(.985)}
+
+    .btn-primary{
+      background:linear-gradient(145deg,var(--rose),var(--lilac));
+      color:#5d4a57;
+      box-shadow:0 10px 22px rgba(204,165,183,.22);
+    }
+
+    .btn-soft{
+      background:linear-gradient(145deg,#fff,#fff5f8);
+      color:#7a6170;
+      border:1px solid var(--line);
+    }
+
+    .btn-mint{
+      background:linear-gradient(145deg,var(--mint),#f5fffb);
+      color:#53776c;
+    }
+
+    .btn-peach{
+      background:linear-gradient(145deg,var(--peach),#fff8f4);
+      color:#936b53;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .chip{
+      border:none;
+      border-radius:999px;
+      padding:10px 12px;
+      font-size:.88rem;
+      cursor:pointer;
+      background:linear-gradient(145deg,#fff,#fff6fa);
+      color:#7a6170;
+      border:1px solid var(--line);
+      font-weight:800;
+    }
+
+    .chip.active{
+      background:linear-gradient(145deg,var(--rose-2),var(--lilac));
+      color:#5a4954;
+    }
+
+    .mood-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .mood{
+      border:none;
+      border-radius:20px;
+      padding:12px 8px;
+      min-height:78px;
+      background:linear-gradient(145deg,#fff,#fff7fa);
+      border:1px solid var(--line);
+      color:var(--text);
+      font-weight:800;
+      cursor:pointer;
+      font-size:.84rem;
+      line-height:1.2;
+    }
+
+    .mood.active{
+      background:linear-gradient(145deg,var(--pink),var(--lilac));
+    }
+
+    .mood span{
+      display:block;
+      font-size:1.3rem;
+      margin-bottom:6px;
+    }
+
+    .scale{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .scale button{
+      border:none;
+      border-radius:18px;
+      padding:12px 0;
+      font-weight:900;
+      font-size:.95rem;
+      background:linear-gradient(145deg,#fff,#fff7fb);
+      border:1px solid var(--line);
+      color:var(--text);
+      cursor:pointer;
+    }
+
+    .scale button.active{
+      background:linear-gradient(145deg,var(--rose),var(--peach));
+    }
+
+    .phrase-list,.log-list,.memory-list,.plan-list{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .item{
+      background:linear-gradient(180deg,#fff,#fff9fb);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:13px;
+    }
+
+    .item strong{
+      display:block;
+      margin-bottom:6px;
+      color:#6f5968;
+    }
+
+    .item .meta{
+      font-size:.82rem;
+      color:var(--text-soft);
+      margin-top:8px;
+      line-height:1.4;
+    }
+
+    .item .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .tiny-btn{
+      border:none;
+      border-radius:999px;
+      padding:8px 11px;
+      font-size:.78rem;
+      font-weight:900;
+      cursor:pointer;
+      background:linear-gradient(145deg,#fff,#fff3f8);
+      border:1px solid var(--line);
+      color:#7a6170;
+    }
+
+    .sos-panel{
+      display:grid;
+      gap:12px;
+    }
+
+    .sos-box{
+      border-radius:22px;
+      padding:16px;
+      background:linear-gradient(145deg,#fff,#fff3f7);
+      border:1px solid var(--line);
+    }
+
+    .step-list{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .step{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      background:linear-gradient(145deg,#fff,#fffafd);
+      border-radius:18px;
+      padding:12px;
+      border:1px solid var(--line);
+    }
+
+    .step-num{
+      width:32px;height:32px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      background:linear-gradient(145deg,var(--rose-2),var(--lilac));
+      color:#684f5c;
+      flex:0 0 32px;
+    }
+
+    .insight{
+      border-radius:20px;
+      padding:14px;
+      background:linear-gradient(145deg,#fffef9,#fff7ea);
+      border:1px solid rgba(216,182,110,.18);
+      color:#7c6740;
+      margin-top:12px;
+      font-size:.92rem;
+      line-height:1.45;
+    }
+
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .stat{
+      border-radius:20px;
+      padding:12px;
+      background:linear-gradient(145deg,#fff,#fff8fb);
+      border:1px solid var(--line);
+      text-align:center;
+    }
+
+    .stat .n{
+      font-size:1.2rem;
+      font-weight:900;
+      margin-bottom:4px;
+    }
+
+    .stat .t{
+      font-size:.8rem;
+      color:var(--text-soft);
+      line-height:1.3;
+    }
+
+    .footer-nav{
+      position:sticky;
+      bottom:10px;
+      margin-top:18px;
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:8px;
+      padding:8px;
+      border-radius:24px;
+      background:rgba(255,255,255,.7);
+      backdrop-filter:blur(14px);
+      border:1px solid rgba(255,255,255,.75);
+      box-shadow:var(--shadow);
+    }
+
+    .nav-btn{
+      border:none;
+      border-radius:18px;
+      padding:10px 6px;
+      background:transparent;
+      color:#7c6774;
+      font-size:.75rem;
+      font-weight:900;
+      line-height:1.15;
+      cursor:pointer;
+    }
+
+    .nav-btn.active{
+      background:linear-gradient(145deg,var(--rose-2),var(--lilac));
+      color:#5a4854;
+    }
+
+    .credits{
+      text-align:center;
+      font-size:.82rem;
+      color:var(--text-soft);
+      line-height:1.45;
+      margin:18px 0 4px;
+      padding-bottom:8px;
+    }
+
+    .hidden{display:none !important}
+
+    @media (max-width:380px){
+      .mood-grid{grid-template-columns:repeat(2,1fr)}
+      .stats{grid-template-columns:1fr}
+      .footer-nav{grid-template-columns:repeat(5,1fr)}
+      .nav-btn{font-size:.7rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="top-row">
+        <div class="brand">
+          <div class="logo">🌷</div>
+          <div>
+            <h1>Espacio en Calma</h1>
+            <p class="subtitle">Acompañamiento emocional para transitar conversaciones sensibles con más serenidad, claridad y cuidado.</p>
+          </div>
+        </div>
+        <div class="badge">iPhone · Android</div>
+      </div>
+      <div class="welcome" id="welcomeText">
+        Hoy puedes cuidarte sin endurecerte. Esta app te ayuda a anticipar detonantes, elegir respuestas amables, ordenar lo que sientes y registrar tus avances.
+      </div>
+    </header>
+
+    <div class="quick-grid">
+      <button class="quick-card quick-1" onclick="openScreen('sos')">
+        <div style="font-size:1.5rem">💗</div>
+        <div class="quick-title">Necesito calmarme</div>
+        <div class="quick-text">Guía breve para estabilizarte y responder con más calma.</div>
+      </button>
+
+      <button class="quick-card quick-2" onclick="openScreen('frases')">
+        <div style="font-size:1.5rem">🗨️</div>
+        <div class="quick-title">Quiero una frase</div>
+        <div class="quick-text">Respuestas preparadas, firmes y respetuosas.</div>
+      </button>
+
+      <button class="quick-card quick-3" onclick="openScreen('plan')">
+        <div style="font-size:1.5rem">🧭</div>
+        <div class="quick-title">Plan familiar</div>
+        <div class="quick-text">Acuerdos concretos para atravesar momentos delicados.</div>
+      </button>
+
+      <button class="quick-card quick-4" onclick="openScreen('registro')">
+        <div style="font-size:1.5rem">📔</div>
+        <div class="quick-title">Registrar el momento</div>
+        <div class="quick-text">Detonante, emoción, intensidad y aprendizaje.</div>
+      </button>
+    </div>
+
+    <!-- INICIO -->
+    <section id="inicio" class="screen active">
+      <div class="card">
+        <h2>✨ Tu frase de hoy</h2>
+        <p id="dailyPhrase">Puedo sentir dolor sin hablarme con dureza ni responder desde la tensión.</p>
+        <div class="row">
+          <button class="btn btn-primary" onclick="rotateDailyPhrase()">Cambiar frase</button>
+          <button class="btn btn-soft" onclick="openScreen('estado')">Hacer chequeo emocional</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🌸 Chequeo rápido</h2>
+        <p>Ubica cómo estás antes de hablar con alguien sobre tu papá o cuando notes que el tema empieza a tocarte más de la cuenta.</p>
+        <div class="row">
+          <button class="btn btn-peach" onclick="openScreen('estado')">Ver mi estado</button>
+          <button class="btn btn-mint" onclick="openScreen('sos')">Ir a calma guiada</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>📊 Resumen personal</h2>
+        <p>Pequeños registros ayudan a ver patrones y a responder cada vez con mayor cuidado.</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="n" id="statLogs">0</div>
+            <div class="t">Registros</div>
+          </div>
+          <div class="stat">
+            <div class="n" id="statPhrases">0</div>
+            <div class="t">Frases guardadas</div>
+          </div>
+          <div class="stat">
+            <div class="n" id="statPlans">0</div>
+            <div class="t">Planes activos</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTADO -->
+    <section id="estado" class="screen">
+      <div class="card">
+        <h2>🪞 ¿Cómo estás ahora?</h2>
+        <p>Elegir una palabra o una sensación ayuda a darte cuenta de lo que necesitas antes de responder.</p>
+
+        <label class="label">Emoción predominante</label>
+        <div class="mood-grid" id="moodGrid">
+          <button class="mood" data-value="tristeza"><span>😔</span>Tristeza</button>
+          <button class="mood" data-value="tension"><span>😣</span>Tensión</button>
+          <button class="mood" data-value="colera"><span>😠</span>Cólera</button>
+          <button class="mood" data-value="culpa"><span>😞</span>Culpa</button>
+          <button class="mood" data-value="nostalgia"><span>🥺</span>Nostalgia</button>
+          <button class="mood" data-value="agotamiento"><span>😮‍💨</span>Agotamiento</button>
+          <button class="mood" data-value="ansiedad"><span>😟</span>Ansiedad</button>
+          <button class="mood" data-value="calma"><span>🌿</span>Calma</button>
+        </div>
+
+        <label class="label">Intensidad</label>
+        <div class="scale" id="stateScale">
+          <button type="button" data-level="1">1</button>
+          <button type="button" data-level="2">2</button>
+          <button type="button" data-level="3">3</button>
+          <button type="button" data-level="4">4</button>
+          <button type="button" data-level="5">5</button>
+        </div>
+
+        <label class="label">¿Dónde lo sientes más?</label>
+        <select id="stateBody">
+          <option value="">Selecciona una zona</option>
+          <option>Pecho</option>
+          <option>Garganta</option>
+          <option>Estómago</option>
+          <option>Hombros</option>
+          <option>Cabeza</option>
+          <option>Mandíbula</option>
+          <option>Manos</option>
+        </select>
+
+        <label class="label">Lo que necesito ahora</label>
+        <div class="chips" id="needsChips">
+          <button class="chip" data-value="espacio">Espacio</button>
+          <button class="chip" data-value="silencio">Silencio</button>
+          <button class="chip" data-value="acompanamiento">Acompañamiento</button>
+          <button class="chip" data-value="pausa">Pausa</button>
+          <button class="chip" data-value="orden">Orden interno</button>
+          <button class="chip" data-value="limite">Poner un límite</button>
+        </div>
+
+        <div class="row">
+          <button class="btn btn-primary" onclick="saveStateCheck()">Guardar chequeo</button>
+          <button class="btn btn-soft" onclick="suggestAction()">Sugerirme una acción</button>
+        </div>
+
+        <div class="insight hidden" id="stateInsight"></div>
+      </div>
+    </section>
+
+    <!-- SOS -->
+    <section id="sos" class="screen">
+      <div class="card">
+        <h2>💗 Kit de calma y respuesta</h2>
+        <p>Este espacio no busca borrar lo que sientes. Busca ayudarte a darte unos segundos de orden interno para responder con mayor cuidado.</p>
+
+        <div class="sos-panel">
+          <div class="sos-box">
+            <strong>Paso 1 · Pausa breve</strong>
+            <div class="mini">Mira un punto fijo, apoya ambos pies y suelta lentamente los hombros.</div>
+            <div class="row">
+              <button class="btn btn-primary" onclick="startTimer(20)">20 segundos</button>
+              <button class="btn btn-soft" onclick="startTimer(40)">40 segundos</button>
+              <button class="btn btn-soft" onclick="stopTimer()">Detener</button>
+            </div>
+            <div class="insight" id="timerText">La pausa comienza cuando decides no responder de inmediato.</div>
+          </div>
+
+          <div class="sos-box">
+            <strong>Paso 2 · Ordena internamente</strong>
+            <div class="step-list">
+              <div class="step">
+                <div class="step-num">1</div>
+                <div>
+                  <strong>Nómbralo</strong>
+                  <div class="mini">“Esto me tocó.”</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">2</div>
+                <div>
+                  <strong>Ubícalo</strong>
+                  <div class="mini">“Lo siento aquí, en mi pecho / garganta / estómago.”</div>
+                </div>
+              </div>
+              <div class="step">
+                <div class="step-num">3</div>
+                <div>
+                  <strong>Elige una salida amable</strong>
+                  <div class="mini">“Ahora prefiero no seguir con este tema.”</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sos-box">
+            <strong>Paso 3 · Frase interna</strong>
+            <div class="insight" id="sosAnchor">Esto me duele. Puedo cuidarme sin endurecerme.</div>
+            <div class="row">
+              <button class="btn btn-primary" onclick="cycleAnchor()">Cambiar frase</button>
+              <button class="btn btn-soft" onclick="copyText('sosAnchor')">Copiar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FRASES -->
+    <section id="frases" class="screen">
+      <div class="card">
+        <h2>🗨️ Frases preparadas</h2>
+        <p>Respuestas breves, firmes y respetuosas para cuando el tema aparece y necesitas cuidarte sin herir a los demás.</p>
+        <div class="phrase-list" id="phraseList"></div>
+
+        <label class="label">Crear una frase propia</label>
+        <textarea id="customPhrase" placeholder="Ejemplo: Ahorita me cuesta seguir con este tema; necesito un momento para ordenar lo que siento."></textarea>
+        <div class="row">
+          <button class="btn btn-primary" onclick="addPhrase()">Guardar frase</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAN -->
+    <section id="plan" class="screen">
+      <div class="card">
+        <h2>🧭 Plan familiar delicado</h2>
+        <p>Sirve para anticipar situaciones difíciles y elegir una respuesta concreta antes de que el momento te sorprenda.</p>
+
+        <label class="label">Situación probable</label>
+        <input id="planSituation" placeholder="Ejemplo: Mi mamá pone música que le recuerda a mi papá." />
+
+        <label class="label">Señal de alerta en mí</label>
+        <input id="planSignal" placeholder="Ejemplo: siento tensión y ya no quiero seguir escuchando." />
+
+        <label class="label">Respuesta amable que quiero usar</label>
+        <input id="planResponse" placeholder="Ejemplo: ahorita prefiero guardar un poco de silencio." />
+
+        <label class="label">Mi acción de autocuidado</label>
+        <input id="planCare" placeholder="Ejemplo: salir cinco minutos al balcón o al cuarto." />
+
+        <div class="row">
+          <button class="btn btn-primary" onclick="savePlan()">Guardar plan</button>
+        </div>
+
+        <div class="plan-list" id="planList"></div>
+      </div>
+    </section>
+
+    <!-- REGISTRO -->
+    <section id="registro" class="screen">
+      <div class="card">
+        <h2>📔 Registro del momento</h2>
+        <p>Registrar lo ocurrido permite reconocer patrones y ajustar con mayor precisión lo que te ayuda.</p>
+
+        <label class="label">¿Qué pasó?</label>
+        <textarea id="logTrigger" placeholder="Describe brevemente el momento."></textarea>
+
+        <label class="label">¿Qué tema apareció?</label>
+        <div class="chips" id="triggerChips">
+          <button class="chip" data-value="musica">Música</button>
+          <button class="chip" data-value="recuerdo">Recuerdo</button>
+          <button class="chip" data-value="velorio">Velorio / muerte</button>
+          <button class="chip" data-value="comentario">Comentario familiar</button>
+          <button class="chip" data-value="comparacion">Comparación</button>
+          <button class="chip" data-value="culpa">Culpa</button>
+        </div>
+
+        <label class="label">Intensidad de ese momento</label>
+        <div class="scale" id="logScale">
+          <button type="button" data-level="1">1</button>
+          <button type="button" data-level="2">2</button>
+          <button type="button" data-level="3">3</button>
+          <button type="button" data-level="4">4</button>
+          <button type="button" data-level="5">5</button>
+        </div>
+
+        <label class="label">¿Qué hice?</label>
+        <select id="logAction">
+          <option value="">Selecciona una opción</option>
+          <option>Hice una pausa</option>
+          <option>Pedí cambiar de tema</option>
+          <option>Guardé silencio un momento</option>
+          <option>Me retiré unos minutos</option>
+          <option>Usé una frase preparada</option>
+          <option>No logré regularme como quería</option>
+        </select>
+
+        <label class="label">Aprendizaje</label>
+        <textarea id="logLearning" placeholder="Ejemplo: me ayuda tener una frase lista antes de responder."></textarea>
+
+        <div class="row">
+          <button class="btn btn-primary" onclick="saveLog()">Guardar registro</button>
+          <button class="btn btn-soft" onclick="clearLogs()">Borrar historial</button>
+        </div>
+
+        <div class="log-list" id="logList"></div>
+      </div>
+    </section>
+
+    <!-- RECUERDOS -->
+    <section id="recuerdos" class="screen">
+      <div class="card">
+        <h2>🕊️ Caja de recuerdos</h2>
+        <p>Un espacio privado para guardar recuerdos, palabras o gestos del papá sin que eso tenga que convertirse en una conversación difícil con otros.</p>
+
+        <label class="label">Título del recuerdo</label>
+        <input id="memoryTitle" placeholder="Ejemplo: La conversación en la sala" />
+
+        <label class="label">Escribe lo que quieras guardar</label>
+        <textarea id="memoryText" placeholder="Aquí puedes escribir lo que recuerdas, lo que te conmovió o lo que quisieras ordenar dentro de ti."></textarea>
+
+        <div class="row">
+          <button class="btn btn-primary" onclick="saveMemory()">Guardar recuerdo</button>
+          <button class="btn btn-soft" onclick="togglePrivateNote()">Activar modo íntimo</button>
+        </div>
+
+        <div class="memory-list" id="memoryList"></div>
+      </div>
+    </section>
+
+    <div class="footer-nav">
+      <button class="nav-btn active" data-screen="inicio" onclick="openScreen('inicio', this)">Inicio</button>
+      <button class="nav-btn" data-screen="estado" onclick="openScreen('estado', this)">Estado</button>
+      <button class="nav-btn" data-screen="sos" onclick="openScreen('sos', this)">Calma</button>
+      <button class="nav-btn" data-screen="plan" onclick="openScreen('plan', this)">Plan</button>
+      <button class="nav-btn" data-screen="registro" onclick="openScreen('registro', this)">Registro</button>
+    </div>
+
+    <div class="credits">
+      Desarrollado por: <strong>Lic. Gonzalo Buendía – Psicólogo</strong><br>
+      y <strong>Blanquita – Co terapeuta</strong><br>
+      Mini aplicación psicoeducativa de apoyo clínico y autorregulación emocional.
+    </div>
+  </div>
+
+  <script>
+    const STORAGE = {
+      phrases: "espacio_calma_phrases",
+      plans: "espacio_calma_plans",
+      logs: "espacio_calma_logs",
+      memories: "espacio_calma_memories",
+      checks: "espacio_calma_checks"
+    };
+
+    const presetPhrases = [
+      "Ahorita me cuesta seguir con este tema; prefiero tomar un momento.",
+      "Sí te escucho, pero necesito ordenar primero lo que siento.",
+      "Gracias por entender que hoy prefiero hablar poco de esto.",
+      "No es rechazo; solo necesito un poco de calma antes de seguir.",
+      "Podemos retomarlo luego, cuando me sienta más serena.",
+      "Hoy necesito un tono más suave para poder estar presente."
+    ];
+
+    const dailyPhrases = [
+      "Puedo sentir dolor sin hablarme con dureza ni responder desde la tensión.",
+      "Cuidarme también es una forma de honrar lo que siento.",
+      "No todo lo que me mueve por dentro necesita una respuesta inmediata.",
+      "Puedo poner un límite con respeto y seguir siendo sensible.",
+      "Lo que siento merece espacio, no presión."
+    ];
+
+    const anchors = [
+      "Esto me duele. Puedo cuidarme sin endurecerme.",
+      "No necesito responder en el primer segundo.",
+      "Puedo darme una pausa y volver con más claridad.",
+      "Lo que siento importa, y puedo expresarlo con respeto.",
+      "Primero me ordeno por dentro; luego decido qué decir."
+    ];
+
+    let stateMood = "";
+    let stateIntensity = 0;
+    let stateNeeds = [];
+    let logTopic = "";
+    let logIntensity = 0;
+    let dailyIndex = 0;
+    let anchorIndex = 0;
+    let timerInterval = null;
+    let privateMode = false;
+
+    function getData(key, fallback){
+      try{
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
+      }catch{
+        return fallback;
+      }
+    }
+
+    function setData(key, value){
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function openScreen(screenId, btn){
+      document.querySelectorAll(".screen").forEach(el=>el.classList.remove("active"));
+      document.getElementById(screenId).classList.add("active");
+
+      document.querySelectorAll(".nav-btn").forEach(el=>el.classList.remove("active"));
+      const targetBtn = btn || document.querySelector(`.nav-btn[data-screen="${screenId}"]`);
+      if(targetBtn) targetBtn.classList.add("active");
+
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function rotateDailyPhrase(){
+      dailyIndex = (dailyIndex + 1) % dailyPhrases.length;
+      document.getElementById("dailyPhrase").textContent = dailyPhrases[dailyIndex];
+    }
+
+    function cycleAnchor(){
+      anchorIndex = (anchorIndex + 1) % anchors.length;
+      document.getElementById("sosAnchor").textContent = anchors[anchorIndex];
+    }
+
+    function copyText(id){
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard?.writeText(text);
+      alert("Texto copiado:\n\n" + text);
+    }
+
+    function initMoodGrid(){
+      document.querySelectorAll("#moodGrid .mood").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          document.querySelectorAll("#moodGrid .mood").forEach(x=>x.classList.remove("active"));
+          btn.classList.add("active");
+          stateMood = btn.dataset.value;
+        });
+      });
+    }
+
+    function initScale(containerId, callback){
+      document.querySelectorAll(`#${containerId} button`).forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          document.querySelectorAll(`#${containerId} button`).forEach(x=>x.classList.remove("active"));
+          btn.classList.add("active");
+          callback(Number(btn.dataset.level));
+        });
+      });
+    }
+
+    function initChips(containerId, mode, callback){
+      document.querySelectorAll(`#${containerId} .chip`).forEach(chip=>{
+        chip.addEventListener("click", ()=>{
+          if(mode === "single"){
+            document.querySelectorAll(`#${containerId} .chip`).forEach(x=>x.classList.remove("active"));
+            chip.classList.add("active");
+            callback(chip.dataset.value);
+          }else{
+            chip.classList.toggle("active");
+            const values = Array.from(document.querySelectorAll(`#${containerId} .chip.active`)).map(x=>x.dataset.value);
+            callback(values);
+          }
+        });
+      });
+    }
+
+    function saveStateCheck(){
+      const body = document.getElementById("stateBody").value;
+
+      if(!stateMood || !stateIntensity){
+        alert("Selecciona al menos una emoción y un nivel de intensidad.");
+        return;
+      }
+
+      const checks = getData(STORAGE.checks, []);
+      checks.unshift({
+        mood: stateMood,
+        intensity: stateIntensity,
+        body,
+        needs: stateNeeds,
+        date: new Date().toLocaleString()
+      });
+      setData(STORAGE.checks, checks.slice(0,40));
+      updateStats();
+      alert("Chequeo guardado.");
+    }
+
+    function suggestAction(){
+      const box = document.getElementById("stateInsight");
+      let text = "Puedes darte una pausa breve y elegir una frase suave antes de responder.";
+
+      if(stateMood === "colera" || stateIntensity >= 4){
+        text = "Lo más importante ahora es no responder de inmediato. Haz una pausa breve, baja el tono corporal y usa una frase corta: “ahorita prefiero tomarme un momento”.";
+      } else if(stateMood === "tristeza" || stateMood === "nostalgia"){
+        text = "Quizá no necesitas explicar demasiado. Tal vez te ayude decir: “sí me mueve este tema, necesito un tono más suave”.";
+      } else if(stateMood === "agotamiento"){
+        text = "El cansancio emocional suele necesitar menos conversación y más descanso interno. Hoy tu prioridad puede ser simplificar y protegerte.";
+      } else if(stateMood === "culpa"){
+        text = "No te exijas resolver todo en el momento. Puedes recordar: sentirte removida no significa que estés fallando.";
+      }
+
+      box.textContent = text;
+      box.classList.remove("hidden");
+    }
+
+    function renderPhrases(){
+      const custom = getData(STORAGE.phrases, []);
+      const all = [...presetPhrases, ...custom];
+      const box = document.getElementById("phraseList");
+      box.innerHTML = "";
+
+      all.forEach((phrase, index)=>{
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+          <strong>Frase ${index + 1}</strong>
+          <div>${escapeHtml(phrase)}</div>
+          <div class="actions">
+            <button class="tiny-btn" onclick="copyRawPhrase('${encodeURIComponent(phrase)}')">Copiar</button>
+            <button class="tiny-btn" onclick="useAsDaily('${encodeURIComponent(phrase)}')">Usar como frase de hoy</button>
+          </div>
+        `;
+        box.appendChild(item);
+      });
+
+      updateStats();
+    }
+
+    function copyRawPhrase(encoded){
+      const phrase = decodeURIComponent(encoded);
+      navigator.clipboard?.writeText(phrase);
+      alert("Frase copiada:\n\n" + phrase);
+    }
+
+    function useAsDaily(encoded){
+      const phrase = decodeURIComponent(encoded);
+      document.getElementById("dailyPhrase").textContent = phrase;
+      alert("Frase aplicada en Inicio.");
+    }
+
+    function addPhrase(){
+      const input = document.getElementById("customPhrase");
+      const value = input.value.trim();
+      if(!value) return;
+      const current = getData(STORAGE.phrases, []);
+      current.push(value);
+      setData(STORAGE.phrases, current);
+      input.value = "";
+      renderPhrases();
+      alert("Frase guardada.");
+    }
+
+    function savePlan(){
+      const situation = document.getElementById("planSituation").value.trim();
+      const signal = document.getElementById("planSignal").value.trim();
+      const response = document.getElementById("planResponse").value.trim();
+      const care = document.getElementById("planCare").value.trim();
+
+      if(!situation || !response){
+        alert("Completa al menos la situación y la respuesta.");
+        return;
+      }
+
+      const plans = getData(STORAGE.plans, []);
+      plans.unshift({
+        situation, signal, response, care,
+        date: new Date().toLocaleString()
+      });
+      setData(STORAGE.plans, plans.slice(0,20));
+
+      document.getElementById("planSituation").value = "";
+      document.getElementById("planSignal").value = "";
+      document.getElementById("planResponse").value = "";
+      document.getElementById("planCare").value = "";
+
+      renderPlans();
+      alert("Plan guardado.");
+    }
+
+    function renderPlans(){
+      const plans = getData(STORAGE.plans, []);
+      const box = document.getElementById("planList");
+      box.innerHTML = "";
+
+      if(!plans.length){
+        box.innerHTML = `<div class="mini">Aún no hay planes guardados.</div>`;
+        updateStats();
+        return;
+      }
+
+      plans.forEach((plan, idx)=>{
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+          <strong>Plan ${idx + 1}</strong>
+          <div><b>Situación:</b> ${escapeHtml(plan.situation)}</div>
+          ${plan.signal ? `<div class="mini"><b>Señal:</b> ${escapeHtml(plan.signal)}</div>` : ``}
+          <div class="mini"><b>Respuesta:</b> ${escapeHtml(plan.response)}</div>
+          ${plan.care ? `<div class="mini"><b>Autocuidado:</b> ${escapeHtml(plan.care)}</div>` : ``}
+          <div class="meta">${escapeHtml(plan.date)}</div>
+        `;
+        box.appendChild(item);
+      });
+
+      updateStats();
+    }
+
+    function saveLog(){
+      const trigger = document.getElementById("logTrigger").value.trim();
+      const action = document.getElementById("logAction").value;
+      const learning = document.getElementById("logLearning").value.trim();
+
+      if(!trigger || !logIntensity){
+        alert("Completa el momento y el nivel de intensidad.");
+        return;
+      }
+
+      const logs = getData(STORAGE.logs, []);
+      logs.unshift({
+        trigger,
+        topic: logTopic,
+        intensity: logIntensity,
+        action,
+        learning,
+        date: new Date().toLocaleString()
+      });
+      setData(STORAGE.logs, logs.slice(0,60));
+
+      document.getElementById("logTrigger").value = "";
+      document.getElementById("logAction").value = "";
+      document.getElementById("logLearning").value = "";
+      document.querySelectorAll("#logScale button").forEach(x=>x.classList.remove("active"));
+      document.querySelectorAll("#triggerChips .chip").forEach(x=>x.classList.remove("active"));
+      logTopic = "";
+      logIntensity = 0;
+
+      renderLogs();
+      alert("Registro guardado.");
+    }
+
+    function renderLogs(){
+      const logs = getData(STORAGE.logs, []);
+      const box = document.getElementById("logList");
+      box.innerHTML = "";
+
+      if(!logs.length){
+        box.innerHTML = `<div class="mini">Aún no hay registros guardados.</div>`;
+        updateStats();
+        return;
+      }
+
+      logs.forEach((log, idx)=>{
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+          <strong>Registro ${idx + 1}</strong>
+          <div>${escapeHtml(log.trigger)}</div>
+          ${log.topic ? `<div class="mini"><b>Tema:</b> ${escapeHtml(log.topic)}</div>` : ``}
+          <div class="mini"><b>Intensidad:</b> ${log.intensity}/5</div>
+          ${log.action ? `<div class="mini"><b>Acción:</b> ${escapeHtml(log.action)}</div>` : ``}
+          ${log.learning ? `<div class="mini"><b>Aprendizaje:</b> ${escapeHtml(log.learning)}</div>` : ``}
+          <div class="meta">${escapeHtml(log.date)}</div>
+        `;
+        box.appendChild(item);
+      });
+
+      updateStats();
+    }
+
+    function clearLogs(){
+      if(!confirm("¿Deseas borrar el historial de registros?")) return;
+      setData(STORAGE.logs, []);
+      renderLogs();
+    }
+
+    function saveMemory(){
+      const title = document.getElementById("memoryTitle").value.trim();
+      const text = document.getElementById("memoryText").value.trim();
+
+      if(!title || !text){
+        alert("Completa el título y el texto del recuerdo.");
+        return;
+      }
+
+      const memories = getData(STORAGE.memories, []);
+      memories.unshift({
+        title, text, privateMode,
+        date: new Date().toLocaleString()
+      });
+      setData(STORAGE.memories, memories.slice(0,40));
+
+      document.getElementById("memoryTitle").value = "";
+      document.getElementById("memoryText").value = "";
+      privateMode = false;
+
+      renderMemories();
+      alert("Recuerdo guardado.");
+    }
+
+    function togglePrivateNote(){
+      privateMode = !privateMode;
+      alert(privateMode ? "Modo íntimo activado para el próximo recuerdo." : "Modo íntimo desactivado.");
+    }
+
+    function renderMemories(){
+      const memories = getData(STORAGE.memories, []);
+      const box = document.getElementById("memoryList");
+      box.innerHTML = "";
+
+      if(!memories.length){
+        box.innerHTML = `<div class="mini">Aún no hay recuerdos guardados.</div>`;
+        return;
+      }
+
+      memories.forEach((m, idx)=>{
+        const item = document.createElement("div");
+        item.className = "item";
+        item.innerHTML = `
+          <strong>${escapeHtml(m.title)} ${m.privateMode ? "🔒" : ""}</strong>
+          <div>${escapeHtml(m.text).replace(/\n/g,"<br>")}</div>
+          <div class="meta">${escapeHtml(m.date)}</div>
+        `;
+        box.appendChild(item);
+      });
+    }
+
+    function updateStats(){
+      document.getElementById("statLogs").textContent = getData(STORAGE.logs, []).length;
+      document.getElementById("statPhrases").textContent = getData(STORAGE.phrases, []).length + presetPhrases.length;
+      document.getElementById("statPlans").textContent = getData(STORAGE.plans, []).length;
+    }
+
+    function startTimer(seconds){
+      stopTimer();
+      const box = document.getElementById("timerText");
+      let remaining = seconds;
+      box.textContent = `Pausa activa: ${remaining} segundos. Suelta hombros, mira un punto fijo y no respondas todavía.`;
+
+      timerInterval = setInterval(()=>{
+        remaining--;
+        if(remaining <= 0){
+          stopTimer();
+          box.textContent = "La pausa terminó. Ahora puedes elegir una frase breve y amable.";
+        }else{
+          box.textContent = `Pausa activa: ${remaining} segundos. Suelta hombros, mira un punto fijo y no respondas todavía.`;
+        }
+      }, 1000);
+    }
+
+    function stopTimer(){
+      if(timerInterval){
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    function init(){
+      initMoodGrid();
+      initScale("stateScale", (n)=> stateIntensity = n);
+      initScale("logScale", (n)=> logIntensity = n);
+      initChips("needsChips", "multi", (values)=> stateNeeds = values);
+      initChips("triggerChips", "single", (value)=> logTopic = value);
+
+      renderPhrases();
+      renderPlans();
+      renderLogs();
+      renderMemories();
+      updateStats();
+    }
+
+    init();
+  </script>
+</body>
+</html>

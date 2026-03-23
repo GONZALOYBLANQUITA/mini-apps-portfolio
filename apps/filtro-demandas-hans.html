@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Filtro de Demandas - Hans</title>
+  <style>
+    :root{
+      --bg:#f4efe8;
+      --bg2:#efe6da;
+      --card:#fffaf4;
+      --ink:#2f2925;
+      --muted:#6f665f;
+      --line:#e3d6c8;
+      --accent:#8b5e3c;
+      --accent2:#b88258;
+      --soft:#f3e4d5;
+      --ok:#5f7d5d;
+      --warn:#b88732;
+      --danger:#b65b51;
+      --shadow:0 12px 30px rgba(70,45,20,.10);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:linear-gradient(180deg,var(--bg) 0%, var(--bg2) 100%);
+      color:var(--ink);
+    }
+
+    body{
+      min-height:100vh;
+      padding:14px 14px 110px;
+    }
+
+    .app{
+      max-width:760px;
+      margin:0 auto;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,#fffaf4 0%, #f2e2d1 100%);
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:20px 18px;
+      box-shadow:var(--shadow);
+      margin-bottom:14px;
+    }
+
+    .eyebrow{
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-weight:800;
+      color:var(--accent);
+      margin-bottom:8px;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:29px;
+      line-height:1.05;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      font-size:15px;
+      line-height:1.45;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:14px;
+    }
+
+    .chip{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:8px 10px;
+      font-size:12px;
+      font-weight:700;
+      color:var(--accent);
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:16px;
+      margin-bottom:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+
+    .section-title h2{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+    }
+
+    .section-title small{
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    .small{
+      font-size:12px;
+      line-height:1.45;
+      color:var(--muted);
+    }
+
+    .field{margin-bottom:12px}
+    .label{
+      display:block;
+      margin-bottom:7px;
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+    }
+
+    .input, textarea, select{
+      width:100%;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      border-radius:15px;
+      padding:13px 12px;
+      font-size:15px;
+      outline:none;
+    }
+
+    textarea{
+      min-height:90px;
+      resize:vertical;
+    }
+
+    .grid{
+      display:grid;
+      gap:12px;
+    }
+
+    @media (min-width:700px){
+      .grid.two{
+        grid-template-columns:1fr 1fr;
+      }
+      .grid.three{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
+    .btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      padding:14px 14px;
+      font-size:15px;
+      font-weight:800;
+      transition:transform .05s ease, opacity .2s ease;
+    }
+
+    .btn:active{transform:scale(.98)}
+    .btn.primary{background:var(--accent);color:#fff}
+    .btn.secondary{background:var(--soft);color:var(--accent)}
+    .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}
+    .btn.ok{background:var(--ok);color:#fff}
+    .btn.warn{background:var(--warn);color:#fff}
+    .btn.danger{background:var(--danger);color:#fff}
+
+    .quick-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:9px;
+    }
+
+    @media (min-width:560px){
+      .quick-grid{
+        grid-template-columns:repeat(3,1fr);
+      }
+    }
+
+    .quick-btn{
+      text-align:left;
+      width:100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      font-size:13px;
+      font-weight:800;
+      color:var(--ink);
+      cursor:pointer;
+    }
+
+    .quick-btn small{
+      display:block;
+      margin-top:4px;
+      font-size:11px;
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .result-box{
+      margin-top:12px;
+      border:1px dashed var(--accent2);
+      background:#fff8f0;
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .result-title{
+      margin:0 0 8px;
+      font-size:14px;
+      font-weight:900;
+      color:var(--accent);
+    }
+
+    .decision{
+      font-size:19px;
+      font-weight:900;
+      line-height:1.2;
+      margin:6px 0 8px;
+    }
+
+    .decision.ok{color:var(--ok)}
+    .decision.warn{color:var(--warn)}
+    .decision.danger{color:var(--danger)}
+
+    .badge{
+      display:inline-block;
+      padding:6px 9px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:900;
+      border:1px solid transparent;
+      margin-right:6px;
+      margin-bottom:6px;
+    }
+
+    .badge.red{background:#fdecea;color:#9b3d35;border-color:#f2c8c3}
+    .badge.yellow{background:#fff4de;color:#8b640b;border-color:#ecd9a7}
+    .badge.green{background:#ebf7ea;color:#3f673d;border-color:#cce5ca}
+    .badge.brown{background:#f4e7da;color:#7f5638;border-color:#e4cdb8}
+
+    .list{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .item{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+    }
+
+    .item-head{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:7px;
+    }
+
+    .item-title{
+      margin:0;
+      font-size:14px;
+      font-weight:900;
+      line-height:1.3;
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+
+    .counter{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .counter .box{
+      flex:1 1 115px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:12px;
+    }
+
+    .counter .n{
+      font-size:24px;
+      font-weight:900;
+      color:var(--accent);
+      line-height:1;
+      margin-bottom:5px;
+    }
+
+    .counter .t{
+      font-size:12px;
+      line-height:1.25;
+      color:var(--muted);
+    }
+
+    .anchor-box{
+      background:#fdf5ec;
+      border:1px solid #e9d6c1;
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .anchor{
+      font-size:18px;
+      font-weight:900;
+      line-height:1.3;
+      color:var(--accent);
+      margin:8px 0 0;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .row > *{flex:1 1 160px}
+
+    .hidden{display:none}
+
+    .score-box{
+      display:grid;
+      gap:9px;
+      margin-top:10px;
+    }
+
+    .score-item{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 11px;
+      font-size:13px;
+      color:var(--ink);
+    }
+
+    .hr{
+      height:1px;
+      background:var(--line);
+      border:0;
+      margin:14px 0;
+    }
+
+    .footer{
+      text-align:center;
+      margin-top:18px;
+      padding-top:8px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .tabbar{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      background:rgba(255,250,244,.96);
+      backdrop-filter:blur(10px);
+      border-top:1px solid var(--line);
+      padding:10px 8px calc(10px + env(safe-area-inset-bottom));
+      z-index:20;
+    }
+
+    .tabs{
+      max-width:760px;
+      margin:0 auto;
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:8px;
+    }
+
+    .tab{
+      border:none;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px 8px;
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+      cursor:pointer;
+    }
+
+    .tab.active{
+      background:var(--accent);
+      color:#fff;
+      border-color:var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div class="eyebrow">Mini app clínica</div>
+      <h1>Filtro de Demandas</h1>
+      <p>
+        Herramienta práctica para ayudar a Hans a separar demandas, detectar cuál sí requiere respuesta inmediata,
+        cuál puede esperar, cuál debe postergarse y en qué proporción conviene responder sin colapsar.
+      </p>
+      <div class="chips">
+        <span class="chip">Jerarquía de problemas</span>
+        <span class="chip">Urgencia real vs. ansiedad</span>
+        <span class="chip">Respuesta proporcional</span>
+        <span class="chip">No decidir en caliente</span>
+      </div>
+    </section>
+
+    <section id="screen-inicio" class="screen">
+      <div class="card">
+        <div class="section-title">
+          <h2>Qué hace esta app</h2>
+          <small>uso diario</small>
+        </div>
+        <div class="grid two">
+          <div class="item">
+            <p class="item-title">1. Ordena la confusión</p>
+            <div class="meta">Convierte “todo me está cayendo encima” en una lista de situaciones separadas.</div>
+          </div>
+          <div class="item">
+            <p class="item-title">2. Clasifica por prioridad</p>
+            <div class="meta">Distingue lo urgente, lo importante, lo postergable y lo que no debe tocarse hoy.</div>
+          </div>
+          <div class="item">
+            <p class="item-title">3. Define proporción de respuesta</p>
+            <div class="meta">No todo requiere el mismo esfuerzo, tiempo ni energía.</div>
+          </div>
+          <div class="item">
+            <p class="item-title">4. Evita reactividad</p>
+            <div class="meta">Cuando estás cansado o irritado, la app te frena antes de sobreactuar.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Frase ancla</h2>
+          <small>recuérdala antes de responder</small>
+        </div>
+        <div class="anchor-box">
+          <div class="small">No todo debe resolverse hoy. No todo depende de ti. No todo merece el mismo nivel de energía.</div>
+          <div class="anchor">“Primero filtro. Después priorizo. Recién después respondo.”</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Chequeo rápido</h2>
+          <small>20 segundos</small>
+        </div>
+        <div class="grid two">
+          <div class="field">
+            <label class="label" for="moodNow">¿Cómo estás ahora?</label>
+            <select id="moodNow">
+              <option value="">Selecciona</option>
+              <option value="estable">Estable</option>
+              <option value="cansado">Cansado</option>
+              <option value="irritado">Irritado</option>
+              <option value="saturado">Saturado / al límite</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="focusNow">¿Qué te está pesando más?</label>
+            <select id="focusNow">
+              <option value="">Selecciona</option>
+              <option value="familia">Familia</option>
+              <option value="pareja">Pareja</option>
+              <option value="trabajo">Trabajo / galería</option>
+              <option value="proyectos">Proyectos</option>
+              <option value="juicios">Juicios / temas legales</option>
+              <option value="todo">Siento que todo</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn primary" onclick="readState()">Leer estado</button>
+        <div id="stateBox" class="result-box hidden"></div>
+      </div>
+    </section>
+
+    <section id="screen-filtrar" class="screen hidden">
+      <div class="card">
+        <div class="section-title">
+          <h2>Filtrar una situación</h2>
+          <small>paso a paso</small>
+        </div>
+
+        <div class="field">
+          <label class="label" for="situationText">¿Qué situación quieres evaluar?</label>
+          <textarea id="situationText" placeholder="Ejemplo: Mi hermano volvió a presionarme con el juicio y al mismo tiempo Mari está desorganizada y tengo pendientes del proyecto."></textarea>
+        </div>
+
+        <div class="quick-grid">
+          <button class="quick-btn" onclick="preset('familia')">Tema familiar<small>madre, hermano, hermana</small></button>
+          <button class="quick-btn" onclick="preset('pareja')">Tema con Mari<small>frustración, desgaste</small></button>
+          <button class="quick-btn" onclick="preset('trabajo')">Trabajo / galería<small>carga operativa</small></button>
+          <button class="quick-btn" onclick="preset('proyecto')">Proyecto demorado<small>incertidumbre</small></button>
+          <button class="quick-btn" onclick="preset('juicio')">Juicio / presión<small>sensación de peso</small></button>
+          <button class="quick-btn" onclick="preset('mezcla')">Todo mezclado<small>múltiples frentes</small></button>
+        </div>
+
+        <hr class="hr" />
+
+        <div class="grid three">
+          <div class="field">
+            <label class="label" for="area">Área</label>
+            <select id="area">
+              <option value="familia">Familia</option>
+              <option value="pareja">Pareja</option>
+              <option value="trabajo">Trabajo / galería</option>
+              <option value="proyectos">Proyectos</option>
+              <option value="legal">Juicios / legal</option>
+              <option value="personal">Personal / descanso</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="realUrgency">¿Exige acción hoy?</label>
+            <select id="realUrgency">
+              <option value="1">No</option>
+              <option value="2">Tal vez</option>
+              <option value="3">Sí</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="impact">¿Cuánto impacta si no haces nada?</label>
+            <select id="impact">
+              <option value="1">Poco</option>
+              <option value="2">Medio</option>
+              <option value="3">Alto</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="deadline">¿Tiene plazo concreto?</label>
+            <select id="deadline">
+              <option value="1">No</option>
+              <option value="2">Sí, pero no hoy</option>
+              <option value="3">Sí, hoy / inmediato</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="energy">¿Cuánta energía te quita?</label>
+            <select id="energy">
+              <option value="1">Baja</option>
+              <option value="2">Media</option>
+              <option value="3">Alta</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="emotion">¿Qué tan activado estás?</label>
+            <select id="emotion">
+              <option value="1">Bajo</option>
+              <option value="2">Medio</option>
+              <option value="3">Alto</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="depends">¿Depende realmente de ti?</label>
+            <select id="depends">
+              <option value="1">Poco</option>
+              <option value="2">Parcialmente</option>
+              <option value="3">Sí</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="risk">¿Hay riesgo real si lo postergas?</label>
+            <select id="risk">
+              <option value="1">No</option>
+              <option value="2">Moderado</option>
+              <option value="3">Sí</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label class="label" for="typeNeed">¿Qué necesita más esta situación?</label>
+            <select id="typeNeed">
+              <option value="accion">Acción</option>
+              <option value="conversacion">Conversación</option>
+              <option value="espera">Espera</option>
+              <option value="delegar">Delegar</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn primary" onclick="filterSituation()">Filtrar y priorizar</button>
+        <div id="filterResult" class="result-box hidden"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Regla clínica</h2>
+          <small>para Hans</small>
+        </div>
+        <div class="anchor-box">
+          <div class="small">Cuando todo parece urgente, la ansiedad suele estar mezclándose con la realidad.</div>
+          <div class="anchor">“Urgente no es lo mismo que incómodo.”</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-plan" class="screen hidden">
+      <div class="card">
+        <div class="section-title">
+          <h2>Matriz de respuesta</h2>
+          <small>qué hacer según la prioridad</small>
+        </div>
+
+        <div class="list">
+          <div class="item">
+            <div class="item-head">
+              <p class="item-title">Nivel 1 — Resolver ahora</p>
+              <span class="badge red">inmediato</span>
+            </div>
+            <div class="meta">Solo si hay plazo real, impacto alto y depende de ti. Respuesta breve, concreta y sin abrir 5 temas más.</div>
+          </div>
+
+          <div class="item">
+            <div class="item-head">
+              <p class="item-title">Nivel 2 — Programar</p>
+              <span class="badge yellow">hoy / esta semana</span>
+            </div>
+            <div class="meta">Es importante, pero no exige reacción instantánea. Se agenda, se define cuándo verlo y se corta la rumiación.</div>
+          </div>
+
+          <div class="item">
+            <div class="item-head">
+              <p class="item-title">Nivel 3 — Postergar</p>
+              <span class="badge green">no hoy</span>
+            </div>
+            <div class="meta">No es que no importe. Solo que no debe consumir energía ahora.</div>
+          </div>
+
+          <div class="item">
+            <div class="item-head">
+              <p class="item-title">Nivel 4 — Soltar o delegar</p>
+              <span class="badge brown">fuera de foco</span>
+            </div>
+            <div class="meta">No depende de ti, no tiene riesgo real o solo estás queriendo controlarlo por ansiedad.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Respuesta proporcional</h2>
+          <small>no sobreactuar</small>
+        </div>
+        <div class="row">
+          <button class="btn secondary" onclick="tool('mini')">Respuesta mínima</button>
+          <button class="btn secondary" onclick="tool('media')">Respuesta media</button>
+          <button class="btn secondary" onclick="tool('alta')">Respuesta alta</button>
+          <button class="btn secondary" onclick="tool('pausa')">Pausa obligatoria</button>
+        </div>
+        <div id="toolBox" class="result-box hidden"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Bloqueador de colapso</h2>
+          <small>cuando todo te cae encima</small>
+        </div>
+        <div class="field"><label><input type="checkbox" id="b1"> Estoy mezclando varios problemas en uno solo.</label></div>
+        <div class="field"><label><input type="checkbox" id="b2"> Quiero resolver hoy cosas que no vencen hoy.</label></div>
+        <div class="field"><label><input type="checkbox" id="b3"> Estoy cansado y aun así quiero decidir.</label></div>
+        <div class="field"><label><input type="checkbox" id="b4"> Siento que todo depende de mí.</label></div>
+        <div class="field"><label><input type="checkbox" id="b5"> Quiero responder por ansiedad, no por prioridad.</label></div>
+        <button class="btn primary" onclick="collapseCheck()">Revisar riesgo de colapso</button>
+        <div id="collapseBox" class="result-box hidden"></div>
+      </div>
+    </section>
+
+    <section id="screen-registro" class="screen hidden">
+      <div class="card">
+        <div class="section-title">
+          <h2>Registro de demandas</h2>
+          <small>seguimiento</small>
+        </div>
+
+        <div class="counter">
+          <div class="box">
+            <div class="n" id="nTotal">0</div>
+            <div class="t">Demandas registradas</div>
+          </div>
+          <div class="box">
+            <div class="n" id="nNow">0</div>
+            <div class="t">Resolver ahora</div>
+          </div>
+          <div class="box">
+            <div class="n" id="nProgram">0</div>
+            <div class="t">Programar</div>
+          </div>
+          <div class="box">
+            <div class="n" id="nPost">0</div>
+            <div class="t">Postergar / delegar</div>
+          </div>
+        </div>
+
+        <hr class="hr" />
+
+        <div class="field">
+          <label class="label" for="logText">Registrar demanda</label>
+          <textarea id="logText" placeholder="Escribe la demanda o problema en una sola frase clara."></textarea>
+        </div>
+
+        <div class="grid three">
+          <div class="field">
+            <label class="label" for="logArea">Área</label>
+            <select id="logArea">
+              <option value="Familia">Familia</option>
+              <option value="Pareja">Pareja</option>
+              <option value="Trabajo">Trabajo / galería</option>
+              <option value="Proyectos">Proyectos</option>
+              <option value="Legal">Juicios / legal</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="logPriority">Prioridad</label>
+            <select id="logPriority">
+              <option value="Resolver ahora">Resolver ahora</option>
+              <option value="Programar">Programar</option>
+              <option value="Postergar">Postergar</option>
+              <option value="Delegar / Soltar">Delegar / Soltar</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label" for="logResponse">Proporción</label>
+            <select id="logResponse">
+              <option value="Mínima">Mínima</option>
+              <option value="Media">Media</option>
+              <option value="Alta">Alta</option>
+              <option value="No responder hoy">No responder hoy</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row">
+          <button class="btn primary" onclick="saveLog()">Guardar</button>
+          <button class="btn ghost" onclick="exportLogs()">Exportar JSON</button>
+          <button class="btn danger" onclick="clearLogs()">Borrar todo</button>
+        </div>
+
+        <div id="logList" class="list"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">
+          <h2>Recordatorio final</h2>
+          <small>uso terapéutico</small>
+        </div>
+        <div class="anchor-box">
+          <div class="small">La meta no es resolver toda la vida en un día. La meta es responder con criterio.</div>
+          <div class="anchor">“Lo importante primero. Lo demás, en su tiempo.”</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div><strong>Lic. Gonzalo Buendía – Psicólogo</strong></div>
+      <div><strong>Blanquita – Co terapeuta</strong></div>
+      <div>Mini aplicación psicoeducativa de apoyo clínico con enfoque estructural-dinámico aplicado.</div>
+    </div>
+  </div>
+
+  <nav class="tabbar">
+    <div class="tabs">
+      <button class="tab active" onclick="showScreen('inicio', this)">Inicio</button>
+      <button class="tab" onclick="showScreen('filtrar', this)">Filtrar</button>
+      <button class="tab" onclick="showScreen('plan', this)">Plan</button>
+      <button class="tab" onclick="showScreen('registro', this)">Registro</button>
+    </div>
+  </nav>
+
+  <script>
+    const STORAGE_KEY = "filtro_demandas_hans_v1";
+
+    function showScreen(name, btn){
+      document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+      document.getElementById("screen-" + name).classList.remove("hidden");
+      document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+      if(btn) btn.classList.add("active");
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    function readState(){
+      const mood = document.getElementById("moodNow").value;
+      const focus = document.getElementById("focusNow").value;
+      const box = document.getElementById("stateBox");
+
+      if(!mood || !focus){
+        box.innerHTML = `<p class="result-title">Falta información</p><div class="small">Selecciona ambas opciones para obtener una lectura rápida.</div>`;
+        box.classList.remove("hidden");
+        return;
+      }
+
+      let moodText = "";
+      if(mood === "estable") moodText = "Tu sistema parece con mejor capacidad de discriminar. Igual conviene filtrar antes de responder.";
+      if(mood === "cansado") moodText = "Con cansancio, muchas cosas parecen más urgentes de lo que realmente son.";
+      if(mood === "irritado") moodText = "Con irritación, el riesgo no es solo el problema: es responder con exceso.";
+      if(mood === "saturado") moodText = "Cuando estás saturado, primero debes separar demandas. No decidas desde amontonamiento.";
+
+      let focusText = "";
+      if(focus === "familia") focusText = "Ojo con querer resolver dinámicas familiares complejas en una sola intervención.";
+      if(focus === "pareja") focusText = "Si el foco es Mari, no mezcles frustración del vínculo con otras cargas externas.";
+      if(focus === "trabajo") focusText = "Trabajo y galería requieren estructura, no impulsividad.";
+      if(focus === "proyectos") focusText = "La demora en proyectos puede activar ansiedad, pero no siempre requiere acción inmediata.";
+      if(focus === "juicios") focusText = "Los temas legales pesan mucho porque parecen permanentes. Necesitan dosificación.";
+      if(focus === "todo") focusText = "Si sientes que es todo, tu primera tarea no es actuar: es separar.";
+
+      box.innerHTML = `
+        <p class="result-title">Lectura rápida</p>
+        <div class="decision warn">Primero separa. Luego jerarquiza.</div>
+        <div class="small">${moodText} ${focusText}</div>
+      `;
+      box.classList.remove("hidden");
+    }
+
+    function preset(type){
+      const presets = {
+        familia: "Mi familia volvió a meter presión y siento que tengo que resolver varias cosas a la vez.",
+        pareja: "Con Mari siento desgaste y al mismo tiempo me irrito por temas de organización y rutina.",
+        trabajo: "Se me juntaron cosas de trabajo y siento que si no respondo rápido se me cae todo.",
+        proyecto: "Mis proyectos siguen demorando y eso me genera ansiedad y necesidad de definir todo ya.",
+        juicio: "El tema del juicio me carga mentalmente y siento presión aunque no siempre haya acción concreta hoy.",
+        mezcla: "Tengo temas de familia, pareja, trabajo y proyectos encima, y todo se me mezcla en la cabeza."
+      };
+      document.getElementById("situationText").value = presets[type] || "";
+    }
+
+    function filterSituation(){
+      const text = document.getElementById("situationText").value.trim();
+      const urgency = Number(document.getElementById("realUrgency").value);
+      const impact = Number(document.getElementById("impact").value);
+      const deadline = Number(document.getElementById("deadline").value);
+      const energy = Number(document.getElementById("energy").value);
+      const emotion = Number(document.getElementById("emotion").value);
+      const depends = Number(document.getElementById("depends").value);
+      const risk = Number(document.getElementById("risk").value);
+      const typeNeed = document.getElementById("typeNeed").value;
+      const area = document.getElementById("area").value;
+      const box = document.getElementById("filterResult");
+
+      if(!text){
+        box.innerHTML = `<p class="result-title">Falta información</p><div class="small">Describe la situación antes de filtrarla.</div>`;
+        box.classList.remove("hidden");
+        return;
+      }
+
+      const practicalScore = urgency + impact + deadline + depends + risk;
+      const overloadScore = energy + emotion;
+
+      let priority = "";
+      let response = "";
+      let cls = "";
+      let explanation = "";
+      let steps = [];
+      let note = "";
+
+      if((practicalScore >= 13 && depends >= 2) || (deadline === 3 && risk >= 2)){
+        priority = "RESOLVER AHORA";
+        response = overloadScore >= 5 ? "Respuesta mínima y focalizada" : "Respuesta media o alta";
+        cls = "danger";
+        explanation = "Sí hay elementos concretos que justifican una intervención hoy. Aun así, no debes mezclar esta demanda con otras.";
+        steps = [
+          "Define una sola acción concreta.",
+          "Hazla en menos de 20 minutos si es posible.",
+          "No abras temas paralelos.",
+          "Cuando termines, corta y vuelve a filtrar lo siguiente."
+        ];
+      } else if(practicalScore >= 10){
+        priority = "PROGRAMAR";
+        response = "Respuesta mínima hoy + agenda específica";
+        cls = "warn";
+        explanation = "Es importante, pero no exige reacción instantánea. Tu tarea hoy es programarlo, no resolverlo por completo.";
+        steps = [
+          "Define fecha u hora para verlo.",
+          "Anota qué sí harás y qué no harás.",
+          "No lo rumies el resto del día.",
+          "Vuelve a esto en el momento programado."
+        ];
+      } else if(depends === 1 || risk === 1){
+        priority = "POSTERGAR O DELEGAR";
+        response = "No responder hoy o derivar";
+        cls = "ok";
+        explanation = "Esta situación no depende tanto de ti o no tiene riesgo real hoy. Responder de más sería descargar ansiedad, no resolver.";
+        steps = [
+          "Pregúntate quién sí debe hacerse cargo.",
+          "Define si realmente requiere tu intervención.",
+          "Suéltalo por hoy.",
+          "No lo conviertas en prioridad falsa."
+        ];
+      } else {
+        priority = "REVISAR LUEGO";
+        response = "Respuesta mínima o espera";
+        cls = "ok";
+        explanation = "No parece requerir energía alta en este momento. Conviene observar mejor antes de actuar.";
+        steps = [
+          "Espera.",
+          "No decidas en caliente.",
+          "Mira si mañana sigue siendo prioridad.",
+          "Reduce el tema a una sola pregunta concreta."
+        ];
+      }
+
+      if(overloadScore >= 5){
+        note = "Estás con alta carga emocional. Tu criterio puede contaminarse. Haz pausa antes de cualquier acción.";
+      }
+
+      if(area === "pareja"){
+        note += (note ? " " : "") + "En pareja, evita decisiones estructurales cuando estés cansado o decepcionado.";
+      }
+      if(area === "familia"){
+        note += (note ? " " : "") + "En familia, no confundas invalidación con obligación de responder.";
+      }
+      if(area === "legal"){
+        note += (note ? " " : "") + "En legal, dosifica: no todo pesa igual ni todo se mueve hoy.";
+      }
+
+      let typeText = "";
+      if(typeNeed === "accion") typeText = "La situación necesita acción concreta, no vueltas mentales.";
+      if(typeNeed === "conversacion") typeText = "La situación necesita conversación en frío, no corrección inmediata.";
+      if(typeNeed === "espera") typeText = "La situación necesita espera, observación y no precipitarte.";
+      if(typeNeed === "delegar") typeText = "La situación necesita distribución de carga, no asumirla toda tú.";
+
+      box.innerHTML = `
+        <p class="result-title">Resultado del filtro</p>
+        <div class="decision ${cls}">${priority}</div>
+        <div class="badge ${cls === 'danger' ? 'red' : cls === 'warn' ? 'yellow' : 'green'}">${response}</div>
+        <div class="small" style="margin-top:8px;"><strong>Lectura:</strong> ${explanation}</div>
+
+        <div class="score-box">
+          <div class="score-item"><strong>Qué necesita:</strong> ${typeText}</div>
+          <div class="score-item"><strong>Urgencia práctica:</strong> ${practicalScore}/15</div>
+          <div class="score-item"><strong>Carga emocional:</strong> ${overloadScore}/6</div>
+        </div>
+
+        <div class="result-box" style="margin-top:10px; background:#fff; border-style:solid;">
+          <p class="result-title">Pasos concretos</p>
+          <ul style="margin:0; padding-left:18px;">
+            ${steps.map(s => `<li style="margin-bottom:6px;">${s}</li>`).join("")}
+          </ul>
+        </div>
+
+        ${note ? `<div class="small" style="margin-top:10px;"><strong>Alerta clínica:</strong> ${note}</div>` : ``}
+      `;
+      box.classList.remove("hidden");
+    }
+
+    function tool(type){
+      const box = document.getElementById("toolBox");
+      const tools = {
+        mini: `
+          <p class="result-title">Respuesta mínima</p>
+          <div class="small">Solo haces una acción breve: responder un mensaje, agendar una llamada, dejar una indicación o anotar el tema. No más.</div>
+        `,
+        media: `
+          <p class="result-title">Respuesta media</p>
+          <div class="small">Inviertes un bloque concreto de tiempo, sin salirte del foco. Ejemplo: 20-30 minutos y luego se cierra.</div>
+        `,
+        alta: `
+          <p class="result-title">Respuesta alta</p>
+          <div class="small">Solo para temas con plazo real, alto impacto y dependencia directa de ti. Incluso ahí, un problema por vez.</div>
+        `,
+        pausa: `
+          <p class="result-title">Pausa obligatoria</p>
+          <div class="small">Si estás muy irritado, cansado o saturado, no eliges prioridad en ese estado. Primero bajas activación y luego filtras de nuevo.</div>
+        `
+      };
+      box.innerHTML = tools[type];
+      box.classList.remove("hidden");
+    }
+
+    function collapseCheck(){
+      const checks = ["b1","b2","b3","b4","b5"].map(id => document.getElementById(id).checked);
+      const count = checks.filter(Boolean).length;
+      const box = document.getElementById("collapseBox");
+
+      if(count <= 1){
+        box.innerHTML = `
+          <p class="result-title">Riesgo de colapso</p>
+          <div class="decision ok">Bajo</div>
+          <div class="small">Tu sistema parece más discriminativo. Igual mantén la secuencia: filtrar, priorizar, responder.</div>
+        `;
+      } else if(count <= 3){
+        box.innerHTML = `
+          <p class="result-title">Riesgo de colapso</p>
+          <div class="decision warn">Moderado</div>
+          <div class="small">Ya estás mezclando ansiedad con prioridad. Reduce el número de problemas activos y responde solo a uno.</div>
+        `;
+      } else {
+        box.innerHTML = `
+          <p class="result-title">Riesgo de colapso</p>
+          <div class="decision danger">Alto</div>
+          <div class="small">Hoy no debes intentar resolver todo. Tu tarea es separar, bajar activación y escoger una sola demanda operativa.</div>
+        `;
+      }
+      box.classList.remove("hidden");
+    }
+
+    function getLogs(){
+      try{
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+      }catch(e){
+        return [];
+      }
+    }
+
+    function setLogs(logs){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+    }
+
+    function saveLog(){
+      const text = document.getElementById("logText").value.trim();
+      const area = document.getElementById("logArea").value;
+      const priority = document.getElementById("logPriority").value;
+      const response = document.getElementById("logResponse").value;
+
+      if(!text){
+        alert("Escribe la demanda antes de guardarla.");
+        return;
+      }
+
+      const logs = getLogs();
+      logs.unshift({
+        id: Date.now(),
+        text,
+        area,
+        priority,
+        response,
+        createdAt: new Date().toLocaleString("es-PE")
+      });
+      setLogs(logs);
+
+      document.getElementById("logText").value = "";
+      document.getElementById("logArea").value = "Familia";
+      document.getElementById("logPriority").value = "Resolver ahora";
+      document.getElementById("logResponse").value = "Mínima";
+      renderLogs();
+    }
+
+    function renderLogs(){
+      const logs = getLogs();
+      const list = document.getElementById("logList");
+      document.getElementById("nTotal").textContent = logs.length;
+      document.getElementById("nNow").textContent = logs.filter(l => l.priority === "Resolver ahora").length;
+      document.getElementById("nProgram").textContent = logs.filter(l => l.priority === "Programar").length;
+      document.getElementById("nPost").textContent = logs.filter(l => l.priority === "Postergar" || l.priority === "Delegar / Soltar").length;
+
+      if(!logs.length){
+        list.innerHTML = `<div class="small" style="margin-top:12px;">Aún no hay registros. Guarda una demanda para empezar a ordenar el sistema.</div>`;
+        return;
+      }
+
+      list.innerHTML = logs.map(log => {
+        let badgeClass = "green";
+        if(log.priority === "Resolver ahora") badgeClass = "red";
+        if(log.priority === "Programar") badgeClass = "yellow";
+        if(log.priority === "Delegar / Soltar") badgeClass = "brown";
+        return `
+          <div class="item">
+            <div class="item-head">
+              <p class="item-title">${escapeHtml(log.text)}</p>
+              <span class="badge ${badgeClass}">${escapeHtml(log.priority)}</span>
+            </div>
+            <div class="meta"><strong>Área:</strong> ${escapeHtml(log.area)}</div>
+            <div class="meta"><strong>Proporción de respuesta:</strong> ${escapeHtml(log.response)}</div>
+            <div class="meta"><strong>Fecha:</strong> ${escapeHtml(log.createdAt)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function clearLogs(){
+      if(confirm("¿Seguro que deseas borrar todos los registros?")){
+        localStorage.removeItem(STORAGE_KEY);
+        renderLogs();
+      }
+    }
+
+    function exportLogs(){
+      const logs = getLogs();
+      const blob = new Blob([JSON.stringify(logs, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "filtro_demandas_hans_registros.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(text){
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    renderLogs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognitiva Lab - Comunicación Inicial TEA</title>
+  <style>
+    :root{
+      --bg1:#fff7fb;
+      --bg2:#eef9ff;
+      --bg3:#f8fff1;
+      --panel:#ffffff;
+      --panel-soft:#fffdfd;
+      --text:#37506a;
+      --text-soft:#6f879d;
+      --pink:#ffd6e7;
+      --pink-strong:#ffbcd8;
+      --blue:#d9f1ff;
+      --blue-strong:#b9e4ff;
+      --mint:#dbf7ea;
+      --mint-strong:#bff0d9;
+      --peach:#ffe7d6;
+      --peach-strong:#ffd2b0;
+      --lav:#ece3ff;
+      --lav-strong:#d8c7ff;
+      --yellow:#fff2b9;
+      --yellow-strong:#ffe58c;
+      --good:#7fd6aa;
+      --bad:#ffb0b0;
+      --shadow:0 12px 28px rgba(135, 169, 194, .18);
+      --radius-xl:30px;
+      --radius-lg:24px;
+      --radius-md:18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+      color:var(--text);
+      min-height:100%;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body{
+      background:
+        radial-gradient(circle at 10% 20%, rgba(255, 214, 231, .55), transparent 18%),
+        radial-gradient(circle at 85% 12%, rgba(185, 228, 255, .45), transparent 18%),
+        radial-gradient(circle at 15% 85%, rgba(191, 240, 217, .45), transparent 18%),
+        radial-gradient(circle at 82% 78%, rgba(216, 199, 255, .35), transparent 18%),
+        linear-gradient(180deg, var(--bg1) 0%, var(--bg2) 48%, var(--bg3) 100%);
+      overflow-x:hidden;
+      touch-action:manipulation;
+    }
+
+    .cloud{
+      position:fixed;
+      border-radius:999px;
+      background:rgba(255,255,255,.55);
+      filter:blur(2px);
+      pointer-events:none;
+      z-index:0;
+    }
+    .cloud.c1{width:180px;height:70px;top:40px;left:4%;}
+    .cloud.c2{width:220px;height:80px;top:90px;right:6%;}
+    .cloud.c3{width:160px;height:62px;bottom:120px;left:8%;}
+
+    .app{
+      position:relative;
+      z-index:1;
+      max-width:1220px;
+      margin:0 auto;
+      padding:18px 18px 26px;
+    }
+
+    .topbar{
+      display:flex;
+      gap:16px;
+      align-items:stretch;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      margin-bottom:18px;
+    }
+
+    .hero{
+      flex:1 1 620px;
+      background:linear-gradient(135deg, rgba(255,255,255,.96), rgba(255,248,252,.96));
+      border:2px solid rgba(255,255,255,.85);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius-xl);
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
+
+    .hero-badge{
+      width:86px;
+      height:86px;
+      border-radius:24px;
+      background:linear-gradient(135deg, var(--pink), var(--blue));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:2.2rem;
+      box-shadow:var(--shadow);
+      flex-shrink:0;
+    }
+
+    .hero h1{
+      margin:0;
+      font-size:1.72rem;
+      line-height:1.15;
+      color:#48627a;
+    }
+
+    .hero p{
+      margin:7px 0 0;
+      font-size:1rem;
+      color:var(--text-soft);
+      line-height:1.45;
+    }
+
+    .status{
+      flex:0 1 380px;
+      background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(245,252,255,.96));
+      border:2px solid rgba(255,255,255,.85);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius-xl);
+      padding:16px 18px;
+    }
+
+    .status-title{
+      font-size:1.08rem;
+      font-weight:bold;
+      margin-bottom:10px;
+      color:#51708b;
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    .stat-pill{
+      background:linear-gradient(180deg, #fff, #f7fcff);
+      border-radius:18px;
+      padding:12px;
+      box-shadow: inset 0 0 0 1px rgba(185, 228, 255, .45);
+    }
+
+    .stat-pill .label{
+      font-size:.9rem;
+      color:var(--text-soft);
+      margin-bottom:4px;
+    }
+
+    .stat-pill .value{
+      font-size:1.14rem;
+      font-weight:bold;
+      color:#4b6882;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+    }
+
+    .panel{
+      background:rgba(255,255,255,.92);
+      border:2px solid rgba(255,255,255,.86);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+
+    .section-title{
+      margin:0 0 10px;
+      font-size:1.34rem;
+      color:#57728a;
+    }
+
+    .intro{
+      font-size:1.02rem;
+      line-height:1.55;
+      color:var(--text-soft);
+    }
+
+    .scene{
+      margin-top:16px;
+      min-height:620px;
+      border-radius:30px;
+      background:
+        radial-gradient(circle at 12% 20%, rgba(255, 214, 231, .62), transparent 18%),
+        radial-gradient(circle at 82% 18%, rgba(185, 228, 255, .62), transparent 18%),
+        radial-gradient(circle at 20% 82%, rgba(191, 240, 217, .55), transparent 18%),
+        linear-gradient(180deg, #ffffff 0%, #fffdf9 55%, #f8fffd 100%);
+      border:2px solid rgba(255,255,255,.86);
+      position:relative;
+      overflow:hidden;
+      padding:22px;
+    }
+
+    .scene:before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image:
+        radial-gradient(rgba(255,255,255,.55) 2px, transparent 2px);
+      background-size:26px 26px;
+      opacity:.23;
+      pointer-events:none;
+    }
+
+    .stage-top{
+      position:relative;
+      z-index:1;
+    }
+
+    .prompt{
+      text-align:center;
+      min-height:34px;
+      font-size:1.34rem;
+      font-weight:800;
+      color:#ff8cae;
+      margin-bottom:16px;
+      line-height:1.3;
+    }
+
+    .card-word{
+      position:relative;
+      z-index:1;
+      min-height:235px;
+      border-radius:32px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:20px;
+      background:linear-gradient(180deg, #fff7fb, #f5fbff);
+      border:3px dashed #ffd2e5;
+      box-shadow: inset 0 0 0 6px rgba(255,255,255,.45);
+      margin-bottom:18px;
+    }
+
+    .word-wrap{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:8px;
+    }
+
+    .word-emoji{
+      font-size:5rem;
+      line-height:1;
+      filter:drop-shadow(0 6px 8px rgba(0,0,0,.08));
+    }
+
+    .word-text{
+      font-size:2.5rem;
+      font-weight:900;
+      color:#5f7d96;
+      letter-spacing:.4px;
+      line-height:1.1;
+    }
+
+    .choices{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:repeat(2, 1fr);
+      gap:18px;
+    }
+
+    .choice{
+      min-height:190px;
+      border:none;
+      border-radius:30px;
+      cursor:pointer;
+      padding:14px;
+      box-shadow:var(--shadow);
+      transition:transform .14s ease, box-shadow .14s ease;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      color:#49657e;
+      font-weight:900;
+    }
+
+    .choice:active{
+      transform:scale(.98);
+    }
+
+    .choice:hover{
+      box-shadow:0 14px 30px rgba(135, 169, 194, .24);
+    }
+
+    .choice:nth-child(4n+1){background:linear-gradient(180deg, var(--pink), var(--pink-strong));}
+    .choice:nth-child(4n+2){background:linear-gradient(180deg, var(--blue), var(--blue-strong));}
+    .choice:nth-child(4n+3){background:linear-gradient(180deg, var(--mint), var(--mint-strong));}
+    .choice:nth-child(4n+4){background:linear-gradient(180deg, var(--peach), var(--peach-strong));}
+
+    .choice-emoji{
+      font-size:4.8rem;
+      line-height:1;
+      filter:drop-shadow(0 6px 8px rgba(255,255,255,.35));
+    }
+
+    .choice-label{
+      font-size:1.12rem;
+      letter-spacing:.3px;
+    }
+
+    .feedback{
+      position:relative;
+      z-index:1;
+      margin-top:16px;
+      border-radius:24px;
+      padding:18px;
+      font-size:1.22rem;
+      line-height:1.45;
+      text-align:center;
+      font-weight:800;
+      display:none;
+      background:linear-gradient(180deg, #ffffff, #fffdf7);
+      color:#5c7890;
+      box-shadow:var(--shadow);
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:18px;
+      padding:15px 20px;
+      font-size:1rem;
+      font-weight:900;
+      cursor:pointer;
+      color:#49657d;
+      box-shadow:var(--shadow);
+      transition:transform .14s ease;
+      min-height:56px;
+    }
+
+    .btn:active{transform:scale(.98)}
+    .btn.start{background:linear-gradient(180deg, var(--mint), var(--mint-strong));}
+    .btn.secondary{background:linear-gradient(180deg, #ffffff, #f4fbff);}
+    .btn.voice{background:linear-gradient(180deg, var(--blue), var(--blue-strong));}
+    .btn.name{background:linear-gradient(180deg, var(--yellow), var(--yellow-strong));}
+    .btn.next{background:linear-gradient(180deg, var(--pink), var(--pink-strong));}
+
+    .side-box{
+      background:linear-gradient(180deg, #ffffff, #fcfeff);
+      border-radius:24px;
+      padding:16px;
+      margin-bottom:14px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.85);
+    }
+
+    .side-box h3{
+      margin:0 0 10px;
+      color:#5c7890;
+      font-size:1.12rem;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .chip{
+      background:linear-gradient(180deg, #fff, #f8fcff);
+      color:#678299;
+      border-radius:999px;
+      padding:9px 12px;
+      font-size:.92rem;
+      font-weight:700;
+      box-shadow: inset 0 0 0 1px rgba(185, 228, 255, .42);
+    }
+
+    .meter{
+      height:22px;
+      background:#f2f8fc;
+      border-radius:999px;
+      overflow:hidden;
+      box-shadow: inset 0 0 0 1px rgba(185, 228, 255, .4);
+      margin-top:10px;
+    }
+
+    .meter-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, #ffd0e3, #bfe7ff, #c8f0da);
+      transition:width .35s ease;
+      border-radius:999px;
+    }
+
+    .progress-label{
+      margin-top:10px;
+      color:var(--text-soft);
+      font-weight:800;
+    }
+
+    .log{
+      max-height:300px;
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .log-item{
+      border-radius:18px;
+      padding:12px 14px;
+      margin-bottom:10px;
+      font-size:.96rem;
+      line-height:1.4;
+      color:#5e7a92;
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    .good{border-left:8px solid var(--good);}
+    .bad{border-left:8px solid var(--bad);}
+    .neutral{border-left:8px solid #ffd989;}
+
+    .mini-note{
+      font-size:.96rem;
+      line-height:1.55;
+      color:var(--text-soft);
+    }
+
+    .summary-card{
+      text-align:left;
+      font-size:1.06rem;
+      line-height:1.55;
+      font-weight:700;
+      color:#5b768e;
+    }
+
+    .footer{
+      margin-top:18px;
+      text-align:center;
+      color:#6e879d;
+      font-size:.95rem;
+      padding:16px;
+      font-weight:700;
+    }
+
+    .hidden{display:none}
+
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr}
+      .scene{min-height:unset}
+    }
+
+    @media (max-width:680px){
+      .app{padding:14px}
+      .hero{
+        padding:16px;
+        align-items:flex-start;
+      }
+      .hero-badge{
+        width:72px;height:72px;font-size:2rem;
+      }
+      .hero h1{font-size:1.42rem}
+      .status-grid{grid-template-columns:1fr 1fr}
+      .prompt{font-size:1.12rem}
+      .word-emoji{font-size:4.3rem}
+      .word-text{font-size:2rem}
+      .choices{grid-template-columns:1fr}
+      .choice{min-height:160px}
+      .choice-emoji{font-size:4.2rem}
+      .controls .btn{flex:1 1 calc(50% - 10px)}
+    }
+
+    @media (max-width:450px){
+      .status-grid{grid-template-columns:1fr}
+      .controls .btn{flex:1 1 100%}
+      .card-word{min-height:210px}
+      .word-text{font-size:1.8rem}
+      .choice{min-height:148px}
+      .choice-emoji{font-size:4rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+
+  <div class="app">
+    <div class="topbar">
+      <div class="hero">
+        <div class="hero-badge">🧸</div>
+        <div>
+          <h1>COGNITIVA LAB<br>Comunicación inicial — TEA con retraso en lenguaje</h1>
+          <p>
+            Mini app visual y amigable para explorar atención, respuesta a consignas simples,
+            asociación palabra–imagen y respuesta al nombre, en un formato más cálido y atractivo para niños.
+          </p>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="status-title">Panel de sesión</div>
+        <div class="status-grid">
+          <div class="stat-pill">
+            <div class="label">Actividad</div>
+            <div class="value" id="activityName">Emparejar palabra–imagen</div>
+          </div>
+          <div class="stat-pill">
+            <div class="label">Aciertos</div>
+            <div class="value" id="score">0</div>
+          </div>
+          <div class="stat-pill">
+            <div class="label">Intentos</div>
+            <div class="value" id="attempts">0</div>
+          </div>
+          <div class="stat-pill">
+            <div class="label">Respuesta al nombre</div>
+            <div class="value" id="nameResponse">Pendiente</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="panel">
+        <h2 class="section-title">Actividad principal</h2>
+        <div class="intro">
+          El niño observa una consigna simple y elige entre opciones visuales grandes.
+          Se mantiene la función de voz, repetición de consigna, prueba de respuesta al nombre y resumen clínico breve.
+        </div>
+
+        <div class="scene">
+          <div class="stage-top">
+            <div class="prompt" id="promptText">Toca “Iniciar” para comenzar 🌈</div>
+
+            <div class="card-word" id="cardWord">
+              <div class="word-wrap">
+                <div class="word-emoji">👋</div>
+                <div class="word-text">Hola</div>
+              </div>
+            </div>
+
+            <div class="choices" id="choices"></div>
+
+            <div class="feedback" id="feedbackBox"></div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn start" id="startBtn">▶ Iniciar</button>
+          <button class="btn voice" id="repeatBtn">🔊 Repetir consigna</button>
+          <button class="btn name" id="nameBtn">👀 Llamar por su nombre</button>
+          <button class="btn next" id="nextBtn">➡ Siguiente</button>
+          <button class="btn secondary" id="resetBtn">↺ Reiniciar</button>
+          <button class="btn secondary" id="summaryBtn">📋 Ver resumen</button>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="side-box">
+          <h3>Áreas que explora</h3>
+          <div class="chips">
+            <div class="chip">Atención</div>
+            <div class="chip">Comprensión verbal simple</div>
+            <div class="chip">Asociación palabra–imagen</div>
+            <div class="chip">Comunicación funcional</div>
+            <div class="chip">Respuesta al nombre</div>
+            <div class="chip">Seguimiento de consignas</div>
+          </div>
+        </div>
+
+        <div class="side-box">
+          <h3>Progreso de sesión</h3>
+          <div class="meter">
+            <div class="meter-fill" id="progressFill"></div>
+          </div>
+          <div class="progress-label" id="progressLabel">0% completado</div>
+        </div>
+
+        <div class="side-box">
+          <h3>Observaciones rápidas</h3>
+          <div class="log" id="logBox"></div>
+        </div>
+
+        <div class="side-box">
+          <h3>Uso sugerido en sesión</h3>
+          <div class="mini-note">
+            1. Acompañar con voz cálida y modelado.<br>
+            2. Usar reforzadores sociales breves y positivos.<br>
+            3. Observar si responde a la palabra, a la imagen o al gesto del adulto.<br>
+            4. Registrar si necesita repetición, ayuda o señalamiento.<br>
+            5. Mantener sesiones breves, agradables y sin sobrecarga.
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer">
+      Desarrollado por: <strong>Lic. Gonzalo Buendía – Psicólogo</strong> y <strong>Blanquita – Co terapeuta</strong>
+    </div>
+  </div>
+
+  <script>
+    const trials = [
+      {
+        word: "PELOTA",
+        emoji: "⚽",
+        prompt: "Toca la pelota",
+        correct: "⚽",
+        options: [
+          { emoji: "⚽", label: "Pelota" },
+          { emoji: "🚗", label: "Carro" },
+          { emoji: "🍎", label: "Manzana" },
+          { emoji: "🐶", label: "Perro" }
+        ],
+        category: "Comprensión de sustantivo concreto"
+      },
+      {
+        word: "MAMÁ",
+        emoji: "👩",
+        prompt: "¿Dónde está mamá?",
+        correct: "👩",
+        options: [
+          { emoji: "👩", label: "Mamá" },
+          { emoji: "🐱", label: "Gato" },
+          { emoji: "🧃", label: "Jugo" },
+          { emoji: "🛏️", label: "Cama" }
+        ],
+        category: "Reconocimiento social básico"
+      },
+      {
+        word: "AGUA",
+        emoji: "💧",
+        prompt: "Toca el agua",
+        correct: "💧",
+        options: [
+          { emoji: "🍪", label: "Galleta" },
+          { emoji: "💧", label: "Agua" },
+          { emoji: "🚲", label: "Bici" },
+          { emoji: "🧸", label: "Oso" }
+        ],
+        category: "Comunicación funcional básica"
+      },
+      {
+        word: "PERRO",
+        emoji: "🐶",
+        prompt: "Busca el perro",
+        correct: "🐶",
+        options: [
+          { emoji: "🐶", label: "Perro" },
+          { emoji: "🍌", label: "Plátano" },
+          { emoji: "🚂", label: "Tren" },
+          { emoji: "🪑", label: "Silla" }
+        ],
+        category: "Asociación palabra–imagen"
+      },
+      {
+        word: "COMER",
+        emoji: "🍎",
+        prompt: "¿Qué usamos para comer?",
+        correct: "🍎",
+        options: [
+          { emoji: "🎈", label: "Globo" },
+          { emoji: "🍎", label: "Comida" },
+          { emoji: "🧦", label: "Media" },
+          { emoji: "📘", label: "Libro" }
+        ],
+        category: "Comprensión funcional simple"
+      },
+      {
+        word: "DAME",
+        emoji: "✋",
+        prompt: "Toca la mano",
+        correct: "✋",
+        options: [
+          { emoji: "🚪", label: "Puerta" },
+          { emoji: "✋", label: "Mano" },
+          { emoji: "🌙", label: "Luna" },
+          { emoji: "🐟", label: "Pez" }
+        ],
+        category: "Consigna con gesto y función social"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let attempts = 0;
+    let started = false;
+    let nameChecks = 0;
+    let nameResponses = 0;
+
+    const cardWord = document.getElementById("cardWord");
+    const promptText = document.getElementById("promptText");
+    const choicesBox = document.getElementById("choices");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const scoreEl = document.getElementById("score");
+    const attemptsEl = document.getElementById("attempts");
+    const progressFill = document.getElementById("progressFill");
+    const progressLabel = document.getElementById("progressLabel");
+    const logBox = document.getElementById("logBox");
+    const nameResponseEl = document.getElementById("nameResponse");
+    const activityName = document.getElementById("activityName");
+
+    const praiseMessages = [
+      "¡Muy bien! 🌟",
+      "¡Lo hiciste excelente! 🎉",
+      "¡Qué bien trabajaste! 😊",
+      "¡Super! 🧸"
+    ];
+
+    const tryAgainMessages = [
+      "Intentemos otra vez 🙂",
+      "Vamos de nuevo, tú puedes 💛",
+      "Probemos una vez más 🌈",
+      "Lo volvemos a intentar 😊"
+    ];
+
+    function randomPick(arr){
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function speak(text) {
+      try {
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = "es-PE";
+          utter.rate = 0.88;
+          utter.pitch = 1.08;
+          window.speechSynthesis.speak(utter);
+        }
+      } catch (e) {}
+    }
+
+    function log(message, type = "neutral") {
+      const div = document.createElement("div");
+      div.className = `log-item ${type}`;
+      div.textContent = message;
+      logBox.prepend(div);
+    }
+
+    function updateStatus() {
+      scoreEl.textContent = score;
+      attemptsEl.textContent = attempts;
+      const progress = Math.round((current / trials.length) * 100);
+      progressFill.style.width = progress + "%";
+      progressLabel.textContent = `${progress}% completado`;
+
+      if (nameChecks === 0) {
+        nameResponseEl.textContent = "Pendiente";
+      } else {
+        nameResponseEl.textContent = `${nameResponses}/${nameChecks}`;
+      }
+    }
+
+    function renderTrial() {
+      if (current >= trials.length) {
+        showSummary();
+        return;
+      }
+
+      feedbackBox.style.display = "none";
+      choicesBox.innerHTML = "";
+
+      const t = trials[current];
+      promptText.textContent = t.prompt;
+      activityName.textContent = t.category;
+
+      cardWord.innerHTML = `
+        <div class="word-wrap">
+          <div class="word-emoji">${t.emoji}</div>
+          <div class="word-text">${t.word}</div>
+        </div>
+      `;
+
+      t.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.innerHTML = `
+          <div class="choice-emoji">${opt.emoji}</div>
+          <div class="choice-label">${opt.label}</div>
+        `;
+        btn.onclick = () => selectOption(opt.emoji);
+        choicesBox.appendChild(btn);
+      });
+
+      speak(t.prompt);
+      updateStatus();
+    }
+
+    function selectOption(opt) {
+      if (current >= trials.length) return;
+      const t = trials[current];
+      attempts++;
+
+      if (opt === t.correct) {
+        score++;
+        feedbackBox.textContent = randomPick(praiseMessages);
+        feedbackBox.style.display = "block";
+        log(`Correcto en "${t.word}" | Área: ${t.category}`, "good");
+        speak(feedbackBox.textContent);
+      } else {
+        feedbackBox.textContent = randomPick(tryAgainMessages);
+        feedbackBox.style.display = "block";
+        log(`Requirió apoyo en "${t.word}" | Área: ${t.category}`, "bad");
+        speak(feedbackBox.textContent);
+      }
+
+      updateStatus();
+    }
+
+    function nextTrial() {
+      if (!started) return;
+      current++;
+      renderTrial();
+    }
+
+    function repeatInstruction() {
+      if (!started || current >= trials.length) return;
+      const text = trials[current].prompt;
+      speak(text);
+      log(`Se repitió la consigna: "${text}"`, "neutral");
+    }
+
+    function startApp() {
+      started = true;
+      current = 0;
+      score = 0;
+      attempts = 0;
+      nameChecks = 0;
+      nameResponses = 0;
+      logBox.innerHTML = "";
+      log("Sesión iniciada", "neutral");
+      renderTrial();
+    }
+
+    function resetApp() {
+      started = false;
+      current = 0;
+      score = 0;
+      attempts = 0;
+      nameChecks = 0;
+      nameResponses = 0;
+
+      cardWord.innerHTML = `
+        <div class="word-wrap">
+          <div class="word-emoji">👋</div>
+          <div class="word-text">Hola</div>
+        </div>
+      `;
+      promptText.textContent = "Toca “Iniciar” para comenzar 🌈";
+      choicesBox.innerHTML = "";
+      feedbackBox.style.display = "none";
+      logBox.innerHTML = "";
+      activityName.textContent = "Emparejar palabra–imagen";
+      updateStatus();
+    }
+
+    function callName() {
+      const childName = prompt("Escribe el nombre del niño o niña:");
+      if (!childName) return;
+
+      nameChecks++;
+      promptText.textContent = "Observa si mira, gira o responde 👀";
+      cardWord.innerHTML = `
+        <div class="word-wrap">
+          <div class="word-emoji">👀</div>
+          <div class="word-text">${childName.toUpperCase()}</div>
+        </div>
+      `;
+
+      choicesBox.innerHTML = `
+        <button class="choice" onclick="registerNameResponse(true)">
+          <div class="choice-emoji">😊</div>
+          <div class="choice-label">Sí respondió</div>
+        </button>
+        <button class="choice" onclick="registerNameResponse(false)">
+          <div class="choice-emoji">🤍</div>
+          <div class="choice-label">Respuesta mínima</div>
+        </button>
+      `;
+
+      feedbackBox.style.display = "none";
+      speak(childName);
+      log(`Se realizó prueba de respuesta al nombre: ${childName}`, "neutral");
+      updateStatus();
+    }
+
+    function registerNameResponse(ok) {
+      if (ok) {
+        nameResponses++;
+        feedbackBox.textContent = "Se registró respuesta al nombre ✅";
+        feedbackBox.style.display = "block";
+        log("Respondió al nombre o mostró orientación clara", "good");
+        speak("Muy bien");
+      } else {
+        feedbackBox.textContent = "Se registró respuesta limitada ⚠️";
+        feedbackBox.style.display = "block";
+        log("No respondió claramente al nombre", "bad");
+        speak("Está bien, seguimos observando");
+      }
+
+      if (started && current < trials.length) {
+        setTimeout(() => renderTrial(), 850);
+      } else {
+        updateStatus();
+      }
+    }
+
+    function buildClinicalSummary(accuracy) {
+      let verbal = "";
+      let functional = "";
+
+      if (accuracy >= 75) {
+        verbal = "Se observa buena disposición para asociación palabra–imagen en tareas concretas.";
+      } else if (accuracy >= 45) {
+        verbal = "Se observa rendimiento intermedio; podría requerir repetición, modelado o apoyo adicional.";
+      } else {
+        verbal = "Se observa dificultad relevante para seguir consignas verbales simples sin apoyo adicional.";
+      }
+
+      if (nameChecks === 0) {
+        functional = "No se registró ensayo formal de respuesta al nombre en esta sesión.";
+      } else if (nameResponses / nameChecks >= 0.6) {
+        functional = "La respuesta al nombre fue relativamente conservada o emergente en este contexto.";
+      } else {
+        functional = "La respuesta al nombre fue limitada, por lo que conviene seguir explorando orientación social y atención compartida.";
+      }
+
+      return verbal + " " + functional;
+    }
+
+    function showSummary() {
+      const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
+
+      cardWord.innerHTML = `
+        <div class="word-wrap">
+          <div class="word-emoji">📋</div>
+          <div class="word-text">Resumen</div>
+        </div>
+      `;
+      promptText.textContent = "Síntesis breve de la sesión";
+      choicesBox.innerHTML = "";
+      feedbackBox.style.display = "block";
+      feedbackBox.innerHTML = `
+        <div class="summary-card">
+          <strong>Aciertos:</strong> ${score}<br>
+          <strong>Intentos:</strong> ${attempts}<br>
+          <strong>Precisión:</strong> ${accuracy}%<br>
+          <strong>Respuesta al nombre:</strong> ${nameResponses}/${nameChecks}<br><br>
+          <strong>Lectura clínica breve:</strong><br>
+          ${buildClinicalSummary(accuracy)}
+        </div>
+      `;
+      log("Se visualizó el resumen de sesión", "neutral");
+      progressFill.style.width = "100%";
+      progressLabel.textContent = "100% completado";
+    }
+
+    document.getElementById("startBtn").addEventListener("click", startApp);
+    document.getElementById("repeatBtn").addEventListener("click", repeatInstruction);
+    document.getElementById("nameBtn").addEventListener("click", callName);
+    document.getElementById("nextBtn").addEventListener("click", nextTrial);
+    document.getElementById("resetBtn").addEventListener("click", resetApp);
+    document.getElementById("summaryBtn").addEventListener("click", showSummary);
+
+    window.registerNameResponse = registerNameResponse;
+    updateStatus();
+  </script>
+</body>
+</html>

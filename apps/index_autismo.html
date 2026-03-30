@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognitiva Lab - Comunicación Inicial TEA</title>
+  <style>
+    :root{
+      --bg:#0f2233;
+      --panel:#16344d;
+      --panel-2:#1f4a6b;
+      --accent:#67c1ff;
+      --accent-2:#8ee3c2;
+      --text:#f4f8fb;
+      --soft:#d6e6f2;
+      --warn:#ffd37a;
+      --ok:#8ee3c2;
+      --danger:#ff9e9e;
+      --shadow:0 10px 30px rgba(0,0,0,.22);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #0b1b2a 0%, #0f2233 50%, #12304a 100%);
+      color:var(--text);
+      min-height:100vh;
+      overflow-x:hidden;
+      touch-action:manipulation;
+    }
+
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+      padding:18px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:16px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:20px;
+      padding:14px 18px;
+      box-shadow:var(--shadow);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:1.5rem;
+      letter-spacing:.4px;
+    }
+
+    .brand p{
+      margin:4px 0 0;
+      color:var(--soft);
+      font-size:.98rem;
+    }
+
+    .status{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:20px;
+      padding:14px 18px;
+      min-width:280px;
+      box-shadow:var(--shadow);
+    }
+
+    .status-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      margin:6px 0;
+      font-size:1rem;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:18px;
+    }
+
+    .panel{
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .panel h2{
+      margin:0 0 14px;
+      font-size:1.35rem;
+    }
+
+    .intro{
+      font-size:1.08rem;
+      line-height:1.5;
+      color:var(--soft);
+    }
+
+    .scene{
+      margin-top:16px;
+      background:linear-gradient(180deg, rgba(103,193,255,.12), rgba(142,227,194,.09));
+      border-radius:20px;
+      min-height:280px;
+      padding:20px;
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+    }
+
+    .card-word{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:150px;
+      border-radius:24px;
+      background:rgba(0,0,0,.15);
+      border:2px dashed rgba(255,255,255,.18);
+      margin-bottom:18px;
+      text-align:center;
+      padding:18px;
+      font-size:2.1rem;
+      font-weight:bold;
+      letter-spacing:.5px;
+    }
+
+    .prompt{
+      text-align:center;
+      font-size:1.15rem;
+      color:var(--warn);
+      margin-bottom:14px;
+      min-height:28px;
+      font-weight:bold;
+    }
+
+    .choices{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    .choice{
+      min-height:112px;
+      border:none;
+      border-radius:22px;
+      background:linear-gradient(180deg, #245277, #1d4564);
+      color:white;
+      font-size:1.25rem;
+      font-weight:bold;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      transition:transform .15s ease, opacity .15s ease;
+      padding:10px;
+    }
+
+    .choice:active{
+      transform:scale(.98);
+    }
+
+    .choice small{
+      display:block;
+      font-size:.9rem;
+      font-weight:normal;
+      opacity:.9;
+      margin-top:6px;
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .btn{
+      border:none;
+      border-radius:16px;
+      padding:14px 18px;
+      font-size:1rem;
+      font-weight:bold;
+      cursor:pointer;
+      background:var(--accent);
+      color:#082033;
+      box-shadow:var(--shadow);
+    }
+
+    .btn.secondary{
+      background:#274760;
+      color:#fff;
+    }
+
+    .btn.success{
+      background:var(--ok);
+      color:#083128;
+    }
+
+    .btn.warning{
+      background:var(--warn);
+      color:#3a2500;
+    }
+
+    .side-box{
+      background:rgba(0,0,0,.14);
+      border-radius:18px;
+      padding:16px;
+      margin-bottom:14px;
+      border:1px solid rgba(255,255,255,.1);
+    }
+
+    .side-box h3{
+      margin:0 0 10px;
+      font-size:1.1rem;
+    }
+
+    .meter{
+      height:18px;
+      background:rgba(255,255,255,.1);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:10px;
+    }
+
+    .meter-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--accent), var(--accent-2));
+      transition:width .3s ease;
+    }
+
+    .log{
+      max-height:250px;
+      overflow:auto;
+      padding-right:4px;
+    }
+
+    .log-item{
+      padding:10px 12px;
+      background:rgba(255,255,255,.06);
+      border-radius:14px;
+      margin-bottom:8px;
+      font-size:.96rem;
+      line-height:1.35;
+    }
+
+    .good{border-left:5px solid var(--ok)}
+    .bad{border-left:5px solid var(--danger)}
+    .neutral{border-left:5px solid var(--warn)}
+
+    .footer{
+      margin-top:18px;
+      text-align:center;
+      color:var(--soft);
+      font-size:.92rem;
+      opacity:.95;
+      padding:14px;
+    }
+
+    .hidden{display:none}
+
+    .tag{
+      display:inline-block;
+      background:rgba(255,255,255,.1);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.9rem;
+      margin-right:8px;
+      margin-bottom:8px;
+    }
+
+    .big-message{
+      font-size:1.25rem;
+      line-height:1.5;
+      text-align:center;
+      background:rgba(0,0,0,.18);
+      border-radius:20px;
+      padding:18px;
+      margin-top:12px;
+    }
+
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr}
+      .card-word{font-size:1.8rem}
+      .choices{grid-template-columns:1fr 1fr}
+    }
+
+    @media (max-width:640px){
+      .choices{grid-template-columns:1fr}
+      .choice{min-height:96px}
+      .card-word{font-size:1.6rem; min-height:130px}
+      .topbar{align-items:stretch}
+      .status{min-width:auto}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <h1>COGNITIVA LAB</h1>
+        <p>Mini app de comunicación inicial — TEA con retraso en lenguaje</p>
+      </div>
+
+      <div class="status">
+        <div class="status-row"><strong>Actividad:</strong> <span id="activityName">Emparejar palabra–imagen</span></div>
+        <div class="status-row"><strong>Aciertos:</strong> <span id="score">0</span></div>
+        <div class="status-row"><strong>Intentos:</strong> <span id="attempts">0</span></div>
+        <div class="status-row"><strong>Respuesta al nombre:</strong> <span id="nameResponse">Pendiente</span></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Objetivo clínico</h2>
+        <div class="intro">
+          Esta mini app está orientada a trabajo inicial con niños pequeños con TEA y retraso en lenguaje.
+          Busca estimular atención conjunta, asociación palabra–imagen, respuesta a consignas simples y
+          comunicación funcional básica, en un formato visual, concreto y táctil.
+        </div>
+
+        <div class="scene">
+          <div class="prompt" id="promptText">Toca “INICIAR” para comenzar</div>
+          <div class="card-word" id="cardWord">Hola 👋</div>
+
+          <div class="choices" id="choices"></div>
+
+          <div class="big-message hidden" id="feedbackBox"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn success" id="startBtn">Iniciar</button>
+          <button class="btn secondary" id="repeatBtn">Repetir consigna</button>
+          <button class="btn warning" id="nameBtn">Llamar por su nombre</button>
+          <button class="btn secondary" id="nextBtn">Siguiente</button>
+          <button class="btn secondary" id="resetBtn">Reiniciar</button>
+          <button class="btn secondary" id="summaryBtn">Ver resumen</button>
+        </div>
+      </section>
+
+      <aside class="panel">
+        <div class="side-box">
+          <h3>Áreas que explora</h3>
+          <span class="tag">Atención</span>
+          <span class="tag">Comprensión verbal simple</span>
+          <span class="tag">Asociación palabra–imagen</span>
+          <span class="tag">Comunicación funcional</span>
+          <span class="tag">Respuesta al nombre</span>
+          <span class="tag">Seguimiento de consignas</span>
+        </div>
+
+        <div class="side-box">
+          <h3>Progreso de sesión</h3>
+          <div>Índice general de avance</div>
+          <div class="meter">
+            <div class="meter-fill" id="progressFill"></div>
+          </div>
+          <div style="margin-top:10px" id="progressLabel">0%</div>
+        </div>
+
+        <div class="side-box">
+          <h3>Observaciones rápidas</h3>
+          <div class="log" id="logBox"></div>
+        </div>
+
+        <div class="side-box">
+          <h3>Uso sugerido en sesión</h3>
+          <div style="color:var(--soft); line-height:1.5;">
+            1. Iniciar con acompañamiento verbal y modelado.<br>
+            2. Usar reforzadores sociales breves.<br>
+            3. Observar si responde a la palabra, a la imagen o al gesto del adulto.<br>
+            4. Registrar si necesita ayuda física, modelado o repetición.<br>
+            5. No sobrecargar. Mantener el formato breve y positivo.
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="footer">
+      Desarrollado por: <strong>Lic. Gonzalo Buendía – Psicólogo</strong> y <strong>Blanquita – Co terapeuta</strong>
+    </div>
+  </div>
+
+  <script>
+    const trials = [
+      {
+        word: "PELOTA ⚽",
+        prompt: "Toca la pelota",
+        correct: "⚽",
+        options: ["⚽", "🚗", "🍎", "🐶"],
+        category: "Comprensión de sustantivo concreto"
+      },
+      {
+        word: "MAMÁ 👩",
+        prompt: "¿Dónde está mamá?",
+        correct: "👩",
+        options: ["👩", "🐱", "🧃", "🛏️"],
+        category: "Reconocimiento social básico"
+      },
+      {
+        word: "AGUA 💧",
+        prompt: "Toca el agua",
+        correct: "💧",
+        options: ["🍪", "💧", "🚲", "🧸"],
+        category: "Comunicación funcional básica"
+      },
+      {
+        word: "PERRO 🐶",
+        prompt: "Busca el perro",
+        correct: "🐶",
+        options: ["🐶", "🍌", "🚂", "🪑"],
+        category: "Asociación palabra–imagen"
+      },
+      {
+        word: "COMER 🍎",
+        prompt: "¿Qué usamos para comer?",
+        correct: "🍎",
+        options: ["🎈", "🍎", "🧦", "📘"],
+        category: "Comprensión funcional simple"
+      },
+      {
+        word: "DAME ✋",
+        prompt: "Toca la mano",
+        correct: "✋",
+        options: ["🚪", "✋", "🌙", "🐟"],
+        category: "Consigna con gesto y función social"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let attempts = 0;
+    let started = false;
+    let nameChecks = 0;
+    let nameResponses = 0;
+
+    const cardWord = document.getElementById("cardWord");
+    const promptText = document.getElementById("promptText");
+    const choicesBox = document.getElementById("choices");
+    const feedbackBox = document.getElementById("feedbackBox");
+    const scoreEl = document.getElementById("score");
+    const attemptsEl = document.getElementById("attempts");
+    const progressFill = document.getElementById("progressFill");
+    const progressLabel = document.getElementById("progressLabel");
+    const logBox = document.getElementById("logBox");
+    const nameResponseEl = document.getElementById("nameResponse");
+    const activityName = document.getElementById("activityName");
+
+    const speak = (text) => {
+      try{
+        if ("speechSynthesis" in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(text);
+          utter.lang = "es-PE";
+          utter.rate = 0.9;
+          utter.pitch = 1;
+          window.speechSynthesis.speak(utter);
+        }
+      } catch(e){}
+    };
+
+    function log(message, type="neutral"){
+      const div = document.createElement("div");
+      div.className = `log-item ${type}`;
+      div.textContent = message;
+      logBox.prepend(div);
+    }
+
+    function updateStatus(){
+      scoreEl.textContent = score;
+      attemptsEl.textContent = attempts;
+      const progress = Math.round((current / trials.length) * 100);
+      progressFill.style.width = progress + "%";
+      progressLabel.textContent = `${progress}% completado`;
+      if(nameChecks === 0){
+        nameResponseEl.textContent = "Pendiente";
+      } else {
+        nameResponseEl.textContent = `${nameResponses}/${nameChecks}`;
+      }
+    }
+
+    function renderTrial(){
+      if(current >= trials.length){
+        showSummary();
+        return;
+      }
+
+      feedbackBox.classList.add("hidden");
+      choicesBox.innerHTML = "";
+      const t = trials[current];
+      cardWord.textContent = t.word;
+      promptText.textContent = t.prompt;
+      activityName.textContent = t.category;
+
+      t.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.innerHTML = `${opt}<small>Tocar</small>`;
+        btn.onclick = () => selectOption(opt);
+        choicesBox.appendChild(btn);
+      });
+
+      speak(t.prompt);
+      updateStatus();
+    }
+
+    function selectOption(opt){
+      if(current >= trials.length) return;
+      const t = trials[current];
+      attempts++;
+
+      if(opt === t.correct){
+        score++;
+        feedbackBox.textContent = "¡Muy bien! ✅";
+        feedbackBox.className = "big-message";
+        log(`Correcto en "${t.word}" | Área: ${t.category}`, "good");
+      } else {
+        feedbackBox.textContent = "Intentemos otra vez 🙂";
+        feedbackBox.className = "big-message";
+        log(`Requirió apoyo en "${t.word}" | Área: ${t.category}`, "bad");
+      }
+
+      feedbackBox.classList.remove("hidden");
+      updateStatus();
+    }
+
+    function nextTrial(){
+      if(!started) return;
+      current++;
+      renderTrial();
+    }
+
+    function repeatInstruction(){
+      if(!started || current >= trials.length) return;
+      speak(trials[current].prompt);
+      log(`Se repitió la consigna: "${trials[current].prompt}"`, "neutral");
+    }
+
+    function startApp(){
+      started = true;
+      current = 0;
+      score = 0;
+      attempts = 0;
+      nameChecks = 0;
+      nameResponses = 0;
+      logBox.innerHTML = "";
+      log("Sesión iniciada", "neutral");
+      renderTrial();
+    }
+
+    function resetApp(){
+      started = false;
+      current = 0;
+      score = 0;
+      attempts = 0;
+      nameChecks = 0;
+      nameResponses = 0;
+      cardWord.textContent = "Hola 👋";
+      promptText.textContent = "Toca “INICIAR” para comenzar";
+      choicesBox.innerHTML = "";
+      feedbackBox.classList.add("hidden");
+      logBox.innerHTML = "";
+      activityName.textContent = "Emparejar palabra–imagen";
+      updateStatus();
+    }
+
+    function callName(){
+      const childName = prompt("Escribe el nombre del niño o niña:");
+      if(!childName) return;
+
+      nameChecks++;
+      cardWord.textContent = childName.toUpperCase() + " 👀";
+      promptText.textContent = "Observa si mira, gira o responde";
+      choicesBox.innerHTML = `
+        <button class="choice" onclick="registerNameResponse(true)">Sí respondió / orientó mirada</button>
+        <button class="choice" onclick="registerNameResponse(false)">No respondió / respuesta mínima</button>
+      `;
+      feedbackBox.classList.add("hidden");
+      speak(childName);
+      log(`Se realizó prueba de respuesta al nombre: ${childName}`, "neutral");
+      updateStatus();
+    }
+
+    function registerNameResponse(ok){
+      if(ok){
+        nameResponses++;
+        feedbackBox.textContent = "Se registró respuesta al nombre ✅";
+        feedbackBox.className = "big-message";
+        log("Respondió al nombre o mostró orientación clara", "good");
+      } else {
+        feedbackBox.textContent = "Se registró respuesta limitada ⚠️";
+        feedbackBox.className = "big-message";
+        log("No respondió claramente al nombre", "bad");
+      }
+      feedbackBox.classList.remove("hidden");
+
+      if(started && current < trials.length){
+        setTimeout(() => renderTrial(), 700);
+      } else {
+        updateStatus();
+      }
+    }
+
+    function showSummary(){
+      const accuracy = attempts > 0 ? Math.round((score / attempts) * 100) : 0;
+      cardWord.textContent = "Resumen de sesión 📋";
+      promptText.textContent = "Síntesis breve";
+      choicesBox.innerHTML = "";
+      feedbackBox.classList.remove("hidden");
+      feedbackBox.innerHTML = `
+        <strong>Aciertos:</strong> ${score}<br>
+        <strong>Intentos:</strong> ${attempts}<br>
+        <strong>Precisión:</strong> ${accuracy}%<br>
+        <strong>Respuesta al nombre:</strong> ${nameResponses}/${nameChecks}<br><br>
+        <strong>Lectura clínica breve:</strong><br>
+        ${buildClinicalSummary(accuracy)}
+      `;
+      log("Se visualizó el resumen de sesión", "neutral");
+      progressFill.style.width = "100%";
+      progressLabel.textContent = "100% completado";
+    }
+
+    function buildClinicalSummary(accuracy){
+      let verbal = "";
+      let functional = "";
+
+      if(accuracy >= 75){
+        verbal = "Se observa buena disposición para asociación palabra–imagen en tareas concretas.";
+      } else if (accuracy >= 45){
+        verbal = "Se observa rendimiento intermedio; el niño podría requerir apoyo verbal, repetición o modelado.";
+      } else {
+        verbal = "Se observa dificultad relevante para seguir consignas verbales simples sin apoyo adicional.";
+      }
+
+      if(nameChecks === 0){
+        functional = "No se registró ensayo formal de respuesta al nombre en esta sesión.";
+      } else if(nameResponses / nameChecks >= 0.6){
+        functional = "La respuesta al nombre fue relativamente conservada o emergente en este contexto.";
+      } else {
+        functional = "La respuesta al nombre fue limitada, lo que sugiere necesidad de seguir explorando orientación social y atención compartida.";
+      }
+
+      return verbal + " " + functional;
+    }
+
+    document.getElementById("startBtn").addEventListener("click", startApp);
+    document.getElementById("repeatBtn").addEventListener("click", repeatInstruction);
+    document.getElementById("nextBtn").addEventListener("click", nextTrial);
+    document.getElementById("resetBtn").addEventListener("click", resetApp);
+    document.getElementById("nameBtn").addEventListener("click", callName);
+    document.getElementById("summaryBtn").addEventListener("click", showSummary);
+
+    updateStatus();
+
+    // Exponer función para botones inline
+    window.registerNameResponse = registerNameResponse;
+  </script>
+</body>
+</html>

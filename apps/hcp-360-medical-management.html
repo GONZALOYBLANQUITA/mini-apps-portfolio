@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HCP 360° | Gestión de Médicos</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#121a2b;
+      --panel-2:#182235;
+      --line:#2a3852;
+      --text:#e9eef8;
+      --muted:#9fb0cc;
+      --accent:#60a5fa;
+      --accent-2:#22c55e;
+      --warn:#f59e0b;
+      --danger:#ef4444;
+      --shadow:0 12px 30px rgba(0,0,0,.28);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(96,165,250,.08), transparent 20%),
+        radial-gradient(circle at bottom left, rgba(34,197,94,.06), transparent 20%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    .app{
+      max-width:1400px;
+      margin:0 auto;
+      padding:24px;
+    }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      margin-bottom:22px;
+      flex-wrap:wrap;
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:30px;
+      letter-spacing:.3px;
+    }
+
+    .brand p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    button, .btn{
+      border:none;
+      border-radius:12px;
+      padding:12px 16px;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s ease;
+      font-size:14px;
+    }
+
+    .primary{
+      background:var(--accent);
+      color:#08111f;
+    }
+
+    .secondary{
+      background:var(--panel-2);
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    .danger{
+      background:var(--danger);
+      color:#fff;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      filter:brightness(1.04);
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:340px 1fr;
+      gap:20px;
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .card-header{
+      padding:18px 18px 10px;
+      border-bottom:1px solid rgba(255,255,255,.04);
+    }
+
+    .card-header h2,
+    .card-header h3{
+      margin:0;
+      font-size:18px;
+    }
+
+    .card-header p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .card-body{
+      padding:18px;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:12px;
+    }
+
+    label{
+      display:block;
+      font-size:13px;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:700;
+    }
+
+    input, select, textarea{
+      width:100%;
+      background:#0d1524;
+      color:var(--text);
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px 12px;
+      outline:none;
+      font-size:14px;
+    }
+
+    textarea{
+      min-height:84px;
+      resize:vertical;
+    }
+
+    input:focus, select:focus, textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(96,165,250,.15);
+    }
+
+    .panel-grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:14px;
+      margin-bottom:18px;
+    }
+
+    .stat{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+    }
+
+    .stat .k{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:8px;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+    }
+
+    .stat .v{
+      font-size:28px;
+      font-weight:800;
+    }
+
+    .stat .s{
+      margin-top:6px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .content-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+    }
+
+    .table-wrap{
+      overflow:auto;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width:900px;
+    }
+
+    th, td{
+      text-align:left;
+      padding:12px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:14px;
+      vertical-align:top;
+    }
+
+    th{
+      color:#cdd8eb;
+      font-size:12px;
+      text-transform:uppercase;
+      letter-spacing:.6px;
+      background:rgba(255,255,255,.02);
+      position:sticky;
+      top:0;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:700;
+      border:1px solid transparent;
+      white-space:nowrap;
+    }
+
+    .badge-blue{ background:rgba(96,165,250,.12); color:#93c5fd; border-color:rgba(96,165,250,.25); }
+    .badge-green{ background:rgba(34,197,94,.12); color:#86efac; border-color:rgba(34,197,94,.25); }
+    .badge-yellow{ background:rgba(245,158,11,.12); color:#fcd34d; border-color:rgba(245,158,11,.25); }
+    .badge-red{ background:rgba(239,68,68,.12); color:#fca5a5; border-color:rgba(239,68,68,.25); }
+    .badge-gray{ background:rgba(148,163,184,.12); color:#cbd5e1; border-color:rgba(148,163,184,.22); }
+
+    .row-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .mini-btn{
+      padding:8px 10px;
+      font-size:12px;
+      border-radius:10px;
+    }
+
+    .mini-btn.view{ background:var(--panel-2); color:#fff; border:1px solid var(--line);}
+    .mini-btn.visit{ background:var(--accent-2); color:#05230f;}
+    .mini-btn.delete{ background:#3a1720; color:#fecdd3; border:1px solid rgba(239,68,68,.2);}
+
+    .detail-grid{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+    }
+
+    .detail-box{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .detail-box h4{
+      margin:0 0 10px;
+      font-size:14px;
+      color:#dbe7fb;
+    }
+
+    .detail-item{
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      padding:8px 0;
+      border-bottom:1px dashed rgba(255,255,255,.06);
+      font-size:14px;
+    }
+
+    .detail-item:last-child{ border-bottom:none; }
+
+    .detail-item span:first-child{
+      color:var(--muted);
+    }
+
+    .history-list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      max-height:320px;
+      overflow:auto;
+    }
+
+    .history-item{
+      background:#0d1524;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .history-item .top{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+      flex-wrap:wrap;
+    }
+
+    .history-item .date{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .history-item .note{
+      font-size:13px;
+      color:#d8e3f5;
+      line-height:1.45;
+    }
+
+    .history-item .meta{
+      margin-top:8px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .empty{
+      color:var(--muted);
+      font-size:14px;
+      padding:10px 0;
+    }
+
+    .formula{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:14px;
+      background:rgba(96,165,250,.08);
+      border:1px solid rgba(96,165,250,.2);
+      font-size:13px;
+      color:#dbeafe;
+      line-height:1.5;
+    }
+
+    .footer-note{
+      margin-top:20px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:right;
+    }
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .filters{
+      display:grid;
+      grid-template-columns:1fr 180px 180px;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    @media (max-width: 1180px){
+      .grid{ grid-template-columns:1fr; }
+      .content-grid{ grid-template-columns:1fr; }
+      .panel-grid{ grid-template-columns:repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px){
+      .panel-grid{ grid-template-columns:1fr; }
+      .filters{ grid-template-columns:1fr; }
+      .topbar{ align-items:flex-start; }
+      .brand h1{ font-size:24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">
+        <h1>HCP 360°</h1>
+        <p>Gestión estructurada de médicos, customer profiling y priorización de stakeholders.</p>
+      </div>
+      <div class="actions">
+        <button class="secondary" id="seedBtn">Cargar demo</button>
+        <button class="danger" id="clearBtn">Limpiar todo</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LATERAL -->
+      <div class="card">
+        <div class="card-header">
+          <h2>Nuevo HCP</h2>
+          <p>Registra el perfil del médico y calcula automáticamente su valor estratégico.</p>
+        </div>
+        <div class="card-body">
+          <form id="hcpForm" class="form-grid">
+            <div>
+              <label for="nombre">Nombre del médico</label>
+              <input id="nombre" type="text" placeholder="Ej. Dr. Carlos Mendoza" required />
+            </div>
+
+            <div>
+              <label for="especialidad">Especialidad</label>
+              <select id="especialidad" required>
+                <option value="">Seleccionar</option>
+                <option>Cardiología</option>
+                <option>Neurología</option>
+                <option>Endocrinología</option>
+                <option>Medicina Interna</option>
+                <option>Pediatría</option>
+                <option>Geriatría</option>
+                <option>Psiquiatría</option>
+                <option>Traumatología</option>
+                <option>Dermatología</option>
+                <option>Otra</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="prescripcion">Nivel de prescripción</label>
+              <select id="prescripcion" required>
+                <option value="">Seleccionar</option>
+                <option value="1">Baja</option>
+                <option value="2">Media</option>
+                <option value="3">Alta</option>
+                <option value="4">Muy alta</option>
+                <option value="5">Líder prescriptor</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="interes">Interés en el producto / portafolio</label>
+              <select id="interes" required>
+                <option value="">Seleccionar</option>
+                <option value="1">Muy bajo</option>
+                <option value="2">Bajo</option>
+                <option value="3">Moderado</option>
+                <option value="4">Alto</option>
+                <option value="5">Muy alto</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="influencia">Nivel de influencia</label>
+              <select id="influencia" required>
+                <option value="">Seleccionar</option>
+                <option value="3">A - Alta influencia</option>
+                <option value="2">B - Influencia media</option>
+                <option value="1">C - Influencia básica</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="resistencia">Resistencia comercial / objeción</label>
+              <select id="resistencia" required>
+                <option value="">Seleccionar</option>
+                <option value="1">Muy baja</option>
+                <option value="2">Baja</option>
+                <option value="3">Moderada</option>
+                <option value="4">Alta</option>
+                <option value="5">Muy alta</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="preferencia">Preferencia de contacto</label>
+              <select id="preferencia" required>
+                <option value="">Seleccionar</option>
+                <option>Presencial</option>
+                <option>Digital</option>
+                <option>Mixto</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="frecuenciaInicial">Frecuencia de visitas actual</label>
+              <select id="frecuenciaInicial" required>
+                <option value="">Seleccionar</option>
+                <option value="1">1 contacto / período</option>
+                <option value="2">2 contactos / período</option>
+                <option value="3">3 contactos / período</option>
+                <option value="4">4 contactos / período</option>
+                <option value="5">5 o más contactos / período</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="observaciones">Observaciones estratégicas</label>
+              <textarea id="observaciones" placeholder="Ej. Alta apertura a evidencia clínica, prefiere reuniones breves, sensible a comparativos de eficacia."></textarea>
+            </div>
+
+            <button type="submit" class="primary">Guardar HCP</button>
+          </form>
+
+          <div class="formula">
+            <strong>Modelo estructural:</strong><br>
+            Valor HCP = (Frecuencia × Prescripción × Influencia) − Resistencia<br>
+            <span class="small">La frecuencia se actualiza automáticamente según las visitas registradas.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL PRINCIPAL -->
+      <div>
+        <div class="panel-grid">
+          <div class="stat">
+            <div class="k">Total HCP</div>
+            <div class="v" id="statTotal">0</div>
+            <div class="s">Médicos registrados</div>
+          </div>
+          <div class="stat">
+            <div class="k">Top Tier</div>
+            <div class="v" id="statTop">0</div>
+            <div class="s">Alta prioridad</div>
+          </div>
+          <div class="stat">
+            <div class="k">Visitas</div>
+            <div class="v" id="statVisits">0</div>
+            <div class="s">Interacciones registradas</div>
+          </div>
+          <div class="stat">
+            <div class="k">Score Promedio</div>
+            <div class="v" id="statAvg">0</div>
+            <div class="s">Valor estratégico medio</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>Base de médicos</h3>
+              <p>Segmentación de stakeholders por valor estructural y afinidad comercial.</p>
+            </div>
+            <div class="card-body">
+              <div class="filters">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre o especialidad..." />
+                <select id="filterPreferencia">
+                  <option value="">Todas las preferencias</option>
+                  <option value="Presencial">Presencial</option>
+                  <option value="Digital">Digital</option>
+                  <option value="Mixto">Mixto</option>
+                </select>
+                <select id="filterSegmento">
+                  <option value="">Todos los segmentos</option>
+                  <option value="Top Tier">Top Tier</option>
+                  <option value="Potencial">Potencial</option>
+                  <option value="Desarrollo">Desarrollo</option>
+                  <option value="Recuperación">Recuperación</option>
+                </select>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Médico</th>
+                      <th>Especialidad</th>
+                      <th>Prescripción</th>
+                      <th>Influencia</th>
+                      <th>Preferencia</th>
+                      <th>Frecuencia</th>
+                      <th>Resistencia</th>
+                      <th>Score</th>
+                      <th>Segmento</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="hcpTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Ficha 360°</h3>
+              <p>Visualiza el detalle estratégico del HCP seleccionado y registra nuevas visitas.</p>
+            </div>
+            <div class="card-body">
+              <div id="detailPanel" class="detail-grid">
+                <div class="empty">Selecciona un médico para ver su ficha detallada.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-note">
+          Desarrollado por: <strong>Lic. Gonzalo Buendía – Psicólogo</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "hcp360_data_v1";
+    let hcpData = [];
+    let selectedId = null;
+
+    const form = document.getElementById("hcpForm");
+    const tableBody = document.getElementById("hcpTableBody");
+    const detailPanel = document.getElementById("detailPanel");
+
+    const statTotal = document.getElementById("statTotal");
+    const statTop = document.getElementById("statTop");
+    const statVisits = document.getElementById("statVisits");
+    const statAvg = document.getElementById("statAvg");
+
+    const searchInput = document.getElementById("searchInput");
+    const filterPreferencia = document.getElementById("filterPreferencia");
+    const filterSegmento = document.getElementById("filterSegmento");
+    const seedBtn = document.getElementById("seedBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    function saveData(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(hcpData));
+    }
+
+    function loadData(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      hcpData = raw ? JSON.parse(raw) : [];
+    }
+
+    function getInfluenceLabel(value){
+      if(Number(value) === 3) return "A";
+      if(Number(value) === 2) return "B";
+      return "C";
+    }
+
+    function getFrequency(hcp){
+      const visitCount = hcp.visitas.length;
+      if (visitCount >= 5) return 5;
+      if (visitCount >= 4) return 4;
+      if (visitCount >= 3) return 3;
+      if (visitCount >= 2) return 2;
+      return Number(hcp.frecuenciaInicial || 1);
+    }
+
+    function calculateScore(hcp){
+      const frecuencia = getFrequency(hcp);
+      const prescripcion = Number(hcp.prescripcion);
+      const influencia = Number(hcp.influencia);
+      const resistencia = Number(hcp.resistencia);
+      return (frecuencia * prescripcion * influencia) - resistencia;
+    }
+
+    function getSegment(score, interes, resistencia){
+      const i = Number(interes);
+      const r = Number(resistencia);
+
+      if(score >= 25 && i >= 4 && r <= 3) return "Top Tier";
+      if(score >= 15 && i >= 3) return "Potencial";
+      if(score >= 8) return "Desarrollo";
+      return "Recuperación";
+    }
+
+    function getBadgeForSegment(segment){
+      if(segment === "Top Tier") return "badge badge-green";
+      if(segment === "Potencial") return "badge badge-blue";
+      if(segment === "Desarrollo") return "badge badge-yellow";
+      return "badge badge-red";
+    }
+
+    function getBadgeForPreference(pref){
+      if(pref === "Digital") return "badge badge-blue";
+      if(pref === "Presencial") return "badge badge-green";
+      return "badge badge-gray";
+    }
+
+    function getBadgeForInfluence(value){
+      const label = getInfluenceLabel(value);
+      if(label === "A") return '<span class="badge badge-green">A - Alta</span>';
+      if(label === "B") return '<span class="badge badge-yellow">B - Media</span>';
+      return '<span class="badge badge-gray">C - Base</span>';
+    }
+
+    function getPriorityRecommendation(segment, pref){
+      if(segment === "Top Tier" && pref === "Presencial") return "Priorizar visita presencial de alto valor.";
+      if(segment === "Top Tier" && pref === "Digital") return "Activar seguimiento digital con contenido de impacto.";
+      if(segment === "Potencial") return "Nutrir relación y mover hacia mayor frecuencia.";
+      if(segment === "Desarrollo") return "Trabajar objeciones y reforzar interés clínico.";
+      return "Replantear abordaje, mensaje o timing comercial.";
+    }
+
+    function formatDate(dateStr){
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      return d.toLocaleDateString("es-PE", {
+        year: "numeric",
+        month: "short",
+        day: "numeric"
+      });
+    }
+
+    function renderStats(){
+      const total = hcpData.length;
+      const totalVisits = hcpData.reduce((acc, h) => acc + h.visitas.length, 0);
+      const scores = hcpData.map(h => calculateScore(h));
+      const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+      const top = hcpData.filter(h => getSegment(calculateScore(h), h.interes, h.resistencia) === "Top Tier").length;
+
+      statTotal.textContent = total;
+      statVisits.textContent = totalVisits;
+      statAvg.textContent = avg;
+      statTop.textContent = top;
+    }
+
+    function renderTable(){
+      const q = searchInput.value.trim().toLowerCase();
+      const pref = filterPreferencia.value;
+      const seg = filterSegmento.value;
+
+      const filtered = hcpData.filter(h => {
+        const score = calculateScore(h);
+        const segment = getSegment(score, h.interes, h.resistencia);
+        const matchesText =
+          h.nombre.toLowerCase().includes(q) ||
+          h.especialidad.toLowerCase().includes(q);
+
+        const matchesPref = !pref || h.preferencia === pref;
+        const matchesSeg = !seg || segment === seg;
+
+        return matchesText && matchesPref && matchesSeg;
+      });
+
+      tableBody.innerHTML = "";
+
+      if(!filtered.length){
+        tableBody.innerHTML = `
+          <tr>
+            <td colspan="10" class="empty">No hay registros que coincidan con los filtros.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(h => {
+        const score = calculateScore(h);
+        const segment = getSegment(score, h.interes, h.resistencia);
+        const frequency = getFrequency(h);
+
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>
+            <strong>${escapeHtml(h.nombre)}</strong><br>
+            <span class="small">${escapeHtml(h.observaciones || "Sin observaciones")}</span>
+          </td>
+          <td>${escapeHtml(h.especialidad)}</td>
+          <td>${renderScaleText(h.prescripcion)}</td>
+          <td>${getBadgeForInfluence(h.influencia)}</td>
+          <td><span class="${getBadgeForPreference(h.preferencia)}">${escapeHtml(h.preferencia)}</span></td>
+          <td>${frequency}</td>
+          <td>${renderScaleText(h.resistencia)}</td>
+          <td><strong>${score}</strong></td>
+          <td><span class="${getBadgeForSegment(segment)}">${segment}</span></td>
+          <td>
+            <div class="row-actions">
+              <button class="mini-btn view" onclick="selectHCP('${h.id}')">Ver ficha</button>
+              <button class="mini-btn visit" onclick="quickVisit('${h.id}')">+ Visita</button>
+              <button class="mini-btn delete" onclick="deleteHCP('${h.id}')">Eliminar</button>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function renderScaleText(value){
+      const v = Number(value);
+      if(v === 1) return "Muy baja";
+      if(v === 2) return "Baja";
+      if(v === 3) return "Moderada";
+      if(v === 4) return "Alta";
+      if(v === 5) return "Muy alta";
+      return value;
+    }
+
+    function renderPrescriptionText(value){
+      const v = Number(value);
+      if(v === 1) return "Baja";
+      if(v === 2) return "Media";
+      if(v === 3) return "Alta";
+      if(v === 4) return "Muy alta";
+      if(v === 5) return "Líder prescriptor";
+      return value;
+    }
+
+    function renderInterestText(value){
+      const v = Number(value);
+      if(v === 1) return "Muy bajo";
+      if(v === 2) return "Bajo";
+      if(v === 3) return "Moderado";
+      if(v === 4) return "Alto";
+      if(v === 5) return "Muy alto";
+      return value;
+    }
+
+    function renderDetail(){
+      const hcp = hcpData.find(h => h.id === selectedId);
+
+      if(!hcp){
+        detailPanel.innerHTML = `<div class="empty">Selecciona un médico para ver su ficha detallada.</div>`;
+        return;
+      }
+
+      const score = calculateScore(hcp);
+      const segment = getSegment(score, hcp.interes, hcp.resistencia);
+      const frequency = getFrequency(hcp);
+      const priority = getPriorityRecommendation(segment, hcp.preferencia);
+
+      detailPanel.innerHTML = `
+        <div class="detail-box">
+          <h4>${escapeHtml(hcp.nombre)}</h4>
+          <div class="detail-item"><span>Especialidad</span><strong>${escapeHtml(hcp.especialidad)}</strong></div>
+          <div class="detail-item"><span>Prescripción</span><strong>${renderPrescriptionText(hcp.prescripcion)}</strong></div>
+          <div class="detail-item"><span>Interés</span><strong>${renderInterestText(hcp.interes)}</strong></div>
+          <div class="detail-item"><span>Influencia</span><strong>${getInfluenceLabel(hcp.influencia)}</strong></div>
+          <div class="detail-item"><span>Preferencia</span><strong>${escapeHtml(hcp.preferencia)}</strong></div>
+          <div class="detail-item"><span>Resistencia</span><strong>${renderScaleText(hcp.resistencia)}</strong></div>
+          <div class="detail-item"><span>Frecuencia actual</span><strong>${frequency}</strong></div>
+          <div class="detail-item"><span>Score HCP</span><strong>${score}</strong></div>
+          <div class="detail-item"><span>Segmento</span><strong>${segment}</strong></div>
+          <div class="detail-item"><span>Recomendación</span><strong>${priority}</strong></div>
+        </div>
+
+        <div class="detail-box">
+          <h4>Lectura estratégica</h4>
+          <p class="small" style="line-height:1.65; color:#d8e3f5; font-size:13px;">
+            Este médico presenta un valor estructural calculado mediante la relación entre frecuencia de contacto,
+            capacidad prescriptora e influencia profesional, descontando el nivel de resistencia comercial.
+            El objetivo es facilitar una priorización más objetiva del stakeholder y orientar la frecuencia,
+            canal y profundidad de la visita médica.
+          </p>
+          <div class="formula">
+            <strong>Fórmula activa:</strong><br>
+            (${frequency} × ${Number(hcp.prescripcion)} × ${Number(hcp.influencia)}) − ${Number(hcp.resistencia)} = <strong>${score}</strong>
+          </div>
+        </div>
+
+        <div class="detail-box">
+          <h4>Registrar visita</h4>
+          <form id="visitForm">
+            <div class="form-grid">
+              <div>
+                <label for="visitChannel">Canal</label>
+                <select id="visitChannel" required>
+                  <option value="">Seleccionar</option>
+                  <option>Presencial</option>
+                  <option>Digital</option>
+                  <option>Mixto</option>
+                </select>
+              </div>
+              <div>
+                <label for="visitOutcome">Resultado</label>
+                <select id="visitOutcome" required>
+                  <option value="">Seleccionar</option>
+                  <option>Alta receptividad</option>
+                  <option>Interés moderado</option>
+                  <option>Objeciones relevantes</option>
+                  <option>Seguimiento pendiente</option>
+                </select>
+              </div>
+              <div>
+                <label for="visitNote">Nota de visita</label>
+                <textarea id="visitNote" placeholder="Ej. Solicitó evidencia comparativa, mostró apertura a seguimiento digital." required></textarea>
+              </div>
+              <button type="submit" class="primary">Guardar visita</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="detail-box">
+          <h4>Historial de visitas</h4>
+          <div class="history-list">
+            ${hcp.visitas.length ? hcp.visitas.slice().reverse().map(v => `
+              <div class="history-item">
+                <div class="top">
+                  <strong>${escapeHtml(v.outcome)}</strong>
+                  <span class="date">${formatDate(v.date)}</span>
+                </div>
+                <div class="note">${escapeHtml(v.note)}</div>
+                <div class="meta">Canal: ${escapeHtml(v.channel)}</div>
+              </div>
+            `).join("") : `<div class="empty">No hay visitas registradas.</div>`}
+          </div>
+        </div>
+      `;
+
+      const visitForm = document.getElementById("visitForm");
+      visitForm.addEventListener("submit", function(e){
+        e.preventDefault();
+
+        const channel = document.getElementById("visitChannel").value;
+        const outcome = document.getElementById("visitOutcome").value;
+        const note = document.getElementById("visitNote").value.trim();
+
+        if(!channel || !outcome || !note) return;
+
+        hcp.visitas.push({
+          date: new Date().toISOString(),
+          channel,
+          outcome,
+          note
+        });
+
+        saveData();
+        renderAll();
+      });
+    }
+
+    function renderAll(){
+      renderStats();
+      renderTable();
+      renderDetail();
+    }
+
+    function createHCP(obj){
+      return {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+        nombre: obj.nombre,
+        especialidad: obj.especialidad,
+        prescripcion: obj.prescripcion,
+        interes: obj.interes,
+        influencia: obj.influencia,
+        resistencia: obj.resistencia,
+        preferencia: obj.preferencia,
+        frecuenciaInicial: obj.frecuenciaInicial,
+        observaciones: obj.observaciones || "",
+        visitas: []
+      };
+    }
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+
+      const newHCP = createHCP({
+        nombre: document.getElementById("nombre").value.trim(),
+        especialidad: document.getElementById("especialidad").value,
+        prescripcion: document.getElementById("prescripcion").value,
+        interes: document.getElementById("interes").value,
+        influencia: document.getElementById("influencia").value,
+        resistencia: document.getElementById("resistencia").value,
+        preferencia: document.getElementById("preferencia").value,
+        frecuenciaInicial: document.getElementById("frecuenciaInicial").value,
+        observaciones: document.getElementById("observaciones").value.trim()
+      });
+
+      hcpData.unshift(newHCP);
+      saveData();
+      form.reset();
+      selectedId = newHCP.id;
+      renderAll();
+    });
+
+    searchInput.addEventListener("input", renderTable);
+    filterPreferencia.addEventListener("change", renderTable);
+    filterSegmento.addEventListener("change", renderTable);
+
+    seedBtn.addEventListener("click", function(){
+      if(hcpData.length){
+        const ok = confirm("Ya existen registros. ¿Deseas agregar la demo igualmente?");
+        if(!ok) return;
+      }
+
+      const demo = [
+        {
+          nombre:"Dra. Ana Ruiz",
+          especialidad:"Cardiología",
+          prescripcion:"5",
+          interes:"5",
+          influencia:"3",
+          resistencia:"2",
+          preferencia:"Presencial",
+          frecuenciaInicial:"3",
+          observaciones:"Alta sensibilidad a evidencia clínica y comparativos de eficacia."
+        },
+        {
+          nombre:"Dr. Luis Paredes",
+          especialidad:"Neurología",
+          prescripcion:"4",
+          interes:"4",
+          influencia:"2",
+          resistencia:"3",
+          preferencia:"Mixto",
+          frecuenciaInicial:"2",
+          observaciones:"Interesado en innovación terapéutica, requiere seguimiento técnico."
+        },
+        {
+          nombre:"Dra. Valeria Soto",
+          especialidad:"Endocrinología",
+          prescripcion:"3",
+          interes:"3",
+          influencia:"1",
+          resistencia:"2",
+          preferencia:"Digital",
+          frecuenciaInicial:"1",
+          observaciones:"Buena respuesta a materiales digitales y recordatorios estructurados."
+        }
+      ].map(createHCP);
+
+      demo[0].visitas.push(
+        { date:new Date().toISOString(), channel:"Presencial", outcome:"Alta receptividad", note:"Solicitó evidencia comparativa y nueva visita." },
+        { date:new Date().toISOString(), channel:"Mixto", outcome:"Seguimiento pendiente", note:"Quedó pendiente revisar material técnico." }
+      );
+
+      demo[1].visitas.push(
+        { date:new Date().toISOString(), channel:"Digital", outcome:"Interés moderado", note:"Aceptó seguimiento con resumen clínico." }
+      );
+
+      hcpData = [...demo, ...hcpData];
+      saveData();
+      selectedId = demo[0].id;
+      renderAll();
+    });
+
+    clearBtn.addEventListener("click", function(){
+      const ok = confirm("Esto eliminará todos los HCP y visitas registradas. ¿Deseas continuar?");
+      if(!ok) return;
+      hcpData = [];
+      selectedId = null;
+      saveData();
+      renderAll();
+    });
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    window.selectHCP = function(id){
+      selectedId = id;
+      renderDetail();
+    }
+
+    window.deleteHCP = function(id){
+      const hcp = hcpData.find(h => h.id === id);
+      if(!hcp) return;
+      const ok = confirm(`¿Eliminar a ${hcp.nombre}?`);
+      if(!ok) return;
+      hcpData = hcpData.filter(h => h.id !== id);
+      if(selectedId === id) selectedId = null;
+      saveData();
+      renderAll();
+    }
+
+    window.quickVisit = function(id){
+      const hcp = hcpData.find(h => h.id === id);
+      if(!hcp) return;
+
+      hcp.visitas.push({
+        date: new Date().toISOString(),
+        channel: hcp.preferencia,
+        outcome: "Seguimiento pendiente",
+        note: "Registro rápido de contacto comercial."
+      });
+
+      selectedId = id;
+      saveData();
+      renderAll();
+    }
+
+    loadData();
+    renderAll();
+  </script>
+</body>
+</html>

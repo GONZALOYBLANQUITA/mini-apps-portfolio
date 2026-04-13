@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ApexInsight Analytics Platform</title>
+  <style>
+    :root{
+      --bg:#07111f;
+      --bg2:#0d1828;
+      --panel:#0f1d31;
+      --panel2:#12243b;
+      --line:#233754;
+      --text:#eff6ff;
+      --muted:#9db0c7;
+      --accent:#27c7d8;
+      --accent2:#60dbff;
+      --green:#22c55e;
+      --amber:#f59e0b;
+      --violet:#8b5cf6;
+      --red:#ef4444;
+      --blue:#3b82f6;
+      --shadow:0 20px 56px rgba(0,0,0,.28);
+      --r:22px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#081322 30%,#09111c 100%);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+    .app{display:grid;grid-template-columns:280px 1fr;min-height:100vh}
+    .sidebar{background:linear-gradient(180deg,#091423,#0b1728);border-right:1px solid var(--line);padding:22px 18px;position:sticky;top:0;height:100vh}
+    .brand{font-size:22px;font-weight:800;letter-spacing:-.02em}.brand span{color:var(--accent2)}
+    .brand-sub{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+    .nav{margin-top:26px;display:grid;gap:10px}
+    .nav button{width:100%;text-align:left;padding:14px 14px;border-radius:14px;border:1px solid transparent;background:transparent;color:#d4e5f7;font-weight:700;cursor:pointer}
+    .nav button.active{background:#14243b;border-color:var(--line);color:#fff}
+    .side-card{margin-top:20px;background:#0d1a2d;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .side-card .h{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.side-card .v{margin-top:8px;font-size:14px;line-height:1.6}
+    .main{padding:24px}
+    .hero{background:linear-gradient(135deg,#0a1628 0%, #0f2036 60%, #11344b 100%);border:1px solid var(--line);border-radius:28px;padding:28px;box-shadow:var(--shadow)}
+    .pills{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:8px 12px;border-radius:999px;background:#12223a;border:1px solid var(--line);font-size:12px;color:#d7ecff}
+    h1{margin:12px 0 10px;font-size:40px;line-height:1.02;letter-spacing:-.025em}
+    .sub{color:var(--muted);font-size:15px;line-height:1.75;max-width:980px}
+    .hero-grid{display:grid;grid-template-columns:1.45fr .85fr;gap:18px;align-items:start}
+    .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+    .section{padding:20px}
+    .cards{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:18px}
+    .kpi{padding:18px}.kpi .l{font-size:12px;color:var(--muted)}.kpi .v{font-size:30px;font-weight:800;margin-top:8px}.kpi .n{font-size:12px;color:#8298b4;margin-top:6px;line-height:1.45}
+    .view{display:none}.view.active{display:block}
+    .grid-2{display:grid;grid-template-columns:1.08fr .92fr;gap:18px}.grid-eq{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .title{font-size:18px;font-weight:800;margin:0 0 14px}.muted{color:var(--muted)}
+    .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-bottom:14px}.toolbar .grow{flex:1;min-width:220px}
+    input,select,textarea{width:100%;background:#0b182b;border:1px solid var(--line);color:#fff;padding:13px 14px;border-radius:14px;font:inherit;outline:none}
+    textarea{min-height:96px;resize:vertical}
+    .btn{border:none;background:linear-gradient(90deg,var(--accent),#14b6d0);color:#07202a;padding:13px 16px;border-radius:14px;font-weight:800;cursor:pointer}
+    .btn.secondary{background:#13243c;color:#fff;border:1px solid var(--line)}
+    .mini{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:16px}.mini .h{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.mini .v{margin-top:8px;line-height:1.6}
+    .metric{background:#0d1a2d;border:1px solid var(--line);border-radius:14px;padding:12px}.metric .row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}.progress{height:8px;background:#1b2b44;border-radius:999px;overflow:hidden;margin-top:10px}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:999px}
+    .table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.table th{color:var(--muted)}.table td{color:#e8f3ff}
+    .badge{display:inline-block;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800}.b-blue{background:#133c75;color:#dbeafe}.b-green{background:#166534;color:#dcfce7}.b-amber{background:#7c4a03;color:#ffefc6}.b-violet{background:#5b21b6;color:#efe5ff}.b-red{background:#7f1d1d;color:#fee2e2}.b-slate{background:#334155;color:#f8fafc}
+    .list{display:grid;gap:12px}.item{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.name{font-weight:800;font-size:16px}.meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.5}
+    .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+    .bars{height:320px;display:flex;align-items:flex-end;gap:18px;padding:14px 8px 8px}.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}.bar{width:54px;border-radius:16px 16px 4px 4px;background:linear-gradient(180deg,var(--accent2),var(--accent));box-shadow:0 10px 24px rgba(30,200,215,.25)}.bar-v{font-size:12px;margin-bottom:8px;color:#cffafe}.bar-l{font-size:12px;text-align:center;color:var(--muted);margin-top:8px}
+    .journey{display:grid;gap:12px}.step{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:16px}.flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.arrow{color:var(--muted);font-size:18px}
+    .line-chart{height:300px;padding-top:8px}.funnel{display:grid;gap:12px}.fun{border-radius:14px;padding:12px 14px;font-weight:800}.f1{background:#18314a}.f2{background:#15405f}.f3{background:#135274}.f4{background:#126889}.f5{background:#0f7e97}
+    .footer{margin-top:18px;padding:16px 18px;border-radius:18px;background:#0d1a2d;border:1px solid var(--line);color:var(--muted);font-size:14px;line-height:1.6}
+    @media (max-width:1200px){.app{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--line)}.hero-grid,.grid-2,.grid-eq,.grid-3{grid-template-columns:1fr}.cards{grid-template-columns:repeat(3,1fr)}.metrics{grid-template-columns:1fr 1fr}}
+    @media (max-width:760px){.main{padding:16px}.cards{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}h1{font-size:30px}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">Apex<span>Insight</span></div>
+      <div class="brand-sub">Motor de analítica comercial y clínica orientado a decisiones estratégicas basadas en datos.</div>
+      <div class="nav">
+        <button class="active" data-view="overview">Overview</button>
+        <button data-view="find">Find</button>
+        <button data-view="activate">Activate</button>
+        <button data-view="measure">Measure</button>
+        <button data-view="orchestration">Journeys</button>
+      </div>
+      <div class="side-card">
+        <div class="h">Integrated Analytics</div>
+        <div class="v">Datos integrados, análisis desde el día uno, activación de campo y priorización de HCPs y pacientes.</div>
+      </div>
+      <div class="side-card">
+        <div class="h">Portfolio angle</div>
+        <div class="v">La app no simula solo reportes. Simula una capa analítica que transforma datos en acción comercial.</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div class="hero-grid">
+          <div>
+            <div class="pills">
+              <span class="pill">Find</span>
+              <span class="pill">Activate</span>
+              <span class="pill">Measure</span>
+              <span class="pill">Patient Analytics</span>
+              <span class="pill">Better Segmentation</span>
+              <span class="pill">Journeys & Orchestration</span>
+            </div>
+            <h1>Plataforma de Analytics Comercial y Clínico</h1>
+            <div class="sub">Prototipo analítico centrado en convertir datos integrados en decisiones de campo: identificar oportunidades, segmentar HCPs, activar acciones de alto impacto y medir resultados mediante un flujo estructurado tipo <strong>Find, Activate, Measure</strong>.</div>
+          </div>
+          <div class="card section">
+            <div class="mini">
+              <div class="h">Strategic intent</div>
+              <div class="v">Mostrar una capa de commercial analytics que prioriza HCPs, pacientes y oportunidades con sugerencias accionables para field teams.</div>
+            </div>
+            <div class="mini" style="margin-top:12px">
+              <div class="h">Source logic</div>
+              <div class="v">Arquitectura analítica orientada a combinar datos, segmentación y activación táctica para acelerar decisiones con valor comercial.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cards" id="kpis"></section>
+
+      <section class="view active" id="overview">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Oportunidad por territorio</div>
+            <div class="bars" id="territoryBars"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Embudo Find → Activate → Measure</div>
+            <div class="funnel" id="funnel"></div>
+          </div>
+        </div>
+        <div class="grid-eq" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Tendencia de engagement</div>
+            <div class="line-chart">
+              <svg width="100%" height="100%" viewBox="0 0 520 260" preserveAspectRatio="none">
+                <polyline fill="none" stroke="#223552" stroke-width="1" points="40,30 40,220 490,220"></polyline>
+                <polyline fill="none" stroke="#22d3ee" stroke-width="4" points="70,188 170,162 270,126 370,94 450,72"></polyline>
+                <circle cx="70" cy="188" r="5" fill="#22d3ee"></circle><circle cx="170" cy="162" r="5" fill="#22d3ee"></circle><circle cx="270" cy="126" r="5" fill="#22d3ee"></circle><circle cx="370" cy="94" r="5" fill="#22d3ee"></circle><circle cx="450" cy="72" r="5" fill="#22d3ee"></circle>
+                <text x="62" y="242" fill="#9db0c7" font-size="12">M1</text><text x="162" y="242" fill="#9db0c7" font-size="12">M2</text><text x="262" y="242" fill="#9db0c7" font-size="12">M3</text><text x="362" y="242" fill="#9db0c7" font-size="12">M4</text><text x="442" y="242" fill="#9db0c7" font-size="12">M5</text>
+              </svg>
+            </div>
+          </div>
+          <div class="card section">
+            <div class="title">Next Best Opportunities</div>
+            <div class="list" id="opportunityList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="find">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="toolbar">
+              <div class="grow"><input id="searchHcp" placeholder="Buscar HCP o institución" /></div>
+              <div style="min-width:190px"><select id="segmentFilter"><option value="all">Todos los segmentos</option><option value="KOL">KOL</option><option value="Growth">Growth</option><option value="Access Risk">Access Risk</option></select></div>
+            </div>
+            <div class="title">Better segmentation</div>
+            <div class="list" id="hcpList"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Patient analytics</div>
+            <table class="table">
+              <thead><tr><th>Patient cohort</th><th>Volume</th><th>Referral leakage</th><th>Opportunity</th></tr></thead>
+              <tbody id="patientTable"></tbody>
+            </table>
+            <div class="footer" style="margin-top:14px;">El módulo de patient analytics permite comprender el recorrido del paciente, identificando puntos de fuga, oportunidades de intervención y patrones clínicos relevantes.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="activate">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Field activation queue</div>
+            <div class="list" id="activationQueue"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Suggested actions engine</div>
+            <div class="list" id="actionEngine"></div>
+            <div class="footer">El motor de activación está diseñado para reducir la fricción entre análisis y ejecución, empujando acciones directamente hacia los equipos de campo.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="measure">
+        <div class="grid-eq" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Campaign & field performance</div>
+            <table class="table">
+              <thead><tr><th>Metric</th><th>Current</th><th>Target</th><th>Status</th></tr></thead>
+              <tbody id="measureTable"></tbody>
+            </table>
+          </div>
+          <div class="card section">
+            <div class="title">Impact dashboard</div>
+            <div class="list" id="impactList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="orchestration">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Journey orchestration</div>
+            <div class="journey" id="journeyList"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Channel sequencing planner</div>
+            <div class="list" id="channelPlan"></div>
+            <div class="footer">El módulo de journeys permite diseñar secuencias de interacción optimizadas, asegurando que el mensaje correcto llegue en el momento adecuado.</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">Plataforma conceptual de analytics orientada a la identificación de oportunidades, activación de campo y medición de impacto en entornos clínico-comerciales.</div>
+    </main>
+  </div>
+
+  <script>
+    const hcpData = [
+      {name:'Dra. Ana Mendoza', institution:'Clínica San Gabriel', territory:'Lima Centro', segment:'KOL', score:91, scientific:95, access:74, patientFit:88, nba:'Follow-up with safety deck', status:'High Priority'},
+      {name:'Dr. Luis Paredes', institution:'Hospital Central', territory:'Lima Oeste', segment:'Growth', score:73, scientific:70, access:58, patientFit:76, nba:'Activate digital evidence touchpoint', status:'Growing'},
+      {name:'Dra. Pilar Rojas', institution:'Centro Médico Norte', territory:'Lima Norte', segment:'KOL', score:89, scientific:86, access:84, patientFit:91, nba:'Schedule advisory-style interaction', status:'High Priority'},
+      {name:'Dr. Ricardo Salvatierra', institution:'Red Salud Sur', territory:'Lima Sur', segment:'Access Risk', score:54, scientific:52, access:38, patientFit:60, nba:'Low-friction first contact', status:'Watchlist'}
+    ];
+
+    const patientCohorts = [
+      {cohort:'Early diagnosis candidates', volume:420, leakage:'18%', opp:'High'},
+      {cohort:'Referral drop-off patients', volume:280, leakage:'27%', opp:'High'},
+      {cohort:'Treatment-switch population', volume:190, leakage:'12%', opp:'Medium'},
+      {cohort:'Long-term stable users', volume:310, leakage:'6%', opp:'Maintenance'}
+    ];
+
+    const territories = [
+      {name:'Lima Centro', value:84},
+      {name:'Lima Norte', value:79},
+      {name:'Lima Oeste', value:66},
+      {name:'Lima Sur', value:48}
+    ];
+
+    const opportunities = [
+      {title:'High-fit neurologists with untreated referral leakage', detail:'13 HCPs · Lima Centro · next action: activate evidence touchpoint', badge:'b-green'},
+      {title:'Growth accounts with medium scientific fit', detail:'21 HCPs · Lima Oeste · next action: sequence digital + rep follow-up', badge:'b-blue'},
+      {title:'Access-risk accounts needing low-friction entry', detail:'8 HCPs · Lima Sur · next action: short-form interaction and scheduling', badge:'b-amber'}
+    ];
+
+    const activationQueue = [
+      {hcp:'Dra. Ana Mendoza', action:'Send safety/adherence brief', channel:'Email + rep follow-up', priority:'Immediate'},
+      {hcp:'Dra. Pilar Rojas', action:'Invite to focused scientific discussion', channel:'Virtual scientific exchange', priority:'Immediate'},
+      {hcp:'Dr. Luis Paredes', action:'Push digital evidence summary', channel:'Remote touchpoint', priority:'This week'},
+      {hcp:'Dr. Ricardo Salvatierra', action:'Secure access window', channel:'Short in-person ask', priority:'Planned'}
+    ];
+
+    const actionEngine = [
+      {title:'Segment-informed targeting', detail:'Blend scientific behavior and clinical practice signals to prioritize who matters most.'},
+      {title:'Patient-pathway trigger', detail:'Escalate HCPs linked to high referral leakage cohorts.'},
+      {title:'Real-time suggestion push', detail:'Deliver next best action directly to field execution queues.'}
+    ];
+
+    const measureMetrics = [
+      {metric:'HCP prioritization coverage', current:'82%', target:'90%', status:'On track'},
+      {metric:'Field action adoption', current:'71%', target:'80%', status:'Improving'},
+      {metric:'Digital follow-up completion', current:'64%', target:'75%', status:'Needs lift'},
+      {metric:'Patient opportunity conversion', current:'18%', target:'24%', status:'Growth focus'}
+    ];
+
+    const impacts = [
+      {title:'Top-line activation', detail:'Focused field effort on highest-value HCPs.'},
+      {title:'Resource efficiency', detail:'Reduced wasted coverage on low-fit accounts.'},
+      {title:'Patient opportunity visibility', detail:'Earlier detection of referral and treatment gaps.'}
+    ];
+
+    const journeys = [
+      ['Signal detected','HCP identified','Opportunity appears in targeting layer'],
+      ['Segment confirmed','Action suggested','Best channel and message are selected'],
+      ['Field execution','Follow-up tracked','Action completion is measured'],
+      ['Impact measured','Model updated','Priorities refresh in near real time']
+    ];
+
+    const channelPlan = [
+      {step:'1', title:'Digital evidence touchpoint', detail:'Used for high scientific-fit HCPs with medium access.'},
+      {step:'2', title:'Rep follow-up', detail:'Triggered when engagement threshold is reached.'},
+      {step:'3', title:'Advisory / event invitation', detail:'Reserved for KOL-like profiles and strong patient-fit segments.'},
+      {step:'4', title:'Performance feedback loop', detail:'Feeds measure layer and updates future prioritization.'}
+    ];
+
+    function renderKpis(){
+      const kpis = [
+        ['Integrated data sets','12','Pre-integrated analytics foundation'],
+        ['Priority HCPs','34','High-value target universe'],
+        ['Patient cohorts','4','Modeled populations'],
+        ['Activation tasks','19','Field-ready next actions'],
+        ['Journey stages','4','Core orchestration sequence'],
+        ['Action adoption','71%','Field execution rate']
+      ];
+      document.getElementById('kpis').innerHTML = kpis.map(k=>`<div class="card kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="n">${k[2]}</div></div>`).join('');
+    }
+
+    function renderTerritoryBars(){
+      document.getElementById('territoryBars').innerHTML = territories.map(t=>`
+        <div class="bar-col">
+          <div class="bar-v">${t.value}</div>
+          <div class="bar" style="height:${Math.max(26,t.value*2.5)}px"></div>
+          <div class="bar-l">${t.name}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderFunnel(){
+      const rows = [
+        ['Find','1,240 records screened','f1'],
+        ['Prioritized HCPs','340 targeted','f2'],
+        ['Activated Actions','196 launched','f3'],
+        ['Qualified Engagements','121 completed','f4'],
+        ['Measured Impact','38 converted opportunities','f5']
+      ];
+      document.getElementById('funnel').innerHTML = rows.map(r=>`<div class="fun ${r[2]}"><div>${r[0]}</div><div style="font-size:13px;margin-top:6px;color:#d9f6ff;font-weight:600">${r[1]}</div></div>`).join('');
+    }
+
+    function renderOpportunities(){
+      document.getElementById('opportunityList').innerHTML = opportunities.map(o=>`<div class="item"><div class="top"><div><div class="name">${o.title}</div><div class="meta">${o.detail}</div></div><span class="badge ${o.badge}">Opportunity</span></div></div>`).join('');
+    }
+
+    function metricBox(label, value){
+      return `<div class="metric"><div class="row"><span>${label}</span><span>${value}/100</span></div><div class="progress"><span style="width:${value}%"></span></div></div>`;
+    }
+
+    function renderHcpList(){
+      const q = document.getElementById('searchHcp').value.toLowerCase();
+      const seg = document.getElementById('segmentFilter').value;
+      const filtered = hcpData.filter(h=>{
+        const text = `${h.name} ${h.institution}`.toLowerCase();
+        return text.includes(q) && (seg==='all' || h.segment===seg);
+      });
+      document.getElementById('hcpList').innerHTML = filtered.map(h=>`
+        <div class="item">
+          <div class="top">
+            <div>
+              <div class="name">${h.name}</div>
+              <div class="meta">${h.institution} · ${h.territory} · Segmento ${h.segment}</div>
+            </div>
+            <span class="badge ${h.status==='High Priority'?'b-green':h.status==='Growing'?'b-blue':'b-amber'}">${h.status}</span>
+          </div>
+          <div class="metrics">
+            ${metricBox('Opportunity Score',h.score)}
+            ${metricBox('Scientific Fit',h.scientific)}
+            ${metricBox('Patient Fit',h.patientFit)}
+          </div>
+          <div class="mini" style="margin-top:12px"><div class="h">Next Best Action</div><div class="v">${h.nba}</div></div>
+        </div>
+      `).join('');
+    }
+
+    function renderPatientTable(){
+      document.getElementById('patientTable').innerHTML = patientCohorts.map(p=>`<tr><td>${p.cohort}</td><td>${p.volume}</td><td>${p.leakage}</td><td>${p.opp}</td></tr>`).join('');
+    }
+
+    function renderActivationQueue(){
+      document.getElementById('activationQueue').innerHTML = activationQueue.map(a=>`<div class="item"><div class="top"><div><div class="name">${a.hcp}</div><div class="meta">${a.action}</div></div><span class="badge ${a.priority==='Immediate'?'b-red':a.priority==='This week'?'b-blue':'b-slate'}">${a.priority}</span></div><div class="meta" style="margin-top:10px">Channel: ${a.channel}</div></div>`).join('');
+    }
+
+    function renderActionEngine(){
+      document.getElementById('actionEngine').innerHTML = actionEngine.map(a=>`<div class="item"><div class="name">${a.title}</div><div class="meta">${a.detail}</div></div>`).join('');
+    }
+
+    function renderMeasureTable(){
+      document.getElementById('measureTable').innerHTML = measureMetrics.map(m=>`<tr><td>${m.metric}</td><td>${m.current}</td><td>${m.target}</td><td>${m.status}</td></tr>`).join('');
+    }
+
+    function renderImpactList(){
+      document.getElementById('impactList').innerHTML = impacts.map(i=>`<div class="item"><div class="name">${i.title}</div><div class="meta">${i.detail}</div></div>`).join('');
+    }
+
+    function renderJourneys(){
+      document.getElementById('journeyList').innerHTML = journeys.map(j=>`<div class="step"><div class="flow"><span class="badge b-blue">${j[0]}</span><span class="arrow">→</span><span class="badge b-amber">${j[1]}</span></div><div class="meta" style="margin-top:10px">${j[2]}</div></div>`).join('');
+    }
+
+    function renderChannelPlan(){
+      document.getElementById('channelPlan').innerHTML = channelPlan.map(c=>`<div class="item"><div class="top"><div><div class="name">Step ${c.step} · ${c.title}</div><div class="meta">${c.detail}</div></div><span class="badge b-violet">Sequence</span></div></div>`).join('');
+    }
+
+    function bindNav(){
+      document.querySelectorAll('.nav button').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+          document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.dataset.view).classList.add('active');
+        });
+      });
+    }
+
+    function bindFilters(){
+      document.getElementById('searchHcp').addEventListener('input', renderHcpList);
+      document.getElementById('segmentFilter').addEventListener('change', renderHcpList);
+    }
+
+    function renderAll(){
+      renderKpis();
+      renderTerritoryBars();
+      renderFunnel();
+      renderOpportunities();
+      renderHcpList();
+      renderPatientTable();
+      renderActivationQueue();
+      renderActionEngine();
+      renderMeasureTable();
+      renderImpactList();
+      renderJourneys();
+      renderChannelPlan();
+    }
+
+    bindNav();
+    bindFilters();
+    renderAll();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PATIENT RISK PREDICTOR</title>
+  <style>
+    :root{
+      --bg:#0a1220;
+      --bg-2:#0f1b2d;
+      --panel:#132238;
+      --panel-2:#172b45;
+      --line:rgba(255,255,255,.08);
+      --text:#e9f1fb;
+      --muted:#9fb2c9;
+      --accent:#58c4dc;
+      --accent-2:#88d498;
+      --warn:#f3c66b;
+      --danger:#ef6b73;
+      --shadow:0 18px 40px rgba(0,0,0,.28);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      background:linear-gradient(180deg,var(--bg) 0%, #0c1728 100%);
+      color:var(--text);
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+    }
+
+    body{min-height:100vh}
+
+    .app{
+      width:min(1480px,95vw);
+      margin:24px auto 40px;
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:18px;
+    }
+
+    .sidebar,
+    .panel{
+      background:linear-gradient(180deg,var(--panel) 0%, #0f1d30 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .sidebar{
+      padding:18px;
+      position:sticky;
+      top:16px;
+      height:fit-content;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding-bottom:16px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:16px;
+    }
+
+    .logo{
+      width:54px;
+      height:54px;
+      border-radius:16px;
+      background:radial-gradient(circle at 30% 30%, rgba(88,196,220,.95), rgba(88,196,220,.18) 58%, rgba(136,212,152,.12) 100%);
+      display:grid;
+      place-items:center;
+      color:#08202c;
+      font-weight:900;
+      font-size:18px;
+      box-shadow:inset 0 0 14px rgba(255,255,255,.18), 0 12px 26px rgba(88,196,220,.14);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      line-height:1.1;
+      letter-spacing:.4px;
+    }
+
+    .brand p{
+      margin:5px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .nav{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .nav button{
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      border-radius:14px;
+      padding:12px 14px;
+      text-align:left;
+      font-weight:700;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+
+    .nav button:hover,
+    .nav button.active{
+      background:linear-gradient(90deg, rgba(88,196,220,.16), rgba(136,212,152,.07));
+      border-color:rgba(88,196,220,.34);
+      transform:translateY(-1px);
+    }
+
+    .side-card{
+      margin-top:16px;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    .side-card h3{
+      margin:0 0 8px;
+      font-size:14px;
+    }
+
+    .side-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.65;
+    }
+
+    .footer-note{
+      margin-top:18px;
+      padding-top:12px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .main{
+      display:grid;
+      gap:18px;
+    }
+
+    .hero{
+      padding:22px;
+      display:grid;
+      grid-template-columns:1.45fr 1fr;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    .hero h2{
+      margin:0 0 10px;
+      font-size:28px;
+      letter-spacing:.2px;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      max-width:760px;
+    }
+
+    .hero-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .tag{
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      font-size:12px;
+      color:#dbe8f8;
+    }
+
+    .hero-kpis{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+    }
+
+    .kpi{
+      padding:15px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+      min-height:108px;
+    }
+
+    .kpi .label{
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:10px;
+    }
+
+    .kpi .value{
+      font-size:28px;
+      font-weight:900;
+      line-height:1;
+      margin-bottom:8px;
+    }
+
+    .kpi .sub{
+      color:#c8d7e8;
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+    }
+
+    .panel{padding:18px}
+
+    .panel h3{
+      margin:0 0 6px;
+      font-size:18px;
+    }
+
+    .subhead{
+      margin:0 0 18px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    .field{
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    .field label{
+      display:block;
+      margin-bottom:10px;
+      font-size:12px;
+      font-weight:800;
+      color:#dbe8f8;
+      letter-spacing:.2px;
+    }
+
+    .field small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      margin-top:8px;
+      line-height:1.55;
+    }
+
+    .field input[type="text"],
+    .field input[type="number"],
+    .field select,
+    .field textarea{
+      width:100%;
+      background:#0a1626;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+      font-size:14px;
+    }
+
+    .field textarea{
+      min-height:86px;
+      resize:vertical;
+    }
+
+    .slider-wrap{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--accent);
+      cursor:pointer;
+    }
+
+    .slider-value{
+      min-width:52px;
+      text-align:center;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#0a1626;
+      font-weight:800;
+      font-size:13px;
+      color:#def0fb;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    button.primary,
+    button.secondary,
+    button.danger{
+      border:none;
+      padding:12px 16px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:900;
+      letter-spacing:.2px;
+      transition:.2s ease;
+    }
+
+    button.primary{
+      background:linear-gradient(90deg,var(--accent),#6fd9e6);
+      color:#06212a;
+    }
+
+    button.secondary{
+      background:rgba(255,255,255,.08);
+      color:var(--text);
+      border:1px solid var(--line);
+    }
+
+    button.danger{
+      background:linear-gradient(90deg,#ef6b73,#ff9097);
+      color:#2f080d;
+    }
+
+    button.primary:hover,
+    button.secondary:hover,
+    button.danger:hover{
+      transform:translateY(-1px);
+    }
+
+    .score-boxes{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .score-card{
+      padding:16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+    }
+
+    .score-card h4{
+      margin:0 0 10px;
+      font-size:14px;
+      color:#deebfa;
+    }
+
+    .big{
+      font-size:34px;
+      font-weight:900;
+      line-height:1;
+      margin-bottom:10px;
+    }
+
+    .bar{
+      width:100%;
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.06);
+      margin:10px 0 8px;
+    }
+
+    .fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      transition:width .35s ease;
+      background:linear-gradient(90deg,var(--accent-2), var(--warn), var(--danger));
+    }
+
+    .mini{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .reading-box{
+      margin-top:14px;
+      padding:16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    .reading-box h4{
+      margin:0 0 10px;
+      font-size:15px;
+    }
+
+    .reading-box ul{
+      margin:0;
+      padding-left:18px;
+      color:#e2edf8;
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .drivers{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .driver{
+      display:grid;
+      grid-template-columns:170px 1fr 50px;
+      gap:10px;
+      align-items:center;
+    }
+
+    .driver-name{
+      font-size:13px;
+      font-weight:700;
+      color:#ddeafb;
+    }
+
+    .driver-bar{
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .driver-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#58c4dc,#88d498);
+    }
+
+    .driver-score{
+      text-align:right;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:800;
+    }
+
+    .risk-states{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .state{
+      padding:14px 10px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      text-align:center;
+      min-height:118px;
+    }
+
+    .state .id{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:8px;
+      letter-spacing:.4px;
+    }
+
+    .state .title{
+      font-size:14px;
+      font-weight:800;
+      margin-bottom:8px;
+    }
+
+    .state .desc{
+      font-size:12px;
+      color:#d5e4f4;
+      line-height:1.5;
+    }
+
+    .state.active{
+      border-color:rgba(88,196,220,.42);
+      background:linear-gradient(180deg, rgba(88,196,220,.13), rgba(136,212,152,.05));
+      box-shadow:0 0 0 1px rgba(88,196,220,.2) inset, 0 14px 26px rgba(88,196,220,.10);
+    }
+
+    .trajectory{
+      margin-top:12px;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      font-size:14px;
+      line-height:1.7;
+      color:#e5eef9;
+    }
+
+    .table-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:center;
+      margin-bottom:14px;
+    }
+
+    .table-top p{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .search{
+      width:min(320px,100%);
+    }
+
+    .search input{
+      width:100%;
+      background:#0a1626;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+      font-size:14px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+    }
+
+    thead th{
+      text-align:left;
+      padding:12px 10px;
+      font-size:12px;
+      color:#c9d8ea;
+      background:rgba(255,255,255,.03);
+      border-bottom:1px solid var(--line);
+    }
+
+    tbody td{
+      padding:12px 10px;
+      font-size:13px;
+      color:#edf4fc;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      vertical-align:top;
+    }
+
+    tbody tr:hover{
+      background:rgba(255,255,255,.025);
+    }
+
+    .chip{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      font-size:11px;
+      font-weight:900;
+    }
+
+    .chip.low{background:rgba(136,212,152,.12); color:#c8f1d1}
+    .chip.medium{background:rgba(243,198,107,.12); color:#ffe0a6}
+    .chip.high{background:rgba(239,107,115,.12); color:#ffc5ca}
+    .chip.critical{background:rgba(239,107,115,.18); color:#ffd5d9}
+
+    .hidden{display:none !important}
+    .muted{color:var(--muted)}
+
+    @media (max-width:1180px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative; top:auto}
+      .hero{grid-template-columns:1fr}
+      .grid{grid-template-columns:1fr}
+      .risk-states{grid-template-columns:repeat(2,1fr)}
+    }
+
+    @media (max-width:760px){
+      .form-grid{grid-template-columns:1fr}
+      .hero-kpis{grid-template-columns:1fr 1fr}
+      .score-boxes{grid-template-columns:1fr}
+      .driver{grid-template-columns:1fr}
+      .risk-states{grid-template-columns:1fr}
+      .table-top{flex-direction:column; align-items:flex-start}
+      .search{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">PRP</div>
+        <div>
+          <h1>PATIENT RISK PREDICTOR</h1>
+          <p>Evaluación clínica de riesgo, lectura operativa y recomendaciones de intervención</p>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="active" data-view="dashboardView">Dashboard clínico</button>
+        <button data-view="casesView">Panel de casos</button>
+      </div>
+
+      <div class="side-card">
+        <h3>Modelo clínico</h3>
+        <p>
+          Integra variables sintomáticas, funcionales, contextuales y protectoras para estimar
+          nivel de riesgo clínico general y orientar la prioridad de intervención.
+        </p>
+      </div>
+
+      <div class="side-card">
+        <h3>Estados de riesgo</h3>
+        <p>
+          R1 = Bajo • R2 = Moderado • R3 = Alto • R4 = Crítico.  
+          El motor no sustituye juicio clínico; organiza la lectura y ayuda a decidir foco terapéutico.
+        </p>
+      </div>
+
+      <div class="side-card">
+        <h3>Variables consideradas</h3>
+        <p>
+          Intensidad sintomática, deterioro funcional, impulsividad, ideación autolesiva,
+          consumo de sustancias, apoyo social, adherencia y capacidad de regulación.
+        </p>
+      </div>
+
+      <div class="footer-note">
+        <div><strong>Créditos:</strong> Lic. Gonzalo Buendía – Psicólogo</div>
+        <div><strong>Co-terapeuta:</strong> Blanquita – Co terapeuta</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="panel hero">
+        <div>
+          <h2>PATIENT RISK PREDICTOR</h2>
+          <p>
+            Aplicación clínica con estilo sobrio para valorar riesgo del paciente a partir de inputs clínicos,
+            calcular un score estructurado y generar recomendaciones iniciales de intervención. Diseñada como
+            prototipo profesional para evaluación, triage y organización operativa del caso.
+          </p>
+          <div class="hero-tags">
+            <div class="tag">Input clínico estructurado</div>
+            <div class="tag">Score de riesgo</div>
+            <div class="tag">Triage terapéutico</div>
+            <div class="tag">Recomendaciones de intervención</div>
+          </div>
+        </div>
+
+        <div class="hero-kpis">
+          <div class="kpi">
+            <div class="label">Casos registrados</div>
+            <div class="value" id="kpiCases">0</div>
+            <div class="sub">Base local del navegador</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Riesgo promedio</div>
+            <div class="value" id="kpiAvg">0</div>
+            <div class="sub">Promedio de score clínico</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Casos altos/críticos</div>
+            <div class="value" id="kpiHigh">0</div>
+            <div class="sub">Requieren priorización</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Riesgo actual</div>
+            <div class="value" id="kpiCurrent">R2</div>
+            <div class="sub">Clasificación del caso activo</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboardView" class="grid">
+        <div class="panel">
+          <h3>1. Inputs clínicos</h3>
+          <p class="subhead">
+            Completa los campos del caso actual. El motor actualizará automáticamente el score,
+            el nivel de riesgo y la recomendación operativa prioritaria.
+          </p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="patientName">Nombre del paciente</label>
+              <input id="patientName" type="text" placeholder="Ej. Caso A" />
+              <small>Identificador interno del caso.</small>
+            </div>
+
+            <div class="field">
+              <label for="age">Edad</label>
+              <input id="age" type="number" min="1" max="110" value="34" />
+              <small>Dato descriptivo básico del caso.</small>
+            </div>
+
+            <div class="field">
+              <label for="primaryConcern">Motivo principal</label>
+              <select id="primaryConcern">
+                <option value="ansiedad">Ansiedad</option>
+                <option value="depresion">Depresión</option>
+                <option value="ira">Ira / impulsividad</option>
+                <option value="trauma">Trauma / estrés</option>
+                <option value="adaptacion">Ajuste / crisis vital</option>
+                <option value="mixto">Mixto</option>
+              </select>
+              <small>Problema clínico predominante.</small>
+            </div>
+
+            <div class="field">
+              <label for="treatmentStatus">Estado del tratamiento</label>
+              <select id="treatmentStatus">
+                <option value="evaluacion">Evaluación inicial</option>
+                <option value="inicio">Inicio terapéutico</option>
+                <option value="seguimiento">Seguimiento</option>
+                <option value="descompensacion">Descompensación</option>
+              </select>
+              <small>Ubicación actual del proceso.</small>
+            </div>
+
+            <div class="field">
+              <label>Sintomatología actual</label>
+              <div class="slider-wrap">
+                <input id="symptomSeverity" type="range" min="0" max="100" value="58" />
+                <div class="slider-value" id="symptomSeverityValue">58</div>
+              </div>
+              <small>Intensidad global de los síntomas presentes.</small>
+            </div>
+
+            <div class="field">
+              <label>Deterioro funcional</label>
+              <div class="slider-wrap">
+                <input id="functionalImpairment" type="range" min="0" max="100" value="44" />
+                <div class="slider-value" id="functionalImpairmentValue">44</div>
+              </div>
+              <small>Impacto en trabajo, rutina, autocuidado o relaciones.</small>
+            </div>
+
+            <div class="field">
+              <label>Impulsividad / descontrol</label>
+              <div class="slider-wrap">
+                <input id="impulsivity" type="range" min="0" max="100" value="32" />
+                <div class="slider-value" id="impulsivityValue">32</div>
+              </div>
+              <small>Riesgo de respuesta poco regulada o abrupta.</small>
+            </div>
+
+            <div class="field">
+              <label>Uso de sustancias</label>
+              <div class="slider-wrap">
+                <input id="substanceUse" type="range" min="0" max="100" value="18" />
+                <div class="slider-value" id="substanceUseValue">18</div>
+              </div>
+              <small>Mayor puntaje = mayor carga clínica asociada.</small>
+            </div>
+
+            <div class="field">
+              <label>Ideación autolesiva / riesgo personal</label>
+              <div class="slider-wrap">
+                <input id="selfRisk" type="range" min="0" max="100" value="10" />
+                <div class="slider-value" id="selfRiskValue">10</div>
+              </div>
+              <small>Variable crítica del sistema de riesgo.</small>
+            </div>
+
+            <div class="field">
+              <label>Conflicto interpersonal / entorno</label>
+              <div class="slider-wrap">
+                <input id="environmentStress" type="range" min="0" max="100" value="46" />
+                <div class="slider-value" id="environmentStressValue">46</div>
+              </div>
+              <small>Carga relacional y presión contextual actual.</small>
+            </div>
+
+            <div class="field">
+              <label>Apoyo social disponible</label>
+              <div class="slider-wrap">
+                <input id="socialSupport" type="range" min="0" max="100" value="62" />
+                <div class="slider-value" id="socialSupportValue">62</div>
+              </div>
+              <small>Factor protector relevante.</small>
+            </div>
+
+            <div class="field">
+              <label>Adherencia terapéutica</label>
+              <div class="slider-wrap">
+                <input id="adherence" type="range" min="0" max="100" value="66" />
+                <div class="slider-value" id="adherenceValue">66</div>
+              </div>
+              <small>Grado de continuidad y cumplimiento del proceso.</small>
+            </div>
+
+            <div class="field">
+              <label>Capacidad de regulación emocional</label>
+              <div class="slider-wrap">
+                <input id="regulation" type="range" min="0" max="100" value="52" />
+                <div class="slider-value" id="regulationValue">52</div>
+              </div>
+              <small>Recurso protector ante activación o crisis.</small>
+            </div>
+
+            <div class="field" style="grid-column:1 / -1;">
+              <label for="notes">Observaciones clínicas</label>
+              <textarea id="notes" placeholder="Resumen breve del caso, detonantes, contexto o elementos relevantes..."></textarea>
+              <small>Campo descriptivo libre para complementar la lectura estructurada.</small>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="analyzeBtn">Analizar riesgo</button>
+            <button class="secondary" id="saveBtn">Guardar caso</button>
+            <button class="secondary" id="demoBtn">Cargar demo</button>
+            <button class="danger" id="resetBtn">Reiniciar</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>2. Resultado del predictor</h3>
+          <p class="subhead">
+            Lectura sintética del caso: score global, nivel de riesgo, factores que empujan el sistema
+            y recomendaciones clínicas iniciales.
+          </p>
+
+          <div class="score-boxes">
+            <div class="score-card">
+              <h4>Score de riesgo</h4>
+              <div class="big" id="riskScore">43</div>
+              <div class="bar"><div class="fill" id="riskBar"></div></div>
+              <div class="mini" id="riskText">Riesgo moderado con necesidad de seguimiento estructurado.</div>
+            </div>
+
+            <div class="score-card">
+              <h4>Nivel clínico</h4>
+              <div class="big" id="riskLevel">R2</div>
+              <div class="bar"><div class="fill" id="levelBar"></div></div>
+              <div class="mini" id="levelText">Moderado: el caso requiere intervención focalizada, pero no muestra criticidad extrema.</div>
+            </div>
+          </div>
+
+          <div class="reading-box">
+            <h4>Lectura operativa</h4>
+            <div class="mini" id="readingSummary" style="margin-bottom:10px;color:#e9f2fc;">
+              Estado actual: R2 — Riesgo moderado
+            </div>
+            <ul id="recommendationsList">
+              <li>Reforzar regulación emocional y disminuir factores de sobrecarga contextual.</li>
+              <li>Monitorear adherencia y estabilidad funcional.</li>
+              <li>Trabajar foco clínico prioritario antes de ampliación del abordaje.</li>
+            </ul>
+          </div>
+
+          <div class="reading-box">
+            <h4>Variables con mayor peso</h4>
+            <div class="drivers" id="drivers"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="grid-column:1 / -1;">
+          <h3>3. Estados de riesgo clínico</h3>
+          <p class="subhead">
+            El sistema ubica el caso en un nivel dominante y describe su trayectoria más probable
+            si las variables de carga aumentan o si los factores protectores se fortalecen.
+          </p>
+
+          <div class="risk-states" id="stateMap">
+            <div class="state" data-state="R1">
+              <div class="id">R1</div>
+              <div class="title">Bajo</div>
+              <div class="desc">Sintomatología manejable, protección suficiente y riesgo acotado.</div>
+            </div>
+            <div class="state" data-state="R2">
+              <div class="id">R2</div>
+              <div class="title">Moderado</div>
+              <div class="desc">Hay fragilidad clínica; conviene intervención focalizada y seguimiento.</div>
+            </div>
+            <div class="state" data-state="R3">
+              <div class="id">R3</div>
+              <div class="title">Alto</div>
+              <div class="desc">El sistema muestra descompensación creciente y necesidad de prioridad clínica.</div>
+            </div>
+            <div class="state" data-state="R4">
+              <div class="id">R4</div>
+              <div class="title">Crítico</div>
+              <div class="desc">Señales de alto peligro o desorganización severa. Intervención inmediata.</div>
+            </div>
+          </div>
+
+          <div class="trajectory" id="trajectoryText">
+            Trayectoria probable: el caso se mantiene en un rango moderado. Si aumentan ideación autolesiva,
+            deterioro funcional o impulsividad, puede migrar a un estado alto. Si se fortalecen adherencia,
+            apoyo y regulación, puede reducir riesgo global.
+          </div>
+        </div>
+      </section>
+
+      <section id="casesView" class="panel hidden">
+        <div class="table-top">
+          <div>
+            <h3 style="margin:0 0 4px;">Panel de casos</h3>
+            <p>Casos guardados localmente en este navegador.</p>
+          </div>
+          <div class="search">
+            <input type="text" id="searchInput" placeholder="Buscar por nombre, motivo o nivel..." />
+          </div>
+        </div>
+
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Edad</th>
+                <th>Motivo</th>
+                <th>Estado tratamiento</th>
+                <th>Score</th>
+                <th>Nivel</th>
+                <th>Actualización</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="casesTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="actions" style="margin-top:16px;">
+          <button class="secondary" id="exportBtn">Exportar JSON</button>
+          <button class="danger" id="clearBtn">Borrar base local</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const STORAGE_KEY = "patient_risk_predictor_cases_v1";
+
+    const form = {
+      patientName: $("patientName"),
+      age: $("age"),
+      primaryConcern: $("primaryConcern"),
+      treatmentStatus: $("treatmentStatus"),
+      symptomSeverity: $("symptomSeverity"),
+      functionalImpairment: $("functionalImpairment"),
+      impulsivity: $("impulsivity"),
+      substanceUse: $("substanceUse"),
+      selfRisk: $("selfRisk"),
+      environmentStress: $("environmentStress"),
+      socialSupport: $("socialSupport"),
+      adherence: $("adherence"),
+      regulation: $("regulation"),
+      notes: $("notes")
+    };
+
+    const sliderOutputs = {
+      symptomSeverity: $("symptomSeverityValue"),
+      functionalImpairment: $("functionalImpairmentValue"),
+      impulsivity: $("impulsivityValue"),
+      substanceUse: $("substanceUseValue"),
+      selfRisk: $("selfRiskValue"),
+      environmentStress: $("environmentStressValue"),
+      socialSupport: $("socialSupportValue"),
+      adherence: $("adherenceValue"),
+      regulation: $("regulationValue")
+    };
+
+    const resultEls = {
+      riskScore: $("riskScore"),
+      riskBar: $("riskBar"),
+      riskText: $("riskText"),
+      riskLevel: $("riskLevel"),
+      levelBar: $("levelBar"),
+      levelText: $("levelText"),
+      readingSummary: $("readingSummary"),
+      recommendationsList: $("recommendationsList"),
+      drivers: $("drivers"),
+      trajectoryText: $("trajectoryText")
+    };
+
+    function clamp(value, min, max){
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function getFormData(){
+      return {
+        patientName: form.patientName.value.trim() || "Paciente sin nombre",
+        age: clamp(Number(form.age.value || 0), 1, 110),
+        primaryConcern: form.primaryConcern.value,
+        treatmentStatus: form.treatmentStatus.value,
+        symptomSeverity: Number(form.symptomSeverity.value),
+        functionalImpairment: Number(form.functionalImpairment.value),
+        impulsivity: Number(form.impulsivity.value),
+        substanceUse: Number(form.substanceUse.value),
+        selfRisk: Number(form.selfRisk.value),
+        environmentStress: Number(form.environmentStress.value),
+        socialSupport: Number(form.socialSupport.value),
+        adherence: Number(form.adherence.value),
+        regulation: Number(form.regulation.value),
+        notes: form.notes.value.trim()
+      };
+    }
+
+    function syncSliders(){
+      Object.keys(sliderOutputs).forEach(key => {
+        sliderOutputs[key].textContent = form[key].value;
+      });
+    }
+
+    function computeRisk(data){
+      let risk =
+        (data.symptomSeverity * 0.19) +
+        (data.functionalImpairment * 0.18) +
+        (data.impulsivity * 0.12) +
+        (data.substanceUse * 0.09) +
+        (data.selfRisk * 0.24) +
+        (data.environmentStress * 0.10) -
+        (data.socialSupport * 0.08) -
+        (data.adherence * 0.08) -
+        (data.regulation * 0.10) + 12;
+
+      risk = clamp(Math.round(risk), 0, 100);
+
+      let level = "R2";
+      if (risk < 25) level = "R1";
+      else if (risk < 50) level = "R2";
+      else if (risk < 75) level = "R3";
+      else level = "R4";
+
+      if (data.selfRisk >= 70) level = "R4";
+      else if (data.selfRisk >= 45 && level === "R2") level = "R3";
+
+      const recommendations = buildRecommendations(data, risk, level);
+      const narrative = buildNarrative(data, risk, level);
+      const drivers = buildDrivers(data);
+
+      return {
+        risk,
+        level,
+        recommendations,
+        narrative,
+        drivers,
+        updatedAt: new Date().toLocaleString("es-PE")
+      };
+    }
+
+    function buildRecommendations(data, risk, level){
+      const recs = [];
+
+      if (level === "R4") {
+        recs.push("Priorizar evaluación inmediata de seguridad y contención clínica intensiva.");
+      }
+      if (level === "R3") {
+        recs.push("Aumentar frecuencia de seguimiento y focalizar intervención en variables de mayor carga.");
+      }
+      if (level === "R2") {
+        recs.push("Diseñar plan terapéutico focal con monitoreo periódico de estabilidad.");
+      }
+      if (level === "R1") {
+        recs.push("Mantener seguimiento preventivo y reforzar factores protectores existentes.");
+      }
+
+      if (data.selfRisk >= 45) recs.push("Explorar de manera prioritaria riesgo personal, desesperanza y condiciones de seguridad.");
+      if (data.functionalImpairment >= 60) recs.push("Intervenir sobre funcionalidad diaria: rutina, sueño, autocuidado y desempeño.");
+      if (data.impulsivity >= 60) recs.push("Aplicar estrategias de regulación, pausa conductual y control de respuesta.");
+      if (data.substanceUse >= 50) recs.push("Valorar impacto del consumo de sustancias en la desregulación del cuadro.");
+      if (data.environmentStress >= 60) recs.push("Reducir sobrecarga contextual y ordenar el entorno relacional o familiar.");
+      if (data.socialSupport < 40) recs.push("Movilizar red de apoyo o diseñar recursos compensatorios externos.");
+      if (data.adherence < 45) recs.push("Trabajar adherencia como variable crítica del tratamiento, no como efecto secundario.");
+      if (data.regulation < 45) recs.push("Instalar protocolos concretos de regulación emocional y manejo de crisis.");
+
+      return recs.slice(0, 6);
+    }
+
+    function buildNarrative(data, risk, level){
+      const levelText = {
+        R1: "riesgo bajo",
+        R2: "riesgo moderado",
+        R3: "riesgo alto",
+        R4: "riesgo crítico"
+      }[level];
+
+      let trend = "el caso parece clínicamente acotado";
+      if (level === "R2") trend = "el caso requiere una intervención focalizada para evitar progresión";
+      if (level === "R3") trend = "el caso necesita priorización terapéutica y vigilancia más estrecha";
+      if (level === "R4") trend = "el caso exige respuesta clínica inmediata por su potencial descompensación";
+
+      return `Estado actual: ${level} — ${levelText}. Con un score de ${risk}/100, ${trend}. El sistema debe intervenir sobre las variables de mayor carga antes de que el patrón se rigidice y aumente el riesgo global.`;
+    }
+
+    function buildDrivers(data){
+      const drivers = [
+        { name:"Sintomatología", value:data.symptomSeverity, weight:0.19 },
+        { name:"Deterioro funcional", value:data.functionalImpairment, weight:0.18 },
+        { name:"Impulsividad", value:data.impulsivity, weight:0.12 },
+        { name:"Sustancias", value:data.substanceUse, weight:0.09 },
+        { name:"Riesgo personal", value:data.selfRisk, weight:0.24 },
+        { name:"Estrés ambiental", value:data.environmentStress, weight:0.10 },
+        { name:"Apoyo social", value:100 - data.socialSupport, weight:0.08 },
+        { name:"Baja adherencia", value:100 - data.adherence, weight:0.08 },
+        { name:"Baja regulación", value:100 - data.regulation, weight:0.10 }
+      ];
+
+      return drivers
+        .map(d => ({...d, score: Math.round(d.value * d.weight)}))
+        .sort((a,b) => b.score - a.score)
+        .slice(0,5);
+    }
+
+    function levelLong(level){
+      return {
+        R1:"Riesgo bajo",
+        R2:"Riesgo moderado",
+        R3:"Riesgo alto",
+        R4:"Riesgo crítico"
+      }[level] || level;
+    }
+
+    function levelText(level){
+      return {
+        R1:"Bajo: hay estabilidad relativa y suficiente protección clínica.",
+        R2:"Moderado: el caso requiere intervención focalizada, pero no muestra criticidad extrema.",
+        R3:"Alto: se observan condiciones de descompensación que exigen prioridad terapéutica.",
+        R4:"Crítico: hay señales que requieren intervención inmediata y contención intensiva."
+      }[level];
+    }
+
+    function riskText(score){
+      if (score >= 75) return "Riesgo severo con necesidad de respuesta clínica inmediata.";
+      if (score >= 50) return "Riesgo alto; el caso debe priorizarse y monitorearse estrechamente.";
+      if (score >= 25) return "Riesgo moderado con necesidad de seguimiento estructurado.";
+      return "Riesgo bajo y relativamente contenido.";
+    }
+
+    function chipClass(level){
+      if (level === "R1") return "low";
+      if (level === "R2") return "medium";
+      if (level === "R3") return "high";
+      return "critical";
+    }
+
+    function renderModel(model){
+      resultEls.riskScore.textContent = model.risk;
+      resultEls.riskBar.style.width = model.risk + "%";
+      resultEls.riskText.textContent = riskText(model.risk);
+      resultEls.riskLevel.textContent = model.level;
+      resultEls.levelBar.style.width = model.risk + "%";
+      resultEls.levelText.textContent = levelText(model.level);
+      resultEls.readingSummary.textContent = `Estado actual: ${model.level} — ${levelLong(model.level)}`;
+      resultEls.trajectoryText.textContent = model.narrative;
+
+      resultEls.recommendationsList.innerHTML = "";
+      model.recommendations.forEach(item => {
+        const li = document.createElement("li");
+        li.textContent = item;
+        resultEls.recommendationsList.appendChild(li);
+      });
+
+      resultEls.drivers.innerHTML = "";
+      model.drivers.forEach(driver => {
+        const row = document.createElement("div");
+        row.className = "driver";
+        row.innerHTML = `
+          <div class="driver-name">${driver.name}</div>
+          <div class="driver-bar">
+            <div class="driver-fill" style="width:${clamp(driver.value,0,100)}%"></div>
+          </div>
+          <div class="driver-score">${driver.score}</div>
+        `;
+        resultEls.drivers.appendChild(row);
+      });
+
+      document.querySelectorAll(".state").forEach(el => {
+        el.classList.toggle("active", el.dataset.state === model.level);
+      });
+
+      $("kpiCurrent").textContent = model.level;
+    }
+
+    function analyzeCurrent(){
+      const model = computeRisk(getFormData());
+      renderModel(model);
+      return model;
+    }
+
+    function getCases(){
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch {
+        return [];
+      }
+    }
+
+    function setCases(cases){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cases));
+    }
+
+    function saveCase(){
+      const data = getFormData();
+      const model = computeRisk(data);
+      const cases = getCases();
+
+      const payload = {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        ...data,
+        ...model
+      };
+
+      cases.unshift(payload);
+      setCases(cases);
+      renderCasesTable();
+      updateKPIs();
+      alert("Caso guardado correctamente en la base local.");
+    }
+
+    function loadCase(id){
+      const cases = getCases();
+      const current = cases.find(c => c.id === id);
+      if (!current) return;
+
+      form.patientName.value = current.patientName || "";
+      form.age.value = current.age || 34;
+      form.primaryConcern.value = current.primaryConcern || "ansiedad";
+      form.treatmentStatus.value = current.treatmentStatus || "evaluacion";
+      form.symptomSeverity.value = current.symptomSeverity ?? 58;
+      form.functionalImpairment.value = current.functionalImpairment ?? 44;
+      form.impulsivity.value = current.impulsivity ?? 32;
+      form.substanceUse.value = current.substanceUse ?? 18;
+      form.selfRisk.value = current.selfRisk ?? 10;
+      form.environmentStress.value = current.environmentStress ?? 46;
+      form.socialSupport.value = current.socialSupport ?? 62;
+      form.adherence.value = current.adherence ?? 66;
+      form.regulation.value = current.regulation ?? 52;
+      form.notes.value = current.notes || "";
+
+      syncSliders();
+      analyzeCurrent();
+      showView("dashboardView");
+    }
+
+    function deleteCase(id){
+      const updated = getCases().filter(c => c.id !== id);
+      setCases(updated);
+      renderCasesTable($("searchInput").value);
+      updateKPIs();
+    }
+
+    function renderCasesTable(filter = ""){
+      const tbody = $("casesTableBody");
+      const cases = getCases();
+      const q = filter.trim().toLowerCase();
+
+      const filtered = cases.filter(c =>
+        c.patientName.toLowerCase().includes(q) ||
+        c.primaryConcern.toLowerCase().includes(q) ||
+        c.treatmentStatus.toLowerCase().includes(q) ||
+        c.level.toLowerCase().includes(q)
+      );
+
+      tbody.innerHTML = "";
+
+      if (!filtered.length){
+        tbody.innerHTML = `<tr><td colspan="8" class="muted">No hay casos registrados.</td></tr>`;
+        return;
+      }
+
+      filtered.forEach(c => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td><strong>${escapeHtml(c.patientName)}</strong></td>
+          <td>${c.age}</td>
+          <td>${capitalize(c.primaryConcern)}</td>
+          <td>${capitalize(c.treatmentStatus)}</td>
+          <td>${c.risk}</td>
+          <td><span class="chip ${chipClass(c.level)}">${c.level} · ${levelLong(c.level).replace("Riesgo ","")}</span></td>
+          <td>${c.updatedAt}</td>
+          <td>
+            <button class="secondary" style="padding:8px 10px;border-radius:10px;font-size:12px;" data-load="${c.id}">Cargar</button>
+            <button class="danger" style="padding:8px 10px;border-radius:10px;font-size:12px;" data-delete="${c.id}">Eliminar</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("[data-load]").forEach(btn => {
+        btn.addEventListener("click", () => loadCase(btn.dataset.load));
+      });
+
+      tbody.querySelectorAll("[data-delete]").forEach(btn => {
+        btn.addEventListener("click", () => deleteCase(btn.dataset.delete));
+      });
+    }
+
+    function updateKPIs(){
+      const cases = getCases();
+      $("kpiCases").textContent = cases.length;
+
+      if (!cases.length){
+        $("kpiAvg").textContent = "0";
+        $("kpiHigh").textContent = "0";
+        return;
+      }
+
+      const avg = Math.round(cases.reduce((acc, c) => acc + c.risk, 0) / cases.length);
+      const high = cases.filter(c => c.level === "R3" || c.level === "R4").length;
+
+      $("kpiAvg").textContent = avg;
+      $("kpiHigh").textContent = high;
+    }
+
+    function showView(viewId){
+      document.querySelectorAll(".nav button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.view === viewId);
+      });
+      $("dashboardView").classList.toggle("hidden", viewId !== "dashboardView");
+      $("casesView").classList.toggle("hidden", viewId !== "casesView");
+    }
+
+    function exportCases(){
+      const cases = getCases();
+      const blob = new Blob([JSON.stringify(cases, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "patient_risk_predictor_cases.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function loadDemo(){
+      form.patientName.value = "Caso Demo";
+      form.age.value = 29;
+      form.primaryConcern.value = "mixto";
+      form.treatmentStatus.value = "descompensacion";
+      form.symptomSeverity.value = 78;
+      form.functionalImpairment.value = 72;
+      form.impulsivity.value = 58;
+      form.substanceUse.value = 36;
+      form.selfRisk.value = 42;
+      form.environmentStress.value = 68;
+      form.socialSupport.value = 30;
+      form.adherence.value = 34;
+      form.regulation.value = 28;
+      form.notes.value = "Paciente con aumento reciente de desregulación, conflicto interpersonal persistente y deterioro funcional progresivo.";
+      syncSliders();
+      analyzeCurrent();
+    }
+
+    function resetForm(){
+      form.patientName.value = "";
+      form.age.value = 34;
+      form.primaryConcern.value = "ansiedad";
+      form.treatmentStatus.value = "evaluacion";
+      form.symptomSeverity.value = 58;
+      form.functionalImpairment.value = 44;
+      form.impulsivity.value = 32;
+      form.substanceUse.value = 18;
+      form.selfRisk.value = 10;
+      form.environmentStress.value = 46;
+      form.socialSupport.value = 62;
+      form.adherence.value = 66;
+      form.regulation.value = 52;
+      form.notes.value = "";
+      syncSliders();
+      analyzeCurrent();
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function capitalize(str){
+      if (!str) return "";
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    document.querySelectorAll(".nav button").forEach(btn => {
+      btn.addEventListener("click", () => showView(btn.dataset.view));
+    });
+
+    Object.keys(sliderOutputs).forEach(key => {
+      form[key].addEventListener("input", () => {
+        syncSliders();
+        analyzeCurrent();
+      });
+    });
+
+    ["patientName","age","primaryConcern","treatmentStatus","notes"].forEach(key => {
+      form[key].addEventListener("input", analyzeCurrent);
+      form[key].addEventListener("change", analyzeCurrent);
+    });
+
+    $("analyzeBtn").addEventListener("click", analyzeCurrent);
+    $("saveBtn").addEventListener("click", saveCase);
+    $("demoBtn").addEventListener("click", loadDemo);
+    $("resetBtn").addEventListener("click", resetForm);
+    $("searchInput").addEventListener("input", (e) => renderCasesTable(e.target.value));
+    $("exportBtn").addEventListener("click", exportCases);
+    $("clearBtn").addEventListener("click", () => {
+      if (confirm("¿Deseas borrar toda la base local de casos?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderCasesTable();
+        updateKPIs();
+      }
+    });
+
+    syncSliders();
+    analyzeCurrent();
+    renderCasesTable();
+    updateKPIs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ADHERENCE OPTIMIZATION ENGINE</title>
+  <style>
+    :root{
+      --bg:#07111f;
+      --panel:#0d1b2a;
+      --panel-2:#10253a;
+      --line:rgba(255,255,255,.10);
+      --text:#eaf2ff;
+      --muted:#9db2c9;
+      --accent:#4cc9f0;
+      --accent-2:#7bd389;
+      --warn:#f4b860;
+      --danger:#ff6b6b;
+      --shadow:0 18px 40px rgba(0,0,0,.28);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:linear-gradient(180deg,#06101c 0%, #0a1624 100%);color:var(--text);font-family:Inter,Segoe UI,Arial,sans-serif}
+    body{min-height:100vh}
+
+    .app{
+      width:min(1500px,96vw);
+      margin:22px auto 40px;
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:18px;
+    }
+
+    .sidebar,
+    .panel{
+      background:linear-gradient(180deg,var(--panel) 0%, #0b1725 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .sidebar{
+      padding:18px;
+      position:sticky;
+      top:16px;
+      height:fit-content;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding-bottom:14px;
+      border-bottom:1px solid var(--line);
+      margin-bottom:16px;
+    }
+
+    .logo{
+      width:52px;height:52px;border-radius:16px;
+      background:radial-gradient(circle at 30% 30%, rgba(76,201,240,.95), rgba(76,201,240,.20) 60%, rgba(123,211,137,.18) 100%);
+      display:grid;place-items:center;
+      font-weight:800;font-size:18px;color:#03111a;
+      box-shadow:inset 0 0 16px rgba(255,255,255,.18), 0 10px 24px rgba(76,201,240,.18);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.6px;
+      line-height:1.1;
+    }
+
+    .brand p{
+      margin:4px 0 0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.4;
+    }
+
+    .nav{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .nav button{
+      width:100%;
+      text-align:left;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      cursor:pointer;
+      transition:.2s ease;
+      font-weight:600;
+    }
+
+    .nav button:hover,
+    .nav button.active{
+      background:linear-gradient(90deg, rgba(76,201,240,.18), rgba(123,211,137,.08));
+      border-color:rgba(76,201,240,.34);
+      transform:translateY(-1px);
+    }
+
+    .sidebar-card{
+      margin-top:16px;
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+    }
+
+    .sidebar-card h3{
+      margin:0 0 10px;
+      font-size:14px;
+    }
+
+    .sidebar-card p{
+      margin:0;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .main{
+      display:grid;
+      gap:18px;
+    }
+
+    .hero{
+      padding:22px;
+      display:grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    .hero h2{
+      margin:0 0 8px;
+      font-size:28px;
+      letter-spacing:.3px;
+    }
+
+    .hero p{
+      margin:0;
+      color:var(--muted);
+      line-height:1.7;
+      max-width:760px;
+    }
+
+    .hero-badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .badge{
+      padding:9px 12px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+      font-size:12px;
+      color:#d7e7fb;
+    }
+
+    .hero-right{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+    }
+
+    .kpi{
+      padding:14px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+      min-height:110px;
+    }
+
+    .kpi .label{
+      color:var(--muted);
+      font-size:12px;
+      margin-bottom:10px;
+    }
+
+    .kpi .value{
+      font-size:28px;
+      font-weight:800;
+      line-height:1;
+      margin-bottom:8px;
+    }
+
+    .kpi .sub{
+      color:#c4d7ea;
+      font-size:12px;
+      line-height:1.5;
+    }
+
+    .content-grid{
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+    }
+
+    .panel{
+      padding:18px;
+    }
+
+    .panel h3{
+      margin:0 0 6px;
+      font-size:18px;
+    }
+
+    .panel .subhead{
+      margin:0 0 18px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.6;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    .field{
+      padding:14px;
+      border-radius:16px;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+    }
+
+    .field label{
+      display:block;
+      font-size:12px;
+      color:#d6e4f3;
+      margin-bottom:10px;
+      font-weight:700;
+      letter-spacing:.2px;
+    }
+
+    .field small{
+      display:block;
+      color:var(--muted);
+      font-size:11px;
+      margin-top:8px;
+      line-height:1.5;
+    }
+
+    .field input[type="text"],
+    .field input[type="number"],
+    .field select{
+      width:100%;
+      background:#071421;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+      font-size:14px;
+    }
+
+    .slider-wrap{
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--accent);
+      cursor:pointer;
+    }
+
+    .slider-value{
+      min-width:50px;
+      text-align:center;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:#071421;
+      font-weight:700;
+      color:#dff3ff;
+      font-size:13px;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:18px;
+    }
+
+    button.primary,
+    button.secondary,
+    button.danger{
+      border:none;
+      padding:12px 16px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:800;
+      letter-spacing:.2px;
+      transition:.2s ease;
+    }
+
+    button.primary{background:linear-gradient(90deg,var(--accent),#5fe0ff); color:#03131d}
+    button.secondary{background:rgba(255,255,255,.08); color:var(--text); border:1px solid var(--line)}
+    button.danger{background:linear-gradient(90deg,#ff6b6b,#ff8d8d); color:#230606}
+    button.primary:hover,
+    button.secondary:hover,
+    button.danger:hover{transform:translateY(-1px)}
+
+    .results-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+    }
+
+    .score-card{
+      padding:16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015));
+    }
+
+    .score-card h4{
+      margin:0 0 10px;
+      font-size:14px;
+      color:#d9e9f9;
+    }
+
+    .big-number{
+      font-size:34px;
+      font-weight:900;
+      line-height:1;
+      margin-bottom:10px;
+    }
+
+    .risk-bar{
+      width:100%;
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.07);
+      margin:10px 0 8px;
+    }
+
+    .risk-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      transition:width .35s ease;
+      background:linear-gradient(90deg,var(--accent-2), var(--warn), var(--danger));
+    }
+
+    .mini{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .recommendations{
+      margin-top:14px;
+      padding:16px;
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    .recommendations h4{
+      margin:0 0 12px;
+      font-size:15px;
+    }
+
+    .recommendations ul{
+      margin:0;
+      padding-left:18px;
+      color:#dce8f7;
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .transitions{
+      display:grid;
+      gap:12px;
+    }
+
+    .state-map{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .state{
+      padding:14px 10px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      text-align:center;
+      min-height:122px;
+    }
+
+    .state .s{
+      font-size:11px;
+      color:var(--muted);
+      margin-bottom:8px;
+      letter-spacing:.4px;
+    }
+
+    .state .t{
+      font-weight:800;
+      font-size:14px;
+      margin-bottom:8px;
+      line-height:1.25;
+    }
+
+    .state .d{
+      font-size:12px;
+      color:#d5e4f5;
+      line-height:1.5;
+    }
+
+    .state.active{
+      border-color:rgba(76,201,240,.45);
+      box-shadow:0 0 0 1px rgba(76,201,240,.22) inset, 0 14px 26px rgba(76,201,240,.10);
+      background:linear-gradient(180deg, rgba(76,201,240,.13), rgba(123,211,137,.05));
+    }
+
+    .trajectory{
+      margin-top:12px;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:#ddecfb;
+      line-height:1.7;
+      font-size:14px;
+    }
+
+    .drivers{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .driver{
+      display:grid;
+      grid-template-columns: 180px 1fr 56px;
+      gap:10px;
+      align-items:center;
+    }
+
+    .driver-name{
+      font-size:13px;
+      color:#dbe9f9;
+      font-weight:700;
+    }
+
+    .driver-bar{
+      height:12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.06);
+    }
+
+    .driver-fill{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background:linear-gradient(90deg,#4cc9f0,#7bd389);
+    }
+
+    .driver-score{
+      font-size:12px;
+      color:var(--muted);
+      text-align:right;
+      font-weight:800;
+    }
+
+    .patients-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .patients-top .left h3{margin-bottom:4px}
+    .patients-top .left p{margin:0;color:var(--muted);font-size:12px}
+    .search{
+      width:min(330px,100%);
+    }
+
+    .search input{
+      width:100%;
+      background:#071421;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.09);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+      font-size:14px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius:14px;
+    }
+
+    thead th{
+      text-align:left;
+      font-size:12px;
+      color:#c9dcee;
+      padding:12px 10px;
+      border-bottom:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+    }
+
+    tbody td{
+      padding:12px 10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      font-size:13px;
+      color:#e7f0fb;
+      vertical-align:top;
+    }
+
+    tbody tr:hover{
+      background:rgba(255,255,255,.025);
+    }
+
+    .chip{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:800;
+      border:1px solid var(--line);
+    }
+
+    .chip.low{background:rgba(123,211,137,.12); color:#bff2cb}
+    .chip.medium{background:rgba(244,184,96,.12); color:#ffd99f}
+    .chip.high{background:rgba(255,107,107,.12); color:#ffc0c0}
+
+    .footer{
+      margin-top:18px;
+      padding-top:12px;
+      border-top:1px solid var(--line);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+    }
+
+    .muted{color:var(--muted)}
+    .hidden{display:none !important}
+
+    @media (max-width: 1180px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative;top:auto}
+      .hero{grid-template-columns:1fr}
+      .content-grid{grid-template-columns:1fr}
+      .results-grid{grid-template-columns:1fr}
+      .state-map{grid-template-columns:repeat(2,1fr)}
+    }
+
+    @media (max-width: 760px){
+      .form-grid{grid-template-columns:1fr}
+      .hero-right{grid-template-columns:1fr 1fr}
+      .driver{grid-template-columns:1fr}
+      .state-map{grid-template-columns:1fr}
+      .patients-top{flex-direction:column;align-items:flex-start}
+      .search{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">AOE</div>
+        <div>
+          <h1>ADHERENCE OPTIMIZATION ENGINE</h1>
+          <p>Modelo conductual de adherencia y predicción de abandono</p>
+        </div>
+      </div>
+
+      <div class="nav">
+        <button class="active" data-view="dashboardView">Dashboard clínico</button>
+        <button data-view="patientsView">Panel de pacientes</button>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Arquitectura del modelo</h3>
+        <p>
+          Este prototipo integra variables conductuales, barreras contextuales y señales de compromiso
+          terapéutico para estimar adherencia probable, riesgo de abandono y estado de transición del paciente.
+        </p>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Estados del sistema</h3>
+        <p>
+          S0 = Desvinculación • S1 = Inicio inestable • S2 = Adherencia parcial •
+          S3 = Adherencia consolidada • S4 = Riesgo crítico de abandono
+        </p>
+      </div>
+
+      <div class="sidebar-card">
+        <h3>Lógica clínica-operativa</h3>
+        <p>
+          El motor pondera motivación, olvidos, alianza, soporte, carga logística,
+          efectos adversos, comprensión terapéutica y consistencia reciente para sugerir
+          una intervención prioritaria.
+        </p>
+      </div>
+
+      <div class="footer">
+        <div><strong>Créditos:</strong> Lic. Gonzalo Buendía – Psicólogo</div>
+        <div><strong>Co-terapeuta:</strong> Blanquita – Co terapeuta</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="panel hero">
+        <div>
+          <h2>ADHERENCE OPTIMIZATION ENGINE</h2>
+          <p>
+            Plataforma conceptual para seguimiento de adherencia en pacientes. Evalúa variables conductuales,
+            estima probabilidad de abandono, clasifica el estado actual del paciente y propone acciones de
+            optimización focalizadas en la transición clínica más probable.
+          </p>
+
+          <div class="hero-badges">
+            <div class="badge">Predictor de abandono</div>
+            <div class="badge">Variables conductuales</div>
+            <div class="badge">Estados de adherencia</div>
+            <div class="badge">Recomendación operativa</div>
+          </div>
+        </div>
+
+        <div class="hero-right">
+          <div class="kpi">
+            <div class="label">Pacientes registrados</div>
+            <div class="value" id="kpiPatients">0</div>
+            <div class="sub">Base local del prototipo</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Riesgo promedio</div>
+            <div class="value" id="kpiAvgRisk">0%</div>
+            <div class="sub">Probabilidad media estimada de abandono</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Alta adherencia</div>
+            <div class="value" id="kpiHighAdh">0</div>
+            <div class="sub">Casos con adherencia ≥ 75</div>
+          </div>
+          <div class="kpi">
+            <div class="label">Casos críticos</div>
+            <div class="value" id="kpiCritical">0</div>
+            <div class="sub">Riesgo de abandono ≥ 70%</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="dashboardView" class="content-grid">
+        <div class="panel">
+          <h3>1. Ingreso y evaluación conductual</h3>
+          <p class="subhead">
+            Introduce datos del paciente y ajusta las variables del modelo. El motor recalculará adherencia,
+            probabilidad de abandono, estado del sistema y recomendaciones prioritarias.
+          </p>
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="patientName">Nombre del paciente</label>
+              <input id="patientName" type="text" placeholder="Ej. Paciente A" />
+              <small>Identificador interno del caso.</small>
+            </div>
+
+            <div class="field">
+              <label for="treatmentType">Tipo de tratamiento</label>
+              <select id="treatmentType">
+                <option value="farmacologico">Farmacológico</option>
+                <option value="psicologico">Psicológico</option>
+                <option value="rehabilitacion">Rehabilitación</option>
+                <option value="mixto">Mixto</option>
+              </select>
+              <small>Se usa para contextualizar la lectura del caso.</small>
+            </div>
+
+            <div class="field">
+              <label for="phase">Fase terapéutica</label>
+              <select id="phase">
+                <option value="inicio">Inicio</option>
+                <option value="seguimiento">Seguimiento</option>
+                <option value="mantenimiento">Mantenimiento</option>
+                <option value="ajuste">Ajuste</option>
+              </select>
+              <small>Etapa actual del proceso clínico.</small>
+            </div>
+
+            <div class="field">
+              <label for="daysMissed">Sesiones o tomas perdidas (últimos 30 días)</label>
+              <input id="daysMissed" type="number" min="0" max="30" value="2" />
+              <small>Dato directo de incumplimiento reciente.</small>
+            </div>
+
+            <div class="field">
+              <label>Motivación para continuar</label>
+              <div class="slider-wrap">
+                <input id="motivation" type="range" min="0" max="100" value="72" />
+                <div class="slider-value" id="motivationValue">72</div>
+              </div>
+              <small>Voluntad subjetiva de sostener el tratamiento.</small>
+            </div>
+
+            <div class="field">
+              <label>Comprensión del tratamiento</label>
+              <div class="slider-wrap">
+                <input id="understanding" type="range" min="0" max="100" value="68" />
+                <div class="slider-value" id="understandingValue">68</div>
+              </div>
+              <small>Grado de claridad sobre finalidad, pasos y beneficios.</small>
+            </div>
+
+            <div class="field">
+              <label>Alianza terapéutica</label>
+              <div class="slider-wrap">
+                <input id="alliance" type="range" min="0" max="100" value="74" />
+                <div class="slider-value" id="allianceValue">74</div>
+              </div>
+              <small>Calidad del vínculo con el profesional/equipo tratante.</small>
+            </div>
+
+            <div class="field">
+              <label>Soporte familiar / red de apoyo</label>
+              <div class="slider-wrap">
+                <input id="support" type="range" min="0" max="100" value="60" />
+                <div class="slider-value" id="supportValue">60</div>
+              </div>
+              <small>Disponibilidad de ayuda práctica y sostén interpersonal.</small>
+            </div>
+
+            <div class="field">
+              <label>Consistencia reciente</label>
+              <div class="slider-wrap">
+                <input id="consistency" type="range" min="0" max="100" value="66" />
+                <div class="slider-value" id="consistencyValue">66</div>
+              </div>
+              <small>Qué tan estable ha sido la conducta adherente en las últimas semanas.</small>
+            </div>
+
+            <div class="field">
+              <label>Frecuencia de olvidos</label>
+              <div class="slider-wrap">
+                <input id="forgetfulness" type="range" min="0" max="100" value="38" />
+                <div class="slider-value" id="forgetfulnessValue">38</div>
+              </div>
+              <small>Mayor puntaje = mayor probabilidad de omisión por olvido.</small>
+            </div>
+
+            <div class="field">
+              <label>Carga logística / barreras prácticas</label>
+              <div class="slider-wrap">
+                <input id="barrier" type="range" min="0" max="100" value="42" />
+                <div class="slider-value" id="barrierValue">42</div>
+              </div>
+              <small>Tiempo, distancia, costo, trámites o dificultad operativa.</small>
+            </div>
+
+            <div class="field">
+              <label>Efectos adversos / disconfort percibido</label>
+              <div class="slider-wrap">
+                <input id="sideEffects" type="range" min="0" max="100" value="28" />
+                <div class="slider-value" id="sideEffectsValue">28</div>
+              </div>
+              <small>Mayor puntaje = mayor malestar asociado al tratamiento.</small>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="analyzeBtn">Analizar caso</button>
+            <button class="secondary" id="saveBtn">Guardar paciente</button>
+            <button class="secondary" id="demoBtn">Cargar caso demo</button>
+            <button class="danger" id="resetBtn">Reiniciar formulario</button>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3>2. Salida del motor de adherencia</h3>
+          <p class="subhead">
+            Resultado dinámico del modelo. Este panel integra el índice de adherencia, el riesgo de abandono,
+            el estado del sistema y los impulsores principales del caso.
+          </p>
+
+          <div class="results-grid">
+            <div class="score-card">
+              <h4>Índice de adherencia</h4>
+              <div class="big-number" id="adherenceScore">72</div>
+              <div class="risk-bar">
+                <div class="risk-fill" id="adherenceBar"></div>
+              </div>
+              <div class="mini" id="adherenceText">Adherencia funcional, con áreas de fragilidad moderada.</div>
+            </div>
+
+            <div class="score-card">
+              <h4>Probabilidad de abandono</h4>
+              <div class="big-number" id="dropoutScore">28%</div>
+              <div class="risk-bar">
+                <div class="risk-fill" id="dropoutBar"></div>
+              </div>
+              <div class="mini" id="dropoutText">Riesgo bajo a moderado. Conviene reforzar consistencia y recordatorios.</div>
+            </div>
+          </div>
+
+          <div class="recommendations">
+            <h4>Lectura operativa del caso</h4>
+            <div class="mini" id="stateSummary" style="margin-bottom:10px;color:#e8f3ff;">
+              Estado actual: S2 — Adherencia parcial
+            </div>
+            <ul id="recommendationsList">
+              <li>Fortalecer recordatorios o apoyos externos para reducir olvidos.</li>
+              <li>Revisar barreras logísticas que interfieren con la continuidad.</li>
+              <li>Consolidar comprensión terapéutica y sentido del tratamiento.</li>
+            </ul>
+          </div>
+
+          <div class="recommendations" style="margin-top:14px;">
+            <h4>Variables con mayor peso actual</h4>
+            <div class="drivers" id="drivers"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="grid-column:1 / -1;">
+          <h3>3. Modelo de transición de adherencia</h3>
+          <p class="subhead">
+            El sistema estima el estado dominante del paciente según la configuración actual de variables.
+            No reemplaza juicio clínico; organiza la lectura operativa del riesgo y la dirección de intervención.
+          </p>
+
+          <div class="transitions">
+            <div class="state-map" id="stateMap">
+              <div class="state" data-state="S0">
+                <div class="s">S0</div>
+                <div class="t">Desvinculación</div>
+                <div class="d">Bajo compromiso y alta probabilidad de salida del proceso.</div>
+              </div>
+              <div class="state" data-state="S1">
+                <div class="s">S1</div>
+                <div class="t">Inicio inestable</div>
+                <div class="d">Aceptación inicial con fragilidad en continuidad.</div>
+              </div>
+              <div class="state" data-state="S2">
+                <div class="s">S2</div>
+                <div class="t">Adherencia parcial</div>
+                <div class="d">Cumplimiento irregular con riesgo modulable.</div>
+              </div>
+              <div class="state" data-state="S3">
+                <div class="s">S3</div>
+                <div class="t">Adherencia consolidada</div>
+                <div class="d">Compromiso estable y probabilidad de continuidad alta.</div>
+              </div>
+              <div class="state" data-state="S4">
+                <div class="s">S4</div>
+                <div class="t">Riesgo crítico</div>
+                <div class="d">Persisten señales que anticipan abandono próximo.</div>
+              </div>
+            </div>
+
+            <div class="trajectory" id="trajectoryText">
+              Trayectoria probable: el paciente se encuentra en una zona de adherencia parcial. Si aumentan los olvidos,
+              la carga logística o el malestar percibido, puede migrar hacia un estado de riesgo crítico. Si se fortalece
+              alianza, comprensión y apoyo, puede consolidar adherencia.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="patientsView" class="panel hidden">
+        <div class="patients-top">
+          <div class="left">
+            <h3>Panel de pacientes</h3>
+            <p>Base local de casos guardados desde este navegador.</p>
+          </div>
+          <div class="search">
+            <input type="text" id="patientSearch" placeholder="Buscar por nombre o estado..." />
+          </div>
+        </div>
+
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Tratamiento</th>
+                <th>Fase</th>
+                <th>Adherencia</th>
+                <th>Riesgo abandono</th>
+                <th>Estado</th>
+                <th>Últ. actualización</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="patientsTableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="actions" style="margin-top:16px;">
+          <button class="secondary" id="exportBtn">Exportar JSON</button>
+          <button class="danger" id="clearStorageBtn">Borrar base local</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const formElements = {
+      patientName: $("patientName"),
+      treatmentType: $("treatmentType"),
+      phase: $("phase"),
+      daysMissed: $("daysMissed"),
+      motivation: $("motivation"),
+      understanding: $("understanding"),
+      alliance: $("alliance"),
+      support: $("support"),
+      consistency: $("consistency"),
+      forgetfulness: $("forgetfulness"),
+      barrier: $("barrier"),
+      sideEffects: $("sideEffects")
+    };
+
+    const sliderValueMap = {
+      motivation: $("motivationValue"),
+      understanding: $("understandingValue"),
+      alliance: $("allianceValue"),
+      support: $("supportValue"),
+      consistency: $("consistencyValue"),
+      forgetfulness: $("forgetfulnessValue"),
+      barrier: $("barrierValue"),
+      sideEffects: $("sideEffectsValue")
+    };
+
+    const resultEls = {
+      adherenceScore: $("adherenceScore"),
+      dropoutScore: $("dropoutScore"),
+      adherenceBar: $("adherenceBar"),
+      dropoutBar: $("dropoutBar"),
+      adherenceText: $("adherenceText"),
+      dropoutText: $("dropoutText"),
+      stateSummary: $("stateSummary"),
+      trajectoryText: $("trajectoryText"),
+      recommendationsList: $("recommendationsList"),
+      drivers: $("drivers")
+    };
+
+    const STORAGE_KEY = "aoe_patients_v1";
+
+    function clamp(value, min, max){
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function sigmoid(x){
+      return 1 / (1 + Math.exp(-x));
+    }
+
+    function getFormData(){
+      return {
+        patientName: formElements.patientName.value.trim() || "Paciente sin nombre",
+        treatmentType: formElements.treatmentType.value,
+        phase: formElements.phase.value,
+        daysMissed: clamp(Number(formElements.daysMissed.value || 0), 0, 30),
+        motivation: Number(formElements.motivation.value),
+        understanding: Number(formElements.understanding.value),
+        alliance: Number(formElements.alliance.value),
+        support: Number(formElements.support.value),
+        consistency: Number(formElements.consistency.value),
+        forgetfulness: Number(formElements.forgetfulness.value),
+        barrier: Number(formElements.barrier.value),
+        sideEffects: Number(formElements.sideEffects.value)
+      };
+    }
+
+    function computeModel(data){
+      const protective =
+        (data.motivation * 0.18) +
+        (data.understanding * 0.14) +
+        (data.alliance * 0.18) +
+        (data.support * 0.12) +
+        (data.consistency * 0.22);
+
+      const riskLoad =
+        (data.forgetfulness * 0.14) +
+        (data.barrier * 0.12) +
+        (data.sideEffects * 0.10) +
+        (data.daysMissed * 1.8);
+
+      let adherence = protective - riskLoad + 18;
+      adherence = clamp(Math.round(adherence), 0, 100);
+
+      const z =
+        (-2.2) +
+        (data.forgetfulness / 100) * 1.2 +
+        (data.barrier / 100) * 1.1 +
+        (data.sideEffects / 100) * 0.8 +
+        (data.daysMissed / 30) * 1.6 -
+        (data.motivation / 100) * 1.15 -
+        (data.alliance / 100) * 1.0 -
+        (data.consistency / 100) * 1.15 -
+        (data.understanding / 100) * 0.8 -
+        (data.support / 100) * 0.65;
+
+      let dropoutRisk = Math.round(sigmoid(z) * 100);
+      dropoutRisk = clamp(dropoutRisk, 1, 99);
+
+      let state = "S2";
+      if (dropoutRisk >= 80 || adherence <= 25) state = "S4";
+      else if (adherence >= 80 && dropoutRisk <= 20) state = "S3";
+      else if (adherence < 45 && dropoutRisk >= 55) state = "S1";
+      else if (adherence < 20 && dropoutRisk > 85) state = "S0";
+      else state = "S2";
+
+      if (adherence <= 12 && dropoutRisk >= 90) state = "S0";
+
+      const recommendations = generateRecommendations(data, adherence, dropoutRisk, state);
+      const narrative = generateNarrative(data, adherence, dropoutRisk, state);
+      const drivers = generateDrivers(data);
+
+      return {
+        adherence,
+        dropoutRisk,
+        state,
+        recommendations,
+        narrative,
+        drivers,
+        updatedAt: new Date().toLocaleString("es-PE")
+      };
+    }
+
+    function generateRecommendations(data, adherence, dropoutRisk, state){
+      const recs = [];
+
+      if (data.forgetfulness >= 60) recs.push("Implementar recordatorios externos, alarma o sistema de seguimiento simple para reducir omisiones.");
+      if (data.barrier >= 60) recs.push("Intervenir sobre barreras logísticas: horario, transporte, costos o fricción operativa del proceso.");
+      if (data.sideEffects >= 55) recs.push("Revisar de inmediato el malestar asociado al tratamiento y ajustar expectativas o tolerancia clínica.");
+      if (data.understanding < 55) recs.push("Reforzar psicoeducación: explicar propósito, beneficios esperados y criterios de continuidad.");
+      if (data.alliance < 55) recs.push("Fortalecer alianza terapéutica mediante validación, claridad relacional y negociación de metas.");
+      if (data.support < 45) recs.push("Movilizar red de apoyo o diseñar adherencia menos dependiente del entorno.");
+      if (data.consistency < 50) recs.push("Fijar microobjetivos observables para transformar adherencia irregular en rutina mínima estable.");
+      if (data.daysMissed >= 4) recs.push("Explorar patrón de incumplimiento reciente antes de que se consolide una trayectoria de salida.");
+
+      if (state === "S3") recs.unshift("Mantener la estructura actual y pasar a fase de consolidación con monitoreo liviano.");
+      if (state === "S4") recs.unshift("Caso prioritario: requiere intervención inmediata para evitar abandono inminente.");
+      if (state === "S0") recs.unshift("Reingreso clínico necesario: primero reconstruir sentido de continuidad antes de pedir exigencia terapéutica.");
+      if (state === "S1") recs.unshift("Fase de inicio frágil: conviene bajar complejidad y asegurar primeras victorias conductuales.");
+
+      return recs.slice(0, 5);
+    }
+
+    function generateNarrative(data, adherence, dropoutRisk, state){
+      const stateTextMap = {
+        S0: "Desvinculación",
+        S1: "Inicio inestable",
+        S2: "Adherencia parcial",
+        S3: "Adherencia consolidada",
+        S4: "Riesgo crítico"
+      };
+
+      let trend = "el sistema puede estabilizarse";
+      if (dropoutRisk >= 70) trend = "la trayectoria apunta a posible abandono en el corto plazo";
+      else if (adherence >= 75) trend = "la continuidad clínica tiene bases sólidas";
+      else trend = "el caso permanece en una zona intermedia y modulable";
+
+      return `Estado actual: ${state} — ${stateTextMap[state]}. Con un índice de adherencia de ${adherence}/100 y un riesgo de abandono de ${dropoutRisk}%, ${trend}. Las variables más determinantes deben ser intervenidas antes de que el patrón se rigidice.`;
+    }
+
+    function generateDrivers(data){
+      const items = [
+        { name: "Motivación", value: data.motivation, direction: "protective" },
+        { name: "Comprensión", value: data.understanding, direction: "protective" },
+        { name: "Alianza", value: data.alliance, direction: "protective" },
+        { name: "Soporte", value: data.support, direction: "protective" },
+        { name: "Consistencia", value: data.consistency, direction: "protective" },
+        { name: "Olvidos", value: data.forgetfulness, direction: "risk" },
+        { name: "Barreras", value: data.barrier, direction: "risk" },
+        { name: "Efectos adversos", value: data.sideEffects, direction: "risk" },
+        { name: "Incumplimientos", value: clamp((data.daysMissed / 30) * 100, 0, 100), direction: "risk" }
+      ];
+
+      return items
+        .map(item => {
+          const weightFactor = ({
+            "Motivación": 0.18,
+            "Comprensión": 0.14,
+            "Alianza": 0.18,
+            "Soporte": 0.12,
+            "Consistencia": 0.22,
+            "Olvidos": 0.14,
+            "Barreras": 0.12,
+            "Efectos adversos": 0.10,
+            "Incumplimientos": 0.18
+          })[item.name] || 0.10;
+
+          return {
+            ...item,
+            score: Math.round(item.value * weightFactor)
+          };
+        })
+        .sort((a,b) => b.score - a.score)
+        .slice(0,5);
+    }
+
+    function adherenceLabel(score){
+      if (score >= 75) return "Alta";
+      if (score >= 50) return "Media";
+      return "Baja";
+    }
+
+    function riskLevelLabel(score){
+      if (score >= 70) return { text:"Alto", className:"high" };
+      if (score >= 40) return { text:"Medio", className:"medium" };
+      return { text:"Bajo", className:"low" };
+    }
+
+    function stateName(state){
+      return ({
+        S0:"Desvinculación",
+        S1:"Inicio inestable",
+        S2:"Adherencia parcial",
+        S3:"Adherencia consolidada",
+        S4:"Riesgo crítico"
+      })[state] || state;
+    }
+
+    function adherenceText(score){
+      if (score >= 80) return "Adherencia robusta y relativamente estable.";
+      if (score >= 60) return "Adherencia funcional, con áreas de fragilidad moderada.";
+      if (score >= 40) return "Adherencia vulnerable; requiere intervención focalizada.";
+      return "Adherencia baja; continuidad comprometida.";
+    }
+
+    function dropoutText(score){
+      if (score >= 75) return "Riesgo alto. Se recomienda intervención prioritaria e inmediata.";
+      if (score >= 45) return "Riesgo moderado. Hay señales de fragilidad que requieren contención.";
+      return "Riesgo bajo a moderado. Conviene sostener seguimiento preventivo.";
+    }
+
+    function renderResults(model){
+      resultEls.adherenceScore.textContent = model.adherence;
+      resultEls.dropoutScore.textContent = `${model.dropoutRisk}%`;
+      resultEls.adherenceBar.style.width = `${model.adherence}%`;
+      resultEls.dropoutBar.style.width = `${model.dropoutRisk}%`;
+      resultEls.adherenceText.textContent = adherenceText(model.adherence);
+      resultEls.dropoutText.textContent = dropoutText(model.dropoutRisk);
+      resultEls.stateSummary.textContent = `Estado actual: ${model.state} — ${stateName(model.state)}`;
+      resultEls.trajectoryText.textContent = model.narrative;
+
+      resultEls.recommendationsList.innerHTML = "";
+      model.recommendations.forEach(rec => {
+        const li = document.createElement("li");
+        li.textContent = rec;
+        resultEls.recommendationsList.appendChild(li);
+      });
+
+      resultEls.drivers.innerHTML = "";
+      model.drivers.forEach(driver => {
+        const row = document.createElement("div");
+        row.className = "driver";
+
+        const friendlyValue = `${driver.score}`;
+        row.innerHTML = `
+          <div class="driver-name">${driver.name}</div>
+          <div class="driver-bar">
+            <div class="driver-fill" style="width:${clamp(driver.value,0,100)}%"></div>
+          </div>
+          <div class="driver-score">${friendlyValue}</div>
+        `;
+        resultEls.drivers.appendChild(row);
+      });
+
+      document.querySelectorAll(".state").forEach(el => {
+        el.classList.toggle("active", el.dataset.state === model.state);
+      });
+    }
+
+    function syncSliderValues(){
+      Object.keys(sliderValueMap).forEach(key => {
+        sliderValueMap[key].textContent = formElements[key].value;
+      });
+    }
+
+    function analyzeCurrent(){
+      const model = computeModel(getFormData());
+      renderResults(model);
+      return model;
+    }
+
+    function getPatients(){
+      try{
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      }catch{
+        return [];
+      }
+    }
+
+    function setPatients(data){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function saveCurrentPatient(){
+      const data = getFormData();
+      const model = computeModel(data);
+      const patients = getPatients();
+
+      const payload = {
+        id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now()),
+        ...data,
+        ...model
+      };
+
+      patients.unshift(payload);
+      setPatients(patients);
+      renderPatientsTable();
+      updateKPIs();
+      alert("Paciente guardado correctamente en la base local.");
+    }
+
+    function renderPatientsTable(filter = ""){
+      const tbody = $("patientsTableBody");
+      const patients = getPatients();
+      const q = filter.trim().toLowerCase();
+
+      const filtered = patients.filter(p => {
+        return (
+          p.patientName.toLowerCase().includes(q) ||
+          stateName(p.state).toLowerCase().includes(q) ||
+          p.treatmentType.toLowerCase().includes(q) ||
+          p.phase.toLowerCase().includes(q)
+        );
+      });
+
+      tbody.innerHTML = "";
+
+      if (!filtered.length){
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="muted">No hay pacientes registrados en esta vista.</td>
+          </tr>
+        `;
+        return;
+      }
+
+      filtered.forEach(patient => {
+        const tr = document.createElement("tr");
+        const risk = riskLevelLabel(patient.dropoutRisk);
+
+        tr.innerHTML = `
+          <td>
+            <strong>${escapeHtml(patient.patientName)}</strong><br>
+            <span class="muted">ID local</span>
+          </td>
+          <td>${capitalize(patient.treatmentType)}</td>
+          <td>${capitalize(patient.phase)}</td>
+          <td>${patient.adherence} <span class="muted">(${adherenceLabel(patient.adherence)})</span></td>
+          <td><span class="chip ${risk.className}">${patient.dropoutRisk}% · ${risk.text}</span></td>
+          <td>${patient.state} — ${stateName(patient.state)}</td>
+          <td>${patient.updatedAt}</td>
+          <td>
+            <button class="secondary" style="padding:8px 10px;border-radius:10px;font-size:12px;" data-load="${patient.id}">Cargar</button>
+            <button class="danger" style="padding:8px 10px;border-radius:10px;font-size:12px;" data-delete="${patient.id}">Eliminar</button>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("[data-load]").forEach(btn => {
+        btn.addEventListener("click", () => loadPatient(btn.dataset.load));
+      });
+
+      tbody.querySelectorAll("[data-delete]").forEach(btn => {
+        btn.addEventListener("click", () => deletePatient(btn.dataset.delete));
+      });
+    }
+
+    function loadPatient(id){
+      const patients = getPatients();
+      const patient = patients.find(p => p.id === id);
+      if (!patient) return;
+
+      formElements.patientName.value = patient.patientName || "";
+      formElements.treatmentType.value = patient.treatmentType || "farmacologico";
+      formElements.phase.value = patient.phase || "inicio";
+      formElements.daysMissed.value = patient.daysMissed ?? 0;
+      formElements.motivation.value = patient.motivation ?? 50;
+      formElements.understanding.value = patient.understanding ?? 50;
+      formElements.alliance.value = patient.alliance ?? 50;
+      formElements.support.value = patient.support ?? 50;
+      formElements.consistency.value = patient.consistency ?? 50;
+      formElements.forgetfulness.value = patient.forgetfulness ?? 50;
+      formElements.barrier.value = patient.barrier ?? 50;
+      formElements.sideEffects.value = patient.sideEffects ?? 50;
+
+      syncSliderValues();
+      analyzeCurrent();
+
+      showView("dashboardView");
+    }
+
+    function deletePatient(id){
+      const remaining = getPatients().filter(p => p.id !== id);
+      setPatients(remaining);
+      renderPatientsTable($("patientSearch").value);
+      updateKPIs();
+    }
+
+    function updateKPIs(){
+      const patients = getPatients();
+      $("kpiPatients").textContent = patients.length;
+
+      if (!patients.length){
+        $("kpiAvgRisk").textContent = "0%";
+        $("kpiHighAdh").textContent = "0";
+        $("kpiCritical").textContent = "0";
+        return;
+      }
+
+      const avgRisk = Math.round(patients.reduce((acc,p)=>acc + p.dropoutRisk, 0) / patients.length);
+      const highAdh = patients.filter(p => p.adherence >= 75).length;
+      const critical = patients.filter(p => p.dropoutRisk >= 70).length;
+
+      $("kpiAvgRisk").textContent = `${avgRisk}%`;
+      $("kpiHighAdh").textContent = highAdh;
+      $("kpiCritical").textContent = critical;
+    }
+
+    function showView(viewId){
+      document.querySelectorAll(".nav button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.view === viewId);
+      });
+
+      $("dashboardView").classList.toggle("hidden", viewId !== "dashboardView");
+      $("patientsView").classList.toggle("hidden", viewId !== "patientsView");
+    }
+
+    function loadDemoCase(){
+      formElements.patientName.value = "Paciente Demo";
+      formElements.treatmentType.value = "mixto";
+      formElements.phase.value = "seguimiento";
+      formElements.daysMissed.value = 5;
+      formElements.motivation.value = 44;
+      formElements.understanding.value = 52;
+      formElements.alliance.value = 61;
+      formElements.support.value = 36;
+      formElements.consistency.value = 40;
+      formElements.forgetfulness.value = 71;
+      formElements.barrier.value = 64;
+      formElements.sideEffects.value = 58;
+      syncSliderValues();
+      analyzeCurrent();
+    }
+
+    function resetForm(){
+      formElements.patientName.value = "";
+      formElements.treatmentType.value = "farmacologico";
+      formElements.phase.value = "inicio";
+      formElements.daysMissed.value = 2;
+      formElements.motivation.value = 72;
+      formElements.understanding.value = 68;
+      formElements.alliance.value = 74;
+      formElements.support.value = 60;
+      formElements.consistency.value = 66;
+      formElements.forgetfulness.value = 38;
+      formElements.barrier.value = 42;
+      formElements.sideEffects.value = 28;
+      syncSliderValues();
+      analyzeCurrent();
+    }
+
+    function exportPatients(){
+      const patients = getPatients();
+      const blob = new Blob([JSON.stringify(patients, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "adherence_optimization_engine_patients.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function capitalize(str){
+      if (!str) return "";
+      return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    document.querySelectorAll(".nav button").forEach(btn => {
+      btn.addEventListener("click", () => showView(btn.dataset.view));
+    });
+
+    Object.keys(sliderValueMap).forEach(key => {
+      formElements[key].addEventListener("input", syncSliderValues);
+      formElements[key].addEventListener("input", analyzeCurrent);
+    });
+
+    ["patientName","treatmentType","phase","daysMissed"].forEach(key => {
+      formElements[key].addEventListener("input", analyzeCurrent);
+      formElements[key].addEventListener("change", analyzeCurrent);
+    });
+
+    $("analyzeBtn").addEventListener("click", analyzeCurrent);
+    $("saveBtn").addEventListener("click", saveCurrentPatient);
+    $("demoBtn").addEventListener("click", loadDemoCase);
+    $("resetBtn").addEventListener("click", resetForm);
+    $("exportBtn").addEventListener("click", exportPatients);
+    $("clearStorageBtn").addEventListener("click", () => {
+      if (confirm("¿Seguro que deseas borrar toda la base local de pacientes?")) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderPatientsTable();
+        updateKPIs();
+      }
+    });
+    $("patientSearch").addEventListener("input", (e) => renderPatientsTable(e.target.value));
+
+    syncSliderValues();
+    analyzeCurrent();
+    renderPatientsTable();
+    updateKPIs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Call Planning Engine</title>
+  <style>
+    :root{
+      --bg:#0b1324;
+      --panel:#121d36;
+      --panel-2:#182647;
+      --line:#2a3b67;
+      --text:#eef4ff;
+      --muted:#9fb1d9;
+      --accent:#4ea1ff;
+      --accent-2:#79d2ff;
+      --good:#28c76f;
+      --warn:#ffb020;
+      --bad:#ff5d73;
+      --shadow:0 14px 40px rgba(0,0,0,.28);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#08101f 0%, #0b1324 100%);color:var(--text)}
+    body{padding:22px}
+    h1,h2,h3,p{margin:0}
+    button,input,select{font:inherit}
+    .app{max-width:1500px;margin:0 auto}
+    .hero{
+      display:grid;
+      grid-template-columns:1.35fr .65fr;
+      gap:18px;
+      margin-bottom:18px;
+    }
+    .card{
+      background:linear-gradient(180deg,var(--panel) 0%, #0f1830 100%);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+    .hero-main{
+      min-height:180px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      overflow:hidden;
+      position:relative;
+    }
+    .hero-main:before{
+      content:"";
+      position:absolute;
+      width:380px;height:380px;
+      background:radial-gradient(circle, rgba(78,161,255,.25) 0%, rgba(78,161,255,0) 70%);
+      right:-80px;top:-120px;
+      pointer-events:none;
+    }
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-size:12px;
+      letter-spacing:.14em;
+      color:var(--accent-2);
+      text-transform:uppercase;
+      margin-bottom:10px;
+      font-weight:700;
+    }
+    .hero h1{
+      font-size:34px;
+      line-height:1.05;
+      max-width:760px;
+      margin-bottom:10px;
+    }
+    .hero p{
+      color:var(--muted);
+      line-height:1.5;
+      max-width:820px;
+    }
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      color:var(--text);
+      padding:8px 12px;
+      border-radius:999px;
+      font-size:12px;
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      height:100%;
+    }
+    .stat{
+      background:linear-gradient(180deg,var(--panel-2),#121d36);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      min-height:86px;
+    }
+    .stat small{color:var(--muted);font-size:12px}
+    .stat strong{font-size:28px}
+
+    .layout{
+      display:grid;
+      grid-template-columns:370px 1fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .field.full{grid-column:1 / -1}
+    label{
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+      letter-spacing:.04em;
+      text-transform:uppercase;
+    }
+    input,select{
+      width:100%;
+      background:#0d162b;
+      border:1px solid var(--line);
+      color:var(--text);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+    }
+    input:focus,select:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 3px rgba(78,161,255,.15);
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:14px;
+    }
+    button{
+      border:none;
+      cursor:pointer;
+      border-radius:12px;
+      padding:11px 14px;
+      transition:.18s ease;
+      font-weight:700;
+    }
+    .btn-primary{
+      background:linear-gradient(180deg,var(--accent),#2d79d8);
+      color:white;
+    }
+    .btn-secondary{
+      background:#162646;
+      border:1px solid var(--line);
+      color:var(--text);
+    }
+    .btn-danger{
+      background:linear-gradient(180deg,#ff6a7f,#e0425f);
+      color:white;
+    }
+    button:hover{transform:translateY(-1px)}
+    button:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .section-title h2{
+      font-size:20px;
+    }
+    .section-title span{
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .doctor-list{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-height:650px;
+      overflow:auto;
+      padding-right:4px;
+    }
+    .doctor-item{
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#15213d 0%, #111b33 100%);
+      border-radius:16px;
+      padding:14px;
+    }
+    .doctor-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+      margin-bottom:10px;
+    }
+    .doctor-name{
+      font-size:18px;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+    .doctor-meta{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .score-badge{
+      min-width:72px;
+      text-align:center;
+      background:rgba(78,161,255,.12);
+      border:1px solid rgba(78,161,255,.28);
+      color:#bfe0ff;
+      padding:8px 10px;
+      border-radius:14px;
+      font-weight:700;
+      font-size:18px;
+    }
+    .doctor-tags{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin:10px 0 12px;
+    }
+    .tag{
+      background:#10203d;
+      border:1px solid var(--line);
+      color:var(--text);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+    }
+    .doctor-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .small-btn{
+      background:#182847;
+      border:1px solid var(--line);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .grid-main{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:18px;
+    }
+
+    .planner-toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      margin-bottom:14px;
+    }
+    .planner-toolbar select{
+      width:auto;
+      min-width:160px;
+    }
+
+    .days{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:12px;
+    }
+    .day{
+      background:linear-gradient(180deg,#13203b,#10192f);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      min-height:320px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .day h3{
+      font-size:15px;
+      margin-bottom:4px;
+    }
+    .day small{
+      color:var(--muted);
+    }
+    .visit-card{
+      border:1px solid var(--line);
+      background:#0f1830;
+      border-radius:14px;
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .visit-card strong{font-size:14px}
+    .visit-card span{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .state{
+      font-size:11px;
+      padding:5px 8px;
+      border-radius:999px;
+      display:inline-block;
+      width:max-content;
+      font-weight:700;
+      letter-spacing:.03em;
+    }
+    .s0{background:rgba(255,93,115,.15);color:#ff99a8;border:1px solid rgba(255,93,115,.25)}
+    .s1{background:rgba(255,176,32,.15);color:#ffd27b;border:1px solid rgba(255,176,32,.25)}
+    .s2{background:rgba(78,161,255,.14);color:#b7dbff;border:1px solid rgba(78,161,255,.25)}
+    .s3{background:rgba(40,199,111,.15);color:#97f0bd;border:1px solid rgba(40,199,111,.25)}
+
+    .route-wrap{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+    .route-box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:linear-gradient(180deg,#111c34,#0f1830);
+      min-height:330px;
+    }
+    .route-seq{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      margin-top:12px;
+    }
+    .route-step{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:10px;
+      border-radius:12px;
+      background:#0d162b;
+      border:1px solid var(--line);
+    }
+    .step-n{
+      width:30px;height:30px;border-radius:50%;
+      display:grid;place-items:center;
+      background:rgba(78,161,255,.18);
+      color:#d7ebff;
+      font-weight:700;
+      flex:0 0 auto;
+    }
+
+    .canvas-wrap{
+      margin-top:12px;
+      background:#0b1428;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:8px;
+    }
+    canvas{
+      width:100%;
+      height:280px;
+      display:block;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)),
+        #0b1428;
+      border-radius:10px;
+    }
+
+    .decision-engine{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:18px;
+    }
+    .state-flow{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    .node{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:linear-gradient(180deg,#15213d,#0f1830);
+      min-height:120px;
+    }
+    .node h4{
+      margin-bottom:6px;
+      font-size:16px;
+    }
+    .node p{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .decision-box{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:linear-gradient(180deg,#121d36,#0f1830);
+      padding:16px;
+    }
+    .decision-box .result{
+      font-size:24px;
+      font-weight:800;
+      margin:10px 0 6px;
+    }
+    .decision-box .sub{
+      color:var(--muted);
+      line-height:1.55;
+      font-size:14px;
+    }
+
+    .footer{
+      margin-top:20px;
+      text-align:center;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.6;
+      padding:10px;
+    }
+
+    .empty{
+      color:var(--muted);
+      font-size:14px;
+      padding:18px;
+      text-align:center;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      background:#0e172d;
+    }
+
+    @media (max-width:1200px){
+      .layout{grid-template-columns:1fr}
+      .hero{grid-template-columns:1fr}
+      .days{grid-template-columns:repeat(2,1fr)}
+      .route-wrap,.decision-engine{grid-template-columns:1fr}
+    }
+    @media (max-width:760px){
+      body{padding:12px}
+      .days{grid-template-columns:1fr}
+      .form-grid{grid-template-columns:1fr}
+      .state-flow{grid-template-columns:1fr}
+      .hero h1{font-size:28px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div class="card hero-main">
+        <div>
+          <div class="eyebrow">Call Planning Engine · Motor de planificación</div>
+          <h1>Agenda semanal inteligente, priorización de médicos y rutas optimizadas</h1>
+          <p>
+            Prototipo funcional de planificación de visitas médicas con lógica estructurada de decisión.
+            El sistema calcula prioridad comercial, distribuye visitas por semana, organiza recorridos
+            y modela el avance relacional del médico a través de estados: <strong>S0</strong> sin contacto,
+            <strong>S1</strong> contacto inicial, <strong>S2</strong> seguimiento y <strong>S3</strong> cierre.
+          </p>
+          <div class="legend">
+            <div class="pill">Priorización automática</div>
+            <div class="pill">Asignación semanal</div>
+            <div class="pill">Ruta por proximidad</div>
+            <div class="pill">Motor de estados S0 → S3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="stats">
+          <div class="stat">
+            <small>Médicos registrados</small>
+            <strong id="statDoctors">0</strong>
+          </div>
+          <div class="stat">
+            <small>Visitas planificadas</small>
+            <strong id="statVisits">0</strong>
+          </div>
+          <div class="stat">
+            <small>Prioridad promedio</small>
+            <strong id="statAvg">0</strong>
+          </div>
+          <div class="stat">
+            <small>Cierres potenciales</small>
+            <strong id="statClosures">0</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="card">
+        <div class="section-title">
+          <div>
+            <h2>Registro de médicos</h2>
+            <span>Perfil + score + estado</span>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="field full">
+            <label for="doctorName">Nombre del médico</label>
+            <input id="doctorName" type="text" placeholder="Ej. Dra. Valeria Gómez" />
+          </div>
+
+          <div class="field">
+            <label for="specialty">Especialidad</label>
+            <select id="specialty">
+              <option value="Cardiología">Cardiología</option>
+              <option value="Neurología">Neurología</option>
+              <option value="Psiquiatría">Psiquiatría</option>
+              <option value="Medicina interna">Medicina interna</option>
+              <option value="Pediatría">Pediatría</option>
+              <option value="Geriatría">Geriatría</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="zone">Zona</label>
+            <select id="zone">
+              <option value="Norte">Norte</option>
+              <option value="Centro">Centro</option>
+              <option value="Sur">Sur</option>
+              <option value="Este">Este</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="state">Estado relacional</label>
+            <select id="state">
+              <option value="S0">S0 · Sin contacto</option>
+              <option value="S1">S1 · Contacto inicial</option>
+              <option value="S2">S2 · Seguimiento</option>
+              <option value="S3">S3 · Cierre</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="channel">Canal preferido</label>
+            <select id="channel">
+              <option value="Presencial">Presencial</option>
+              <option value="Digital">Digital</option>
+              <option value="Mixto">Mixto</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="potential">Potencial prescriptivo</label>
+            <select id="potential">
+              <option value="5">Muy alto</option>
+              <option value="4">Alto</option>
+              <option value="3">Medio</option>
+              <option value="2">Bajo</option>
+              <option value="1">Muy bajo</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="influence">Nivel de influencia</label>
+            <select id="influence">
+              <option value="5">A+</option>
+              <option value="4">A</option>
+              <option value="3">B</option>
+              <option value="2">C</option>
+              <option value="1">D</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="affinity">Afinidad / apertura</label>
+            <select id="affinity">
+              <option value="5">Muy alta</option>
+              <option value="4">Alta</option>
+              <option value="3">Media</option>
+              <option value="2">Baja</option>
+              <option value="1">Muy baja</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="resistance">Resistencia</label>
+            <select id="resistance">
+              <option value="1">Muy baja</option>
+              <option value="2">Baja</option>
+              <option value="3">Media</option>
+              <option value="4">Alta</option>
+              <option value="5">Muy alta</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="xCoord">Coordenada X</label>
+            <input id="xCoord" type="number" min="0" max="100" value="50" />
+          </div>
+
+          <div class="field">
+            <label for="yCoord">Coordenada Y</label>
+            <input id="yCoord" type="number" min="0" max="100" value="50" />
+          </div>
+
+          <div class="field full">
+            <label for="notes">Notas estratégicas</label>
+            <input id="notes" type="text" placeholder="Ej. Receptiva a seguimiento, foco en evidencia clínica" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn-primary" id="addDoctorBtn">Agregar médico</button>
+          <button class="btn-secondary" id="loadDemoBtn">Cargar demo</button>
+          <button class="btn-danger" id="clearAllBtn">Limpiar todo</button>
+        </div>
+
+        <div style="margin-top:18px">
+          <div class="section-title">
+            <div>
+              <h2>Base de médicos</h2>
+              <span>Ordenados por prioridad</span>
+            </div>
+          </div>
+          <div class="doctor-list" id="doctorList"></div>
+        </div>
+      </aside>
+
+      <main class="grid-main">
+        <section class="card">
+          <div class="section-title">
+            <div>
+              <h2>Agenda semanal inteligente</h2>
+              <span>Distribución automática de visitas por prioridad y estado</span>
+            </div>
+          </div>
+
+          <div class="planner-toolbar">
+            <button class="btn-primary" id="generatePlanBtn">Generar plan semanal</button>
+            <button class="btn-secondary" id="optimizeRoutesBtn">Optimizar rutas</button>
+            <select id="visitsPerWeek">
+              <option value="10">10 visitas/semana</option>
+              <option value="15" selected>15 visitas/semana</option>
+              <option value="20">20 visitas/semana</option>
+            </select>
+          </div>
+
+          <div class="days" id="daysContainer"></div>
+        </section>
+
+        <section class="route-wrap">
+          <div class="card">
+            <div class="section-title">
+              <div>
+                <h2>Ruta optimizada</h2>
+                <span>Secuencia por proximidad geográfica</span>
+              </div>
+            </div>
+            <div class="route-box">
+              <div id="routeSummary" class="empty">Genera un plan y luego optimiza la ruta.</div>
+              <div class="route-seq" id="routeSequence"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">
+              <div>
+                <h2>Mapa operativo</h2>
+                <span>Visualización simple de territorio</span>
+              </div>
+            </div>
+            <div class="canvas-wrap">
+              <canvas id="mapCanvas" width="700" height="280"></canvas>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="section-title">
+            <div>
+              <h2>Motor de decisión comercial</h2>
+              <span>Lógica estructurada por transición relacional</span>
+            </div>
+          </div>
+
+          <div class="decision-engine">
+            <div>
+              <div class="state-flow">
+                <div class="node">
+                  <h4>S0 · Sin contacto</h4>
+                  <p>Médico no activado. Requiere aproximación inicial, pertinencia del mensaje y primer punto de entrada.</p>
+                </div>
+                <div class="node">
+                  <h4>S1 · Contacto inicial</h4>
+                  <p>Existe primer vínculo. El objetivo es consolidar recordación y detectar receptividad real.</p>
+                </div>
+                <div class="node">
+                  <h4>S2 · Seguimiento</h4>
+                  <p>Relación en desarrollo. Aquí importa consistencia, evidencia, frecuencia y adaptación del abordaje.</p>
+                </div>
+                <div class="node">
+                  <h4>S3 · Cierre</h4>
+                  <p>Médico altamente alineado. La meta pasa a retención, profundización y protección de la cuenta.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="decision-box">
+              <div style="color:var(--accent-2);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;">Resultado del motor</div>
+              <div class="result" id="decisionResult">Esperando cálculo</div>
+              <div class="sub" id="decisionText">
+                El sistema evaluará el patrón dominante de tu base y sugerirá la prioridad estratégica de la semana.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </section>
+
+    <div class="footer">
+      Desarrollado por: Lic. Gonzalo Buendía – Psicólogo y Blanquita – Co terapeuta
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "call_planning_engine_data_v1";
+
+    const stateMap = {
+      S0: "Sin contacto",
+      S1: "Contacto inicial",
+      S2: "Seguimiento",
+      S3: "Cierre"
+    };
+
+    const days = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
+
+    let doctors = [];
+    let weeklyPlan = [];
+    let optimizedRoute = [];
+
+    function loadData(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        try{
+          const parsed = JSON.parse(raw);
+          doctors = Array.isArray(parsed.doctors) ? parsed.doctors : [];
+          weeklyPlan = Array.isArray(parsed.weeklyPlan) ? parsed.weeklyPlan : [];
+          optimizedRoute = Array.isArray(parsed.optimizedRoute) ? parsed.optimizedRoute : [];
+        }catch(e){
+          doctors = [];
+          weeklyPlan = [];
+          optimizedRoute = [];
+        }
+      }
+    }
+
+    function saveData(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ doctors, weeklyPlan, optimizedRoute }));
+    }
+
+    function uid(){
+      return Math.random().toString(36).slice(2, 10);
+    }
+
+    function clamp(n, min, max){
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function computePriority(d){
+      const stateBoost = { S0: 1.05, S1: 1.12, S2: 1.22, S3: 1.08 }[d.state] || 1;
+      const channelBoost = { Presencial: 1.08, Digital: 0.97, Mixto: 1.12 }[d.channel] || 1;
+      const zoneBoost = { Centro: 1.1, Norte: 1.02, Sur: 1.02, Este: 1.00 }[d.zone] || 1;
+
+      let score =
+        (
+          (Number(d.potential) * 3.2) +
+          (Number(d.influence) * 2.8) +
+          (Number(d.affinity) * 2.4) -
+          (Number(d.resistance) * 2.1)
+        ) * stateBoost * channelBoost * zoneBoost;
+
+      if(d.state === "S2" && Number(d.affinity) >= 4) score += 4;
+      if(d.state === "S3" && Number(d.influence) >= 4) score += 3;
+      if(d.state === "S0" && Number(d.resistance) >= 4) score -= 2;
+
+      return Math.max(1, Math.round(score));
+    }
+
+    function stateClass(state){
+      return state.toLowerCase();
+    }
+
+    function getRecommendedAction(d){
+      if(d.state === "S0"){
+        return "Abrir contacto con mensaje breve de alto valor y visita inicial.";
+      }
+      if(d.state === "S1"){
+        return "Consolidar recordación y validar interés real en próxima interacción.";
+      }
+      if(d.state === "S2"){
+        return "Profundizar seguimiento, resolver objeciones y avanzar al cierre.";
+      }
+      return "Proteger relación, reforzar confianza y sostener frecuencia óptima.";
+    }
+
+    function renderDoctors(){
+      const list = document.getElementById("doctorList");
+      list.innerHTML = "";
+
+      const sorted = [...doctors].sort((a,b) => b.priority - a.priority);
+
+      if(!sorted.length){
+        list.innerHTML = `<div class="empty">Aún no hay médicos registrados.</div>`;
+        updateStats();
+        updateDecisionEngine();
+        drawMap();
+        return;
+      }
+
+      sorted.forEach(d => {
+        const div = document.createElement("div");
+        div.className = "doctor-item";
+        div.innerHTML = `
+          <div class="doctor-top">
+            <div>
+              <div class="doctor-name">${escapeHtml(d.name)}</div>
+              <div class="doctor-meta">
+                ${escapeHtml(d.specialty)} · Zona ${escapeHtml(d.zone)}<br>
+                Canal: ${escapeHtml(d.channel)} · Estado: ${stateMap[d.state]}
+              </div>
+            </div>
+            <div class="score-badge">${d.priority}</div>
+          </div>
+
+          <div class="doctor-tags">
+            <span class="tag">Potencial ${d.potential}</span>
+            <span class="tag">Influencia ${d.influence}</span>
+            <span class="tag">Afinidad ${d.affinity}</span>
+            <span class="tag">Resistencia ${d.resistance}</span>
+            <span class="tag">(${d.x}, ${d.y})</span>
+          </div>
+
+          <div class="doctor-meta" style="margin-bottom:12px">
+            ${escapeHtml(d.notes || "Sin observaciones")}<br>
+            Recomendación: ${escapeHtml(getRecommendedAction(d))}
+          </div>
+
+          <div class="doctor-actions">
+            <button class="small-btn" onclick="advanceState('${d.id}')">Avanzar estado</button>
+            <button class="small-btn" onclick="downgradeState('${d.id}')">Retroceder</button>
+            <button class="small-btn" onclick="duplicateDoctor('${d.id}')">Duplicar</button>
+            <button class="small-btn" onclick="removeDoctor('${d.id}')">Eliminar</button>
+          </div>
+        `;
+        list.appendChild(div);
+      });
+
+      updateStats();
+      updateDecisionEngine();
+      drawMap();
+    }
+
+    function updateStats(){
+      const total = doctors.length;
+      const totalVisits = weeklyPlan.length;
+      const avg = total ? Math.round(doctors.reduce((a,b) => a + b.priority, 0) / total) : 0;
+      const closures = doctors.filter(d => d.state === "S2" || d.state === "S3").length;
+
+      document.getElementById("statDoctors").textContent = total;
+      document.getElementById("statVisits").textContent = totalVisits;
+      document.getElementById("statAvg").textContent = avg;
+      document.getElementById("statClosures").textContent = closures;
+    }
+
+    function updateDecisionEngine(){
+      const result = document.getElementById("decisionResult");
+      const text = document.getElementById("decisionText");
+
+      if(!doctors.length){
+        result.textContent = "Base vacía";
+        text.textContent = "Registra médicos para activar el análisis estratégico del sistema.";
+        return;
+      }
+
+      const counts = { S0:0, S1:0, S2:0, S3:0 };
+      doctors.forEach(d => counts[d.state]++);
+
+      const avgPriority = doctors.reduce((a,b)=>a+b.priority,0)/doctors.length;
+      let label = "";
+      let desc = "";
+
+      if(counts.S0 >= counts.S1 && counts.S0 >= counts.S2 && counts.S0 >= counts.S3){
+        label = "Expansión de cobertura";
+        desc = "La base muestra predominio de cuentas frías. La estrategia recomendada es apertura de contacto, segmentación precisa y mayor volumen de primeras visitas.";
+      } else if(counts.S1 >= counts.S2 && counts.S1 >= counts.S3){
+        label = "Consolidación inicial";
+        desc = "Predominan contactos recientes. Conviene reforzar frecuencia, recordación y relevancia del mensaje antes de escalar el esfuerzo de cierre.";
+      } else if(counts.S2 >= counts.S3){
+        label = "Aceleración de seguimiento";
+        desc = "La base está madura para profundizar seguimiento. La prioridad semanal debe concentrarse en médicos con alta afinidad e influencia para empujar transiciones a cierre.";
+      } else {
+        label = "Sostenimiento y retención";
+        desc = "Existen cuentas avanzadas. La decisión óptima es proteger cierres, evitar caída de engagement y equilibrar mantenimiento con prospección selectiva.";
+      }
+
+      if(avgPriority >= 16){
+        desc += " La calidad promedio de la base es alta, por lo que la ejecución táctica puede ser más selectiva y menos dispersa.";
+      } else {
+        desc += " La prioridad promedio sugiere ampliar depuración y foco para elevar rendimiento del ciclo.";
+      }
+
+      result.textContent = label;
+      text.textContent = desc;
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function addDoctor(){
+      const name = document.getElementById("doctorName").value.trim();
+      if(!name){
+        alert("Ingresa el nombre del médico.");
+        return;
+      }
+
+      const doctor = {
+        id: uid(),
+        name,
+        specialty: document.getElementById("specialty").value,
+        zone: document.getElementById("zone").value,
+        state: document.getElementById("state").value,
+        channel: document.getElementById("channel").value,
+        potential: Number(document.getElementById("potential").value),
+        influence: Number(document.getElementById("influence").value),
+        affinity: Number(document.getElementById("affinity").value),
+        resistance: Number(document.getElementById("resistance").value),
+        x: clamp(Number(document.getElementById("xCoord").value || 50), 0, 100),
+        y: clamp(Number(document.getElementById("yCoord").value || 50), 0, 100),
+        notes: document.getElementById("notes").value.trim()
+      };
+
+      doctor.priority = computePriority(doctor);
+      doctors.push(doctor);
+      saveData();
+      renderDoctors();
+      clearForm();
+    }
+
+    function clearForm(){
+      document.getElementById("doctorName").value = "";
+      document.getElementById("notes").value = "";
+      document.getElementById("xCoord").value = 50;
+      document.getElementById("yCoord").value = 50;
+    }
+
+    function removeDoctor(id){
+      doctors = doctors.filter(d => d.id !== id);
+      weeklyPlan = weeklyPlan.filter(v => v.id !== id);
+      optimizedRoute = optimizedRoute.filter(v => v.id !== id);
+      saveData();
+      renderDoctors();
+      renderWeeklyPlan();
+      renderRoute();
+    }
+
+    function duplicateDoctor(id){
+      const d = doctors.find(x => x.id === id);
+      if(!d) return;
+      const copy = {
+        ...d,
+        id: uid(),
+        name: d.name + " (copia)"
+      };
+      copy.priority = computePriority(copy);
+      doctors.push(copy);
+      saveData();
+      renderDoctors();
+    }
+
+    function advanceState(id){
+      const d = doctors.find(x => x.id === id);
+      if(!d) return;
+      if(d.state === "S0") d.state = "S1";
+      else if(d.state === "S1") d.state = "S2";
+      else if(d.state === "S2") d.state = "S3";
+      d.priority = computePriority(d);
+      saveData();
+      renderDoctors();
+      if(weeklyPlan.length) generateWeeklyPlan();
+    }
+
+    function downgradeState(id){
+      const d = doctors.find(x => x.id === id);
+      if(!d) return;
+      if(d.state === "S3") d.state = "S2";
+      else if(d.state === "S2") d.state = "S1";
+      else if(d.state === "S1") d.state = "S0";
+      d.priority = computePriority(d);
+      saveData();
+      renderDoctors();
+      if(weeklyPlan.length) generateWeeklyPlan();
+    }
+
+    window.removeDoctor = removeDoctor;
+    window.duplicateDoctor = duplicateDoctor;
+    window.advanceState = advanceState;
+    window.downgradeState = downgradeState;
+
+    function visitWeightByState(state){
+      return { S0: 1, S1: 2, S2: 3, S3: 2 }[state] || 1;
+    }
+
+    function generateWeeklyPlan(){
+      if(!doctors.length){
+        alert("Agrega médicos primero.");
+        return;
+      }
+
+      const visitsPerWeek = Number(document.getElementById("visitsPerWeek").value);
+      const sorted = [...doctors].sort((a,b) => b.priority - a.priority);
+
+      const weighted = [];
+      sorted.forEach(d => {
+        const reps = visitWeightByState(d.state);
+        for(let i = 0; i < reps; i++) weighted.push(d);
+      });
+
+      const selected = [];
+      const usedCount = {};
+
+      for(const d of weighted){
+        if(selected.length >= visitsPerWeek) break;
+        usedCount[d.id] = usedCount[d.id] || 0;
+
+        const maxPerDoctor = d.state === "S2" ? 2 : 1;
+        if(usedCount[d.id] < maxPerDoctor){
+          selected.push({
+            ...d,
+            day: days[selected.length % 5]
+          });
+          usedCount[d.id]++;
+        }
+      }
+
+      weeklyPlan = selected;
+      saveData();
+      renderWeeklyPlan();
+      renderRoute();
+      updateStats();
+    }
+
+    function renderWeeklyPlan(){
+      const container = document.getElementById("daysContainer");
+      container.innerHTML = "";
+
+      days.forEach(day => {
+        const visits = weeklyPlan.filter(v => v.day === day);
+        const col = document.createElement("div");
+        col.className = "day";
+
+        let html = `
+          <div>
+            <h3>${day}</h3>
+            <small>${visits.length} visita(s) programada(s)</small>
+          </div>
+        `;
+
+        if(!visits.length){
+          html += `<div class="empty" style="padding:14px;font-size:13px">Sin visitas asignadas</div>`;
+        } else {
+          visits.forEach(v => {
+            html += `
+              <div class="visit-card">
+                <strong>${escapeHtml(v.name)}</strong>
+                <span>${escapeHtml(v.specialty)} · Zona ${escapeHtml(v.zone)} · Prioridad ${v.priority}</span>
+                <span class="state ${stateClass(v.state)}">${v.state} · ${stateMap[v.state]}</span>
+                <span>${escapeHtml(getRecommendedAction(v))}</span>
+              </div>
+            `;
+          });
+        }
+
+        col.innerHTML = html;
+        container.appendChild(col);
+      });
+    }
+
+    function distance(a,b){
+      return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
+    }
+
+    function optimizeRoutes(){
+      if(!weeklyPlan.length){
+        alert("Primero genera el plan semanal.");
+        return;
+      }
+
+      const monday = weeklyPlan.filter(v => v.day === "Lunes");
+      if(!monday.length){
+        optimizedRoute = [];
+        renderRoute();
+        return;
+      }
+
+      const remaining = [...monday];
+      const route = [];
+      let current = remaining.shift();
+      route.push(current);
+
+      while(remaining.length){
+        let nearestIndex = 0;
+        let nearestDistance = Infinity;
+
+        for(let i = 0; i < remaining.length; i++){
+          const d = distance(current, remaining[i]);
+          if(d < nearestDistance){
+            nearestDistance = d;
+            nearestIndex = i;
+          }
+        }
+
+        current = remaining.splice(nearestIndex, 1)[0];
+        route.push(current);
+      }
+
+      optimizedRoute = route;
+      saveData();
+      renderRoute();
+    }
+
+    function renderRoute(){
+      const summary = document.getElementById("routeSummary");
+      const seq = document.getElementById("routeSequence");
+      seq.innerHTML = "";
+
+      if(!optimizedRoute.length){
+        summary.className = "empty";
+        summary.textContent = weeklyPlan.length
+          ? "Plan generado. Presiona “Optimizar rutas” para calcular la secuencia del lunes."
+          : "Genera un plan y luego optimiza la ruta.";
+        drawMap();
+        return;
+      }
+
+      let totalDistance = 0;
+      for(let i = 0; i < optimizedRoute.length - 1; i++){
+        totalDistance += distance(optimizedRoute[i], optimizedRoute[i + 1]);
+      }
+
+      summary.className = "";
+      summary.innerHTML = `
+        <strong style="display:block;font-size:18px;margin-bottom:8px">Ruta recomendada para Lunes</strong>
+        <div style="color:var(--muted);line-height:1.6">
+          ${optimizedRoute.length} visita(s) · Distancia relativa total: <strong style="color:var(--text)">${totalDistance.toFixed(1)}</strong><br>
+          Criterio aplicado: recorrido por cercanía geográfica desde el primer médico del día.
+        </div>
+      `;
+
+      optimizedRoute.forEach((d, i) => {
+        const step = document.createElement("div");
+        step.className = "route-step";
+        step.innerHTML = `
+          <div class="step-n">${i + 1}</div>
+          <div>
+            <strong>${escapeHtml(d.name)}</strong><br>
+            <span style="color:var(--muted);font-size:13px">${escapeHtml(d.specialty)} · Zona ${escapeHtml(d.zone)} · Estado ${stateMap[d.state]} · Coordenadas (${d.x}, ${d.y})</span>
+          </div>
+        `;
+        seq.appendChild(step);
+      });
+
+      drawMap();
+    }
+
+    function drawMap(){
+      const canvas = document.getElementById("mapCanvas");
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // grid
+      ctx.strokeStyle = "rgba(159,177,217,0.12)";
+      ctx.lineWidth = 1;
+      for(let x = 40; x < w; x += 60){
+        ctx.beginPath();
+        ctx.moveTo(x, 12);
+        ctx.lineTo(x, h - 12);
+        ctx.stroke();
+      }
+      for(let y = 20; y < h; y += 52){
+        ctx.beginPath();
+        ctx.moveTo(12, y);
+        ctx.lineTo(w - 12, y);
+        ctx.stroke();
+      }
+
+      const planForMap = optimizedRoute.length ? optimizedRoute : weeklyPlan.slice(0, 8);
+
+      // lines
+      if(planForMap.length > 1){
+        ctx.strokeStyle = "rgba(78,161,255,.55)";
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        planForMap.forEach((d, i) => {
+          const px = 30 + (d.x / 100) * (w - 60);
+          const py = 20 + (d.y / 100) * (h - 40);
+          if(i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        });
+        ctx.stroke();
+      }
+
+      doctors.forEach(d => {
+        const x = 30 + (d.x / 100) * (w - 60);
+        const y = 20 + (d.y / 100) * (h - 40);
+
+        let color = "#ff5d73";
+        if(d.state === "S1") color = "#ffb020";
+        if(d.state === "S2") color = "#4ea1ff";
+        if(d.state === "S3") color = "#28c76f";
+
+        ctx.beginPath();
+        ctx.fillStyle = color;
+        ctx.arc(x, y, 7, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#eef4ff";
+        ctx.font = "12px Arial";
+        ctx.fillText(d.name.slice(0, 16), x + 10, y + 4);
+      });
+    }
+
+    function clearAll(){
+      if(!confirm("¿Deseas borrar todos los datos del planificador?")) return;
+      doctors = [];
+      weeklyPlan = [];
+      optimizedRoute = [];
+      saveData();
+      renderDoctors();
+      renderWeeklyPlan();
+      renderRoute();
+    }
+
+    function loadDemo(){
+      doctors = [
+        { id:uid(), name:"Dra. Valeria Gómez", specialty:"Cardiología", zone:"Centro", state:"S2", channel:"Mixto", potential:5, influence:5, affinity:4, resistance:2, x:22, y:28, notes:"Alta receptividad. Interés sostenido en evidencia clínica." },
+        { id:uid(), name:"Dr. Luis Fernández", specialty:"Neurología", zone:"Sur", state:"S1", channel:"Presencial", potential:4, influence:4, affinity:3, resistance:2, x:64, y:72, notes:"Primer contacto favorable. Requiere seguimiento breve." },
+        { id:uid(), name:"Dra. Andrea Paredes", specialty:"Psiquiatría", zone:"Norte", state:"S0", channel:"Digital", potential:3, influence:4, affinity:2, resistance:4, x:78, y:25, notes:"Cuenta fría con buena influencia, pero barrera inicial alta." },
+        { id:uid(), name:"Dr. César Salazar", specialty:"Medicina interna", zone:"Centro", state:"S3", channel:"Mixto", potential:5, influence:4, affinity:5, resistance:1, x:30, y:44, notes:"Cuenta madura. Prioridad de mantenimiento y protección." },
+        { id:uid(), name:"Dra. Elena Rivas", specialty:"Geriatría", zone:"Este", state:"S2", channel:"Presencial", potential:4, influence:3, affinity:5, resistance:2, x:86, y:58, notes:"Muy buena apertura al seguimiento. Oportunidad de cierre." },
+        { id:uid(), name:"Dr. Miguel Torres", specialty:"Pediatría", zone:"Sur", state:"S1", channel:"Presencial", potential:3, influence:3, affinity:4, resistance:2, x:58, y:84, notes:"Buen terreno para consolidación temprana." }
+      ];
+
+      doctors = doctors.map(d => ({ ...d, priority: computePriority(d) }));
+      weeklyPlan = [];
+      optimizedRoute = [];
+      saveData();
+      renderDoctors();
+      renderWeeklyPlan();
+      renderRoute();
+    }
+
+    document.getElementById("addDoctorBtn").addEventListener("click", addDoctor);
+    document.getElementById("generatePlanBtn").addEventListener("click", generateWeeklyPlan);
+    document.getElementById("optimizeRoutesBtn").addEventListener("click", optimizeRoutes);
+    document.getElementById("clearAllBtn").addEventListener("click", clearAll);
+    document.getElementById("loadDemoBtn").addEventListener("click", loadDemo);
+
+    loadData();
+    doctors = doctors.map(d => ({ ...d, priority: computePriority(d) }));
+    renderDoctors();
+    renderWeeklyPlan();
+    renderRoute();
+  </script>
+</body>
+</html>

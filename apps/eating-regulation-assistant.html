@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comer con calma — Ellen</title>
+  <style>
+    :root{
+      --bg:#f7f4ef;
+      --panel:#fffaf6;
+      --panel-2:#f2ebe4;
+      --accent:#9bb7a4;
+      --accent-2:#c8a98d;
+      --text:#5b5b5b;
+      --muted:#837d78;
+      --ok:#9bbf9b;
+      --warn:#d8b28a;
+      --danger:#d8a1a1;
+      --shadow:0 10px 30px rgba(80,70,60,.10);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(180deg, #faf7f2 0%, #f3eee7 100%);
+      color:var(--text);
+    }
+    .app{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px;
+    }
+    .hero{
+      background:linear-gradient(135deg, #fffaf6, #f3ede6);
+      border-radius:28px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:20px;
+      align-items:center;
+    }
+    .hero h1{
+      margin:0 0 10px;
+      font-size:2rem;
+      color:#5d675f;
+    }
+    .hero p{
+      margin:0;
+      line-height:1.6;
+      color:var(--muted);
+    }
+    .badge-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px}
+    .badge{
+      background:#f0e7de;
+      color:#6d6a65;
+      border-radius:999px;
+      padding:8px 14px;
+      font-size:.9rem;
+    }
+    .hero-card{
+      background:rgba(255,255,255,.7);
+      border:1px solid rgba(180,160,140,.2);
+      border-radius:24px;
+      padding:20px;
+      text-align:center;
+    }
+    .hero-card .big{
+      font-size:2.8rem;
+      font-weight:700;
+      color:#758c7c;
+      margin:6px 0;
+    }
+    .layout{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:20px;
+    }
+    .panel{
+      background:var(--panel);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    .panel h2{
+      margin:0 0 14px;
+      font-size:1.2rem;
+      color:#64746a;
+    }
+    .panel h3{
+      margin:18px 0 10px;
+      font-size:1rem;
+      color:#7a6d63;
+    }
+    .steps{display:grid; gap:12px}
+    .step{
+      background:var(--panel-2);
+      border-radius:18px;
+      padding:14px;
+      border-left:5px solid var(--accent);
+    }
+    .step strong{display:block; margin-bottom:6px}
+    .exercise-grid{display:grid; gap:12px}
+    .exercise{
+      padding:14px;
+      border-radius:18px;
+      background:#f7f1ea;
+      border:1px solid #eee1d4;
+    }
+    .controls{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{
+      border:none;
+      border-radius:14px;
+      padding:12px 16px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.2s ease;
+      box-shadow:0 4px 10px rgba(0,0,0,.05);
+    }
+    button:hover{transform:translateY(-1px)}
+    .primary{background:var(--accent); color:white}
+    .secondary{background:#ead8c8; color:#6b5e55}
+    .soft{background:#ece7df; color:#6b6b6b}
+    .danger{background:#e6c1c1; color:#7a4c4c}
+    .timer-circle{
+      width:220px; height:220px; border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, #fff, #e9efe9);
+      margin:14px auto;
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column;
+      text-align:center;
+      border:8px solid #dce8de;
+      color:#68806e;
+    }
+    .timer-circle .phase{font-size:1rem; margin-bottom:6px}
+    .timer-circle .count{font-size:3rem; font-weight:700}
+    .mini{
+      font-size:.88rem;
+      color:var(--muted);
+      line-height:1.55;
+    }
+    .meal-box{
+      background:#f5eee7;
+      border-radius:18px;
+      padding:16px;
+      margin-top:12px;
+    }
+    label{display:block; margin:10px 0 6px; font-size:.92rem; color:#776f69}
+    input, select, textarea{
+      width:100%;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid #dfd4c8;
+      background:white;
+      color:var(--text);
+      font:inherit;
+    }
+    textarea{min-height:100px; resize:vertical}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    .stats{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:14px}
+    .stat{
+      background:#f4ece4;
+      padding:14px;
+      border-radius:18px;
+      text-align:center;
+    }
+    .stat .n{font-size:1.7rem; font-weight:700; color:#6e8974}
+    .log-list{margin-top:14px; display:grid; gap:10px}
+    .log-item{
+      background:#f8f3ed;
+      border:1px solid #ede2d8;
+      border-radius:16px;
+      padding:12px;
+      line-height:1.5;
+    }
+    .footer{
+      margin-top:24px;
+      text-align:center;
+      color:#7f7a75;
+      font-size:.92rem;
+      padding:18px;
+    }
+    .credits{
+      margin-top:14px;
+      background:#f2e9df;
+      border-radius:18px;
+      padding:14px;
+      text-align:center;
+      font-size:.92rem;
+      color:#6b645e;
+    }
+    .pill{
+      display:inline-block;
+      padding:4px 10px;
+      background:#e7efe9;
+      color:#69806f;
+      border-radius:999px;
+      font-size:.8rem;
+      margin-bottom:10px;
+    }
+    @media (max-width: 860px){
+      .hero, .layout, .row{grid-template-columns:1fr}
+      .stats{grid-template-columns:1fr}
+      .timer-circle{width:190px; height:190px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div>
+        <div class="pill">Mini app terapéutica</div>
+        <h1>Comer con calma</h1>
+        <p>
+          Herramienta de apoyo para reducir la toma de aire al masticar, favorecer una secuencia más lenta y segura durante la comida, y registrar avances de manera simple.
+        </p>
+        <div class="badge-row">
+          <div class="badge">Control</div>
+          <div class="badge">Relajación</div>
+          <div class="badge">Registro</div>
+          <div class="badge">Paleta suave</div>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div class="mini">Enfoque central</div>
+        <div class="big" id="mainMode">Pausa • Mastica • Traga</div>
+        <div class="mini">La meta no es forzarse, sino desacelerar el patrón y volver a una sensación de control corporal.</div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <h2>Secuencia de control antes y durante la comida</h2>
+        <div class="steps">
+          <div class="step">
+            <strong>1. Preparar el cuerpo</strong>
+            Apoya ambos pies, relaja hombros y mandíbula. Antes del primer bocado, exhala lento una vez.
+          </div>
+          <div class="step">
+            <strong>2. Bocado pequeño</strong>
+            Usa una cantidad reducida. No introduzcas el siguiente bocado hasta terminar el actual.
+          </div>
+          <div class="step">
+            <strong>3. Masticación guiada</strong>
+            Mastica con ritmo lento. Observa la necesidad de tomar aire sin obedecerla de inmediato.
+          </div>
+          <div class="step">
+            <strong>4. Pausa consciente</strong>
+            Cuando aparezca el impulso, baja el cubierto, descruza la lengua del paladar y exhala suave por nariz o labios.
+          </div>
+          <div class="step">
+            <strong>5. Registro breve</strong>
+            Al final, anota cuánto control sentiste y en qué momento apareció más el impulso.
+          </div>
+        </div>
+
+        <div class="meal-box">
+          <h3>Frases guía</h3>
+          <div class="mini">
+            “No tengo que apurarme.”<br>
+            “Puedo masticar y luego respirar.”<br>
+            “El impulso sube y baja; no necesito seguirlo de inmediato.”
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Ejercicio de relajación guiada</h2>
+        <div class="timer-circle">
+          <div class="phase" id="phase">Listo</div>
+          <div class="count" id="count">4</div>
+          <div class="mini" id="instruction">Presiona iniciar para hacer una secuencia suave antes de comer.</div>
+        </div>
+        <div class="controls">
+          <button class="primary" onclick="startBreathing()">Iniciar</button>
+          <button class="secondary" onclick="pauseBreathing()">Pausar</button>
+          <button class="soft" onclick="resetBreathing()">Reiniciar</button>
+        </div>
+        <div class="mini" style="margin-top:12px">
+          Secuencia sugerida: inhalar 4, sostener 2, exhalar 6. El foco está en soltar tensión y disminuir la urgencia corporal.
+        </div>
+
+        <h3>Micro ejercicios de control</h3>
+        <div class="exercise-grid">
+          <div class="exercise">
+            <strong>Mandíbula suelta</strong>
+            <div class="mini">Deja caer ligeramente la tensión del maxilar durante 10 segundos antes del primer bocado.</div>
+          </div>
+          <div class="exercise">
+            <strong>Exhalación de salida</strong>
+            <div class="mini">Si aparece la necesidad de tomar aire, exhala primero y luego vuelve al ritmo de la comida.</div>
+          </div>
+          <div class="exercise">
+            <strong>Separación entre bocados</strong>
+            <div class="mini">Deja el cubierto sobre la mesa durante 3 segundos entre un bocado y otro.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="layout">
+      <div class="panel">
+        <h2>Registro de la comida</h2>
+        <div class="row">
+          <div>
+            <label>Momento del día</label>
+            <select id="mealMoment">
+              <option>Desayuno</option>
+              <option>Almuerzo</option>
+              <option>Cena</option>
+              <option>Snack</option>
+            </select>
+          </div>
+          <div>
+            <label>Nivel de tensión antes de comer (0-10)</label>
+            <input type="number" id="tension" min="0" max="10" value="4">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>Impulso de tomar aire al masticar (0-10)</label>
+            <input type="number" id="urge" min="0" max="10" value="5">
+          </div>
+          <div>
+            <label>Sensación de control durante la comida (0-10)</label>
+            <input type="number" id="control" min="0" max="10" value="5">
+          </div>
+        </div>
+
+        <label>¿Qué ayudó más?</label>
+        <select id="helped">
+          <option>Respiración guiada</option>
+          <option>Pausa entre bocados</option>
+          <option>Bocados pequeños</option>
+          <option>Frases guía</option>
+          <option>Aún no identifiqué algo útil</option>
+        </select>
+
+        <label>Observaciones</label>
+        <textarea id="notes" placeholder="Ejemplo: apareció el impulso al inicio, pero bajó cuando solté el cubierto y exhalé lento."></textarea>
+
+        <div class="controls">
+          <button class="primary" onclick="saveLog()">Guardar registro</button>
+          <button class="soft" onclick="exportData()">Exportar registro</button>
+          <button class="danger" onclick="clearLogs()">Borrar todo</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Seguimiento</h2>
+        <div class="stats">
+          <div class="stat">
+            <div class="mini">Registros</div>
+            <div class="n" id="statEntries">0</div>
+          </div>
+          <div class="stat">
+            <div class="mini">Promedio de impulso</div>
+            <div class="n" id="statUrge">0</div>
+          </div>
+          <div class="stat">
+            <div class="mini">Promedio de control</div>
+            <div class="n" id="statControl">0</div>
+          </div>
+        </div>
+
+        <h3>Últimos registros</h3>
+        <div id="logList" class="log-list"></div>
+      </div>
+    </section>
+
+    <div class="credits">
+      Desarrollado por: <strong>Lic. Gonzalo Buendía – Psicólogo</strong><br>
+      Co terapeuta: <strong>Blanquita</strong>
+    </div>
+
+    <div class="footer">
+      Herramienta de apoyo psicoeducativo y autorregulación durante la alimentación.
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'ellen_comer_con_calma_registros';
+
+    let breathing = {
+      timer: null,
+      running: false,
+      phaseIndex: 0,
+      remaining: 4,
+      phases: [
+        { name: 'Inhala', seconds: 4, text: 'Toma aire suave por nariz.' },
+        { name: 'Sostén', seconds: 2, text: 'Mantén sin tensión.' },
+        { name: 'Exhala', seconds: 6, text: 'Suelta lento y largo.' }
+      ]
+    };
+
+    function updateBreathingUI(){
+      const current = breathing.phases[breathing.phaseIndex];
+      document.getElementById('phase').textContent = breathing.running ? current.name : 'Listo';
+      document.getElementById('count').textContent = breathing.remaining;
+      document.getElementById('instruction').textContent = breathing.running ? current.text : 'Presiona iniciar para hacer una secuencia suave antes de comer.';
+    }
+
+    function stepBreathing(){
+      if(!breathing.running) return;
+      breathing.remaining -= 1;
+      if(breathing.remaining <= 0){
+        breathing.phaseIndex = (breathing.phaseIndex + 1) % breathing.phases.length;
+        breathing.remaining = breathing.phases[breathing.phaseIndex].seconds;
+      }
+      updateBreathingUI();
+    }
+
+    function startBreathing(){
+      if(breathing.running) return;
+      breathing.running = true;
+      if(breathing.remaining <= 0){
+        breathing.phaseIndex = 0;
+        breathing.remaining = breathing.phases[0].seconds;
+      }
+      updateBreathingUI();
+      breathing.timer = setInterval(stepBreathing, 1000);
+    }
+
+    function pauseBreathing(){
+      breathing.running = false;
+      clearInterval(breathing.timer);
+      updateBreathingUI();
+    }
+
+    function resetBreathing(){
+      pauseBreathing();
+      breathing.phaseIndex = 0;
+      breathing.remaining = breathing.phases[0].seconds;
+      updateBreathingUI();
+    }
+
+    function getLogs(){
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    }
+
+    function setLogs(logs){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+    }
+
+    function saveLog(){
+      const log = {
+        date: new Date().toLocaleString(),
+        mealMoment: document.getElementById('mealMoment').value,
+        tension: Number(document.getElementById('tension').value || 0),
+        urge: Number(document.getElementById('urge').value || 0),
+        control: Number(document.getElementById('control').value || 0),
+        helped: document.getElementById('helped').value,
+        notes: document.getElementById('notes').value.trim()
+      };
+
+      const logs = getLogs();
+      logs.unshift(log);
+      setLogs(logs);
+      document.getElementById('notes').value = '';
+      renderLogs();
+    }
+
+    function renderLogs(){
+      const logs = getLogs();
+      const list = document.getElementById('logList');
+      list.innerHTML = '';
+
+      if(logs.length === 0){
+        list.innerHTML = '<div class="log-item">Aún no hay registros guardados.</div>';
+      } else {
+        logs.slice(0, 6).forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'log-item';
+          div.innerHTML = `
+            <strong>${item.mealMoment}</strong> · ${item.date}<br>
+            Tensión: <strong>${item.tension}</strong> · Impulso: <strong>${item.urge}</strong> · Control: <strong>${item.control}</strong><br>
+            Ayudó más: <strong>${item.helped}</strong><br>
+            <span class="mini">${item.notes || 'Sin observaciones.'}</span>
+          `;
+          list.appendChild(div);
+        });
+      }
+
+      document.getElementById('statEntries').textContent = logs.length;
+      const avgUrge = logs.length ? (logs.reduce((a,b)=>a+b.urge,0)/logs.length).toFixed(1) : '0';
+      const avgControl = logs.length ? (logs.reduce((a,b)=>a+b.control,0)/logs.length).toFixed(1) : '0';
+      document.getElementById('statUrge').textContent = avgUrge;
+      document.getElementById('statControl').textContent = avgControl;
+    }
+
+    function exportData(){
+      const logs = getLogs();
+      const blob = new Blob([JSON.stringify(logs, null, 2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'registro_comer_con_calma_ellen.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function clearLogs(){
+      localStorage.removeItem(STORAGE_KEY);
+      renderLogs();
+    }
+
+    resetBreathing();
+    renderLogs();
+  </script>
+</body>
+</html>

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Franco | Protocolo de Control Emocional</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{
+  --bg:#fff7ed;
+  --card:#ffffff;
+  --text:#2f1b0c;
+  --muted:#7c5a3a;
+  --primary:#f97316;
+  --primary-dark:#c2410c;
+  --secondary:#facc15;
+  --danger:#dc2626;
+  --ok:#16a34a;
+  --line:#fed7aa;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(180deg,#fff7ed,#ffedd5);
+  color:var(--text);
+}
+header{
+  background:linear-gradient(135deg,#f97316,#fb923c);
+  color:white;
+  padding:28px 18px;
+  text-align:center;
+}
+header h1{margin:0;font-size:30px}
+header p{margin:8px 0 0;font-size:16px}
+nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  padding:14px;
+  background:#431407;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+nav button{
+  border:none;
+  padding:12px 16px;
+  border-radius:18px;
+  background:#fff7ed;
+  color:#7c2d12;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.2s;
+}
+nav button:hover{transform:scale(1.04);background:#fed7aa}
+nav button.active{background:#f97316;color:white}
+section{
+  display:none;
+  max-width:1100px;
+  margin:auto;
+  padding:22px;
+}
+section.active{display:block}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:24px;
+  padding:22px;
+  margin:16px 0;
+  box-shadow:0 12px 28px rgba(124,45,18,.12);
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+h2{color:#c2410c;margin-top:0}
+h3{color:#9a3412}
+p,li{line-height:1.55}
+.big{
+  font-size:28px;
+  font-weight:bold;
+  color:#9a3412;
+}
+.alert{border-left:8px solid var(--danger)}
+.ok{border-left:8px solid var(--ok)}
+.warn{border-left:8px solid var(--primary)}
+input,textarea,select{
+  width:100%;
+  padding:14px;
+  margin:8px 0 16px;
+  border:1px solid #fdba74;
+  border-radius:16px;
+  font-size:16px;
+  background:#fffaf5;
+  color:var(--text);
+}
+textarea{min-height:90px}
+label{font-weight:bold;color:#7c2d12}
+.btn{
+  border:none;
+  border-radius:18px;
+  padding:14px 20px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:6px;
+  transition:.2s;
+}
+.btn:hover{transform:translateY(-2px)}
+.btn-primary{background:#f97316;color:white}
+.btn-danger{background:#dc2626;color:white}
+.btn-ok{background:#16a34a;color:white}
+.btn-soft{background:#fed7aa;color:#7c2d12}
+.badge{
+  display:inline-block;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#ffedd5;
+  color:#7c2d12;
+  margin:5px;
+  font-weight:bold;
+}
+.item{
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  border-radius:18px;
+  padding:14px;
+  margin:10px 0;
+}
+.progress{
+  height:22px;
+  background:#fed7aa;
+  border-radius:999px;
+  overflow:hidden;
+}
+.bar{
+  height:100%;
+  background:#f97316;
+  width:0%;
+}
+.footer{
+  text-align:center;
+  color:#7c5a3a;
+  padding:30px;
+  font-size:13px;
+}
+.timer{
+  font-size:42px;
+  font-weight:bold;
+  color:#dc2626;
+}
+canvas{
+  background:white;
+  border-radius:18px;
+  padding:12px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Franco: Protocolo de Corte y Regulación</h1>
+  <p>Control de impulsos · Pensamientos intrusivos · Recuerdos · No contacto · Recuperación de autonomía</p>
+</header>
+
+<nav>
+  <button class="active" onclick="tab('inicio',this)">Inicio</button>
+  <button onclick="tab('emergencia',this)">Emergencia</button>
+  <button onclick="tab('pensamientos',this)">Pensamientos</button>
+  <button onclick="tab('recuerdos',this)">Recuerdos</button>
+  <button onclick="tab('impulsos',this)">Impulsos</button>
+  <button onclick="tab('registro',this)">Registro</button>
+  <button onclick="tab('graficos',this)">Gráficos</button>
+  <button onclick="tab('protocolo',this)">21 días</button>
+</nav>
+
+<section id="inicio" class="active">
+  <div class="card warn">
+    <h2>Franco, quiero que recuerdes esto</h2>
+    <p class="big">No estamos decidiendo si ella vuelve. Estamos evitando que tú vuelvas a perder el control.</p>
+    <p>Cuando aparezca ansiedad, rabia, celos, recuerdos o ganas de buscarla, no vamos a discutir con la emoción. Vamos a aplicar una secuencia.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>Frase ancla</h3>
+      <p>“Esto no es amor en este momento. Es el sistema activándose.”</p>
+    </div>
+    <div class="card">
+      <h3>Regla central</h3>
+      <p>“No tomo decisiones cuando estoy activado.”</p>
+    </div>
+    <div class="card">
+      <h3>Objetivo</h3>
+      <p>Recuperar dominio sobre mi conducta antes de volver a pensar en la relación.</p>
+    </div>
+  </div>
+
+  <div class="card alert">
+    <h3>Conductas bloqueadas</h3>
+    <span class="badge">No escribir</span>
+    <span class="badge">No llamar</span>
+    <span class="badge">No revisar redes</span>
+    <span class="badge">No ir a buscarla</span>
+    <span class="badge">No preguntar por ella</span>
+    <span class="badge">No buscar al tercero</span>
+  </div>
+</section>
+
+<section id="emergencia">
+  <div class="card alert">
+    <h2>Modo emergencia</h2>
+    <p>Franco, si tu activación está en 7/10 o más, no razonas bien. Primero regulas, después piensas.</p>
+    <button class="btn btn-danger" onclick="startTimer()">Activar pausa de 20 minutos</button>
+    <div id="timerBox" style="display:none">
+      <p class="timer" id="timer">20:00</p>
+      <ol>
+        <li>Dejo el celular lejos.</li>
+        <li>Me alejo físicamente del lugar.</li>
+        <li>Camino, me ducho o hago una tarea concreta.</li>
+        <li>Llamo a mi persona de contención.</li>
+        <li>No escribo, no reviso, no confronto.</li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="card ok">
+    <h3>Mensaje de contención</h3>
+    <textarea readonly>Estoy activado. Necesito que me ayudes a no actuar durante 20 minutos. No necesito hablar de ella; necesito recuperar control.</textarea>
+  </div>
+</section>
+
+<section id="pensamientos">
+  <div class="card">
+    <h2>Control del pensamiento</h2>
+    <p>Franco, el objetivo no es eliminar el pensamiento. El objetivo es no obedecerlo.</p>
+
+    <label>Pensamiento que apareció</label>
+    <textarea id="thought" placeholder="Ej.: seguro está con él, me reemplazó, necesito saber la verdad"></textarea>
+
+    <label>Tipo de pensamiento</label>
+    <select id="thoughtType">
+      <option>Celos</option>
+      <option>Rabia</option>
+      <option>Comparación</option>
+      <option>Necesidad de saber</option>
+      <option>Culpa</option>
+      <option>Esperanza de retorno</option>
+    </select>
+
+    <label>Respuesta terapéutica</label>
+    <textarea id="thoughtResponse" placeholder="Ej.: no necesito comprobar nada ahora; comprobar me desregula"></textarea>
+
+    <button class="btn btn-primary" onclick="saveThought()">Guardar pensamiento</button>
+  </div>
+
+  <div class="card warn">
+    <h3>Técnica: nombrar y separar</h3>
+    <p>“Estoy teniendo el pensamiento de que necesito buscarla. Pero tener ese pensamiento no significa que deba actuar.”</p>
+  </div>
+
+  <div class="card">
+    <h3>Historial</h3>
+    <div id="thoughtList"></div>
+  </div>
+</section>
+
+<section id="recuerdos">
+  <div class="card">
+    <h2>Manejo de recuerdos de la expareja</h2>
+    <p>Franco, un recuerdo no es una señal. Es una activación interna. No necesito convertirlo en acción.</p>
+
+    <label>Recuerdo activado</label>
+    <textarea id="memory" placeholder="Ej.: cuando estábamos bien, cuando me dijo que era su primera opción"></textarea>
+
+    <label>Intensidad emocional 0–10</label>
+    <select id="memoryLevel">
+      <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+    </select>
+
+    <label>Reencuadre</label>
+    <textarea id="memoryFrame" placeholder="Ej.: ese recuerdo fue real, pero no define la relación completa"></textarea>
+
+    <button class="btn btn-primary" onclick="saveMemory()">Guardar recuerdo trabajado</button>
+  </div>
+
+  <div class="card ok">
+    <h3>Frase de cierre del recuerdo</h3>
+    <p>“Puedo recordar sin volver. Puedo sentir sin actuar. Puedo extrañar sin buscar.”</p>
+  </div>
+
+  <div class="card">
+    <h3>Recuerdos trabajados</h3>
+    <div id="memoryList"></div>
+  </div>
+</section>
+
+<section id="impulsos">
+  <div class="card alert">
+    <h2>Regulación de impulsividad</h2>
+    <p>Franco, cuando el impulso aparece, no negocies con él. Aplica la secuencia: <b>paro – nombro – retiro – registro – sustituyo</b>.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>1. Paro</h3>
+      <p>No actúo durante 20 minutos.</p>
+    </div>
+    <div class="card">
+      <h3>2. Nombro</h3>
+      <p>“Estoy activado, no estoy pensando con claridad.”</p>
+    </div>
+    <div class="card">
+      <h3>3. Retiro</h3>
+      <p>Me alejo del lugar, del celular o del estímulo.</p>
+    </div>
+    <div class="card">
+      <h3>4. Sustituyo</h3>
+      <p>Camino, llamo a alguien, entreno, ordeno, trabajo o me ducho.</p>
+    </div>
+  </div>
+</section>
+
+<section id="registro">
+  <div class="card">
+    <h2>Registro diario de activación</h2>
+
+    <label>Estado emocional</label>
+    <input id="mood" placeholder="Ansiedad, rabia, tristeza, celos">
+
+    <label>Nivel 0–10</label>
+    <select id="level">
+      <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option>
+      <option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+    </select>
+
+    <label>Detonante</label>
+    <input id="trigger" placeholder="Redes, recuerdo, lugar, información de terceros">
+
+    <label>Impulso</label>
+    <input id="urge" placeholder="Escribir, revisar, buscar, confrontar">
+
+    <label>Conducta alternativa</label>
+    <input id="alt" placeholder="Caminar, llamar, trabajar, entrenar">
+
+    <button class="btn btn-primary" onclick="saveRecord()">Guardar registro</button>
+  </div>
+
+  <div class="card">
+    <h3>Registros</h3>
+    <div id="recordList"></div>
+  </div>
+</section>
+
+<section id="graficos">
+  <div class="card">
+    <h2>Gráfico de activación emocional</h2>
+    <canvas id="activationChart"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>Gráfico de recuerdos activados</h2>
+    <canvas id="memoryChart"></canvas>
+  </div>
+</section>
+
+<section id="protocolo">
+  <div class="card alert">
+    <h2>Protocolo de 21 días</h2>
+    <p>Franco, durante 21 días no vamos a medir amor. Vamos a medir control.</p>
+    <ul>
+      <li>No contacto.</li>
+      <li>No redes.</li>
+      <li>No intermediarios.</li>
+      <li>No lugares asociados.</li>
+      <li>No búsqueda de información.</li>
+    </ul>
+    <button class="btn btn-ok" onclick="markDay()">Marcar día cumplido</button>
+    <button class="btn btn-danger" onclick="resetDays()">Reiniciar</button>
+  </div>
+
+  <div class="card ok">
+    <h3>Avance</h3>
+    <p><span id="days">0</span> / 21 días</p>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+  </div>
+</section>
+
+<div class="footer">
+  Desarrollado por: Lic. Gonzalo Buendía – Psicólogo y Blanquita – Co terapeuta
+</div>
+
+<script>
+let timerInterval;
+let seconds=1200;
+let chart1=null;
+let chart2=null;
+
+function tab(id,btn){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+  refresh();
+  if(id==="graficos"){setTimeout(drawCharts,100);}
+}
+
+function get(k){return JSON.parse(localStorage.getItem(k)||"[]")}
+function set(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+function startTimer(){
+  document.getElementById("timerBox").style.display="block";
+  seconds=1200;
+  clearInterval(timerInterval);
+  updateTimer();
+  timerInterval=setInterval(()=>{
+    seconds--;
+    updateTimer();
+    if(seconds<=0)clearInterval(timerInterval);
+  },1000)
+}
+function updateTimer(){
+  let m=String(Math.floor(seconds/60)).padStart(2,"0");
+  let s=String(seconds%60).padStart(2,"0");
+  document.getElementById("timer").innerText=m+":"+s;
+}
+
+function saveThought(){
+  let arr=get("thoughts");
+  arr.unshift({
+    date:new Date().toLocaleString(),
+    thought:thought.value,
+    type:thoughtType.value,
+    response:thoughtResponse.value
+  });
+  set("thoughts",arr);
+  thought.value="";
+  thoughtResponse.value="";
+  refresh();
+}
+
+function saveMemory(){
+  let arr=get("memories");
+  arr.unshift({
+    date:new Date().toLocaleString(),
+    memory:memory.value,
+    level:Number(memoryLevel.value),
+    frame:memoryFrame.value
+  });
+  set("memories",arr);
+  memory.value="";
+  memoryFrame.value="";
+  memoryLevel.value="0";
+  refresh();
+}
+
+function saveRecord(){
+  let arr=get("records");
+  arr.unshift({
+    date:new Date().toLocaleString(),
+    mood:mood.value,
+    level:Number(level.value),
+    trigger:trigger.value,
+    urge:urge.value,
+    alt:alt.value
+  });
+  set("records",arr);
+  mood.value="";
+  trigger.value="";
+  urge.value="";
+  alt.value="";
+  level.value="0";
+  refresh();
+}
+
+function render(){
+  thoughtList.innerHTML=get("thoughts").map(x=>`
+    <div class="item">
+      <b>${x.date}</b><br>
+      Tipo: ${x.type}<br>
+      Pensamiento: ${x.thought}<br>
+      Respuesta: ${x.response}
+    </div>`).join("") || "Sin pensamientos registrados.";
+
+  memoryList.innerHTML=get("memories").map(x=>`
+    <div class="item">
+      <b>${x.date}</b><br>
+      Intensidad: ${x.level}/10<br>
+      Recuerdo: ${x.memory}<br>
+      Reencuadre: ${x.frame}
+    </div>`).join("") || "Sin recuerdos trabajados.";
+
+  recordList.innerHTML=get("records").map(x=>`
+    <div class="item">
+      <b>${x.date}</b><br>
+      Activación: ${x.level}/10<br>
+      Estado: ${x.mood}<br>
+      Detonante: ${x.trigger}<br>
+      Impulso: ${x.urge}<br>
+      Alternativa: ${x.alt}
+    </div>`).join("") || "Sin registros.";
+
+  let d=Number(localStorage.getItem("days")||0);
+  days.innerText=d;
+  bar.style.width=Math.min(100,d/21*100)+"%";
+}
+
+function markDay(){
+  let d=Number(localStorage.getItem("days")||0);
+  if(d<21)d++;
+  localStorage.setItem("days",d);
+  refresh();
+}
+
+function resetDays(){
+  if(confirm("¿Reiniciar el conteo de 21 días?")){
+    localStorage.setItem("days",0);
+    refresh();
+  }
+}
+
+function drawCharts(){
+  let records=get("records").slice().reverse();
+  let memories=get("memories").slice().reverse();
+
+  if(chart1)chart1.destroy();
+  chart1=new Chart(document.getElementById("activationChart"),{
+    type:"line",
+    data:{
+      labels:records.map((_,i)=>"R"+(i+1)),
+      datasets:[{
+        label:"Activación emocional",
+        data:records.map(x=>x.level),
+        borderWidth:3,
+        tension:.3
+      }]
+    },
+    options:{scales:{y:{min:0,max:10}}}
+  });
+
+  if(chart2)chart2.destroy();
+  chart2=new Chart(document.getElementById("memoryChart"),{
+    type:"bar",
+    data:{
+      labels:memories.map((_,i)=>"M"+(i+1)),
+      datasets:[{
+        label:"Intensidad del recuerdo",
+        data:memories.map(x=>x.level),
+        borderWidth:2
+      }]
+    },
+    options:{scales:{y:{min:0,max:10}}}
+  });
+}
+
+function refresh(){render();}
+refresh();
+</script>
+</body>
+</html>

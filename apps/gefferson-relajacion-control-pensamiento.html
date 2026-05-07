@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gefferson | Control de Pensamiento y Relajación Corporal</title>
+
+<style>
+:root{
+  --bg:#eef6ff;
+  --card:#ffffff;
+  --blue900:#0f172a;
+  --blue800:#1e3a8a;
+  --blue700:#1d4ed8;
+  --blue600:#2563eb;
+  --blue500:#3b82f6;
+  --blue300:#93c5fd;
+  --blue200:#bfdbfe;
+  --blue100:#dbeafe;
+  --blue50:#eff6ff;
+  --gray:#64748b;
+  --green:#16a34a;
+  --yellow:#ca8a04;
+  --red:#dc2626;
+  --shadow:0 12px 28px rgba(15,23,42,.14);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,var(--blue50),#ffffff);
+  color:var(--blue900);
+  line-height:1.55;
+}
+
+header{
+  background:linear-gradient(135deg,var(--blue900),var(--blue700));
+  color:white;
+  padding:34px 18px;
+  text-align:center;
+  border-bottom-left-radius:32px;
+  border-bottom-right-radius:32px;
+  box-shadow:var(--shadow);
+}
+
+header h1{margin:0;font-size:32px}
+header p{max-width:900px;margin:10px auto 0;font-size:17px;opacity:.95}
+
+main{
+  max-width:1180px;
+  margin:24px auto;
+  padding:0 16px 48px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--blue200);
+  border-radius:24px;
+  padding:22px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  gap:20px;
+}
+
+h2,h3{color:var(--blue900);margin-top:0}
+
+label{
+  display:block;
+  font-weight:bold;
+  margin-top:12px;
+  color:var(--blue900);
+}
+
+input,textarea,select{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--blue200);
+  border-radius:14px;
+  font-size:16px;
+  margin-top:6px;
+  background:#f8fbff;
+}
+
+textarea{min-height:92px;resize:vertical}
+
+button{
+  background:var(--blue700);
+  color:white;
+  border:none;
+  border-radius:14px;
+  padding:13px 16px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:8px 6px 0 0;
+  box-shadow:0 6px 14px rgba(37,99,235,.24);
+}
+
+button:hover{background:var(--blue900)}
+button.light{background:var(--blue100);color:var(--blue900);box-shadow:none;border:1px solid var(--blue200)}
+button.ok{background:var(--green)}
+button.warn{background:var(--yellow)}
+button.danger{background:var(--red)}
+
+.alert{
+  padding:15px;
+  border-radius:16px;
+  background:var(--blue100);
+  border-left:6px solid var(--blue600);
+  margin:12px 0;
+}
+
+.alert.ok{background:#dcfce7;border-left-color:var(--green)}
+.alert.warn{background:#fef9c3;border-left-color:var(--yellow)}
+.alert.danger{background:#fee2e2;border-left-color:var(--red)}
+
+.pill{
+  display:inline-block;
+  background:var(--blue100);
+  color:var(--blue900);
+  border:1px solid var(--blue200);
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:bold;
+  margin:4px;
+}
+
+.slider-box{
+  display:grid;
+  grid-template-columns:1fr 70px;
+  gap:12px;
+  align-items:center;
+}
+
+input[type="range"]{accent-color:var(--blue700)}
+
+.value{
+  text-align:center;
+  background:var(--blue100);
+  border:1px solid var(--blue200);
+  border-radius:12px;
+  padding:8px;
+  font-weight:bold;
+}
+
+.breath-circle{
+  width:185px;
+  height:185px;
+  border-radius:50%;
+  margin:24px auto;
+  background:radial-gradient(circle,var(--blue100),var(--blue500));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-weight:bold;
+  color:var(--blue900);
+  transition:4s ease-in-out;
+  box-shadow:0 0 34px rgba(59,130,246,.35);
+}
+
+.breath-circle.expand{transform:scale(1.38)}
+
+.step{display:none}
+.step.active{display:block}
+
+.progressbar{
+  height:20px;
+  background:var(--blue100);
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid var(--blue200);
+  margin:16px 0;
+}
+
+.progress{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--blue500),var(--blue900));
+  transition:.25s;
+}
+
+.big-number{
+  display:inline-flex;
+  width:50px;
+  height:50px;
+  border-radius:15px;
+  align-items:center;
+  justify-content:center;
+  background:var(--blue700);
+  color:white;
+  font-size:26px;
+  font-weight:bold;
+  margin-right:10px;
+}
+
+canvas{
+  width:100%;
+  height:auto;
+  background:white;
+  border:1px solid var(--blue200);
+  border-radius:18px;
+  display:block;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+th,td{
+  padding:10px;
+  border-bottom:1px solid var(--blue100);
+  vertical-align:top;
+}
+
+th{background:var(--blue100);color:var(--blue900)}
+
+.footer{
+  text-align:center;
+  color:var(--gray);
+  font-size:14px;
+  margin-top:30px;
+}
+
+.hidden{display:none}
+
+@media print{
+  button,.no-print{display:none!important}
+  body{background:white}
+  .card{box-shadow:none;break-inside:avoid}
+  header{box-shadow:none}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Gefferson | Control de Pensamiento y Relajación Corporal</h1>
+  <p>Mini app terapéutica para reducir ansiedad, tensión muscular, pensamiento negativo y bloqueo emocional mediante técnicas guiadas.</p>
+</header>
+
+<main>
+
+<section class="card">
+  <h2>Objetivo terapéutico</h2>
+  <p>Esta herramienta ayuda a Gefferson a identificar pensamientos negativos, cuestionarlos, reemplazarlos por respuestas más útiles y reducir la tensión corporal acumulada por estrés laboral.</p>
+  <span class="pill">Control de pensamiento</span>
+  <span class="pill">Relajación corporal</span>
+  <span class="pill">Ansiedad</span>
+  <span class="pill">Depresión</span>
+  <span class="pill">Estrés laboral</span>
+</section>
+
+<section class="grid">
+
+<div class="card">
+  <h2>1. Estado inicial</h2>
+
+  <label>Ansiedad</label>
+  <div class="slider-box">
+    <input id="ansiedad" type="range" min="0" max="10" value="5">
+    <div class="value" id="ansiedadValor">5</div>
+  </div>
+
+  <label>Tensión corporal</label>
+  <div class="slider-box">
+    <input id="tension" type="range" min="0" max="10" value="5">
+    <div class="value" id="tensionValor">5</div>
+  </div>
+
+  <label>Pensamiento negativo</label>
+  <div class="slider-box">
+    <input id="pensNeg" type="range" min="0" max="10" value="5">
+    <div class="value" id="pensNegValor">5</div>
+  </div>
+
+  <label>Ánimo bajo</label>
+  <div class="slider-box">
+    <input id="animo" type="range" min="0" max="10" value="5">
+    <div class="value" id="animoValor">5</div>
+  </div>
+
+  <label>Situación activadora</label>
+  <textarea id="activador" placeholder="¿Qué activó este estado?"></textarea>
+
+  <button onclick="evaluarEstado()">Evaluar estado</button>
+  <button onclick="guardarEstado()">Guardar estado inicial</button>
+</div>
+
+<div class="card">
+  <h2>2. Lectura clínica</h2>
+  <div id="lectura" class="alert">
+    Registra los niveles para obtener una lectura inicial.
+  </div>
+
+  <h3>Instrucción inmediata</h3>
+  <div id="instruccion" class="alert ok">
+    “Primero bajo mi activación corporal. Luego reviso mi pensamiento.”
+  </div>
+  <button onclick="nuevaInstruccion()">Nueva instrucción</button>
+</div>
+
+</section>
+
+<section class="grid">
+
+<div class="card">
+  <h2>3. Respiración 4-4 guiada</h2>
+  <p>Indicada para bajar activación fisiológica antes de trabajar el pensamiento.</p>
+  <div id="circulo" class="breath-circle">Respira</div>
+  <button onclick="iniciarRespiracion()">Iniciar respiración</button>
+  <button class="light" onclick="detenerRespiracion()">Detener</button>
+  <div id="respMsg" class="alert hidden"></div>
+</div>
+
+<div class="card">
+  <h2>4. Relajación corporal por zonas</h2>
+  <p>Contrae y suelta cada zona para descargar tensión muscular.</p>
+  <div id="relajacionTexto" class="alert">Presiona iniciar para comenzar.</div>
+  <button onclick="iniciarRelajacion()">Iniciar relajación</button>
+  <button class="light" onclick="siguienteZona()">Siguiente zona</button>
+
+  <label>Tensión corporal después</label>
+  <div class="slider-box">
+    <input id="tensionPost" type="range" min="0" max="10" value="5">
+    <div class="value" id="tensionPostValor">5</div>
+  </div>
+
+  <button class="ok" onclick="guardarRelajacion()">Guardar relajación</button>
+</div>
+
+</section>
+
+<section class="card">
+  <h2>5. Control de pensamiento paso a paso</h2>
+  <p>Este módulo es el núcleo de la herramienta. Permite capturar, cuestionar y reemplazar pensamientos automáticos negativos.</p>
+
+  <div class="progressbar">
+    <div id="barraPensamiento" class="progress"></div>
+  </div>
+
+  <div class="step active" id="paso0">
+    <h3><span class="big-number">1</span>Capturar el pensamiento automático</h3>
+    <label>¿Qué pensamiento apareció?</label>
+    <textarea id="pAuto" placeholder="Ejemplo: no puedo más, voy a fallar, nada va a cambiar..."></textarea>
+
+    <label>¿Qué situación lo activó?</label>
+    <textarea id="pSituacion"></textarea>
+
+    <button onclick="siguientePensamiento()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso1">
+    <h3><span class="big-number">2</span>Nombrar la emoción</h3>
+
+    <label>Emoción principal</label>
+    <select id="emocion">
+      <option>Ansiedad</option>
+      <option>Tristeza</option>
+      <option>Agotamiento</option>
+      <option>Irritabilidad</option>
+      <option>Bloqueo</option>
+      <option>Desesperanza</option>
+    </select>
+
+    <label>Intensidad emocional</label>
+    <div class="slider-box">
+      <input id="intensidad" type="range" min="0" max="10" value="5">
+      <div class="value" id="intensidadValor">5</div>
+    </div>
+
+    <button onclick="siguientePensamiento()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso2">
+    <h3><span class="big-number">3</span>Detectar distorsión cognitiva</h3>
+
+    <label>Tipo de pensamiento negativo</label>
+    <select id="distorsion">
+      <option>Catastrofización: imaginar el peor escenario</option>
+      <option>Todo o nada: verlo como éxito total o fracaso total</option>
+      <option>Generalización: creer que siempre será igual</option>
+      <option>Lectura mental: asumir lo que otros piensan</option>
+      <option>Filtro negativo: mirar solo lo malo</option>
+      <option>Descalificar lo positivo: ignorar avances</option>
+      <option>Personalización: asumir culpa excesiva</option>
+      <option>Debería rígido: exigirme demasiado</option>
+    </select>
+
+    <div id="explicacionDistorsion" class="alert">
+      Selecciona una distorsión para observar su función clínica.
+    </div>
+
+    <button onclick="explicarDistorsion()">Explicar distorsión</button>
+    <button onclick="siguientePensamiento()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso3">
+    <h3><span class="big-number">4</span>Discutir el pensamiento</h3>
+
+    <label>¿Qué evidencia real apoya este pensamiento?</label>
+    <textarea id="evidenciaFavor"></textarea>
+
+    <label>¿Qué evidencia real lo contradice?</label>
+    <textarea id="evidenciaContra"></textarea>
+
+    <label>¿Qué le diría a otra persona si pensara esto?</label>
+    <textarea id="consejoOtro"></textarea>
+
+    <button onclick="siguientePensamiento()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso4">
+    <h3><span class="big-number">5</span>Crear pensamiento alternativo</h3>
+
+    <label>Pensamiento alternativo más realista</label>
+    <textarea id="pAlternativo" placeholder="Ejemplo: estoy sobrecargado, pero puedo avanzar por partes y pedir apoyo."></textarea>
+
+    <label>Frase corta para repetir</label>
+    <textarea id="fraseCorta" placeholder="Ejemplo: paso pequeño, control posible."></textarea>
+
+    <button onclick="siguientePensamiento()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso5">
+    <h3><span class="big-number">6</span>Acción conductual mínima</h3>
+
+    <label>Acción mínima que haré ahora</label>
+    <select id="accion">
+      <option>Ordenar tres pendientes</option>
+      <option>Avanzar 10 minutos en una tarea</option>
+      <option>Pedir una aclaración laboral concreta</option>
+      <option>Tomar una pausa corporal</option>
+      <option>Conversar brevemente sin descargar todo</option>
+      <option>Salir a caminar 5 minutos</option>
+      <option>Escribir lo urgente y lo postergable</option>
+    </select>
+
+    <label>Detalle concreto</label>
+    <textarea id="accionDetalle"></textarea>
+
+    <label>Intensidad emocional después</label>
+    <div class="slider-box">
+      <input id="intensidadPost" type="range" min="0" max="10" value="5">
+      <div class="value" id="intensidadPostValor">5</div>
+    </div>
+
+    <button class="ok" onclick="guardarPensamiento()">Guardar trabajo cognitivo</button>
+    <button class="light" onclick="reiniciarPensamiento()">Reiniciar</button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>6. Gráfico de evolución emocional</h2>
+  <canvas id="graficoLineas" width="1100" height="420"></canvas>
+  <button onclick="dibujarGraficos()">Actualizar gráfico</button>
+</section>
+
+<section class="card">
+  <h2>7. Gráfico de práctica terapéutica</h2>
+  <canvas id="graficoBarras" width="1100" height="360"></canvas>
+  <button onclick="dibujarGraficos()">Actualizar gráfico</button>
+</section>
+
+<section class="card">
+  <h2>8. Historial</h2>
+  <div id="historial"></div>
+  <button class="light" onclick="exportarDatos()">Exportar datos</button>
+  <button class="light" onclick="window.print()">Imprimir / guardar PDF</button>
+  <button class="danger" onclick="borrarTodo()">Borrar historial</button>
+</section>
+
+<section class="card">
+  <h2>9. Señales de alerta</h2>
+  <div class="alert danger">
+    Si aparece malestar muy intenso, abandono de actividades básicas, aislamiento marcado o pensamientos de hacerse daño, debe buscar apoyo inmediato con una persona cercana, terapeuta o servicio de emergencia.
+  </div>
+</section>
+
+<div class="footer">
+  Desarrollado por: Lic. Gonzalo Buendía – Psicólogo<br>
+  Blanquita – Co terapeuta
+</div>
+
+</main>
+
+<script>
+const DB = "gefferson_control_pensamiento_relajacion_v3";
+
+let respiracionTimer = null;
+let zonaActual = 0;
+let pasoPensamiento = 0;
+
+const instrucciones = [
+  "Primero bajo mi activación corporal. Luego reviso mi pensamiento.",
+  "Un pensamiento intenso no siempre es un pensamiento verdadero.",
+  "No necesito creerle automáticamente a mi mente cuando estoy agotado.",
+  "Puedo pausar, respirar y responder con más claridad.",
+  "La tensión corporal puede hacer que el problema parezca más grande.",
+  "Una acción pequeña puede debilitar un pensamiento negativo.",
+  "No resuelvo todo ahora; solo recupero control sobre el siguiente paso."
+];
+
+const zonas = [
+  "Frente: levanta las cejas durante 5 segundos y suelta lentamente.",
+  "Ojos y rostro: aprieta suavemente los ojos durante 5 segundos y relaja.",
+  "Mandíbula: aprieta suavemente la mandíbula y luego deja caer el peso.",
+  "Cuello: lleva el mentón suavemente hacia el pecho y relaja.",
+  "Hombros: sube los hombros hacia las orejas y suelta.",
+  "Brazos: contrae bíceps y antebrazos durante 5 segundos y relaja.",
+  "Manos: cierra los puños y luego abre los dedos lentamente.",
+  "Pecho: inhala profundo, sostén 2 segundos y exhala lentamente.",
+  "Abdomen: contrae suavemente el abdomen y suelta.",
+  "Piernas: presiona los pies contra el suelo y libera.",
+  "Cierre: observa el cuerpo completo y registra si la tensión bajó."
+];
+
+function $(id){return document.getElementById(id)}
+
+function obtenerDatos(){
+  return JSON.parse(localStorage.getItem(DB) || "[]");
+}
+
+function guardarDatos(d){
+  localStorage.setItem(DB, JSON.stringify(d));
+}
+
+function safe(t){
+  return String(t || "").replace(/[<>&"]/g, c => ({
+    "<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"
+  }[c]));
+}
+
+function configurarSliders(){
+  [
+    "ansiedad","tension","pensNeg","animo",
+    "tensionPost","intensidad","intensidadPost"
+  ].forEach(id=>{
+    const el = $(id);
+    const val = $(id+"Valor");
+    if(el && val){
+      val.textContent = el.value;
+      el.addEventListener("input",()=>{val.textContent = el.value});
+    }
+  });
+}
+
+function evaluarEstado(){
+  const a = Number($("ansiedad").value);
+  const t = Number($("tension").value);
+  const p = Number($("pensNeg").value);
+  const an = Number($("animo").value);
+  const prom = (a+t+p+an)/4;
+
+  let dominante = "ansiedad";
+  let max = a;
+  if(t>max){dominante="tensión corporal";max=t}
+  if(p>max){dominante="pensamiento negativo";max=p}
+  if(an>max){dominante="ánimo bajo";max=an}
+
+  const lectura = $("lectura");
+
+  if(prom >= 7){
+    lectura.className = "alert danger";
+    lectura.innerHTML = "<strong>Zona roja:</strong> activación alta.<br><strong>Variable dominante:</strong> "+dominante+".<br>Ruta sugerida: respiración → relajación corporal → control de pensamiento → acción mínima.";
+  }else if(prom >= 4){
+    lectura.className = "alert warn";
+    lectura.innerHTML = "<strong>Zona amarilla:</strong> malestar moderado.<br><strong>Variable dominante:</strong> "+dominante+".<br>Ruta sugerida: relajación breve y discusión del pensamiento automático.";
+  }else{
+    lectura.className = "alert ok";
+    lectura.innerHTML = "<strong>Zona verde:</strong> estado manejable.<br>Ruta sugerida: registrar avances y practicar prevención.";
+  }
+}
+
+function nuevaInstruccion(){
+  $("instruccion").textContent = "“" + instrucciones[Math.floor(Math.random()*instrucciones.length)] + "”";
+}
+
+function guardarEstado(){
+  const d = obtenerDatos();
+  d.push({
+    tipo:"estado",
+    fecha:new Date().toLocaleString(),
+    fechaISO:new Date().toISOString(),
+    ansiedad:Number($("ansiedad").value),
+    tension:Number($("tension").value),
+    pensNeg:Number($("pensNeg").value),
+    animo:Number($("animo").value),
+    activador:$("activador").value
+  });
+  guardarDatos(d);
+  $("activador").value="";
+  renderHistorial();
+  dibujarGraficos();
+  alert("Estado inicial guardado.");
+}
+
+function iniciarRespiracion(){
+  detenerRespiracion();
+
+  const c = $("circulo");
+  const msg = $("respMsg");
+
+  msg.classList.remove("hidden");
+  msg.className = "alert";
+  msg.textContent = "Inhala cuando el círculo crece. Exhala cuando disminuye.";
+
+  let expandido = false;
+  let ciclos = 0;
+
+  respiracionTimer = setInterval(()=>{
+    expandido = !expandido;
+    c.classList.toggle("expand", expandido);
+    c.textContent = expandido ? "Inhala 4" : "Exhala 4";
+    ciclos++;
+
+    if(ciclos >= 10){
+      detenerRespiracion();
+      msg.className = "alert ok";
+      msg.textContent = "Respiración completada. Ahora continúa con relajación corporal o control de pensamiento.";
+    }
+  },4000);
+}
+
+function detenerRespiracion(){
+  clearInterval(respiracionTimer);
+  respiracionTimer = null;
+  $("circulo").classList.remove("expand");
+  $("circulo").textContent = "Respira";
+}
+
+function iniciarRelajacion(){
+  zonaActual = 0;
+  $("relajacionTexto").className = "alert";
+  $("relajacionTexto").textContent = zonas[zonaActual];
+}
+
+function siguienteZona(){
+  zonaActual++;
+  if(zonaActual >= zonas.length){
+    $("relajacionTexto").className = "alert ok";
+    $("relajacionTexto").textContent = "Relajación completada. Registra la tensión corporal después.";
+    zonaActual = 0;
+    return;
+  }
+  $("relajacionTexto").className = "alert";
+  $("relajacionTexto").textContent = zonas[zonaActual];
+}
+
+function guardarRelajacion(){
+  const d = obtenerDatos();
+  d.push({
+    tipo:"relajacion",
+    fecha:new Date().toLocaleString(),
+    fechaISO:new Date().toISOString(),
+    tensionInicial:Number($("tension").value),
+    tensionPost:Number($("tensionPost").value)
+  });
+  guardarDatos(d);
+  renderHistorial();
+  dibujarGraficos();
+  alert("Relajación guardada.");
+}
+
+function siguientePensamiento(){
+  $("paso"+pasoPensamiento).classList.remove("active");
+  pasoPensamiento++;
+  if(pasoPensamiento>5) pasoPensamiento=5;
+  $("paso"+pasoPensamiento).classList.add("active");
+  $("barraPensamiento").style.width = ((pasoPensamiento/5)*100)+"%";
+}
+
+function reiniciarPensamiento(){
+  for(let i=0;i<=5;i++) $("paso"+i).classList.remove("active");
+  pasoPensamiento=0;
+  $("paso0").classList.add("active");
+  $("barraPensamiento").style.width = "0%";
+}
+
+function explicarDistorsion(){
+  const d = $("distorsion").value;
+  $("explicacionDistorsion").innerHTML =
+    "<strong>Función clínica:</strong> este tipo de pensamiento aumenta la emoción negativa porque presenta una interpretación como si fuera un hecho absoluto. El objetivo no es negar el problema, sino evaluarlo con más precisión.";
+}
+
+function guardarPensamiento(){
+  const d = obtenerDatos();
+
+  d.push({
+    tipo:"pensamiento",
+    fecha:new Date().toLocaleString(),
+    fechaISO:new Date().toISOString(),
+    pensamiento:$("pAuto").value,
+    situacion:$("pSituacion").value,
+    emocion:$("emocion").value,
+    intensidad:Number($("intensidad").value),
+    distorsion:$("distorsion").value,
+    evidenciaFavor:$("evidenciaFavor").value,
+    evidenciaContra:$("evidenciaContra").value,
+    consejoOtro:$("consejoOtro").value,
+    alternativo:$("pAlternativo").value,
+    fraseCorta:$("fraseCorta").value,
+    accion:$("accion").value,
+    accionDetalle:$("accionDetalle").value,
+    intensidadPost:Number($("intensidadPost").value)
+  });
+
+  guardarDatos(d);
+  renderHistorial();
+  dibujarGraficos();
+  alert("Trabajo de pensamiento guardado.");
+  reiniciarPensamiento();
+}
+
+function renderHistorial(){
+  const d = obtenerDatos().slice().reverse();
+  const h = $("historial");
+
+  if(d.length===0){
+    h.innerHTML="<p>No hay registros todavía.</p>";
+    return;
+  }
+
+  let html="<table><thead><tr><th>Fecha</th><th>Tipo</th><th>Detalle</th></tr></thead><tbody>";
+
+  d.forEach(r=>{
+    let det="";
+
+    if(r.tipo==="estado"){
+      det=`Ansiedad: ${r.ansiedad}/10 | Tensión: ${r.tension}/10 | Pensamiento negativo: ${r.pensNeg}/10 | Ánimo bajo: ${r.animo}/10<br><strong>Activador:</strong> ${safe(r.activador)}`;
+    }
+
+    if(r.tipo==="relajacion"){
+      det=`Tensión inicial: ${r.tensionInicial}/10 | Tensión después: ${r.tensionPost}/10`;
+    }
+
+    if(r.tipo==="pensamiento"){
+      det=`<strong>Pensamiento:</strong> ${safe(r.pensamiento)}<br>
+      <strong>Distorsión:</strong> ${safe(r.distorsion)}<br>
+      <strong>Alternativo:</strong> ${safe(r.alternativo)}<br>
+      <strong>Acción:</strong> ${safe(r.accion)}<br>
+      Intensidad: ${r.intensidad}/10 → ${r.intensidadPost}/10`;
+    }
+
+    html+=`<tr><td>${r.fecha}</td><td>${r.tipo}</td><td>${det}</td></tr>`;
+  });
+
+  html+="</tbody></table>";
+  h.innerHTML=html;
+}
+
+function dibujarGraficos(){
+  dibujarLineas();
+  dibujarBarras();
+}
+
+function dibujarBase(ctx, canvas, titulo){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#0f172a";
+  ctx.font="bold 22px Arial";
+  ctx.fillText(titulo,32,35);
+
+  const left=70, top=65, right=40, bottom=75;
+  const w=canvas.width-left-right;
+  const h=canvas.height-top-bottom;
+
+  ctx.strokeStyle="#dbeafe";
+  ctx.lineWidth=1;
+  ctx.font="13px Arial";
+  ctx.fillStyle="#64748b";
+
+  for(let i=0;i<=10;i++){
+    const y=top+h-(i/10)*h;
+    ctx.beginPath();
+    ctx.moveTo(left,y);
+    ctx.lineTo(left+w,y);
+    ctx.stroke();
+    ctx.fillText(i,35,y+4);
+  }
+
+  ctx.strokeStyle="#94a3b8";
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(left,top);
+  ctx.lineTo(left,top+h);
+  ctx.lineTo(left+w,top+h);
+  ctx.stroke();
+
+  return {left,top,w,h};
+}
+
+function dibujarLineas(){
+  const canvas=$("graficoLineas");
+  const ctx=canvas.getContext("2d");
+  const registros=obtenerDatos().filter(r=>r.tipo==="estado").slice(-12);
+
+  const area=dibujarBase(ctx,canvas,"Evolución emocional");
+
+  if(registros.length===0){
+    ctx.fillStyle="#64748b";
+    ctx.font="18px Arial";
+    ctx.fillText("No hay registros emocionales todavía.",90,210);
+    return;
+  }
+
+  const series=[
+    {key:"ansiedad", name:"Ansiedad", color:"#1d4ed8"},
+    {key:"tension", name:"Tensión", color:"#0284c7"},
+    {key:"pensNeg", name:"Pensamiento negativo", color:"#0f172a"},
+    {key:"animo", name:"Ánimo bajo", color:"#64748b"}
+  ];
+
+  series.forEach(s=>{
+    ctx.beginPath();
+    registros.forEach((r,i)=>{
+      const x=area.left+(registros.length===1?area.w/2:i*(area.w/(registros.length-1)));
+      const y=area.top+area.h-(r[s.key]/10)*area.h;
+      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    });
+    ctx.strokeStyle=s.color;
+    ctx.lineWidth=4;
+    ctx.stroke();
+
+    registros.forEach((r,i)=>{
+      const x=area.left+(registros.length===1?area.w/2:i*(area.w/(registros.length-1)));
+      const y=area.top+area.h-(r[s.key]/10)*area.h;
+      ctx.beginPath();
+      ctx.arc(x,y,6,0,Math.PI*2);
+      ctx.fillStyle=s.color;
+      ctx.fill();
+    });
+  });
+
+  let lx=80;
+  series.forEach(s=>{
+    ctx.fillStyle=s.color;
+    ctx.fillRect(lx,canvas.height-38,18,18);
+    ctx.fillStyle="#0f172a";
+    ctx.font="15px Arial";
+    ctx.fillText(s.name,lx+24,canvas.height-23);
+    lx+=220;
+  });
+}
+
+function dibujarBarras(){
+  const canvas=$("graficoBarras");
+  const ctx=canvas.getContext("2d");
+
+  const d=obtenerDatos();
+  const estados=d.filter(r=>r.tipo==="estado").length;
+  const relaj=d.filter(r=>r.tipo==="relajacion").length;
+  const pens=d.filter(r=>r.tipo==="pensamiento").length;
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#0f172a";
+  ctx.font="bold 22px Arial";
+  ctx.fillText("Práctica terapéutica acumulada",32,35);
+
+  const items=[
+    {name:"Registros emocionales", val:estados, color:"#1d4ed8"},
+    {name:"Relajaciones corporales", val:relaj, color:"#0284c7"},
+    {name:"Pensamientos trabajados", val:pens, color:"#0f172a"}
+  ];
+
+  const max=Math.max(1,...items.map(i=>i.val));
+  const baseY=285;
+  const maxH=190;
+  const barW=170;
+  const startX=120;
+  const gap=130;
+
+  ctx.strokeStyle="#dbeafe";
+  for(let i=0;i<=5;i++){
+    const y=baseY-(i/5)*maxH;
+    ctx.beginPath();
+    ctx.moveTo(70,y);
+    ctx.lineTo(1030,y);
+    ctx.stroke();
+  }
+
+  items.forEach((it,i)=>{
+    const x=startX+i*(barW+gap);
+    const h=(it.val/max)*maxH;
+    const y=baseY-h;
+
+    ctx.fillStyle=it.color;
+    ctx.fillRect(x,y,barW,h);
+
+    ctx.fillStyle="#0f172a";
+    ctx.font="bold 22px Arial";
+    ctx.fillText(it.val,x+barW/2-8,y-12);
+
+    ctx.font="15px Arial";
+    ctx.fillText(it.name,x-10,baseY+30);
+  });
+}
+
+function exportarDatos(){
+  const d=obtenerDatos();
+  const blob=new Blob([JSON.stringify(d,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="gefferson_control_pensamiento_relajacion.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function borrarTodo(){
+  if(confirm("¿Deseas borrar todo el historial?")){
+    localStorage.removeItem(DB);
+    renderHistorial();
+    dibujarGraficos();
+  }
+}
+
+configurarSliders();
+evaluarEstado();
+renderHistorial();
+dibujarGraficos();
+</script>
+
+</body>
+</html>

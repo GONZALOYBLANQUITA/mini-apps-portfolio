@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREDES | Gefferson Balada Manrique</title>
+
+<style>
+:root{
+  --azul-900:#0f172a;
+  --azul-800:#1e293b;
+  --azul-700:#1d4ed8;
+  --azul-600:#2563eb;
+  --azul-500:#3b82f6;
+  --azul-300:#93c5fd;
+  --azul-200:#bfdbfe;
+  --azul-100:#dbeafe;
+  --azul-50:#eff6ff;
+  --blanco:#ffffff;
+  --gris:#64748b;
+  --gris-claro:#e2e8f0;
+  --verde:#16a34a;
+  --amarillo:#ca8a04;
+  --rojo:#dc2626;
+  --sombra:0 12px 28px rgba(15,23,42,.14);
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(135deg,var(--azul-50),#ffffff);
+  color:var(--azul-900);
+  line-height:1.55;
+}
+
+header{
+  background:linear-gradient(135deg,var(--azul-900),var(--azul-700));
+  color:white;
+  padding:32px 20px;
+  text-align:center;
+  border-bottom-left-radius:32px;
+  border-bottom-right-radius:32px;
+  box-shadow:var(--sombra);
+}
+
+header h1{
+  margin:0;
+  font-size:32px;
+}
+
+header p{
+  max-width:900px;
+  margin:10px auto 0;
+  font-size:17px;
+  opacity:.95;
+}
+
+main{
+  max-width:1200px;
+  margin:24px auto;
+  padding:0 16px 48px;
+}
+
+.card{
+  background:var(--blanco);
+  border:1px solid var(--azul-200);
+  border-radius:24px;
+  padding:22px;
+  margin-bottom:20px;
+  box-shadow:var(--sombra);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:20px;
+}
+
+h2,h3{
+  color:var(--azul-800);
+  margin-top:0;
+}
+
+label{
+  display:block;
+  font-weight:bold;
+  color:var(--azul-800);
+  margin-top:12px;
+}
+
+input,textarea,select{
+  width:100%;
+  padding:12px;
+  border:1px solid var(--azul-200);
+  border-radius:14px;
+  font-size:16px;
+  margin-top:6px;
+  background:#f8fbff;
+}
+
+textarea{
+  min-height:88px;
+  resize:vertical;
+}
+
+button{
+  background:var(--azul-700);
+  color:white;
+  border:none;
+  border-radius:14px;
+  padding:13px 16px;
+  font-size:16px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:8px 6px 0 0;
+  box-shadow:0 6px 14px rgba(37,99,235,.25);
+}
+
+button:hover{
+  background:var(--azul-900);
+}
+
+button.secondary{background:var(--azul-500)}
+button.light{
+  background:var(--azul-100);
+  color:var(--azul-900);
+  box-shadow:none;
+  border:1px solid var(--azul-200);
+}
+button.ok{background:var(--verde)}
+button.warn{background:var(--amarillo)}
+button.danger{background:var(--rojo)}
+
+.pill{
+  display:inline-block;
+  background:var(--azul-100);
+  color:var(--azul-800);
+  border:1px solid var(--azul-200);
+  padding:7px 12px;
+  border-radius:999px;
+  font-size:14px;
+  font-weight:bold;
+  margin:4px;
+}
+
+.alert{
+  padding:15px;
+  border-radius:16px;
+  background:var(--azul-50);
+  border-left:6px solid var(--azul-600);
+  margin:12px 0;
+}
+
+.alert.ok{
+  background:#dcfce7;
+  border-left-color:var(--verde);
+}
+
+.alert.warn{
+  background:#fef9c3;
+  border-left-color:var(--amarillo);
+}
+
+.alert.danger{
+  background:#fee2e2;
+  border-left-color:var(--rojo);
+}
+
+.slider-box{
+  display:grid;
+  grid-template-columns:1fr 70px;
+  gap:12px;
+  align-items:center;
+}
+
+input[type="range"]{
+  accent-color:var(--azul-700);
+}
+
+.value{
+  text-align:center;
+  background:var(--azul-100);
+  border:1px solid var(--azul-200);
+  border-radius:12px;
+  padding:8px;
+  font-weight:bold;
+}
+
+.step{
+  display:none;
+}
+
+.step.active{
+  display:block;
+}
+
+.progressbar{
+  height:20px;
+  background:var(--azul-100);
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid var(--azul-200);
+  margin:16px 0;
+}
+
+.progress{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--azul-500),var(--azul-900));
+  transition:.25s;
+}
+
+.big-letter{
+  display:inline-flex;
+  width:54px;
+  height:54px;
+  border-radius:16px;
+  align-items:center;
+  justify-content:center;
+  background:var(--azul-700);
+  color:white;
+  font-size:30px;
+  font-weight:bold;
+  margin-right:10px;
+}
+
+.breathe{
+  width:170px;
+  height:170px;
+  border-radius:50%;
+  margin:20px auto;
+  background:radial-gradient(circle,var(--azul-100),var(--azul-500));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  color:var(--azul-900);
+  transition:4s ease-in-out;
+  box-shadow:0 0 30px rgba(59,130,246,.35);
+}
+
+.breathe.expand{
+  transform:scale(1.35);
+}
+
+canvas{
+  width:100%;
+  height:auto;
+  background:#ffffff;
+  border:1px solid var(--azul-200);
+  border-radius:18px;
+  display:block;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:14px;
+}
+
+th,td{
+  padding:10px;
+  border-bottom:1px solid var(--azul-100);
+  vertical-align:top;
+}
+
+th{
+  background:var(--azul-100);
+  color:var(--azul-900);
+}
+
+.footer{
+  text-align:center;
+  color:var(--gris);
+  font-size:14px;
+  margin-top:30px;
+}
+
+.hidden{display:none}
+
+@media print{
+  button,.no-print{display:none!important}
+  body{background:white}
+  .card{box-shadow:none;break-inside:avoid}
+  header{box-shadow:none}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>PREDES | Gefferson Balada Manrique</h1>
+  <p>Mini app clínica para monitorear depresión, ansiedad, estrés laboral, bloqueo conductual y cumplimiento del protocolo PREDES.</p>
+</header>
+
+<main>
+
+<section class="card">
+  <h2>Panel clínico inicial</h2>
+  <p>Esta herramienta permite registrar el estado emocional, activar el protocolo PREDES, regular la ansiedad, controlar pensamientos automáticos y revisar la evolución mediante gráficos funcionales.</p>
+  <span class="pill">Depresión significativa</span>
+  <span class="pill">Ansiedad</span>
+  <span class="pill">Estrés laboral</span>
+  <span class="pill">Afrontamiento pasivo</span>
+  <span class="pill">PREDES</span>
+</section>
+
+<section class="grid">
+
+<div class="card">
+  <h2>1. Registro emocional</h2>
+
+  <label>Ansiedad actual</label>
+  <div class="slider-box">
+    <input id="ansiedad" type="range" min="0" max="10" value="5">
+    <div class="value" id="ansiedadValor">5</div>
+  </div>
+
+  <label>Depresión / abatimiento</label>
+  <div class="slider-box">
+    <input id="depresion" type="range" min="0" max="10" value="5">
+    <div class="value" id="depresionValor">5</div>
+  </div>
+
+  <label>Estrés laboral</label>
+  <div class="slider-box">
+    <input id="estres" type="range" min="0" max="10" value="5">
+    <div class="value" id="estresValor">5</div>
+  </div>
+
+  <label>Bloqueo / pasividad</label>
+  <div class="slider-box">
+    <input id="bloqueo" type="range" min="0" max="10" value="5">
+    <div class="value" id="bloqueoValor">5</div>
+  </div>
+
+  <label>Situación activadora</label>
+  <textarea id="situacion" placeholder="¿Qué ocurrió o qué situación activó este estado?"></textarea>
+
+  <label>Pensamiento dominante</label>
+  <textarea id="pensamiento" placeholder="¿Qué pensamiento apareció con más fuerza?"></textarea>
+
+  <label>Conducta actual</label>
+  <select id="conducta">
+    <option>Me estoy aislando</option>
+    <option>Estoy postergando</option>
+    <option>Estoy preocupado</option>
+    <option>Estoy cansado pero sigo funcionando</option>
+    <option>Estoy evitando pedir ayuda</option>
+    <option>Estoy intentando regularme</option>
+  </select>
+
+  <button onclick="guardarRegistro()">Guardar registro</button>
+  <button class="light" onclick="limpiarRegistro()">Limpiar</button>
+</div>
+
+<div class="card">
+  <h2>2. Semáforo clínico</h2>
+  <div id="semaforo" class="alert">Registra tus niveles para obtener una lectura clínica.</div>
+
+  <h3>Lectura del sistema</h3>
+  <div id="lecturaSistema" class="alert">
+    Estado pendiente de registro.
+  </div>
+
+  <h3>Frase ancla</h3>
+  <div id="frase" class="alert ok">“Primero regulo, luego decido.”</div>
+  <button class="secondary" onclick="nuevaFrase()">Nueva frase</button>
+  <button class="warn" onclick="activarPredes()">Activar PREDES</button>
+</div>
+
+</section>
+
+<section class="card" id="predes">
+  <h2>3. Protocolo PREDES completo</h2>
+  <p>El objetivo clínico es interrumpir el circuito: sobrecarga → pasividad → abatimiento → mayor incapacidad percibida.</p>
+
+  <div class="progressbar">
+    <div id="barra" class="progress"></div>
+  </div>
+
+  <div class="step active" id="paso0">
+    <h3><span class="big-letter">P</span>Pausar</h3>
+    <p>Detengo el circuito automático. No respondo desde ansiedad, cansancio o abatimiento.</p>
+    <div class="alert">Frase: “Estoy sobrecargado. Primero debo regularme. Después decido.”</div>
+    <label>¿Qué señal me indicó que debía pausar?</label>
+    <textarea id="p_pausa"></textarea>
+    <button onclick="siguientePaso()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso1">
+    <h3><span class="big-letter">R</span>Reconocer</h3>
+    <p>Identifico el estado emocional sin juzgarme.</p>
+    <label>Emoción dominante</label>
+    <select id="r_emocion">
+      <option>Ansiedad</option>
+      <option>Tristeza</option>
+      <option>Agotamiento</option>
+      <option>Bloqueo</option>
+      <option>Irritabilidad</option>
+      <option>Desesperanza</option>
+    </select>
+    <label>¿Qué necesito reconocer?</label>
+    <textarea id="r_reconocer"></textarea>
+    <button onclick="siguientePaso()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso2">
+    <h3><span class="big-letter">E</span>Externalizar</h3>
+    <p>Saco el problema de mi cabeza y lo convierto en información visible.</p>
+    <label>Problema concreto</label>
+    <textarea id="e_problema"></textarea>
+    <label>Pensamiento automático</label>
+    <textarea id="e_pensamiento"></textarea>
+    <label>Acción que estoy evitando</label>
+    <textarea id="e_evitacion"></textarea>
+    <button onclick="siguientePaso()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso3">
+    <h3><span class="big-letter">D</span>Decidir</h3>
+    <p>Elijo una acción mínima, concreta y posible.</p>
+    <label>Acción mínima</label>
+    <select id="d_accion">
+      <option>Ordenar mis pendientes por prioridad</option>
+      <option>Avanzar 15 minutos en una sola tarea</option>
+      <option>Pedir una aclaración laboral concreta</option>
+      <option>Tomar una pausa real de 10 minutos</option>
+      <option>Conversar con mi esposa de forma breve y clara</option>
+      <option>Escribir lo urgente, lo importante y lo postergable</option>
+      <option>Pedir apoyo específico</option>
+      <option>Realizar una actividad breve de autocuidado</option>
+    </select>
+    <label>Detalle de la acción</label>
+    <textarea id="d_detalle"></textarea>
+    <button onclick="siguientePaso()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso4">
+    <h3><span class="big-letter">E</span>Ejecutar</h3>
+    <p>Realizo la acción durante un tiempo breve sin exigir sentirme bien de inmediato.</p>
+    <div class="alert">Regla: “Una acción mínima es suficiente para romper la inmovilidad.”</div>
+    <button onclick="iniciarTimer()">Iniciar 10 minutos</button>
+    <button class="light" onclick="marcarEjecutado()">Marcar ejecutado</button>
+    <h2 id="timer">10:00</h2>
+    <label>¿Qué ejecuté realmente?</label>
+    <textarea id="e_ejecucion"></textarea>
+    <button onclick="siguientePaso()">Continuar</button>
+  </div>
+
+  <div class="step" id="paso5">
+    <h3><span class="big-letter">S</span>Supervisar</h3>
+    <p>Evalúo si logré cortar el circuito de pasividad.</p>
+
+    <label>Ansiedad después</label>
+    <div class="slider-box">
+      <input id="ansiedadPost" type="range" min="0" max="10" value="5">
+      <div class="value" id="ansiedadPostValor">5</div>
+    </div>
+
+    <label>Bloqueo después</label>
+    <div class="slider-box">
+      <input id="bloqueoPost" type="range" min="0" max="10" value="5">
+      <div class="value" id="bloqueoPostValor">5</div>
+    </div>
+
+    <label>Aprendizaje del episodio</label>
+    <textarea id="s_aprendizaje"></textarea>
+
+    <button class="ok" onclick="guardarPredes()">Guardar PREDES completado</button>
+    <button class="light" onclick="reiniciarPredes()">Reiniciar PREDES</button>
+  </div>
+</section>
+
+<section class="grid">
+
+<div class="card">
+  <h2>4. Regulación emocional</h2>
+  <p>Ejercicio breve de respiración guiada para reducir activación fisiológica.</p>
+  <div id="circulo" class="breathe">Respira</div>
+  <button onclick="respirar()">Iniciar respiración</button>
+  <div id="respMensaje" class="alert hidden"></div>
+</div>
+
+<div class="card">
+  <h2>5. Control de pensamiento</h2>
+  <label>Pensamiento automático</label>
+  <textarea id="pa" placeholder="Ejemplo: no voy a poder con esto."></textarea>
+  <label>Respuesta terapéutica alternativa</label>
+  <textarea id="ra" placeholder="Ejemplo: estoy sobrecargado, pero puedo empezar por una acción mínima."></textarea>
+  <label>Acción asociada</label>
+  <textarea id="aa" placeholder="¿Qué haré en los próximos 10 a 15 minutos?"></textarea>
+  <button onclick="guardarPensamiento()">Guardar pensamiento trabajado</button>
+</div>
+
+</section>
+
+<section class="card">
+  <h2>6. Gráfico de evolución emocional</h2>
+  <p>El gráfico muestra los últimos registros guardados. Funciona sin librerías externas.</p>
+  <canvas id="graficoLineas" width="1100" height="420"></canvas>
+  <button onclick="dibujarGraficos()">Actualizar gráficos</button>
+</section>
+
+<section class="card">
+  <h2>7. Gráfico de cumplimiento PREDES</h2>
+  <canvas id="graficoBarras" width="1100" height="360"></canvas>
+  <button onclick="dibujarGraficos()">Actualizar cumplimiento</button>
+</section>
+
+<section class="card">
+  <h2>8. Historial clínico</h2>
+  <div id="historial"></div>
+  <button class="light" onclick="exportarJSON()">Exportar datos</button>
+  <button class="light" onclick="window.print()">Imprimir / guardar PDF</button>
+  <button class="danger" onclick="borrarTodo()">Borrar historial</button>
+</section>
+
+<section class="card">
+  <h2>9. Señales de alerta</h2>
+  <div class="alert danger">
+    Si el malestar se intensifica, aparece aislamiento marcado, deterioro importante del sueño, abandono de actividades básicas o pensamientos de hacerse daño, debe buscar apoyo inmediato con una persona cercana, su terapeuta o un servicio de emergencia.
+  </div>
+</section>
+
+<div class="footer">
+  Desarrollado por: Lic. Gonzalo Buendía – Psicólogo<br>
+  Blanquita – Co terapeuta
+</div>
+
+</main>
+
+<script>
+const DB = "predes_gefferson_v2";
+
+let pasoActual = 0;
+let timerInterval = null;
+
+const frases = [
+  "Primero regulo, luego decido.",
+  "No tengo que resolver toda mi vida en este momento.",
+  "Una acción mínima puede cortar el circuito.",
+  "Mi estado emocional es una señal, no una sentencia.",
+  "Si me quedo inmóvil, el problema crece; si doy un paso pequeño, recupero control.",
+  "No necesito sentirme motivado para empezar; necesito empezar para recuperar energía."
+];
+
+function $(id){return document.getElementById(id)}
+
+function obtenerDatos(){
+  return JSON.parse(localStorage.getItem(DB) || "[]");
+}
+
+function guardarDatos(datos){
+  localStorage.setItem(DB, JSON.stringify(datos));
+}
+
+function limpiarTexto(t){
+  return String(t || "").replace(/[<>&"]/g, function(c){
+    return {"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c];
+  });
+}
+
+function actualizarSliders(){
+  ["ansiedad","depresion","estres","bloqueo","ansiedadPost","bloqueoPost"].forEach(id=>{
+    const el = $(id);
+    const val = $(id+"Valor");
+    if(el && val){
+      val.textContent = el.value;
+      el.oninput = function(){ val.textContent = this.value; evaluarSistema(); };
+    }
+  });
+}
+
+function evaluarSistema(){
+  const a = Number($("ansiedad").value);
+  const d = Number($("depresion").value);
+  const e = Number($("estres").value);
+  const b = Number($("bloqueo").value);
+  const promedio = (a+d+e+b)/4;
+
+  const sem = $("semaforo");
+  const lectura = $("lecturaSistema");
+
+  if(promedio >= 7){
+    sem.className = "alert danger";
+    sem.innerHTML = "<strong>Zona roja:</strong> sobrecarga clínica alta. Conviene activar PREDES inmediatamente.";
+  }else if(promedio >= 4){
+    sem.className = "alert warn";
+    sem.innerHTML = "<strong>Zona amarilla:</strong> malestar moderado. Hay riesgo de pasividad si no se interviene.";
+  }else{
+    sem.className = "alert ok";
+    sem.innerHTML = "<strong>Zona verde:</strong> estado manejable. Mantener prevención y registro.";
+  }
+
+  let dominante = "ansiedad";
+  let max = a;
+  if(d > max){dominante="depresión / abatimiento"; max=d;}
+  if(e > max){dominante="estrés laboral"; max=e;}
+  if(b > max){dominante="bloqueo / pasividad"; max=b;}
+
+  lectura.innerHTML =
+    "<strong>Variable dominante:</strong> " + dominante + ".<br>" +
+    "<strong>Promedio clínico:</strong> " + promedio.toFixed(1) + "/10.<br>" +
+    "La intervención recomendada es reducir la activación emocional y ejecutar una acción mínima.";
+}
+
+function nuevaFrase(){
+  $("frase").textContent = "“" + frases[Math.floor(Math.random()*frases.length)] + "”";
+}
+
+function guardarRegistro(){
+  const datos = obtenerDatos();
+
+  datos.push({
+    tipo:"registro",
+    fechaISO:new Date().toISOString(),
+    fecha:new Date().toLocaleString(),
+    ansiedad:Number($("ansiedad").value),
+    depresion:Number($("depresion").value),
+    estres:Number($("estres").value),
+    bloqueo:Number($("bloqueo").value),
+    situacion:$("situacion").value,
+    pensamiento:$("pensamiento").value,
+    conducta:$("conducta").value
+  });
+
+  guardarDatos(datos);
+  limpiarRegistro();
+  renderHistorial();
+  dibujarGraficos();
+  alert("Registro guardado correctamente.");
+}
+
+function limpiarRegistro(){
+  $("situacion").value = "";
+  $("pensamiento").value = "";
+}
+
+function activarPredes(){
+  $("predes").scrollIntoView({behavior:"smooth"});
+  reiniciarPredes();
+}
+
+function siguientePaso(){
+  $("paso"+pasoActual).classList.remove("active");
+  pasoActual++;
+  if(pasoActual > 5) pasoActual = 5;
+  $("paso"+pasoActual).classList.add("active");
+  actualizarBarra();
+}
+
+function reiniciarPredes(){
+  for(let i=0;i<=5;i++){
+    $("paso"+i).classList.remove("active");
+  }
+  pasoActual = 0;
+  $("paso0").classList.add("active");
+  actualizarBarra();
+}
+
+function actualizarBarra(){
+  $("barra").style.width = ((pasoActual/5)*100) + "%";
+}
+
+function iniciarTimer(){
+  let segundos = 600;
+  clearInterval(timerInterval);
+
+  timerInterval = setInterval(()=>{
+    let m = Math.floor(segundos/60);
+    let s = segundos % 60;
+    $("timer").textContent = String(m).padStart(2,"0") + ":" + String(s).padStart(2,"0");
+    segundos--;
+
+    if(segundos < 0){
+      clearInterval(timerInterval);
+      $("timer").textContent = "Completado";
+    }
+  },1000);
+}
+
+function marcarEjecutado(){
+  clearInterval(timerInterval);
+  $("timer").textContent = "Ejecutado";
+}
+
+function guardarPredes(){
+  const datos = obtenerDatos();
+
+  datos.push({
+    tipo:"predes",
+    fechaISO:new Date().toISOString(),
+    fecha:new Date().toLocaleString(),
+    pausa:$("p_pausa").value,
+    emocion:$("r_emocion").value,
+    reconocer:$("r_reconocer").value,
+    problema:$("e_problema").value,
+    pensamiento:$("e_pensamiento").value,
+    evitacion:$("e_evitacion").value,
+    accion:$("d_accion").value,
+    detalle:$("d_detalle").value,
+    ejecucion:$("e_ejecucion").value,
+    ansiedadPost:Number($("ansiedadPost").value),
+    bloqueoPost:Number($("bloqueoPost").value),
+    aprendizaje:$("s_aprendizaje").value
+  });
+
+  guardarDatos(datos);
+  renderHistorial();
+  dibujarGraficos();
+  alert("PREDES guardado. Se registró cumplimiento del protocolo.");
+  reiniciarPredes();
+}
+
+function respirar(){
+  const c = $("circulo");
+  const m = $("respMensaje");
+
+  m.classList.remove("hidden");
+  m.className = "alert";
+  m.textContent = "Inhala cuando el círculo crece. Exhala cuando disminuye.";
+
+  let ciclos = 0;
+  let expandido = false;
+
+  const intervalo = setInterval(()=>{
+    expandido = !expandido;
+    c.classList.toggle("expand", expandido);
+    c.textContent = expandido ? "Inhala" : "Exhala";
+    ciclos++;
+
+    if(ciclos >= 8){
+      clearInterval(intervalo);
+      c.classList.remove("expand");
+      c.textContent = "Respira";
+      m.className = "alert ok";
+      m.textContent = "Respiración completada. Ahora elige una acción mínima.";
+    }
+  },4000);
+}
+
+function guardarPensamiento(){
+  const datos = obtenerDatos();
+
+  datos.push({
+    tipo:"pensamiento",
+    fechaISO:new Date().toISOString(),
+    fecha:new Date().toLocaleString(),
+    pensamientoAutomatico:$("pa").value,
+    respuestaAlternativa:$("ra").value,
+    accionAsociada:$("aa").value
+  });
+
+  guardarDatos(datos);
+  $("pa").value="";
+  $("ra").value="";
+  $("aa").value="";
+  renderHistorial();
+  alert("Pensamiento trabajado guardado.");
+}
+
+function renderHistorial(){
+  const datos = obtenerDatos().slice().reverse();
+  const cont = $("historial");
+
+  if(datos.length === 0){
+    cont.innerHTML = "<p>No hay registros todavía.</p>";
+    return;
+  }
+
+  let html = "<table><thead><tr><th>Fecha</th><th>Tipo</th><th>Detalle clínico</th></tr></thead><tbody>";
+
+  datos.forEach(r=>{
+    let detalle = "";
+
+    if(r.tipo === "registro"){
+      detalle =
+        "<strong>Ansiedad:</strong> "+r.ansiedad+"/10 | " +
+        "<strong>Depresión:</strong> "+r.depresion+"/10 | " +
+        "<strong>Estrés:</strong> "+r.estres+"/10 | " +
+        "<strong>Bloqueo:</strong> "+r.bloqueo+"/10<br>" +
+        "<strong>Situación:</strong> "+limpiarTexto(r.situacion)+"<br>" +
+        "<strong>Pensamiento:</strong> "+limpiarTexto(r.pensamiento)+"<br>" +
+        "<strong>Conducta:</strong> "+limpiarTexto(r.conducta);
+    }
+
+    if(r.tipo === "predes"){
+      detalle =
+        "<strong>Emoción:</strong> "+limpiarTexto(r.emocion)+"<br>" +
+        "<strong>Problema:</strong> "+limpiarTexto(r.problema)+"<br>" +
+        "<strong>Acción:</strong> "+limpiarTexto(r.accion)+"<br>" +
+        "<strong>Ejecución:</strong> "+limpiarTexto(r.ejecucion)+"<br>" +
+        "<strong>Ansiedad post:</strong> "+r.ansiedadPost+"/10 | " +
+        "<strong>Bloqueo post:</strong> "+r.bloqueoPost+"/10";
+    }
+
+    if(r.tipo === "pensamiento"){
+      detalle =
+        "<strong>Pensamiento automático:</strong> "+limpiarTexto(r.pensamientoAutomatico)+"<br>" +
+        "<strong>Respuesta alternativa:</strong> "+limpiarTexto(r.respuestaAlternativa)+"<br>" +
+        "<strong>Acción asociada:</strong> "+limpiarTexto(r.accionAsociada);
+    }
+
+    html += "<tr><td>"+r.fecha+"</td><td>"+r.tipo+"</td><td>"+detalle+"</td></tr>";
+  });
+
+  html += "</tbody></table>";
+  cont.innerHTML = html;
+}
+
+function dibujarGraficos(){
+  dibujarLineas();
+  dibujarBarras();
+}
+
+function dibujarLineas(){
+  const canvas = $("graficoLineas");
+  const ctx = canvas.getContext("2d");
+  const datos = obtenerDatos().filter(r=>r.tipo==="registro").slice(-12);
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  fondoGrafico(ctx, canvas, "Evolución emocional últimos registros");
+
+  if(datos.length === 0){
+    ctx.fillStyle = "#64748b";
+    ctx.font = "18px Arial";
+    ctx.fillText("No hay registros emocionales todavía.", 80, 210);
+    return;
+  }
+
+  const margenIzq = 70;
+  const margenDer = 40;
+  const margenTop = 60;
+  const margenBottom = 70;
+  const w = canvas.width - margenIzq - margenDer;
+  const h = canvas.height - margenTop - margenBottom;
+
+  const series = [
+    {key:"ansiedad", nombre:"Ansiedad", color:"#1d4ed8"},
+    {key:"depresion", nombre:"Depresión", color:"#0f172a"},
+    {key:"estres", nombre:"Estrés", color:"#0284c7"},
+    {key:"bloqueo", nombre:"Bloqueo", color:"#64748b"}
+  ];
+
+  series.forEach(s=>{
+    ctx.beginPath();
+    datos.forEach((r,i)=>{
+      const x = margenIzq + (datos.length === 1 ? w/2 : i*(w/(datos.length-1)));
+      const y = margenTop + h - (r[s.key]/10)*h;
+      if(i===0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    });
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    datos.forEach((r,i)=>{
+      const x = margenIzq + (datos.length === 1 ? w/2 : i*(w/(datos.length-1)));
+      const y = margenTop + h - (r[s.key]/10)*h;
+      ctx.beginPath();
+      ctx.arc(x,y,6,0,Math.PI*2);
+      ctx.fillStyle = s.color;
+      ctx.fill();
+    });
+  });
+
+  let lx = 80;
+  series.forEach(s=>{
+    ctx.fillStyle = s.color;
+    ctx.fillRect(lx, canvas.height-36, 18, 18);
+    ctx.fillStyle = "#0f172a";
+    ctx.font = "15px Arial";
+    ctx.fillText(s.nombre, lx+24, canvas.height-21);
+    lx += 135;
+  });
+}
+
+function fondoGrafico(ctx, canvas, titulo){
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle = "#0f172a";
+  ctx.font = "bold 22px Arial";
+  ctx.fillText(titulo, 32, 34);
+
+  const margenIzq = 70;
+  const margenTop = 60;
+  const margenBottom = 70;
+  const margenDer = 40;
+  const w = canvas.width - margenIzq - margenDer;
+  const h = canvas.height - margenTop - margenBottom;
+
+  ctx.strokeStyle = "#dbeafe";
+  ctx.lineWidth = 1;
+  ctx.font = "13px Arial";
+  ctx.fillStyle = "#64748b";
+
+  for(let i=0;i<=10;i++){
+    const y = margenTop + h - (i/10)*h;
+    ctx.beginPath();
+    ctx.moveTo(margenIzq,y);
+    ctx.lineTo(margenIzq+w,y);
+    ctx.stroke();
+    ctx.fillText(i, 35, y+4);
+  }
+
+  ctx.strokeStyle = "#94a3b8";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(margenIzq,margenTop);
+  ctx.lineTo(margenIzq,margenTop+h);
+  ctx.lineTo(margenIzq+w,margenTop+h);
+  ctx.stroke();
+}
+
+function dibujarBarras(){
+  const canvas = $("graficoBarras");
+  const ctx = canvas.getContext("2d");
+  const datos = obtenerDatos();
+  const predes = datos.filter(r=>r.tipo==="predes");
+  const registros = datos.filter(r=>r.tipo==="registro");
+  const pensamientos = datos.filter(r=>r.tipo==="pensamiento");
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  ctx.fillStyle="#0f172a";
+  ctx.font="bold 22px Arial";
+  ctx.fillText("Cumplimiento terapéutico acumulado",32,34);
+
+  const items = [
+    {nombre:"Registros emocionales", valor:registros.length, color:"#1d4ed8"},
+    {nombre:"PREDES completados", valor:predes.length, color:"#0f172a"},
+    {nombre:"Pensamientos trabajados", valor:pensamientos.length, color:"#0284c7"}
+  ];
+
+  const max = Math.max(1,...items.map(i=>i.valor));
+  const baseY = 290;
+  const startX = 110;
+  const barW = 170;
+  const gap = 120;
+  const maxH = 190;
+
+  ctx.strokeStyle="#dbeafe";
+  ctx.lineWidth=1;
+
+  for(let i=0;i<=5;i++){
+    const y = baseY - (i/5)*maxH;
+    ctx.beginPath();
+    ctx.moveTo(70,y);
+    ctx.lineTo(1030,y);
+    ctx.stroke();
+  }
+
+  items.forEach((item,i)=>{
+    const x = startX + i*(barW+gap);
+    const h = (item.valor/max)*maxH;
+    const y = baseY - h;
+
+    ctx.fillStyle = item.color;
+    ctx.fillRect(x,y,barW,h);
+
+    ctx.fillStyle="#0f172a";
+    ctx.font="bold 22px Arial";
+    ctx.fillText(item.valor, x+barW/2-8, y-12);
+
+    ctx.font="15px Arial";
+    wrapText(ctx,item.nombre,x-20,baseY+30,barW+50,18);
+  });
+}
+
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+  const words = text.split(" ");
+  let line = "";
+  for(let n=0;n<words.length;n++){
+    const testLine = line + words[n] + " ";
+    const metrics = ctx.measureText(testLine);
+    if(metrics.width > maxWidth && n > 0){
+      ctx.fillText(line,x,y);
+      line = words[n] + " ";
+      y += lineHeight;
+    }else{
+      line = testLine;
+    }
+  }
+  ctx.fillText(line,x,y);
+}
+
+function exportarJSON(){
+  const datos = obtenerDatos();
+  const blob = new Blob([JSON.stringify(datos,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "seguimiento_predes_gefferson.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function borrarTodo(){
+  if(confirm("¿Deseas borrar todo el historial?")){
+    localStorage.removeItem(DB);
+    renderHistorial();
+    dibujarGraficos();
+  }
+}
+
+actualizarSliders();
+evaluarSistema();
+renderHistorial();
+dibujarGraficos();
+</script>
+
+</body>
+</html>

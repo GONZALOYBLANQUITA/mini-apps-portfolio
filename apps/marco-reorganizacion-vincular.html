@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marco | Mini App Clínica Estructural-Dinámica</title>
+
+<style>
+:root{
+  --navy:#0f243d;
+  --blue:#1f3f66;
+  --blue2:#2f5f8f;
+  --steel:#64748b;
+  --light:#f3f6fa;
+  --white:#ffffff;
+  --border:#d8e0ea;
+  --text:#1f2937;
+  --green:#157347;
+  --amber:#b7791f;
+  --red:#b42318;
+  --purple:#5b3cc4;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:var(--light);
+  color:var(--text);
+}
+
+header{
+  background:linear-gradient(135deg,var(--navy),var(--blue));
+  color:white;
+  padding:28px 18px;
+  text-align:center;
+}
+
+header h1{
+  margin:0;
+  font-size:30px;
+}
+
+header p{
+  margin:8px 0 0;
+  font-size:16px;
+  opacity:.92;
+}
+
+nav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:white;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(145px,1fr));
+  gap:8px;
+  padding:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:12px 10px;
+  background:var(--blue);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  font-size:14px;
+}
+
+button:hover{filter:brightness(1.08)}
+
+.btn-green{background:var(--green)}
+.btn-amber{background:var(--amber)}
+.btn-red{background:var(--red)}
+.btn-purple{background:var(--purple)}
+.btn-gray{background:#4b5563}
+
+main{
+  max-width:1250px;
+  margin:auto;
+  padding:18px;
+}
+
+section{display:none}
+section.active{display:block}
+
+.card{
+  background:white;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:18px;
+  box-shadow:0 8px 22px rgba(15,36,61,.08);
+  border:1px solid rgba(216,224,234,.8);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;
+}
+
+h2{
+  color:var(--navy);
+  margin-top:0;
+  font-size:24px;
+}
+
+h3{
+  color:var(--blue);
+  margin-bottom:8px;
+}
+
+p{line-height:1.55}
+
+.badge{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:800;
+}
+
+.low{background:#e8f5ee;color:var(--green)}
+.medium{background:#fff4dc;color:var(--amber)}
+.high{background:#fdecec;color:var(--red)}
+.info{background:#e9f1fb;color:var(--blue)}
+.purple{background:#eee9ff;color:var(--purple)}
+
+.state-box{
+  border-left:6px solid var(--blue);
+  background:#f8fafc;
+  border-radius:14px;
+  padding:14px;
+  margin:10px 0;
+}
+
+.variable{
+  border-left:6px solid var(--purple);
+  background:#fbfaff;
+  border-radius:14px;
+  padding:14px;
+  margin:10px 0;
+}
+
+.risk-card{
+  border-left:6px solid var(--amber);
+  background:#fffaf0;
+  border-radius:14px;
+  padding:14px;
+  margin:10px 0;
+}
+
+.protective{
+  border-left:6px solid var(--green);
+  background:#f0fff7;
+  border-radius:14px;
+  padding:14px;
+  margin:10px 0;
+}
+
+label{
+  display:block;
+  margin-top:12px;
+  font-weight:700;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:11px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  margin-top:6px;
+  font-size:15px;
+  background:white;
+}
+
+textarea{min-height:95px;resize:vertical}
+
+.progress{
+  width:100%;
+  background:#e5e7eb;
+  height:22px;
+  border-radius:999px;
+  overflow:hidden;
+  margin-top:12px;
+}
+
+.bar{
+  height:22px;
+  width:0%;
+  background:var(--blue2);
+  transition:.3s;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+  font-size:14px;
+}
+
+th,td{
+  padding:10px;
+  border-bottom:1px solid #e5e7eb;
+  text-align:left;
+  vertical-align:top;
+}
+
+th{
+  background:#edf2f7;
+  color:var(--navy);
+}
+
+.small{font-size:13px;color:#5b6470}
+
+footer{
+  text-align:center;
+  color:#5b6470;
+  padding:25px;
+  font-size:14px;
+}
+
+@media print{
+  nav,.no-print,button{display:none!important}
+  section{display:block!important}
+  body{background:white}
+  .card{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🧭 Mini App Clínica | Reorganización Vincular</h1>
+  <p>Paciente: Marco | Modelo Estructural-Dinámico S–V–T–R–P–M</p>
+</header>
+
+<nav>
+  <button onclick="showTab('inicio')">🏠 Inicio</button>
+  <button onclick="showTab('formulacion')">🧠 Formulación</button>
+  <button onclick="showTab('estados')">🔄 Estados S</button>
+  <button onclick="showTab('variables')">🎚️ Variables V</button>
+  <button onclick="showTab('transiciones')">🧩 Transiciones</button>
+  <button onclick="showTab('riesgo')">⚠️ Riesgo</button>
+  <button onclick="showTab('limites')">🛡️ Límites</button>
+  <button onclick="showTab('protocolo')">📌 Protocolo</button>
+  <button onclick="showTab('registro')">📝 Registro</button>
+  <button onclick="showTab('reporte')">📄 Reporte</button>
+</nav>
+
+<main>
+
+<section id="inicio" class="active">
+  <div class="card">
+    <h2>Resumen clínico operativo</h2>
+    <p>
+      Esta mini app organiza el caso de Marco como un sistema vincular en transición.
+      El objetivo no es solo “superar a la exesposa”, sino identificar los estados internos,
+      variables moduladoras, puntos de recaída, condiciones de riesgo y conductas protectoras
+      que permiten consolidar autonomía afectiva, límites y reorganización personal.
+    </p>
+    <span class="badge info">Foco central: autonomía afectiva + límites parentales + responsabilidad emocional</span>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3>🧠 Hipótesis principal</h3>
+      <p>Patrón vincular ambivalente-evitativo, con necesidad de control relacional y baja tolerancia a la pérdida de acceso afectivo.</p>
+    </div>
+    <div class="card">
+      <h3>⚠️ Riesgo dominante</h3>
+      <p>Reenganche emocional si Celmira reaparece vulnerable, si aumenta la soledad nocturna o si se activa culpa familiar.</p>
+    </div>
+    <div class="card">
+      <h3>🎯 Meta terapéutica</h3>
+      <p>Construir vínculos desde reciprocidad madura, no desde disponibilidad, control, culpa o fantasía de reparación.</p>
+    </div>
+  </div>
+</section>
+
+<section id="formulacion">
+  <div class="card">
+    <h2>Formulación clínica estructural</h2>
+    <p>
+      Marco no presenta únicamente una dependencia emocional simple. El caso se organiza
+      como una oscilación entre control funcional y desorganización intensa ante pérdida
+      de acceso afectivo.
+    </p>
+
+    <div class="state-box">
+      <b>Polo A — Control / autosuficiencia:</b>
+      funciona como proveedor, organizador y figura estructurante. Puede estabilizar la vida familiar,
+      pero reduce presencia afectiva, ternura, erotismo e iniciativa emocional.
+    </div>
+
+    <div class="state-box">
+      <b>Polo B — Hiperactivación / pérdida de control:</b>
+      ante reemplazo, infidelidad o amenaza externa, aparece ansiedad, insomnio, urgencia de contacto,
+      negociación degradada y búsqueda de recuperar lugar.
+    </div>
+
+    <div class="risk-card">
+      <b>Punto crítico:</b> el problema no está solo en elegir pareja, sino en cómo Marco sostiene
+      emocionalmente el vínculo cuando este se estabiliza.
+    </div>
+  </div>
+</section>
+
+<section id="estados">
+  <div class="card">
+    <h2>Modelo S — Estados clínicos</h2>
+
+    <div class="state-box"><b>S1 — Control funcional:</b> foco laboral, provisión, estructura, identidad basada en resolver.</div>
+    <div class="state-box"><b>S2 — Habituación vincular:</b> disminuyen detalles, verbalizaciones de amor, erotismo e iniciativa afectiva.</div>
+    <div class="state-box"><b>S3 — Distancia relacional:</b> la pareja se siente sola, poco vista, no elegida o emocionalmente desatendida.</div>
+    <div class="state-box"><b>S4 — Amenaza externa:</b> aparición de tercero, pérdida de exclusividad, ruptura de previsibilidad.</div>
+    <div class="state-box"><b>S5 — Hiperactivación ansiosa:</b> insomnio, angustia, rumiación, hipervigilancia y urgencia vincular.</div>
+    <div class="state-box"><b>S6 — Negociación degradada:</b> acepta condiciones contrarias a sus valores para conservar acceso.</div>
+    <div class="state-box"><b>S7 — Agotamiento / desorganización:</b> pérdida de claridad, deterioro funcional, descuido parcial del rol paterno.</div>
+    <div class="state-box"><b>S8 — Reinstalación de límites:</b> contacto parental estructurado, intercambio por colegio, reorganización personal.</div>
+  </div>
+</section>
+
+<section id="variables">
+  <div class="card">
+    <h2>Modelo V — Variables moduladoras</h2>
+
+    <div class="variable"><b>V1 — Necesidad de control relacional:</b> dificultad para tolerar incertidumbre y pérdida de previsibilidad. Peso clínico: alto.</div>
+    <div class="variable"><b>V2 — Ideal de familia nuclear:</b> deseo de familia constituida que puede confundirse con reparación vincular. Peso: muy alto.</div>
+    <div class="variable"><b>V3 — Herida narcisista:</b> activación intensa ante reemplazo, otro hombre, exclusión o pérdida de lugar. Peso: muy alto.</div>
+    <div class="variable"><b>V4 — Baja tolerancia a la soledad:</b> dificultad para sostener vacío afectivo sin regulación externa. Peso: alto.</div>
+    <div class="variable"><b>V5 — Culpa relacional:</b> “no fui buena pareja”, “descuidé el vínculo”. Puede generar reparación impulsiva. Peso: medio-alto.</div>
+    <div class="variable"><b>V6 — Acceso sexual / disponibilidad:</b> puede mantener ilusión vincular y ambigüedad. Peso: medio.</div>
+    <div class="variable"><b>V7 — Atracción por relaciones asimétricas:</b> tendencia a elegir parejas disponibles, vulnerables o que requieren guía. Peso: alto.</div>
+  </div>
+</section>
+
+<section id="transiciones">
+  <div class="card">
+    <h2>Modelo T — Transiciones dominantes</h2>
+
+    <table>
+      <tr><th>Ruta</th><th>Descripción clínica</th><th>Intervención</th></tr>
+      <tr><td>S1 → S2</td><td>De proveedor funcional a habituación afectiva.</td><td>Registrar señales tempranas de desconexión.</td></tr>
+      <tr><td>S2 → S3</td><td>La relación se mantiene, pero se desnutre emocionalmente.</td><td>Trabajar responsabilidad emocional sostenida.</td></tr>
+      <tr><td>S3 → S4</td><td>La pareja busca validación externa o aparece tercero.</td><td>Reconocer deterioro antes de crisis.</td></tr>
+      <tr><td>S4 → S5</td><td>Reemplazo activa angustia, insomnio y pérdida de centro.</td><td>Aplicar protocolo de estabilización.</td></tr>
+      <tr><td>S5 → S6</td><td>La ansiedad genera negociación degradada.</td><td>Bloquear decisiones desde urgencia.</td></tr>
+      <tr><td>S6 → S7</td><td>El vínculo captura recursos ejecutivos y parentales.</td><td>Retomar sueño, trabajo, paternidad y límites.</td></tr>
+      <tr><td>S7 → S8</td><td>Se reinstalan límites y distancia estructurada.</td><td>Consolidar conducta, no solo insight.</td></tr>
+    </table>
+  </div>
+</section>
+
+<section id="riesgo">
+  <div class="card">
+    <h2>Calculadora clínica de riesgo de reenganche</h2>
+    <p>Marca las condiciones presentes hoy. La escala no diagnostica; orienta la intervención clínica.</p>
+
+    <label><input type="checkbox" class="risk" value="18"> Celmira escribió mostrándose vulnerable</label>
+    <label><input type="checkbox" class="risk" value="14"> Marco se siente solo por la noche</label>
+    <label><input type="checkbox" class="risk" value="14"> Apareció nostalgia familiar</label>
+    <label><input type="checkbox" class="risk" value="12"> Hay culpa por no haber sido buena pareja</label>
+    <label><input type="checkbox" class="risk" value="15"> Fantasía de recuperar la familia</label>
+    <label><input type="checkbox" class="risk" value="12"> Deseo de saber si ella aún lo elige</label>
+    <label><input type="checkbox" class="risk" value="10"> Atracción sexual o recuerdo de intimidad</label>
+    <label><input type="checkbox" class="risk" value="10"> Problema con la hija usado como excusa de contacto</label>
+    <label><input type="checkbox" class="risk" value="15"> La relación de ella con el tercero parece fallar</label>
+
+    <br><br>
+    <button onclick="calculateRisk()" class="btn-amber">⚠️ Calcular riesgo</button>
+
+    <div class="progress"><div id="riskBar" class="bar"></div></div>
+    <h3 id="riskResult">Riesgo actual: 0%</h3>
+    <p id="riskInterpretation"></p>
+  </div>
+</section>
+
+<section id="limites">
+  <div class="card">
+    <h2>Protocolo de límites con Celmira</h2>
+
+    <div class="grid">
+      <div class="protective">
+        <h3>✅ Permitido</h3>
+        <p>Comunicación breve, logística y centrada en la hija.</p>
+        <p>Intercambio mediante colegio.</p>
+        <p>Mensajes claros, sin nostalgia ni discusión afectiva.</p>
+      </div>
+
+      <div class="risk-card">
+        <h3>🚫 No recomendado</h3>
+        <p>Conversaciones sobre la relación pasada.</p>
+        <p>Reclamos, reproches o promesas.</p>
+        <p>Encuentros presenciales innecesarios.</p>
+        <p>Responder mensajes ambiguos en estado de soledad o culpa.</p>
+      </div>
+    </div>
+
+    <label>Mensaje seguro 1 — límite neutral</label>
+    <textarea id="msg1">Celmira, por ahora prefiero que mantengamos la comunicación solo por temas relacionados con nuestra hija. Si hay algo logístico que coordinar, lo vemos de forma breve y clara.</textarea>
+
+    <label>Mensaje seguro 2 — si ella aparece vulnerable</label>
+    <textarea id="msg2">Entiendo que puedas estar pasando un momento difícil. Sin embargo, creo que lo más sano para ambos es mantener límites claros y enfocarnos únicamente en nuestra responsabilidad como padres.</textarea>
+
+    <label>Mensaje seguro 3 — si usa a la hija como canal emocional</label>
+    <textarea id="msg3">Sobre nuestra hija, coordinemos todo lo necesario. Pero prefiero que no mezclemos temas emocionales de nosotros con asuntos parentales.</textarea>
+
+    <button onclick="copyText('msg1')" class="btn-green">📋 Copiar mensaje 1</button>
+    <button onclick="copyText('msg2')" class="btn-green">📋 Copiar mensaje 2</button>
+    <button onclick="copyText('msg3')" class="btn-green">📋 Copiar mensaje 3</button>
+  </div>
+</section>
+
+<section id="protocolo">
+  <div class="card">
+    <h2>Protocolo terapéutico inicial</h2>
+
+    <table>
+      <tr><th>Fase</th><th>Objetivo</th><th>Tareas clínicas</th></tr>
+      <tr>
+        <td>Fase 1 — Contención y estabilización</td>
+        <td>Evitar recaída, restaurar sueño y recuperar foco.</td>
+        <td>Registro diario, bloqueo de contacto impulsivo, rutina nocturna, foco laboral y parental.</td>
+      </tr>
+      <tr>
+        <td>Fase 2 — Mapeo relacional</td>
+        <td>Identificar patrón de elección y repetición.</td>
+        <td>Historia vincular, parejas disponibles/vulnerables, rol de proveedor, miedo a soledad.</td>
+      </tr>
+      <tr>
+        <td>Fase 3 — Reestructuración</td>
+        <td>Diferenciar amor, acceso, control y validación.</td>
+        <td>Reestructuración cognitiva, análisis de culpa, responsabilidad emocional y mutualidad.</td>
+      </tr>
+      <tr>
+        <td>Fase 4 — Prevención de recurrencia</td>
+        <td>Evitar repetir el patrón con nueva pareja.</td>
+        <td>Criterios de elección, tolerancia a soledad, límites, indicadores tempranos de habituación.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>Tareas domiciliarias</h2>
+    <label><input type="checkbox" class="task"> Registrar cada deseo de contacto antes de actuar.</label>
+    <label><input type="checkbox" class="task"> Esperar 30 minutos antes de responder mensajes emocionalmente cargados.</label>
+    <label><input type="checkbox" class="task"> Identificar si el impulso nace de amor, culpa, soledad, control o herida narcisista.</label>
+    <label><input type="checkbox" class="task"> Mantener comunicación solo parental.</label>
+    <label><input type="checkbox" class="task"> Realizar una actividad propia cuando aparezca vacío nocturno.</label>
+    <label><input type="checkbox" class="task"> Registrar una conducta concreta de rol paterno cada día.</label>
+    <label><input type="checkbox" class="task"> No iniciar nueva relación sentimental durante la fase de reorganización.</label>
+
+    <br><br>
+    <button onclick="saveTasks()" class="btn-green">💾 Guardar tareas</button>
+    <p id="taskStatus"></p>
+  </div>
+</section>
+
+<section id="registro">
+  <div class="card">
+    <h2>Registro clínico diario</h2>
+
+    <label>Fecha</label>
+    <input type="date" id="date">
+
+    <label>Estado dominante</label>
+    <select id="stateToday">
+      <option>S1 - Control funcional</option>
+      <option>S2 - Habituación vincular</option>
+      <option>S3 - Distancia relacional</option>
+      <option>S4 - Amenaza externa</option>
+      <option>S5 - Hiperactivación ansiosa</option>
+      <option>S6 - Negociación degradada</option>
+      <option>S7 - Agotamiento / desorganización</option>
+      <option>S8 - Reinstalación de límites</option>
+    </select>
+
+    <label>Ansiedad / urgencia vincular 0-10</label>
+    <input type="number" min="0" max="10" id="anxiety" value="0">
+
+    <label>Deseo de contactar a Celmira</label>
+    <select id="contactWish">
+      <option>No hubo deseo de contacto</option>
+      <option>Deseo leve</option>
+      <option>Deseo moderado</option>
+      <option>Deseo intenso</option>
+    </select>
+
+    <label>Variable dominante</label>
+    <select id="dominantVariable">
+      <option>V1 - Control relacional</option>
+      <option>V2 - Ideal de familia nuclear</option>
+      <option>V3 - Herida narcisista</option>
+      <option>V4 - Soledad</option>
+      <option>V5 - Culpa relacional</option>
+      <option>V6 - Acceso sexual / disponibilidad</option>
+      <option>V7 - Relación asimétrica</option>
+    </select>
+
+    <label>Situación activadora</label>
+    <textarea id="trigger"></textarea>
+
+    <label>Pensamiento automático</label>
+    <textarea id="thought"></textarea>
+
+    <label>Respuesta aplicada</label>
+    <textarea id="response"></textarea>
+
+    <label>Lectura clínica breve</label>
+    <textarea id="clinicalNote"></textarea>
+
+    <button onclick="saveEntry()" class="btn-green">💾 Guardar registro</button>
+    <button onclick="clearEntries()" class="btn-red">🗑️ Borrar registros</button>
+  </div>
+
+  <div class="card">
+    <h2>Historial de registros</h2>
+    <div id="entries"></div>
+  </div>
+</section>
+
+<section id="reporte">
+  <div class="card">
+    <h2>Reporte terapéutico imprimible</h2>
+    <p>Genera un resumen clínico del seguimiento para sesión o revisión terapéutica.</p>
+    <button onclick="generateReport()" class="btn-purple">📄 Generar reporte</button>
+    <button onclick="window.print()" class="btn-green">🖨️ Imprimir / Guardar PDF</button>
+  </div>
+
+  <div class="card" id="reportOutput">
+    <p>Aún no se ha generado reporte.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Desarrollado por: Lic. Gonzalo Buendía – Psicólogo y Blanquita – Co terapeuta
+</footer>
+
+<script>
+function showTab(id){
+  document.querySelectorAll("section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function calculateRisk(){
+  let total = 0;
+  document.querySelectorAll(".risk:checked").forEach(item => total += Number(item.value));
+  if(total > 100) total = 100;
+
+  document.getElementById("riskBar").style.width = total + "%";
+  document.getElementById("riskResult").innerText = "Riesgo actual: " + total + "%";
+
+  let text = "";
+  let cls = "";
+
+  if(total < 30){
+    text = "Riesgo bajo. Mantener límites, rutina, foco parental y registro preventivo.";
+    cls = "low";
+  }else if(total < 65){
+    text = "Riesgo moderado. Evitar contacto impulsivo, aplicar mensajes seguros y revisar variable dominante.";
+    cls = "medium";
+  }else{
+    text = "Riesgo alto. No responder mensajes ambiguos, bloquear encuentro presencial y llevar el episodio a sesión.";
+    cls = "high";
+  }
+
+  document.getElementById("riskInterpretation").innerHTML = '<span class="badge '+cls+'">'+text+'</span>';
+}
+
+function copyText(id){
+  const field = document.getElementById(id);
+  field.select();
+  document.execCommand("copy");
+  alert("Mensaje copiado.");
+}
+
+function saveTasks(){
+  const tasks = [...document.querySelectorAll(".task")].map(t => t.checked);
+  localStorage.setItem("marco_tasks", JSON.stringify(tasks));
+  const done = tasks.filter(Boolean).length;
+  document.getElementById("taskStatus").innerText = "Tareas guardadas: " + done + " de " + tasks.length + " completadas.";
+}
+
+function loadTasks(){
+  const saved = JSON.parse(localStorage.getItem("marco_tasks") || "[]");
+  document.querySelectorAll(".task").forEach((t,i) => t.checked = saved[i] || false);
+}
+
+function saveEntry(){
+  const entry = {
+    date: document.getElementById("date").value,
+    state: document.getElementById("stateToday").value,
+    anxiety: document.getElementById("anxiety").value,
+    contactWish: document.getElementById("contactWish").value,
+    variable: document.getElementById("dominantVariable").value,
+    trigger: document.getElementById("trigger").value,
+    thought: document.getElementById("thought").value,
+    response: document.getElementById("response").value,
+    clinicalNote: document.getElementById("clinicalNote").value
+  };
+
+  let entries = JSON.parse(localStorage.getItem("marco_entries") || "[]");
+  entries.push(entry);
+  localStorage.setItem("marco_entries", JSON.stringify(entries));
+  renderEntries();
+  alert("Registro guardado correctamente.");
+}
+
+function renderEntries(){
+  const entries = JSON.parse(localStorage.getItem("marco_entries") || "[]");
+  const container = document.getElementById("entries");
+
+  if(entries.length === 0){
+    container.innerHTML = "<p>No hay registros guardados.</p>";
+    return;
+  }
+
+  container.innerHTML = entries.map((e,index) => `
+    <div class="state-box">
+      <b>Registro ${index + 1} | ${e.date || "Sin fecha"}</b><br>
+      <b>Estado:</b> ${e.state}<br>
+      <b>Ansiedad:</b> ${e.anxiety}/10<br>
+      <b>Deseo de contacto:</b> ${e.contactWish}<br>
+      <b>Variable dominante:</b> ${e.variable}<br>
+      <b>Activador:</b> ${e.trigger || "-"}<br>
+      <b>Pensamiento automático:</b> ${e.thought || "-"}<br>
+      <b>Respuesta aplicada:</b> ${e.response || "-"}<br>
+      <b>Nota clínica:</b> ${e.clinicalNote || "-"}
+    </div>
+  `).join("");
+}
+
+function clearEntries(){
+  if(confirm("¿Seguro que deseas borrar todos los registros?")){
+    localStorage.removeItem("marco_entries");
+    renderEntries();
+  }
+}
+
+function generateReport(){
+  const entries = JSON.parse(localStorage.getItem("marco_entries") || "[]");
+  const tasks = [...document.querySelectorAll(".task")];
+  const doneTasks = tasks.filter(t => t.checked).length;
+
+  let avgAnxiety = 0;
+  if(entries.length > 0){
+    avgAnxiety = entries.reduce((sum,e) => sum + Number(e.anxiety || 0), 0) / entries.length;
+  }
+
+  let mostRecent = entries.length ? entries[entries.length - 1] : null;
+
+  document.getElementById("reportOutput").innerHTML = `
+    <h2>Reporte de Seguimiento Clínico — Marco</h2>
+
+    <h3>1. Síntesis del caso</h3>
+    <p>
+      El seguimiento se organiza alrededor de un patrón vincular ambivalente-evitativo,
+      caracterizado por oscilación entre control funcional, habituación afectiva,
+      hiperactivación ante amenaza de pérdida y necesidad de reinstalación de límites.
+    </p>
+
+    <h3>2. Indicadores cuantitativos</h3>
+    <p><b>Total de registros:</b> ${entries.length}</p>
+    <p><b>Ansiedad promedio:</b> ${avgAnxiety.toFixed(1)} / 10</p>
+    <p><b>Tareas domiciliarias completadas:</b> ${doneTasks} de ${tasks.length}</p>
+
+    <h3>3. Último estado registrado</h3>
+    ${
+      mostRecent ? `
+      <p><b>Fecha:</b> ${mostRecent.date}</p>
+      <p><b>Estado:</b> ${mostRecent.state}</p>
+      <p><b>Variable dominante:</b> ${mostRecent.variable}</p>
+      <p><b>Deseo de contacto:</b> ${mostRecent.contactWish}</p>
+      <p><b>Activador:</b> ${mostRecent.trigger || "-"}</p>
+      <p><b>Respuesta aplicada:</b> ${mostRecent.response || "-"}</p>
+      ` : "<p>No hay registros clínicos disponibles.</p>"
+    }
+
+    <h3>4. Lectura clínica</h3>
+    <p>
+      Si predominan estados S5, S6 o S7, se recomienda reforzar el protocolo de estabilización,
+      limitar contacto con Celmira y trabajar la variable dominante: culpa, soledad, control,
+      herida narcisista o fantasía familiar. Si predomina S8, el foco debe ser consolidar límites
+      y transformar el insight en conducta sostenida.
+    </p>
+
+    <h3>5. Recomendación terapéutica inmediata</h3>
+    <p>
+      Mantener comunicación estrictamente parental, registrar impulsos de contacto,
+      evitar decisiones vinculares bajo activación emocional y fortalecer autonomía afectiva,
+      rol paterno, sueño, trabajo y estructura personal.
+    </p>
+
+    <h3>6. Registros completos</h3>
+    ${entries.map((e,i)=>`
+      <div class="state-box">
+        <b>Registro ${i+1} | ${e.date || "Sin fecha"}</b><br>
+        <b>Estado:</b> ${e.state}<br>
+        <b>Ansiedad:</b> ${e.anxiety}/10<br>
+        <b>Variable dominante:</b> ${e.variable}<br>
+        <b>Activador:</b> ${e.trigger || "-"}<br>
+        <b>Pensamiento automático:</b> ${e.thought || "-"}<br>
+        <b>Respuesta:</b> ${e.response || "-"}<br>
+        <b>Nota clínica:</b> ${e.clinicalNote || "-"}
+      </div>
+    `).join("")}
+  `;
+}
+
+document.getElementById("date").valueAsDate = new Date();
+loadTasks();
+renderEntries();
+</script>
+
+</body>
+</html>

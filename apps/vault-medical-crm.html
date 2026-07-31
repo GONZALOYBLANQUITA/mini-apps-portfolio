@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vault CRM Medical</title>
+  <style>
+    :root{
+      --bg:#07101d;
+      --bg2:#0b1626;
+      --panel:#0e1b2f;
+      --panel2:#12243d;
+      --panel3:#0d1728;
+      --line:#233754;
+      --text:#eef6ff;
+      --muted:#9eb3cb;
+      --cyan:#25c6d8;
+      --cyan2:#6fe6ff;
+      --green:#22c55e;
+      --amber:#f59e0b;
+      --violet:#8b5cf6;
+      --blue:#3b82f6;
+      --red:#ef4444;
+      --slate:#64748b;
+      --shadow:0 20px 56px rgba(0,0,0,.28);
+      --r:22px;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#091321 30%,#08111b 100%);color:var(--text)}
+    .layout{display:grid;grid-template-columns:290px 1fr;min-height:100vh}
+    .sidebar{background:linear-gradient(180deg,#091322,#0b1728);border-right:1px solid var(--line);padding:20px 18px;position:sticky;top:0;height:100vh;overflow:auto}
+    .logo{font-size:24px;font-weight:800;letter-spacing:-.02em}.logo span{color:var(--cyan2)}
+    .logo-sub{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+    .nav{margin-top:24px;display:grid;gap:10px}
+    .nav button{width:100%;text-align:left;padding:14px 14px;border:none;background:transparent;color:#d5e5f7;border-radius:14px;cursor:pointer;font-weight:700}
+    .nav button.active{background:#14243b;border:1px solid var(--line);color:#fff}
+    .side-card{margin-top:18px;background:#0d1a2d;border:1px solid var(--line);border-radius:18px;padding:15px}
+    .side-card .h{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.side-card .v{margin-top:8px;font-size:13px;line-height:1.6}
+    .main{padding:22px}
+    .topbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:16px}
+    .search{flex:1;max-width:420px}
+    input,select,textarea{width:100%;background:#0b182b;border:1px solid var(--line);color:#fff;padding:13px 14px;border-radius:14px;font:inherit;outline:none}
+    textarea{min-height:100px;resize:vertical}
+    .top-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{border:none;background:linear-gradient(90deg,var(--cyan),#16b6d0);color:#06202a;padding:12px 16px;border-radius:14px;font-weight:800;cursor:pointer}
+    .btn.secondary{background:#13243c;color:#fff;border:1px solid var(--line)}
+    .hero{background:linear-gradient(135deg,#0a1628 0%, #0d1f35 58%, #12364b 100%);border:1px solid var(--line);border-radius:28px;padding:28px;box-shadow:var(--shadow)}
+    .pills{display:flex;gap:8px;flex-wrap:wrap}.pill{padding:8px 12px;border-radius:999px;background:#12223a;border:1px solid var(--line);font-size:12px;color:#d9eeff}
+    h1{margin:12px 0 10px;font-size:40px;line-height:1.02;letter-spacing:-.025em}
+    .sub{color:var(--muted);font-size:15px;line-height:1.75;max-width:1050px}
+    .hero-grid{display:grid;grid-template-columns:1.45fr .85fr;gap:18px;margin-top:16px}
+    .card{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+    .section{padding:20px}.title{margin:0 0 14px;font-size:18px;font-weight:800}
+    .mini{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:16px}.mini .h{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.mini .v{margin-top:8px;line-height:1.6}
+    .cards{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:18px}.kpi{padding:18px}.kpi .l{font-size:12px;color:var(--muted)}.kpi .v{font-size:30px;font-weight:800;margin-top:8px}.kpi .n{font-size:12px;color:#8298b4;margin-top:6px;line-height:1.45}
+    .view{display:none}.view.active{display:block}
+    .grid-2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.grid-eq{display:grid;grid-template-columns:1fr 1fr;gap:18px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .table{width:100%;border-collapse:collapse}.table th,.table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;font-size:13px}.table th{color:var(--muted)}.table td{color:#e7f3ff}
+    .list{display:grid;gap:12px}.item{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .top{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}.name{font-weight:800;font-size:16px}.meta{margin-top:6px;font-size:13px;color:var(--muted);line-height:1.5}
+    .badge{display:inline-block;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:800}.b-blue{background:#123d77;color:#dbeafe}.b-green{background:#166534;color:#dcfce7}.b-amber{background:#7c4a03;color:#ffefc6}.b-violet{background:#5b21b6;color:#efe5ff}.b-red{background:#7f1d1d;color:#fee2e2}.b-slate{background:#334155;color:#f8fafc}
+    .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}.metric{background:#0d1a2d;border:1px solid var(--line);border-radius:14px;padding:12px}.metric .row{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}.progress{height:8px;background:#1b2b44;border-radius:999px;overflow:hidden;margin-top:10px}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--cyan2),var(--cyan));border-radius:999px}
+    .note{margin-top:12px;background:#0d1a2d;border:1px solid var(--line);border-radius:14px;padding:14px;color:#c8d8e8;font-size:14px;line-height:1.65}
+    .timeline{display:grid;gap:12px}.event{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:start;background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:14px}.time{font-size:12px;color:var(--cyan2);font-weight:800}.event .event-title{font-weight:800}.event .event-text{margin-top:5px;color:var(--muted);font-size:13px;line-height:1.55}
+    .board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.col{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:14px}.col-title{font-size:13px;font-weight:800;color:#d7e9fb;margin-bottom:10px}.task{background:#0d1a2d;border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:10px;font-size:13px;line-height:1.55;color:#d9e9f8}
+    .stack{display:grid;gap:12px}.resource{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:14px}.res-head{display:flex;justify-content:space-between;gap:12px}.res-title{font-weight:800}.res-meta{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.footer{margin-top:18px;padding:16px 18px;border-radius:18px;background:#0d1a2d;border:1px solid var(--line);color:var(--muted);font-size:13px;line-height:1.65}
+    .offline{display:grid;gap:12px}.offline-box{background:#0b182b;border:1px solid var(--line);border-radius:18px;padding:14px}
+    @media (max-width:1200px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--line)}.hero-grid,.grid-2,.grid-eq,.grid-3,.board{grid-template-columns:1fr}.cards{grid-template-columns:repeat(3,1fr)}.metrics{grid-template-columns:1fr 1fr}}
+    @media (max-width:760px){.main{padding:16px}.cards{grid-template-columns:1fr}.metrics{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}h1{font-size:30px}.topbar{flex-direction:column;align-items:stretch}}
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo">Vault<span> Medical</span></div>
+      <div class="logo-sub">Scientific engagement workspace for medical affairs</div>
+      <div class="nav">
+        <button class="active" data-view="overview">Overview</button>
+        <button data-view="stakeholders">Stakeholders</button>
+        <button data-view="engagement">Scientific Exchange</button>
+        <button data-view="content">Medical Content</button>
+        <button data-view="insights">Insights</button>
+        <button data-view="planning">Planning</button>
+        <button data-view="offline">Offline Mode</button>
+      </div>
+      <div class="side-card">
+        <div class="h">Core product logic</div>
+        <div class="v">Single platform, unified customer database, stakeholder profiling, content sharing and management, territory and account planning, and field engagement with insights capture and analysis.</div>
+      </div>
+      <div class="side-card">
+        <div class="h">Reference</div>
+        <div class="v">Inspired by the official Veeva Vault CRM for Medical product page.</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="search"><input placeholder="Search stakeholder, account, insight, or medical content" /></div>
+        <div class="top-actions">
+          <button class="btn secondary">Sync Offline</button>
+          <button class="btn">Create Interaction</button>
+        </div>
+      </div>
+
+      <section class="hero">
+        <div class="pills">
+          <span class="pill">Scientific Exchange</span>
+          <span class="pill">Stakeholder Profiling</span>
+          <span class="pill">Content Sharing</span>
+          <span class="pill">Insights Capture</span>
+          <span class="pill">Territory & Account Planning</span>
+          <span class="pill">Full Offline Support</span>
+        </div>
+        <h1>Drive High-Impact Scientific Exchange</h1>
+        <div class="sub">Medical affairs workspace designed around the operating model described by Veeva Vault CRM for Medical: a single platform connecting teams through a unified customer database, stakeholder profiling, content sharing and management, territory and account planning, and field engagement with insights capture and analysis. The official product page also states browser and desktop access with full offline support on iPad, iPhone, and Android.</div>
+        <div class="hero-grid">
+          <div class="mini">
+            <div class="h">Engagement model</div>
+            <div class="v">Plan, execute, and track scientific interactions across channels. Share relevant medical information, capture field insights in real time, and align with internal counterparts for cohesive engagement.</div>
+          </div>
+          <div class="mini">
+            <div class="h">Operating principles</div>
+            <div class="v">Improve scientific exchange, streamline content dissemination, gather actionable medical insights, and collaborate compliantly.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="cards" id="kpis"></section>
+
+      <section class="view active" id="overview">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Scientific engagement timeline</div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+          <div class="card section">
+            <div class="title">MSL action center</div>
+            <div class="list" id="actionCenter"></div>
+          </div>
+        </div>
+        <div class="grid-eq" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Account health snapshot</div>
+            <table class="table">
+              <thead><tr><th>Account</th><th>Priority</th><th>Access</th><th>Next objective</th></tr></thead>
+              <tbody id="accountTable"></tbody>
+            </table>
+          </div>
+          <div class="card section">
+            <div class="title">Cross-functional alignment</div>
+            <div class="board" id="board"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="stakeholders">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Stakeholder profiles</div>
+            <div class="list" id="stakeholderList"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Stakeholder 360</div>
+            <div class="list" id="stakeholderDetail"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="engagement">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Interaction capture</div>
+            <div class="form-grid">
+              <div><label style="display:block;margin-bottom:8px;color:var(--muted);font-size:13px">Stakeholder</label><select id="interactionStakeholder"></select></div>
+              <div><label style="display:block;margin-bottom:8px;color:var(--muted);font-size:13px">Channel</label><select><option>In-person</option><option>Remote</option><option>Email follow-up</option></select></div>
+            </div>
+            <div class="form-grid" style="margin-top:12px;">
+              <div><label style="display:block;margin-bottom:8px;color:var(--muted);font-size:13px">Date</label><input type="date" value="2026-04-12" /></div>
+              <div><label style="display:block;margin-bottom:8px;color:var(--muted);font-size:13px">Scientific objective</label><input value="Safety and patient selection discussion" /></div>
+            </div>
+            <div style="margin-top:12px;"><label style="display:block;margin-bottom:8px;color:var(--muted);font-size:13px">Summary</label><textarea placeholder="Capture the interaction summary, scientific exchange topics, follow-up needs, and stakeholder preferences"></textarea></div>
+            <div style="margin-top:12px;"><label style="display:block;margin-bottom:8px;color:var(--muted);font-size:13px">Next step</label><textarea placeholder="Schedule follow-up, share medical content, escalate to internal team, or update account plan"></textarea></div>
+            <div style="margin-top:14px;"><button class="btn">Save Interaction</button></div>
+          </div>
+          <div class="card section">
+            <div class="title">Recent interactions</div>
+            <div class="timeline" id="recentInteractions"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="content">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Medical content library</div>
+            <div class="stack" id="contentLibrary"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Content dissemination</div>
+            <div class="list" id="contentActions"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="insights">
+        <div class="grid-eq" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Actionable medical insights</div>
+            <div class="list" id="insightList"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Insight analysis</div>
+            <table class="table">
+              <thead><tr><th>Theme</th><th>Frequency</th><th>Strategic meaning</th><th>Owner</th></tr></thead>
+              <tbody id="insightTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="planning">
+        <div class="grid-2" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Territory planning</div>
+            <div class="list" id="territoryPlan"></div>
+          </div>
+          <div class="card section">
+            <div class="title">Account planning</div>
+            <div class="list" id="accountPlans"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="offline">
+        <div class="grid-3" style="margin-top:18px;">
+          <div class="card section">
+            <div class="title">Offline access</div>
+            <div class="offline">
+              <div class="offline-box">Browser and desktop application access</div>
+              <div class="offline-box">Full offline support on iPad</div>
+              <div class="offline-box">Full offline support on iPhone</div>
+              <div class="offline-box">Full offline support on Android</div>
+            </div>
+          </div>
+          <div class="card section">
+            <div class="title">Sync behavior</div>
+            <div class="note">Interactions, notes, and account-plan changes are queued locally and synchronized once connectivity is restored, preserving continuity during field activity.</div>
+          </div>
+          <div class="card section">
+            <div class="title">Compliance posture</div>
+            <div class="note">Engagement records remain structured, traceable, and available across channels to support region-specific business requirements and regulatory needs.</div>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <strong style="color:#fff">Authorship:</strong> Lic. Gonzalo Buendía – Psicólogo · Blanquita – Co terapeuta<br>
+        <strong style="color:#fff">Reference:</strong> Official Veeva page for Vault CRM for Medical.
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const stakeholders = [
+      {
+        name:'Dra. Ana Mendoza', role:'Neurologist / KOL', account:'Clínica San Gabriel', priority:'High', relationship:88, scientificAlignment:93, access:74, insightScore:81,
+        preferences:'Prefers concise scientific briefs and remote follow-up for safety questions.',
+        objective:'Advance high-value scientific dialogue on patient selection and adherence.',
+        next:'Share updated safety evidence deck and schedule follow-up exchange.'
+      },
+      {
+        name:'Dr. Luis Paredes', role:'Internal Medicine / Influencer', account:'Hospital Central', priority:'Medium', relationship:67, scientificAlignment:72, access:58, insightScore:70,
+        preferences:'Responds well to practical evidence summaries and account-level discussion.',
+        objective:'Increase depth of scientific exchange and identify local unmet needs.',
+        next:'Send focused content and align on next meeting window.'
+      },
+      {
+        name:'Dra. Pilar Rojas', role:'Geriatric Specialist / Strong Advocate', account:'Centro Médico Norte', priority:'High', relationship:91, scientificAlignment:89, access:84, insightScore:86,
+        preferences:'High receptivity to scientific discussion and case-based engagement.',
+        objective:'Sustain two-way dialogue and capture evolving field insight.',
+        next:'Invite to deeper scientific session and gather perspective on patient pathways.'
+      }
+    ];
+
+    const timeline = [
+      {time:'08:30', title:'Scientific exchange scheduled', text:'Dra. Ana Mendoza added to high-priority route based on stakeholder profile and account objectives.'},
+      {time:'10:00', title:'Content shared', text:'Safety and adherence brief sent through approved medical-content workflow.'},
+      {time:'12:15', title:'Insight captured', text:'New perspective on patient-selection barriers recorded for medical strategy review.'},
+      {time:'15:40', title:'Cross-team alignment', text:'Medical, commercial, and clinical counterparts aligned on next stakeholder touchpoint.'}
+    ];
+
+    const actions = [
+      {title:'Prepare high-impact scientific exchange', detail:'Target stakeholder: Dra. Ana Mendoza · Objective: patient-selection dialogue', badge:'b-green'},
+      {title:'Disseminate focused medical content', detail:'Stakeholder: Dr. Luis Paredes · Channel: remote follow-up', badge:'b-blue'},
+      {title:'Capture and route new insight', detail:'Stakeholder: Dra. Pilar Rojas · Owner: medical strategy', badge:'b-amber'}
+    ];
+
+    const accounts = [
+      {name:'Clínica San Gabriel', priority:'High', access:'Moderate', next:'Deepen KOL-level scientific exchange'},
+      {name:'Hospital Central', priority:'Medium', access:'Limited', next:'Strengthen practical evidence dissemination'},
+      {name:'Centro Médico Norte', priority:'High', access:'High', next:'Expand scientific collaboration pathway'}
+    ];
+
+    const board = [
+      {title:'Medical Affairs', tasks:['Review stakeholder insights','Prioritize scientific follow-up','Approve next exchange objective']},
+      {title:'Commercial Alignment', tasks:['Coordinate account timing','Avoid overlap in outreach','Maintain cohesive engagement']},
+      {title:'Clinical Counterparts', tasks:['Validate evidence needs','Support content accuracy','Flag emerging local themes']}
+    ];
+
+    const interactions = [
+      {time:'Yesterday', title:'Remote scientific discussion', text:'Discussion centered on safety profile, patient selection, and educational needs.'},
+      {time:'2 days ago', title:'Field note captured', text:'Stakeholder highlighted local variability in adoption and requested concise comparative content.'},
+      {time:'Last week', title:'In-person medical visit', text:'Two-way dialogue established; follow-up pathway and content request documented.'}
+    ];
+
+    const contentLibrary = [
+      {title:'Safety & Adherence Scientific Brief', tag:'Approved', meta:'Format: PDF · Channel: Remote / In-person · Owner: Medical Affairs'},
+      {title:'Patient Selection Discussion Guide', tag:'Approved', meta:'Format: Detail Aid · Channel: In-person · Owner: Medical + Scientific Communications'},
+      {title:'Therapeutic Landscape Summary', tag:'Updated', meta:'Format: Deck · Channel: Remote · Owner: Medical Strategy'}
+    ];
+
+    const contentActions = [
+      {title:'Streamline content dissemination', detail:'Make scientific and medical information easy to locate and share during stakeholder interactions.'},
+      {title:'Serve the right content', detail:'Match the content asset to stakeholder preferences, channel, and account objective.'},
+      {title:'Reduce administrative work', detail:'Keep field medical teams focused on scientific engagement rather than manual coordination.'}
+    ];
+
+    const insights = [
+      {title:'Adherence concerns remain high', detail:'Repeated questions around patient persistence suggest targeted education is needed.'},
+      {title:'Patient-selection criteria vary by center', detail:'Differences across institutions indicate a need for localized scientific discussion.'},
+      {title:'Remote exchange is gaining preference', detail:'Certain stakeholders prefer short, high-value remote interactions over long in-person sessions.'}
+    ];
+
+    const insightTable = [
+      {theme:'Adherence', freq:'High', meaning:'Need for focused scientific education', owner:'Medical Affairs'},
+      {theme:'Patient Selection', freq:'Medium', meaning:'Opportunity to deepen scientific exchange', owner:'Field Medical'},
+      {theme:'Channel Preference', freq:'Medium', meaning:'Optimize interaction planning by stakeholder', owner:'Operations'}
+    ];
+
+    const territoryPlan = [
+      {title:'Lima Centro', detail:'Concentrate on high-priority scientific stakeholders with strong educational value.'},
+      {title:'Lima Oeste', detail:'Use selective follow-up and content-driven exchange to improve engagement efficiency.'},
+      {title:'Lima Norte', detail:'Leverage strong-access accounts to gather richer scientific insights.'}
+    ];
+
+    const accountPlans = [
+      {title:'Clínica San Gabriel', detail:'Objective: elevate the quality of scientific dialogue and document emerging needs.'},
+      {title:'Hospital Central', detail:'Objective: build relevance with concise evidence dissemination and coordinated follow-up.'},
+      {title:'Centro Médico Norte', detail:'Objective: maintain high-value interactions and feed strategic insight loops.'}
+    ];
+
+    function metric(label, value){
+      return `<div class="metric"><div class="row"><span>${label}</span><span>${value}/100</span></div><div class="progress"><span style="width:${value}%"></span></div></div>`;
+    }
+
+    function renderKpis(){
+      const kpis = [
+        ['Stakeholders','18','Active scientific stakeholders'],
+        ['Accounts','9','Planned and prioritized accounts'],
+        ['Interactions','42','Tracked field-medical engagements'],
+        ['Insights','16','Actionable medical insights captured'],
+        ['Content Assets','27','Available medical-information resources'],
+        ['Offline Ready','100%','Mobile field continuity enabled']
+      ];
+      document.getElementById('kpis').innerHTML = kpis.map(k=>`<div class="card kpi"><div class="l">${k[0]}</div><div class="v">${k[1]}</div><div class="n">${k[2]}</div></div>`).join('');
+    }
+
+    function renderTimeline(){
+      document.getElementById('timeline').innerHTML = timeline.map(t=>`<div class="event"><div class="time">${t.time}</div><div><div class="event-title">${t.title}</div><div class="event-text">${t.text}</div></div></div>`).join('');
+    }
+
+    function renderActions(){
+      document.getElementById('actionCenter').innerHTML = actions.map(a=>`<div class="item"><div class="top"><div><div class="name">${a.title}</div><div class="meta">${a.detail}</div></div><span class="badge ${a.badge}">Action</span></div></div>`).join('');
+    }
+
+    function renderAccounts(){
+      document.getElementById('accountTable').innerHTML = accounts.map(a=>`<tr><td>${a.name}</td><td>${a.priority}</td><td>${a.access}</td><td>${a.next}</td></tr>`).join('');
+    }
+
+    function renderBoard(){
+      document.getElementById('board').innerHTML = board.map(c=>`<div class="col"><div class="col-title">${c.title}</div>${c.tasks.map(t=>`<div class="task">${t}</div>`).join('')}</div>`).join('');
+    }
+
+    function renderStakeholders(){
+      document.getElementById('stakeholderList').innerHTML = stakeholders.map(s=>`<div class="item"><div class="top"><div><div class="name">${s.name}</div><div class="meta">${s.role} · ${s.account}</div></div><span class="badge ${s.priority==='High'?'b-green':'b-blue'}">${s.priority}</span></div><div class="metrics">${metric('Relationship',s.relationship)}${metric('Scientific Alignment',s.scientificAlignment)}${metric('Access',s.access)}${metric('Insight Score',s.insightScore)}</div><div class="note"><strong style="color:#fff">Preferences:</strong> ${s.preferences}</div></div>`).join('');
+      document.getElementById('stakeholderDetail').innerHTML = stakeholders.map(s=>`<div class="item"><div class="name">${s.name}</div><div class="meta">Objective: ${s.objective}</div><div class="note"><strong style="color:#fff">Next recommended step:</strong> ${s.next}</div></div>`).join('');
+      document.getElementById('interactionStakeholder').innerHTML = stakeholders.map(s=>`<option>${s.name}</option>`).join('');
+    }
+
+    function renderInteractions(){
+      document.getElementById('recentInteractions').innerHTML = interactions.map(t=>`<div class="event"><div class="time">${t.time}</div><div><div class="event-title">${t.title}</div><div class="event-text">${t.text}</div></div></div>`).join('');
+    }
+
+    function renderContent(){
+      document.getElementById('contentLibrary').innerHTML = contentLibrary.map(c=>`<div class="resource"><div class="res-head"><div><div class="res-title">${c.title}</div><div class="res-meta">${c.meta}</div></div><span class="badge ${c.tag==='Approved'?'b-green':'b-blue'}">${c.tag}</span></div></div>`).join('');
+      document.getElementById('contentActions').innerHTML = contentActions.map(c=>`<div class="item"><div class="name">${c.title}</div><div class="meta">${c.detail}</div></div>`).join('');
+    }
+
+    function renderInsights(){
+      document.getElementById('insightList').innerHTML = insights.map(i=>`<div class="item"><div class="name">${i.title}</div><div class="meta">${i.detail}</div></div>`).join('');
+      document.getElementById('insightTable').innerHTML = insightTable.map(i=>`<tr><td>${i.theme}</td><td>${i.freq}</td><td>${i.meaning}</td><td>${i.owner}</td></tr>`).join('');
+    }
+
+    function renderPlanning(){
+      document.getElementById('territoryPlan').innerHTML = territoryPlan.map(t=>`<div class="item"><div class="name">${t.title}</div><div class="meta">${t.detail}</div></div>`).join('');
+      document.getElementById('accountPlans').innerHTML = accountPlans.map(a=>`<div class="item"><div class="name">${a.title}</div><div class="meta">${a.detail}</div></div>`).join('');
+    }
+
+    function bindNav(){
+      document.querySelectorAll('.nav button').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+          document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById(btn.dataset.view).classList.add('active');
+        });
+      });
+    }
+
+    function renderAll(){
+      renderKpis(); renderTimeline(); renderActions(); renderAccounts(); renderBoard(); renderStakeholders(); renderInteractions(); renderContent(); renderInsights(); renderPlanning();
+    }
+
+    bindNav(); renderAll();
+  </script>
+</body>
+</html>

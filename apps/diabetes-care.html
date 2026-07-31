@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plataforma de Monitoreo Metabólico Inteligente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --navy:#002A5C;
+      --blue:#009CDE;
+      --red:#E31937;
+      --bg:#F4F8FC;
+      --card:#FFFFFF;
+      --ink:#102033;
+      --muted:#607086;
+      --line:#D9E5F1;
+      --ok:#14B86A;
+      --warn:#F59E0B;
+      --shadow:0 18px 50px rgba(0,42,92,.10);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:'Inter',system-ui,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#F8FBFF 0%, #EEF5FB 100%);
+    }
+    .wrap{width:min(1220px,calc(100% - 32px));margin:0 auto}
+    .topbar{
+      position:sticky;top:0;z-index:40;
+      backdrop-filter: blur(12px);
+      background:rgba(255,255,255,.88);
+      border-bottom:1px solid var(--line);
+    }
+    .topbar .wrap{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 0;
+      gap:18px;
+    }
+    .brand{display:flex;align-items:center;gap:14px}
+    .brand-mark{
+      width:48px;height:48px;border-radius:15px;
+      background:linear-gradient(135deg,var(--navy),var(--blue));
+      display:grid;place-items:center;color:#fff;
+      font-size:22px;font-weight:800;
+      box-shadow:var(--shadow);
+    }
+    .brand h1{
+      margin:0;
+      font-size:18px;
+      color:var(--navy);
+      letter-spacing:-.02em;
+    }
+    .brand p{
+      margin:2px 0 0;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+    nav{display:flex;gap:18px;flex-wrap:wrap}
+    nav a{
+      text-decoration:none;
+      color:var(--muted);
+      font-weight:700;
+      font-size:14px;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border-bottom:1px solid var(--line);
+      background:
+        radial-gradient(circle at 12% 20%, rgba(0,156,222,.15), transparent 24%),
+        radial-gradient(circle at 92% 12%, rgba(227,25,55,.09), transparent 20%),
+        linear-gradient(135deg,#ffffff 0%,#eef5fb 100%);
+    }
+    .hero:before{
+      content:"";
+      position:absolute;right:-80px;top:-60px;
+      width:360px;height:360px;border-radius:50%;
+      background-image:
+        linear-gradient(90deg, rgba(0,42,92,.07) 1px, transparent 1px),
+        linear-gradient(rgba(0,42,92,.07) 1px, transparent 1px);
+      background-size:42px 42px;
+      opacity:.35;
+      pointer-events:none;
+    }
+    .hero-grid{
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:28px;
+      padding:52px 0 38px;
+      align-items:start;
+    }
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:9px 14px;
+      color:var(--navy);
+      font-size:13px;
+      font-weight:800;
+      box-shadow:0 10px 24px rgba(0,42,92,.06);
+    }
+    .hero h2{
+      margin:18px 0 14px;
+      font-size:clamp(34px,5vw,62px);
+      line-height:1.02;
+      letter-spacing:-1.8px;
+      color:var(--navy);
+      max-width:780px;
+    }
+    .hero h2 .accent{color:var(--red)}
+    .hero p{
+      font-size:18px;
+      line-height:1.75;
+      color:#324359;
+      max-width:760px;
+      margin:0;
+    }
+    .hero-cta{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:24px;
+    }
+    .btn{
+      border:0;
+      border-radius:16px;
+      padding:14px 20px;
+      font-size:15px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{
+      background:linear-gradient(90deg,var(--navy),var(--blue));
+      color:#fff;
+      box-shadow:0 18px 36px rgba(0,42,92,.18);
+    }
+    .btn-secondary{
+      background:#fff;
+      color:var(--navy);
+      border:1px solid var(--line);
+      box-shadow:0 12px 24px rgba(0,42,92,.07);
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+    .hero-card-top{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;
+    }
+    .hero-card-top .mini-title{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-weight:800;
+    }
+    .hero-card-top .mini-head{
+      font-size:28px;
+      font-weight:900;
+      color:var(--navy);
+      margin-top:8px;
+      letter-spacing:-.04em;
+    }
+    .spark{
+      width:56px;height:56px;border-radius:18px;
+      display:grid;place-items:center;
+      color:#fff;font-size:26px;
+      background:linear-gradient(135deg,var(--red),var(--blue));
+    }
+    .hero-metrics{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-top:16px;
+    }
+    .metric{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+    }
+    .metric .k{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-weight:800;
+    }
+    .metric .v{
+      font-size:29px;
+      font-weight:900;
+      color:var(--navy);
+      margin-top:8px;
+    }
+    .metric .s{
+      margin-top:6px;
+      font-size:13px;
+      color:#42536a;
+      line-height:1.5;
+    }
+
+    .section{padding:34px 0}
+    .section-title{
+      margin-bottom:20px;
+    }
+    .section-title h3{
+      margin:0;
+      font-size:31px;
+      color:var(--navy);
+      letter-spacing:-.03em;
+    }
+    .section-title p{
+      margin:8px 0 0;
+      color:var(--muted);
+      line-height:1.7;
+      max-width:860px;
+    }
+
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    .card h4{
+      margin:0 0 8px;
+      font-size:22px;
+      color:var(--navy);
+      letter-spacing:-.02em;
+    }
+    .card p{
+      margin:0;
+      color:#42536a;
+      line-height:1.7;
+    }
+
+    .icon{
+      width:50px;height:50px;
+      border-radius:16px;
+      display:grid;place-items:center;
+      color:#fff;font-size:22px;
+      margin-bottom:14px;
+    }
+    .icon.navy{background:linear-gradient(135deg,var(--navy),var(--blue))}
+    .icon.red{background:linear-gradient(135deg,var(--red),#ff6d86)}
+    .icon.mix{background:linear-gradient(135deg,var(--blue),var(--red))}
+    .tag{
+      display:inline-block;
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:10px;
+      background:#EEF6FF;
+      color:var(--navy);
+    }
+
+    .engine{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:20px;
+    }
+    .controls{display:grid;gap:14px}
+    label{
+      display:block;
+      font-size:14px;
+      font-weight:800;
+      color:var(--navy);
+      margin-bottom:8px;
+    }
+    input[type=range]{width:100%;accent-color:var(--blue)}
+    select{
+      width:100%;
+      padding:14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:15px;
+      color:var(--ink);
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+    .mini{
+      background:#F7FBFF;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+    }
+    .mini .k{
+      font-size:12px;
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      font-weight:800;
+    }
+    .mini .v{
+      margin-top:8px;
+      font-size:25px;
+      color:var(--navy);
+      font-weight:900;
+    }
+    .progress{
+      height:12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#edf3fa;
+      overflow:hidden;
+    }
+    .progress span{
+      display:block;
+      height:100%;
+      width:0;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--blue),var(--red));
+      transition:width .28s ease;
+    }
+
+    .state-map{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:12px;
+      align-items:center;
+      margin-top:10px;
+    }
+    .state{
+      min-height:120px;
+      border-radius:22px;
+      border:1px solid var(--line);
+      background:#fff;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      box-shadow:0 10px 20px rgba(0,42,92,.05);
+      transition:.22s ease;
+    }
+    .state.active{
+      border-color:rgba(0,156,222,.45);
+      background:linear-gradient(180deg,#fff,#eef7ff);
+      box-shadow:0 20px 34px rgba(0,42,92,.12);
+    }
+    .state .id{
+      font-size:12px;
+      font-weight:900;
+      color:var(--blue);
+      letter-spacing:.12em;
+    }
+    .state .nm{
+      font-size:16px;
+      font-weight:800;
+      color:var(--navy);
+      line-height:1.35;
+    }
+    .state .dot{
+      width:12px;height:12px;border-radius:50%;
+      background:#d8e3ee;
+    }
+    .state.active .dot{
+      background:linear-gradient(135deg,var(--blue),var(--red));
+    }
+    .connector{
+      height:3px;
+      border-radius:999px;
+      background:linear-gradient(90deg,var(--blue),var(--red));
+      transform:translateY(-54px);
+    }
+
+    .sim{
+      display:grid;
+      grid-template-columns:1fr .95fr;
+      gap:18px;
+    }
+    .alerts{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .alert{
+      padding:12px 14px;
+      border-radius:14px;
+      font-size:14px;
+      font-weight:700;
+    }
+    .alert.info{background:#EEF6FF;color:#0b3f73;border:1px solid #cde7fb}
+    .alert.good{background:#ECFDF5;color:#0f6b43;border:1px solid #bdebd4}
+    .alert.warn{background:#FFF7ED;color:#9a4f11;border:1px solid #fed7aa}
+
+    .chart{
+      height:310px;
+      border-radius:22px;
+      border:1px solid var(--line);
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      padding:16px;
+      overflow:hidden;
+    }
+    .chart svg{width:100%;height:100%}
+    .legend{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+      margin-top:12px;
+      font-size:13px;
+      font-weight:800;
+      color:var(--muted);
+    }
+    .bullet{display:inline-flex;align-items:center;gap:8px}
+    .bullet i{
+      width:10px;height:10px;border-radius:50%;display:inline-block;
+    }
+
+    .footer{padding:36px 0 52px}
+    .foot-card{
+      background:linear-gradient(135deg,var(--navy),#0A4886);
+      color:#fff;
+      border-radius:28px;
+      padding:24px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .foot-card h5{
+      margin:0;
+      font-size:24px;
+      font-weight:900;
+      letter-spacing:-.02em;
+    }
+    .credit{
+      margin-top:8px;
+      color:#D8EBFF;
+      line-height:1.7;
+      font-size:15px;
+    }
+    .credit strong{color:#fff}
+    .disc{
+      margin-top:10px;
+      color:#D0DEF3;
+      font-size:13px;
+      line-height:1.7;
+    }
+
+    @media (max-width:1100px){
+      .hero-grid,.engine,.sim,.grid-4,.grid-3,.grid-2{grid-template-columns:1fr 1fr}
+      .state-map{grid-template-columns:1fr 16px 1fr 16px 1fr}
+      .state-map .state:nth-child(7),
+      .state-map .state:nth-child(9),
+      .state-map .connector:nth-child(8),
+      .state-map .connector:nth-child(10){display:none}
+    }
+    @media (max-width:760px){
+      nav{display:none}
+      .hero-grid,.engine,.sim,.grid-4,.grid-3,.grid-2,.hero-metrics,.stats{grid-template-columns:1fr}
+      .state-map{grid-template-columns:1fr}
+      .connector{display:none}
+      .hero h2{font-size:40px}
+      .section{padding:26px 0}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <div class="brand-mark">M</div>
+        <div>
+          <h1>Plataforma de Monitoreo Metabólico</h1>
+          <p>Interfaz inspirada en soluciones digitales para diabetes</p>
+        </div>
+      </div>
+      <nav>
+        <a href="#vision">Visión</a>
+        <a href="#soluciones">Soluciones</a>
+        <a href="#motor">Motor clínico</a>
+        <a href="#simulador">Simulador</a>
+        <a href="#dashboard">Dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="vision">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">● Experiencia digital en diabetes · Portafolio clínico-tecnológico</div>
+        <h2>Vivir con diabetes.<br>Tomar decisiones con <span class="accent">datos en tiempo real</span>.</h2>
+        <p>
+          Aplicación conceptual para portafolio profesional inspirada en la lógica de plataformas de diabetes conectada: monitoreo continuo, ecosistema digital, apps móviles, adherencia y seguimiento clínico integrado.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="document.getElementById('motor').scrollIntoView({behavior:'smooth'})">Abrir motor clínico</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('soluciones').scrollIntoView({behavior:'smooth'})">Explorar soluciones</button>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <div class="hero-card-top">
+          <div>
+            <div class="mini-title">Resumen de experiencia</div>
+            <div class="mini-head">Control glucémico inteligente</div>
+          </div>
+          <div class="spark">✦</div>
+        </div>
+
+        <div class="hero-metrics">
+          <div class="metric">
+            <div class="k">Tecnología central</div>
+            <div class="v">CGM</div>
+            <div class="s">Monitoreo continuo con lectura dinámica y seguimiento longitudinal</div>
+          </div>
+          <div class="metric">
+            <div class="k">Ecosistema</div>
+            <div class="v">4 capas</div>
+            <div class="s">Sensor, app, integración terapéutica y soporte nutricional</div>
+          </div>
+          <div class="metric">
+            <div class="k">Lógica clínica</div>
+            <div class="v">E0–E4</div>
+            <div class="s">Modelo de estados para riesgo, control y ajuste</div>
+          </div>
+          <div class="metric">
+            <div class="k">Modo portafolio</div>
+            <div class="v">Live</div>
+            <div class="s">Interfaz ejecutiva para LinkedIn y reclutadores</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="soluciones">
+    <div class="wrap">
+      <div class="section-title">
+        <h3>Arquitectura de soluciones</h3>
+        <p>
+          Esta app reinterpreta en formato de portafolio las cuatro grandes capas que la página de diabetes destaca: monitoreo continuo de glucosa, bombas compatibles, apps móviles y soporte nutricional. :contentReference[oaicite:1]{index=1}
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <div class="icon navy">◌</div>
+          <h4>Monitoreo continuo</h4>
+          <p>Sensores que convierten la glucosa en una señal observable y útil para decisiones más finas durante el día y la noche.</p>
+        </div>
+        <div class="card">
+          <div class="icon red">⌁</div>
+          <h4>Integración terapéutica</h4>
+          <p>Ruta conceptual para pacientes que se benefician de una conexión entre datos glucémicos y lógica de ajuste terapéutico.</p>
+        </div>
+        <div class="card">
+          <div class="icon mix">◉</div>
+          <h4>App móvil</h4>
+          <p>Lecturas, tendencias y alertas en una interfaz simple, con foco en comprensión rápida y adherencia.</p>
+        </div>
+        <div class="card">
+          <div class="icon navy">✚</div>
+          <h4>Soporte nutricional</h4>
+          <p>Bloque educativo que integra conducta alimentaria, respuesta glucémica y soporte clínico de autocuidado.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-title">
+        <h3>Ruta clínica simplificada</h3>
+        <p>
+          La página de Abbott también organiza la experiencia alrededor de tecnología conectada, apps con datos en tiempo real y soporte para entender el impacto de comida, medicación y ejercicio. Esta versión lo traduce a una experiencia navegable para portafolio. :contentReference[oaicite:2]{index=2}
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <span class="tag">Monitoreo</span>
+          <h4>Lectura continua</h4>
+          <p>La experiencia parte desde el dato visible: tendencia, nivel actual y variabilidad del sistema metabólico.</p>
+        </div>
+        <div class="card">
+          <span class="tag" style="background:#FFF1F2;color:#9f1239">Conectividad</span>
+          <h4>Datos que se comparten</h4>
+          <p>La capa móvil permite traducir información en comprensión clínica y colaboración con cuidadores o equipo tratante.</p>
+        </div>
+        <div class="card">
+          <span class="tag" style="background:#F5F3FF;color:#5b21b6">Soporte</span>
+          <h4>Decisión y educación</h4>
+          <p>El valor no está solo en medir, sino en facilitar decisiones, adherencia y cambios sostenibles en la conducta.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="motor">
+    <div class="wrap">
+      <div class="section-title">
+        <h3>Motor clínico estructurado</h3>
+        <p>
+          Propuesta propia para el portafolio: usar una lógica de estados para interpretar control metabólico, adherencia y necesidad de ajuste educativo-terapéutico.
+        </p>
+      </div>
+
+      <div class="engine">
+        <div class="card controls">
+          <div>
+            <label>Glucosa actual <span id="glucoseOut" style="float:right;color:var(--blue)">182 mg/dL</span></label>
+            <input id="glucose" type="range" min="60" max="300" value="182">
+          </div>
+
+          <div>
+            <label>Variabilidad</label>
+            <select id="variability">
+              <option value="high">Alta</option>
+              <option value="medium">Moderada</option>
+              <option value="low">Baja</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Adherencia al plan</label>
+            <select id="adherenceType">
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Comprensión del autocuidado <span id="literacyOut" style="float:right;color:var(--red)">58%</span></label>
+            <input id="literacy" type="range" min="0" max="100" value="58">
+          </div>
+
+          <div class="stats">
+            <div class="mini">
+              <div class="k">Perfil</div>
+              <div class="v" id="profileShort">Inestable</div>
+            </div>
+            <div class="mini">
+              <div class="k">Estado</div>
+              <div class="v" id="stateShort">E2</div>
+            </div>
+            <div class="mini">
+              <div class="k">Control estimado</div>
+              <div class="v" id="controlShort">61%</div>
+            </div>
+          </div>
+
+          <div>
+            <label>Índice global de control</label>
+            <div class="progress"><span id="bar"></span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4 style="margin-bottom:14px">Mapa de transición metabólica</h4>
+
+          <div class="state-map">
+            <div class="state" id="e0"><div class="id">E0</div><div class="nm">Riesgo agudo</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="e1"><div class="id">E1</div><div class="nm">Control insuficiente</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="e2"><div class="id">E2</div><div class="nm">Seguimiento intensivo</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="e3"><div class="id">E3</div><div class="nm">Ajuste guiado</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="e4"><div class="id">E4</div><div class="nm">Estabilidad funcional</div><div class="dot"></div></div>
+          </div>
+
+          <div class="card" style="margin-top:18px;padding:16px;background:#F7FBFF">
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800">Interpretación del sistema</div>
+            <div id="engineNarrative" style="margin-top:10px;font-size:16px;font-weight:700;color:var(--navy);line-height:1.6">
+              El caso muestra control parcial con necesidad de seguimiento intensivo, mejora en alfabetización terapéutica y ajuste conductual apoyado en datos.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="simulador">
+    <div class="wrap">
+      <div class="section-title">
+        <h3>Simulador de seguimiento</h3>
+        <p>
+          Módulo demostrativo para mostrar cómo una app puede convertir el dato glucémico en trayectoria clínica, adherencia y alertas accionables.
+        </p>
+      </div>
+
+      <div class="sim">
+        <div class="card">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+            <button id="connectBtn" class="btn btn-secondary">Conectar paciente</button>
+            <button id="adjustBtn" class="btn btn-primary">Aplicar intervención educativa</button>
+          </div>
+
+          <div class="stats">
+            <div class="mini"><div class="k">Glucosa simulada</div><div class="v" id="simGlucose">182</div></div>
+            <div class="mini"><div class="k">Comprensión</div><div class="v" id="simLiteracy">58%</div></div>
+            <div class="mini"><div class="k">Intervenciones</div><div class="v" id="sessions">0</div></div>
+          </div>
+
+          <div class="alerts" id="alerts"></div>
+        </div>
+
+        <div class="card" id="dashboard">
+          <h4>Dashboard metabólico</h4>
+          <p style="margin-bottom:14px">
+            Panel compacto de evolución para mostrar la lógica de lectura longitudinal y apoyo a decisiones.
+          </p>
+
+          <div class="chart">
+            <svg viewBox="0 0 620 260" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gBlue" x1="0" x2="1">
+                  <stop offset="0" stop-color="#002A5C"/>
+                  <stop offset="1" stop-color="#009CDE"/>
+                </linearGradient>
+                <linearGradient id="gRed" x1="0" x2="1">
+                  <stop offset="0" stop-color="#E31937"/>
+                  <stop offset="1" stop-color="#ff768d"/>
+                </linearGradient>
+              </defs>
+
+              <g stroke="#dbe6f1" stroke-width="1">
+                <line x1="40" y1="30" x2="40" y2="220" />
+                <line x1="40" y1="220" x2="585" y2="220" />
+                <line x1="40" y1="180" x2="585" y2="180" />
+                <line x1="40" y1="140" x2="585" y2="140" />
+                <line x1="40" y1="100" x2="585" y2="100" />
+                <line x1="40" y1="60" x2="585" y2="60" />
+              </g>
+
+              <polyline id="glucoseLine" fill="none" stroke="url(#gRed)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              <polyline id="literacyLine" fill="none" stroke="url(#gBlue)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              <g id="points"></g>
+            </svg>
+          </div>
+
+          <div class="legend">
+            <span class="bullet"><i style="background:var(--red)"></i>Trayectoria glucémica</span>
+            <span class="bullet"><i style="background:var(--blue)"></i>Comprensión/autocuidado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-title">
+        <h3>Capa educativa</h3>
+        <p>
+          El sitio de Abbott subraya que la tecnología ayuda a entender el efecto de la comida, la medicación y el ejercicio sobre la glucosa. Este bloque lo resume en un formato claro para tu portafolio. :contentReference[oaicite:3]{index=3}
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <h4>¿Qué hace esta tecnología?</h4>
+          <p>Convierte datos metabólicos en señales comprensibles para apoyar decisiones cotidianas de autocuidado.</p>
+        </div>
+        <div class="card">
+          <h4>Beneficio principal</h4>
+          <p>Permite observar patrones y responder con mayor precisión, en lugar de depender solo de percepciones aisladas.</p>
+        </div>
+        <div class="card">
+          <h4>Cuándo aporta más valor</h4>
+          <p>Cuando el paciente necesita visibilidad continua, motivación sostenida y una interfaz simple para interpretar su estado.</p>
+        </div>
+        <div class="card">
+          <h4>Diferencial del portafolio</h4>
+          <p>Integra lectura clínica, UX de salud digital y una lógica estructurada de estados en una sola experiencia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap foot-card">
+      <h5>App conceptual de salud digital para portafolio</h5>
+      <div class="credit">
+        Desarrollado por: <strong>Lic. Gonzalo Buendía – Psicólogo</strong> y <strong>Blanquita – Co terapeuta</strong>
+      </div>
+      <div class="disc">
+        Prototipo original de portafolio, inspirado en la estructura de experiencia digital de la página de soluciones para diabetes de Abbott, que organiza la información alrededor de CGM, bombas compatibles, apps móviles y soporte nutricional. :contentReference[oaicite:4]{index=4}
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const glucose = document.getElementById('glucose');
+    const variability = document.getElementById('variability');
+    const adherenceType = document.getElementById('adherenceType');
+    const literacy = document.getElementById('literacy');
+
+    const glucoseOut = document.getElementById('glucoseOut');
+    const literacyOut = document.getElementById('literacyOut');
+
+    const profileShort = document.getElementById('profileShort');
+    const stateShort = document.getElementById('stateShort');
+    const controlShort = document.getElementById('controlShort');
+    const engineNarrative = document.getElementById('engineNarrative');
+    const bar = document.getElementById('bar');
+
+    const stateEls = {
+      E0: document.getElementById('e0'),
+      E1: document.getElementById('e1'),
+      E2: document.getElementById('e2'),
+      E3: document.getElementById('e3'),
+      E4: document.getElementById('e4')
+    };
+
+    let connected = false;
+    let simGlucose = 182;
+    let simLiteracy = 58;
+    let interventionCount = 0;
+
+    let trendGlucose = [210,198,192,186,182];
+    let trendLiteracy = [40,46,50,54,58];
+
+    const connectBtn = document.getElementById('connectBtn');
+    const adjustBtn = document.getElementById('adjustBtn');
+    const alerts = document.getElementById('alerts');
+    const simGlucoseEl = document.getElementById('simGlucose');
+    const simLiteracyEl = document.getElementById('simLiteracy');
+    const sessionsEl = document.getElementById('sessions');
+
+    function interpret(){
+      const g = +glucose.value;
+      const l = +literacy.value;
+
+      glucoseOut.textContent = `${g} mg/dL`;
+      literacyOut.textContent = `${l}%`;
+
+      let score = 0;
+      if (g > 240 || g < 70) score += 0;
+      else if (g > 180) score += 1;
+      else if (g >= 90 && g <= 180) score += 3;
+      else score += 2;
+
+      if (variability.value === 'high') score -= 1;
+      else if (variability.value === 'medium') score += 1;
+      else score += 2;
+
+      if (adherenceType.value === 'low') score -= 1;
+      else if (adherenceType.value === 'medium') score += 1;
+      else score += 2;
+
+      if (l >= 75) score += 2;
+      else if (l >= 50) score += 1;
+
+      let state = 'E2';
+      let profile = 'Inestable';
+      let control = 61;
+      let narrative = 'El caso muestra control parcial con necesidad de seguimiento intensivo, mejora en alfabetización terapéutica y ajuste conductual apoyado en datos.';
+
+      if (g > 260 || g < 65) {
+        state = 'E0';
+        profile = 'Crítico';
+        control = 22;
+        narrative = 'Se observa riesgo agudo. El sistema sugiere reevaluación inmediata y vigilancia prioritaria del comportamiento metabólico.';
+      } else if (score <= 2) {
+        state = 'E1';
+        profile = 'Bajo control';
+        control = 38;
+        narrative = 'Predomina control insuficiente. Se requiere mayor estructura en adherencia, lectura de datos y acompañamiento educativo.';
+      } else if (score <= 5) {
+        state = 'E2';
+        profile = 'Inestable';
+        control = 61;
+        narrative = 'Existe potencial de mejora, pero aún se requiere seguimiento intensivo y claridad en la toma de decisiones cotidianas.';
+      } else if (score <= 8) {
+        state = 'E3';
+        profile = 'En ajuste';
+        control = 79;
+        narrative = 'El sistema entra en fase de ajuste guiado. Los datos permiten decisiones más finas y una respuesta terapéutica más consistente.';
+      } else {
+        state = 'E4';
+        profile = 'Estable';
+        control = 91;
+        narrative = 'El caso muestra estabilidad funcional: mejor lectura del sistema, menor variabilidad y mayor capacidad de autocuidado.';
+      }
+
+      if (connected && interventionCount >= 2) {
+        state = 'E3';
+        profile = 'Conectado';
+        control = Math.max(control, 82);
+        narrative = 'La conexión digital favorece seguimiento más estrecho, comprensión de tendencias y ajustes conductuales más oportunos.';
+      }
+
+      if (connected && interventionCount >= 4 && simGlucose <= 150 && simLiteracy >= 75) {
+        state = 'E4';
+        profile = 'Estable';
+        control = 94;
+        narrative = 'Se consolida una estabilidad funcional: mejor comprensión, menor carga glucémica y mayor previsibilidad del sistema.';
+      }
+
+      Object.values(stateEls).forEach(el => el.classList.remove('active'));
+      stateEls[state].classList.add('active');
+
+      profileShort.textContent = profile;
+      stateShort.textContent = state;
+      controlShort.textContent = `${control}%`;
+      engineNarrative.textContent = narrative;
+      bar.style.width = `${control}%`;
+    }
+
+    function pushAlert(text, type='info'){
+      const div = document.createElement('div');
+      div.className = `alert ${type}`;
+      div.textContent = text;
+      alerts.prepend(div);
+      while (alerts.children.length > 4) alerts.removeChild(alerts.lastChild);
+    }
+
+    function renderChart(){
+      const glucoseLine = document.getElementById('glucoseLine');
+      const literacyLine = document.getElementById('literacyLine');
+      const points = document.getElementById('points');
+      points.innerHTML = '';
+
+      const x = [70,180,290,400,520];
+      const gy = trendGlucose.map(v => 220 - ((Math.min(300, Math.max(60, v)) - 60) / 240) * 160);
+      const ly = trendLiteracy.map(v => 220 - (v / 100) * 160);
+
+      glucoseLine.setAttribute('points', x.map((vx,i)=>`${vx},${gy[i]}`).join(' '));
+      literacyLine.setAttribute('points', x.map((vx,i)=>`${vx},${ly[i]}`).join(' '));
+
+      x.forEach((vx,i)=>{
+        const c1 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c1.setAttribute('cx',vx);
+        c1.setAttribute('cy',gy[i]);
+        c1.setAttribute('r',5);
+        c1.setAttribute('fill','#E31937');
+
+        const c2 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c2.setAttribute('cx',vx);
+        c2.setAttribute('cy',ly[i]);
+        c2.setAttribute('r',5);
+        c2.setAttribute('fill','#009CDE');
+
+        points.appendChild(c1);
+        points.appendChild(c2);
+      });
+    }
+
+    function renderSim(){
+      simGlucoseEl.textContent = simGlucose;
+      simLiteracyEl.textContent = `${simLiteracy}%`;
+      sessionsEl.textContent = interventionCount;
+      renderChart();
+      interpret();
+    }
+
+    [glucose, variability, adherenceType, literacy].forEach(el=>{
+      el.addEventListener('input', ()=>{
+        simGlucose = +glucose.value;
+        simLiteracy = +literacy.value;
+
+        trendGlucose = [
+          Math.min(300, simGlucose + 28),
+          Math.min(300, simGlucose + 16),
+          Math.min(300, simGlucose + 8),
+          simGlucose,
+          Math.max(60, simGlucose - 10)
+        ];
+
+        trendLiteracy = [
+          Math.max(0, simLiteracy - 16),
+          Math.max(0, simLiteracy - 10),
+          Math.max(0, simLiteracy - 5),
+          simLiteracy,
+          Math.min(100, simLiteracy + 6)
+        ];
+
+        renderSim();
+      });
+    });
+
+    connectBtn.addEventListener('click', ()=>{
+      connected = !connected;
+      connectBtn.textContent = connected ? 'Paciente conectado' : 'Conectar paciente';
+      connectBtn.className = connected ? 'btn btn-primary' : 'btn btn-secondary';
+      pushAlert(
+        connected
+          ? 'Paciente vinculado al entorno digital de seguimiento.'
+          : 'Conexión remota finalizada.',
+        connected ? 'good' : 'warn'
+      );
+      interpret();
+    });
+
+    adjustBtn.addEventListener('click', ()=>{
+      if (!connected) {
+        pushAlert('Conecta primero al paciente para activar el seguimiento guiado.', 'warn');
+        return;
+      }
+
+      interventionCount += 1;
+      simGlucose = Math.max(80, simGlucose - 12);
+      simLiteracy = Math.min(100, simLiteracy + 6);
+
+      glucose.value = simGlucose;
+      literacy.value = simLiteracy;
+
+      trendGlucose = [
+        Math.min(300, simGlucose + 34),
+        Math.min(300, simGlucose + 24),
+        Math.min(300, simGlucose + 12),
+        simGlucose,
+        Math.max(70, simGlucose - 8)
+      ];
+
+      trendLiteracy = [
+        Math.max(0, simLiteracy - 18),
+        Math.max(0, simLiteracy - 11),
+        Math.max(0, simLiteracy - 5),
+        simLiteracy,
+        Math.min(100, simLiteracy + 6)
+      ];
+
+      pushAlert('Intervención educativa aplicada. Se actualiza el panel de seguimiento.', 'info');
+
+      if (simGlucose <= 160) pushAlert('La trayectoria glucémica entra en rango más favorable.', 'good');
+      if (simLiteracy >= 75) pushAlert('La comprensión del autocuidado alcanzó un nivel sólido.', 'good');
+      if (interventionCount >= 4) pushAlert('Seguimiento prolongado: conviene revisar sostenibilidad y mantenimiento.', 'warn');
+
+      renderSim();
+    });
+
+    pushAlert('Demo de portafolio lista. Ajusta variables para explorar la lógica clínica.', 'info');
+    renderSim();
+  </script>
+</body>
+</html>

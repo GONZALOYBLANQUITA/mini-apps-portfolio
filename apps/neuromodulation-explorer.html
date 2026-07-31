@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Neuromodulation Portfolio Experience</title>
+  <style>
+    :root{
+      --abbott-navy:#002A5C;
+      --abbott-blue:#009CDE;
+      --abbott-red:#E31937;
+      --abbott-white:#FFFFFF;
+      --ink:#0E1A2B;
+      --bg:#F4F8FC;
+      --card:#FFFFFF;
+      --muted:#5C6B80;
+      --line:#DCE6F2;
+      --success:#10B981;
+      --warning:#F59E0B;
+      --shadow:0 18px 50px rgba(0,42,92,.12);
+      --radius:24px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,Segoe UI,Arial,sans-serif;
+      color:var(--ink);
+      background:linear-gradient(180deg,#f8fbff 0%,#eef5fb 100%);
+    }
+    .topbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter: blur(12px);
+      background:rgba(255,255,255,.86);
+      border-bottom:1px solid rgba(220,230,242,.9);
+    }
+    .wrap{width:min(1220px,calc(100% - 32px));margin:0 auto}
+    .topbar .wrap{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+    .brand{display:flex;align-items:center;gap:14px;font-weight:800;color:var(--abbott-navy);letter-spacing:.2px}
+    .brand-mark{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,var(--abbott-navy),var(--abbott-blue));display:grid;place-items:center;color:#fff;font-size:20px;box-shadow:var(--shadow)}
+    .nav{display:flex;gap:18px;flex-wrap:wrap}
+    .nav a{text-decoration:none;color:var(--muted);font-weight:600;font-size:14px}
+
+    .hero{
+      position:relative;overflow:hidden;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(0,156,222,.16), transparent 25%),
+        radial-gradient(circle at 90% 10%, rgba(227,25,55,.12), transparent 22%),
+        linear-gradient(135deg, #ffffff 0%, #eef5fb 100%);
+      border-bottom:1px solid var(--line);
+    }
+    .hero:before,.hero:after{
+      content:"";position:absolute;inset:auto;pointer-events:none;opacity:.28;
+      background-image:
+        linear-gradient(90deg, rgba(0,42,92,.08) 1px, transparent 1px),
+        linear-gradient(rgba(0,42,92,.08) 1px, transparent 1px);
+      background-size:46px 46px;
+    }
+    .hero:before{width:420px;height:420px;right:-80px;top:-40px;border-radius:50%}
+    .hero:after{width:320px;height:320px;left:-80px;bottom:-120px;border-radius:50%}
+    .hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;padding:54px 0 38px}
+    .eyebrow{display:inline-flex;gap:10px;align-items:center;background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:999px;color:var(--abbott-navy);font-size:13px;font-weight:700;box-shadow:0 8px 25px rgba(0,42,92,.06)}
+    h1{font-size:clamp(32px,5vw,60px);line-height:1.03;margin:18px 0 14px;color:var(--abbott-navy);letter-spacing:-1.5px}
+    .hero p{font-size:17px;line-height:1.7;color:#334155;max-width:760px}
+    .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:24px}
+    .btn{border:0;border-radius:16px;padding:14px 18px;font-weight:800;cursor:pointer;font-size:15px;transition:.2s transform,.2s box-shadow,.2s opacity}
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:linear-gradient(90deg,var(--abbott-navy),var(--abbott-blue));color:#fff;box-shadow:0 16px 35px rgba(0,42,92,.18)}
+    .btn-secondary{background:#fff;color:var(--abbott-navy);border:1px solid var(--line);box-shadow:0 12px 24px rgba(0,42,92,.07)}
+    .hero-card{
+      background:rgba(255,255,255,.86);border:1px solid rgba(220,230,242,.95);border-radius:28px;padding:24px;box-shadow:var(--shadow);
+      align-self:start
+    }
+    .hero-metrics{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:16px}
+    .metric{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .metric .k{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+    .metric .v{font-size:28px;font-weight:900;color:var(--abbott-navy);margin-top:8px}
+    .metric .s{font-size:13px;color:#3b4a61;margin-top:6px}
+
+    .section{padding:34px 0}
+    .section-title{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:20px}
+    .section-title h2{margin:0;color:var(--abbott-navy);font-size:30px;letter-spacing:-.6px}
+    .section-title p{margin:6px 0 0;color:var(--muted);max-width:760px;line-height:1.6}
+
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+    .card h3{margin:0 0 8px;color:var(--abbott-navy);font-size:21px}
+    .card p{margin:0;color:#415066;line-height:1.65}
+    .icon-badge{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;color:#fff;font-size:20px;margin-bottom:14px}
+    .blue{background:linear-gradient(135deg,var(--abbott-navy),var(--abbott-blue))}
+    .red{background:linear-gradient(135deg,var(--abbott-red),#ff6a80)}
+    .mix{background:linear-gradient(135deg,var(--abbott-blue),var(--abbott-red))}
+
+    .path-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+    .therapy{position:relative;overflow:hidden}
+    .therapy:after{content:"";position:absolute;right:-40px;top:-40px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle, rgba(0,156,222,.16), transparent 70%)}
+    .therapy .tag{display:inline-block;background:#eef6ff;color:var(--abbott-navy);padding:8px 10px;border-radius:999px;font-weight:800;font-size:12px;margin-bottom:10px}
+
+    .engine{display:grid;grid-template-columns:1.05fr .95fr;gap:20px}
+    .controls{display:grid;gap:14px}
+    label{display:block;font-weight:800;color:var(--abbott-navy);font-size:14px;margin-bottom:8px}
+    input[type=range]{width:100%;accent-color:var(--abbott-blue)}
+    select{width:100%;padding:14px 14px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:15px}
+    .stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .mini{background:#f7fbff;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .mini .k{font-size:12px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+    .mini .v{font-size:24px;font-weight:900;color:var(--abbott-navy);margin-top:8px}
+    .progress{height:12px;background:#edf3fa;border-radius:999px;overflow:hidden;border:1px solid var(--line)}
+    .progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--abbott-blue),var(--abbott-red));width:0;border-radius:999px;transition:width .3s ease}
+
+    .state-map{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;align-items:center;margin-top:10px}
+    .state{
+      min-height:120px;border-radius:22px;border:1px solid var(--line);background:#fff;padding:16px;display:flex;flex-direction:column;justify-content:space-between;
+      position:relative;transition:.25s ease;box-shadow:0 10px 20px rgba(0,42,92,.05)
+    }
+    .state.active{border-color:rgba(0,156,222,.45);box-shadow:0 22px 38px rgba(0,42,92,.12);background:linear-gradient(180deg,#fff,#eef7ff)}
+    .state .id{font-size:12px;font-weight:900;color:var(--abbott-blue);letter-spacing:.12em}
+    .state .nm{font-weight:800;color:var(--abbott-navy);line-height:1.35}
+    .state .dot{width:12px;height:12px;border-radius:50%;background:#d6e1ee}
+    .state.active .dot{background:linear-gradient(135deg,var(--abbott-blue),var(--abbott-red))}
+
+    .connector{height:3px;background:linear-gradient(90deg,var(--abbott-blue),var(--abbott-red));border-radius:999px;transform:translateY(-54px)}
+
+    .sim{display:grid;grid-template-columns:1fr .95fr;gap:18px}
+    .status-box{padding:16px;border-radius:18px;background:#f7fbff;border:1px solid var(--line);margin-bottom:12px}
+    .alerts{display:grid;gap:10px;margin-top:12px}
+    .alert{padding:12px 14px;border-radius:14px;font-size:14px;font-weight:700}
+    .alert.info{background:#eef6ff;color:#0b3f73;border:1px solid #cde7fb}
+    .alert.good{background:#ecfdf5;color:#0f6b43;border:1px solid #bdebd4}
+    .alert.warn{background:#fff7ed;color:#9a4f11;border:1px solid #fed7aa}
+
+    .chart{height:300px;border-radius:22px;border:1px solid var(--line);background:linear-gradient(180deg,#ffffff,#f8fbff);padding:16px;position:relative;overflow:hidden}
+    .chart svg{width:100%;height:100%}
+    .chart-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px;font-size:13px;font-weight:800;color:var(--muted)}
+    .bullet{display:inline-flex;align-items:center;gap:8px}
+    .bullet i{display:inline-block;width:10px;height:10px;border-radius:50%}
+
+    .edu{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .edu .card{min-height:240px}
+
+    .footer{padding:34px 0 50px}
+    .foot-card{background:linear-gradient(135deg,var(--abbott-navy),#0a4886);color:#fff;border-radius:28px;padding:24px;border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+    .foot-grid{display:grid;grid-template-columns:1fr auto;gap:18px;align-items:center}
+    .credit{font-size:15px;line-height:1.7;color:#d9ecff}
+    .credit strong{color:#fff}
+    .disc{font-size:13px;color:#d0def3;line-height:1.6;margin-top:10px}
+
+    @media (max-width:1100px){
+      .hero-grid,.engine,.sim,.grid-3,.grid-2,.path-cards,.edu{grid-template-columns:1fr 1fr}
+      .state-map{grid-template-columns:1fr 16px 1fr 16px 1fr}
+      .state-map .state:nth-child(7),.state-map .state:nth-child(9){display:none}
+      .state-map .connector:nth-child(8),.state-map .connector:nth-child(10){display:none}
+    }
+    @media (max-width:760px){
+      .nav{display:none}
+      .hero-grid,.engine,.sim,.grid-3,.grid-2,.path-cards,.edu,.hero-metrics,.stat-row,.foot-grid{grid-template-columns:1fr}
+      .state-map{display:grid;grid-template-columns:1fr;gap:10px}
+      .connector{display:none}
+      h1{font-size:38px}
+      .section{padding:26px 0}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <div class="brand-mark">N</div>
+        <div>
+          <div>Neuromodulation Portfolio Experience</div>
+          <div style="font-size:12px;color:#6b7a90;font-weight:700">Medical device inspired interface</div>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="#overview">Overview</a>
+        <a href="#pathways">Pathways</a>
+        <a href="#engine">Decision Engine</a>
+        <a href="#simulator">Simulator</a>
+        <a href="#dashboard">Dashboard</a>
+      </nav>
+    </div>
+  </div>
+
+  <section class="hero" id="overview">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">● Chronic pain experience · Neurostimulation inspired</div>
+        <h1>Living with chronic pain.<br>Exploring relief through <span style="color:var(--abbott-red)">neuromodulation</span>.</h1>
+        <p>
+          Interactive portfolio app inspired by the patient-education and therapy-pathway structure used in Abbott Neuromodulation’s chronic pain pages. It combines education, therapy selection logic, a clinical state engine, and a simulated follow-up dashboard into one polished executive experience.
+        </p>
+        <div class="hero-cta">
+          <button class="btn btn-primary" onclick="document.getElementById('engine').scrollIntoView({behavior:'smooth'})">Open clinical engine</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('pathways').scrollIntoView({behavior:'smooth'})">Explore therapy pathways</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <div>
+            <div style="font-size:12px;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase">Clinical summary</div>
+            <div style="font-size:26px;font-weight:900;color:var(--abbott-navy);margin-top:8px">Pain relief pathway</div>
+          </div>
+          <div style="width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--abbott-red),var(--abbott-blue));display:grid;place-items:center;color:#fff;font-size:24px">✦</div>
+        </div>
+        <div class="hero-metrics">
+          <div class="metric">
+            <div class="k">Audience</div>
+            <div class="v">Patients</div>
+            <div class="s">Educational and pathway-based flow</div>
+          </div>
+          <div class="metric">
+            <div class="k">Therapy logic</div>
+            <div class="v">3 routes</div>
+            <div class="s">Broad pain, localized pain, long-term option</div>
+          </div>
+          <div class="metric">
+            <div class="k">State engine</div>
+            <div class="v">S0–S4</div>
+            <div class="s">Decision model for clinical navigation</div>
+          </div>
+          <div class="metric">
+            <div class="k">Portfolio mode</div>
+            <div class="v">Live</div>
+            <div class="s">Minimal UI with medical device aesthetics</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-title">
+        <div>
+          <h2>Understanding chronic pain</h2>
+          <p>This section mirrors the educational tone of a modern neuromodulation landing experience: define the problem, clarify why relief can be complex, and present the patient’s path toward more advanced options.</p>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="card">
+          <div class="icon-badge blue">◌</div>
+          <h3>Persistent condition</h3>
+          <p>Chronic pain is long-lasting and often affects daily functioning, emotional well-being, and quality of life. Many people move through multiple therapies before finding meaningful relief.</p>
+        </div>
+        <div class="card">
+          <div class="icon-badge red">⌁</div>
+          <h3>Conservative first</h3>
+          <p>Typical care pathways start with medications, physical therapy, injections, or procedures intended to reduce pressure or control symptoms before advanced technologies are considered.</p>
+        </div>
+        <div class="card">
+          <div class="icon-badge mix">✚</div>
+          <h3>Technology pathway</h3>
+          <p>Neuromodulation introduces a circuit-based treatment logic: rather than only systemic pharmacologic modulation, it targets pain signaling using programmable stimulation.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pathways">
+    <div class="wrap">
+      <div class="section-title">
+        <div>
+          <h2>Your pathway to relief</h2>
+          <p>Inspired by the therapy categorization on Abbott’s chronic pain page: broad back or leg pain, localized pain, and a durable pain relief option. This version reframes those categories into a portfolio-ready exploration module.</p>
+        </div>
+      </div>
+      <div class="path-cards">
+        <div class="card therapy">
+          <div class="tag">Broad chronic pain</div>
+          <h3>Spinal cord stimulation pathway</h3>
+          <p>Designed for pain distributed more broadly through the back or legs. This route emphasizes signal interruption at the spinal cord level and suits patients whose pain pattern is more diffuse.</p>
+        </div>
+        <div class="card therapy">
+          <div class="tag" style="background:#fff1f2;color:#9f1239">Localized pain</div>
+          <h3>Targeted DRG-style pathway</h3>
+          <p>For more focal pain areas such as the knee or foot, a more precise targeting logic may be appropriate. The interaction here highlights patient selection based on pain topography.</p>
+        </div>
+        <div class="card therapy">
+          <div class="tag" style="background:#f5f3ff;color:#5b21b6">Long-term option</div>
+          <h3>Durable procedural relief option</h3>
+          <p>This pathway represents patients seeking a safe, effective longer-term strategy. It broadens the portfolio narrative and reflects a device-plus-procedure ecosystem.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="engine">
+    <div class="wrap">
+      <div class="section-title">
+        <div>
+          <h2>Clinical decision engine</h2>
+          <p>Your differentiator for the portfolio: a structured logic layer that estimates the transition from uncontrolled pain into conventional management, candidate status, remote adjustment, and stabilization.</p>
+        </div>
+      </div>
+
+      <div class="engine">
+        <div class="card controls">
+          <div>
+            <label>Intensity of pain <span id="painOut" style="float:right;color:var(--abbott-blue)">7/10</span></label>
+            <input id="pain" type="range" min="0" max="10" value="7">
+          </div>
+          <div>
+            <label>Type of pain</label>
+            <select id="painType">
+              <option value="neuropathic">Neuropathic</option>
+              <option value="mixed">Mixed</option>
+              <option value="nociceptive">Nociceptive</option>
+            </select>
+          </div>
+          <div>
+            <label>Response to previous treatment</label>
+            <select id="response">
+              <option value="none">No meaningful relief</option>
+              <option value="partial">Partial relief</option>
+              <option value="good">Adequate relief</option>
+            </select>
+          </div>
+          <div>
+            <label>Adherence level <span id="adhOut" style="float:right;color:var(--abbott-red)">62%</span></label>
+            <input id="adh" type="range" min="0" max="100" value="62">
+          </div>
+          <div class="stat-row">
+            <div class="mini">
+              <div class="k">Patient profile</div>
+              <div class="v" id="profileShort">Advanced</div>
+            </div>
+            <div class="mini">
+              <div class="k">Clinical state</div>
+              <div class="v" id="stateShort">S2</div>
+            </div>
+            <div class="mini">
+              <div class="k">Eligibility</div>
+              <div class="v" id="eligibilityShort">84%</div>
+            </div>
+          </div>
+          <div>
+            <label>Candidate probability</label>
+            <div class="progress"><span id="bar"></span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 style="margin-bottom:14px">State transition map</h3>
+          <div class="state-map">
+            <div class="state" id="s0"><div class="id">S0</div><div class="nm">Pain uncontrolled</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="s1"><div class="id">S1</div><div class="nm">Conventional treatment</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="s2"><div class="id">S2</div><div class="nm">Neuromodulation candidate</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="s3"><div class="id">S3</div><div class="nm">Remote adjustment</div><div class="dot"></div></div>
+            <div class="connector"></div>
+            <div class="state" id="s4"><div class="id">S4</div><div class="nm">Stabilization</div><div class="dot"></div></div>
+          </div>
+          <div class="status-box" style="margin-top:18px">
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:800">System interpretation</div>
+            <div id="engineNarrative" style="margin-top:10px;font-size:16px;font-weight:700;color:var(--abbott-navy);line-height:1.6">Candidate likely for neuromodulation assessment based on persistent pain, limited previous response, and sufficient adherence for structured follow-up.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="simulator">
+    <div class="wrap">
+      <div class="section-title">
+        <div>
+          <h2>Therapy simulator</h2>
+          <p>A portfolio-focused module that makes the concept tangible: connect the patient, adjust stimulation, monitor pain decrease, adherence increase, and generate practical alerts.</p>
+        </div>
+      </div>
+
+      <div class="sim">
+        <div class="card">
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+            <button id="connectBtn" class="btn btn-secondary">Connect patient</button>
+            <button id="adjustBtn" class="btn btn-primary">Adjust stimulation</button>
+          </div>
+          <div class="stat-row">
+            <div class="mini"><div class="k">Simulated pain</div><div class="v" id="simPain">7/10</div></div>
+            <div class="mini"><div class="k">Adherence</div><div class="v" id="simAdh">62%</div></div>
+            <div class="mini"><div class="k">Stimulation</div><div class="v" id="stim">2</div></div>
+          </div>
+          <div class="alerts" id="alerts"></div>
+        </div>
+        <div class="card" id="dashboard">
+          <h3>Clinical dashboard</h3>
+          <p style="margin-bottom:14px">A compact follow-up panel showing trend lines for pain and adherence across the simulated therapy journey.</p>
+          <div class="chart">
+            <svg viewBox="0 0 620 260" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="gBlue" x1="0" x2="1"><stop offset="0" stop-color="#002A5C"/><stop offset="1" stop-color="#009CDE"/></linearGradient>
+                <linearGradient id="gRed" x1="0" x2="1"><stop offset="0" stop-color="#E31937"/><stop offset="1" stop-color="#ff768d"/></linearGradient>
+              </defs>
+              <g stroke="#dbe6f1" stroke-width="1">
+                <line x1="40" y1="30" x2="40" y2="220" />
+                <line x1="40" y1="220" x2="585" y2="220" />
+                <line x1="40" y1="180" x2="585" y2="180" />
+                <line x1="40" y1="140" x2="585" y2="140" />
+                <line x1="40" y1="100" x2="585" y2="100" />
+                <line x1="40" y1="60" x2="585" y2="60" />
+              </g>
+              <polyline id="painLine" fill="none" stroke="url(#gRed)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              <polyline id="adhLine" fill="none" stroke="url(#gBlue)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"></polyline>
+              <g id="points"></g>
+            </svg>
+          </div>
+          <div class="chart-legend">
+            <span class="bullet"><i style="background:var(--abbott-red)"></i>Pain intensity</span>
+            <span class="bullet"><i style="background:var(--abbott-blue)"></i>Adherence trajectory</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="section-title">
+        <div>
+          <h2>Education layer</h2>
+          <p>A concise patient-friendly explanation block that translates technology into clear clinical language for portfolio presentation.</p>
+        </div>
+      </div>
+      <div class="edu">
+        <div class="card"><h3>What is neuromodulation?</h3><p>A programmable therapy approach that modifies nerve signaling using electrical stimulation to help reduce chronic pain in selected patients.</p></div>
+        <div class="card"><h3>Potential benefits</h3><p>May improve pain control, functional capacity, perceived quality of life, and long-term engagement with follow-up when appropriately indicated.</p></div>
+        <div class="card"><h3>When to consider it</h3><p>Usually after more conservative approaches have not provided sufficient lasting relief and when the patient profile supports structured monitoring.</p></div>
+        <div class="card"><h3>Difference vs pharmacotherapy</h3><p>Rather than relying only on systemic chemical action, neuromodulation follows a device-based programming logic focused on circuits and signal modulation.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="wrap foot-card">
+      <div class="foot-grid">
+        <div>
+          <div style="font-size:22px;font-weight:900;letter-spacing:-.4px">Portfolio medical-device concept app</div>
+          <div class="credit">Desarrollado por: <strong>Lic. Gonzalo Buendía – Psicólogo</strong> y <strong>Blanquita – Co terapeuta</strong></div>
+          <div class="disc">This is an original portfolio prototype inspired by the structure and educational flow of Abbott Neuromodulation’s chronic pain web experience. It is intended for demonstration and concept design only.</div>
+        </div>
+        <button class="btn btn-secondary" onclick="window.scrollTo({top:0,behavior:'smooth'})">Back to top</button>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const pain = document.getElementById('pain');
+    const painType = document.getElementById('painType');
+    const response = document.getElementById('response');
+    const adh = document.getElementById('adh');
+    const painOut = document.getElementById('painOut');
+    const adhOut = document.getElementById('adhOut');
+    const profileShort = document.getElementById('profileShort');
+    const stateShort = document.getElementById('stateShort');
+    const eligibilityShort = document.getElementById('eligibilityShort');
+    const engineNarrative = document.getElementById('engineNarrative');
+    const bar = document.getElementById('bar');
+
+    const stateEls = {
+      S0: document.getElementById('s0'),
+      S1: document.getElementById('s1'),
+      S2: document.getElementById('s2'),
+      S3: document.getElementById('s3'),
+      S4: document.getElementById('s4')
+    };
+
+    let connected = false;
+    let simPain = 7;
+    let simAdh = 62;
+    let stim = 2;
+    let sessions = 0;
+    let trendPain = [7,6,6,5,4];
+    let trendAdh = [62,64,66,69,72];
+
+    const alerts = document.getElementById('alerts');
+    const connectBtn = document.getElementById('connectBtn');
+    const adjustBtn = document.getElementById('adjustBtn');
+    const simPainEl = document.getElementById('simPain');
+    const simAdhEl = document.getElementById('simAdh');
+    const stimEl = document.getElementById('stim');
+
+    function interpret() {
+      const p = +pain.value;
+      const a = +adh.value;
+      painOut.textContent = `${p}/10`;
+      adhOut.textContent = `${a}%`;
+
+      let score = 0;
+      if (p >= 8) score += 3; else if (p >= 6) score += 2; else if (p >= 4) score += 1;
+      if (painType.value === 'neuropathic') score += 3;
+      else if (painType.value === 'mixed') score += 2;
+      else score += 1;
+      if (response.value === 'none') score += 3; else if (response.value === 'partial') score += 2;
+      if (a >= 75) score += 2; else if (a >= 50) score += 1;
+
+      let state='S1', profile='Standard', eligibility=36, narrative='Conventional management remains the main route, with ongoing monitoring and reassessment.';
+      if (p >= 9 && response.value === 'none') {
+        state='S0'; profile='Critical'; eligibility=28; narrative='Pain remains severely uncontrolled. Immediate reassessment within the treatment pathway is warranted.';
+      }
+      if (score >= 6) {
+        state='S2'; profile='Advanced'; eligibility=82; narrative='Candidate likely for neuromodulation assessment based on persistent pain, limited previous response, and sufficient adherence for structured follow-up.';
+      }
+      if (connected && sessions >= 2) {
+        state='S3'; profile='Connected'; eligibility=Math.max(eligibility,86); narrative='Remote adjustment phase active. The patient is connected and demonstrates measurable response under programmable therapy logic.';
+      }
+      if (connected && sessions >= 4 && simPain <= 3 && simAdh >= 75) {
+        state='S4'; profile='Stable'; eligibility=92; narrative='System stabilization reached. Pain burden is lower, adherence is stronger, and therapy behavior is more predictable.';
+      }
+
+      Object.values(stateEls).forEach(el=>el.classList.remove('active'));
+      stateEls[state].classList.add('active');
+      profileShort.textContent = profile;
+      stateShort.textContent = state;
+      eligibilityShort.textContent = `${eligibility}%`;
+      engineNarrative.textContent = narrative;
+      bar.style.width = `${eligibility}%`;
+    }
+
+    function pushAlert(text, type='info') {
+      const div = document.createElement('div');
+      div.className = `alert ${type}`;
+      div.textContent = text;
+      alerts.prepend(div);
+      while (alerts.children.length > 4) alerts.removeChild(alerts.lastChild);
+    }
+
+    function renderSim() {
+      simPainEl.textContent = `${simPain}/10`;
+      simAdhEl.textContent = `${simAdh}%`;
+      stimEl.textContent = stim;
+      renderChart();
+      interpret();
+    }
+
+    function renderChart(){
+      const painLine = document.getElementById('painLine');
+      const adhLine = document.getElementById('adhLine');
+      const points = document.getElementById('points');
+      points.innerHTML='';
+      const x = [70,180,290,400,520];
+      const py = trendPain.map(v => 220 - (v/10)*160);
+      const ay = trendAdh.map(v => 220 - (v/100)*160);
+      painLine.setAttribute('points', x.map((v,i)=>`${v},${py[i]}`).join(' '));
+      adhLine.setAttribute('points', x.map((v,i)=>`${v},${ay[i]}`).join(' '));
+      x.forEach((vx,i)=>{
+        const c1 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c1.setAttribute('cx',vx); c1.setAttribute('cy',py[i]); c1.setAttribute('r',5); c1.setAttribute('fill','#E31937');
+        const c2 = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        c2.setAttribute('cx',vx); c2.setAttribute('cy',ay[i]); c2.setAttribute('r',5); c2.setAttribute('fill','#009CDE');
+        points.appendChild(c1); points.appendChild(c2);
+      });
+    }
+
+    [pain,painType,response,adh].forEach(el=>el.addEventListener('input',()=>{
+      simPain = +pain.value;
+      simAdh = +adh.value;
+      trendPain = [Math.min(10,simPain+1), simPain, Math.max(0,simPain-1), Math.max(0,simPain-1), Math.max(0,simPain-2)];
+      trendAdh = [Math.max(0,simAdh-6), Math.max(0,simAdh-4), simAdh, Math.min(100,simAdh+4), Math.min(100,simAdh+8)];
+      renderSim();
+    }));
+
+    connectBtn.addEventListener('click', ()=>{
+      connected = !connected;
+      connectBtn.textContent = connected ? 'Patient connected' : 'Connect patient';
+      connectBtn.className = connected ? 'btn btn-primary' : 'btn btn-secondary';
+      pushAlert(connected ? 'Patient connected to remote follow-up environment.' : 'Remote connection ended.', connected ? 'good' : 'warn');
+      interpret();
+    });
+
+    adjustBtn.addEventListener('click', ()=>{
+      if (!connected) {
+        pushAlert('Connect the patient before remote adjustment.', 'warn');
+        return;
+      }
+      sessions += 1;
+      simPain = Math.max(1, simPain - 1);
+      simAdh = Math.min(100, simAdh + 5);
+      stim = Math.min(5, stim + 1);
+      trendPain = [Math.min(10,simPain+3), Math.min(10,simPain+2), Math.min(10,simPain+1), simPain, Math.max(1,simPain-1)];
+      trendAdh = [Math.max(0,simAdh-10), Math.max(0,simAdh-5), simAdh-2, simAdh, Math.min(100,simAdh+4)];
+      pushAlert('Stimulation adjusted successfully. Monitoring response.', 'info');
+      if (simPain <= 4) pushAlert('Clinically relevant pain reduction detected.', 'good');
+      if (simAdh >= 75) pushAlert('Adherence entered favorable range.', 'good');
+      if (stim >= 4) pushAlert('Higher cumulative stimulation: monitor therapy parameters.', 'warn');
+      renderSim();
+    });
+
+    pushAlert('Portfolio demo ready. Adjust inputs to explore therapy logic.', 'info');
+    renderSim();
+  </script>
+</body>
+</html>

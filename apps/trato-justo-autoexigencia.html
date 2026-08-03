@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#5f6f65">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Trato Justo">
+  <title>Trato Justo | Autoexigencia y Perfeccionismo</title>
+
+  <style>
+    :root {
+      --bg:#f5f7f6;
+      --surface:#ffffff;
+      --surface-2:#edf2ef;
+      --text:#25312d;
+      --muted:#68766f;
+      --border:#d7e0dc;
+      --primary:#5f6f65;
+      --primary-dark:#48574f;
+      --primary-soft:#e0e8e3;
+      --accent:#8a6d58;
+      --warning:#956b2f;
+      --warning-bg:#f8f0e4;
+      --danger:#9a5050;
+      --danger-bg:#f8eaea;
+      --success:#46725a;
+      --radius:18px;
+      --shadow:0 8px 24px rgba(38,54,47,.08);
+    }
+
+    * { box-sizing:border-box; }
+
+    html {
+      scroll-behavior:smooth;
+      -webkit-text-size-adjust:100%;
+    }
+
+    body {
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      line-height:1.5;
+    }
+
+    button,input,textarea,select { font:inherit; }
+    button { cursor:pointer; }
+    input,textarea,select { font-size:16px; }
+    textarea { resize:vertical; min-height:96px; }
+
+    .app {
+      max-width:1180px;
+      min-height:100vh;
+      margin:0 auto;
+    }
+
+    .topbar {
+      position:sticky;
+      top:0;
+      z-index:30;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      padding:calc(12px + env(safe-area-inset-top)) 18px 12px;
+      background:rgba(245,247,246,.96);
+      border-bottom:1px solid var(--border);
+      backdrop-filter:blur(12px);
+    }
+
+    .brand {
+      display:flex;
+      align-items:center;
+      gap:11px;
+      min-width:0;
+    }
+
+    .logo {
+      width:43px;
+      height:43px;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      border-radius:14px;
+      background:var(--primary);
+      color:white;
+      font-size:22px;
+      font-weight:800;
+    }
+
+    .brand h1 {
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+    }
+
+    .brand p {
+      margin:2px 0 0;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .top-actions {
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .layout {
+      display:grid;
+      grid-template-columns:235px minmax(0,1fr);
+      gap:22px;
+      padding:22px;
+    }
+
+    .sidebar {
+      position:sticky;
+      top:94px;
+      height:max-content;
+      padding:12px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .mobile-nav { display:none; }
+
+    .nav-btn {
+      width:100%;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin:3px 0;
+      padding:11px 12px;
+      border:0;
+      border-radius:12px;
+      background:transparent;
+      color:var(--text);
+      text-align:left;
+    }
+
+    .nav-btn:hover { background:var(--surface-2); }
+    .nav-btn.active { background:var(--primary); color:white; }
+    .nav-icon { width:25px; text-align:center; flex:0 0 auto; }
+
+    main { min-width:0; }
+    .view { display:none; }
+    .view.active { display:block; }
+
+    .hero {
+      margin-bottom:18px;
+      padding:28px;
+      border-radius:24px;
+      background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+      color:white;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h2 {
+      margin:9px 0 7px;
+      font-size:28px;
+    }
+
+    .hero p {
+      max-width:820px;
+      margin:0;
+      color:rgba(255,255,255,.9);
+    }
+
+    .status-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      padding:5px 9px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      font-size:12px;
+      font-weight:700;
+    }
+
+    .status-dot {
+      width:8px;
+      height:8px;
+      border-radius:50%;
+      background:#d7eee0;
+    }
+
+    .grid { display:grid; gap:16px; }
+    .grid-2 { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    .grid-3 { grid-template-columns:repeat(3,minmax(0,1fr)); }
+
+    .card {
+      padding:19px;
+      background:var(--surface);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+
+    .card h2,.card h3,.card h4 { margin-top:0; }
+    .card h3 { margin-bottom:8px; font-size:18px; }
+    .card p { color:var(--muted); }
+
+    .metric {
+      margin-top:4px;
+      font-size:30px;
+      font-weight:800;
+    }
+
+    .section-head {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin-bottom:14px;
+    }
+
+    .section-head h2 { margin:0; font-size:24px; }
+    .section-head p { margin:3px 0 0; color:var(--muted); }
+
+    .field { margin-bottom:15px; }
+    label { display:block; margin-bottom:6px; font-weight:650; }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    textarea,
+    select {
+      width:100%;
+      padding:11px 12px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      outline:none;
+      background:white;
+      color:var(--text);
+    }
+
+    input:focus,textarea:focus,select:focus {
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px var(--primary-soft);
+    }
+
+    input[type="range"] { width:100%; accent-color:var(--primary); }
+    input[type="checkbox"] { accent-color:var(--primary); }
+
+    .help {
+      margin-top:5px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:7px;
+      padding:10px 14px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      background:white;
+      color:var(--text);
+      font-weight:650;
+    }
+
+    .btn:hover { background:var(--surface-2); }
+    .btn.primary { border-color:var(--primary); background:var(--primary); color:white; }
+    .btn.primary:hover { background:var(--primary-dark); }
+    .btn.danger { border-color:#e2c3c3; color:var(--danger); }
+    .btn.small { padding:7px 10px; font-size:13px; }
+
+    .range-wrap {
+      display:grid;
+      grid-template-columns:minmax(0,1fr) 52px;
+      gap:12px;
+      align-items:center;
+    }
+
+    .range-value {
+      padding:6px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      background:var(--surface-2);
+      text-align:center;
+      font-weight:800;
+    }
+
+    .chips {
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .chip {
+      padding:8px 11px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:white;
+      color:var(--text);
+    }
+
+    .chip.selected {
+      border-color:var(--primary);
+      background:var(--primary);
+      color:white;
+    }
+
+    .callout {
+      padding:14px 16px;
+      border-left:5px solid var(--primary);
+      border-radius:12px;
+      background:var(--primary-soft);
+    }
+
+    .callout.warning {
+      border-left-color:var(--warning);
+      background:var(--warning-bg);
+    }
+
+    .callout.danger {
+      border-left-color:var(--danger);
+      background:var(--danger-bg);
+    }
+
+    .divider {
+      height:1px;
+      margin:18px 0;
+      background:var(--border);
+    }
+
+    .list { display:grid; gap:10px; }
+
+    .item {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:white;
+    }
+
+    .item strong { display:block; }
+    .item small { display:block; margin-top:3px; color:var(--muted); }
+
+    .empty {
+      padding:27px;
+      border:1px dashed var(--border);
+      border-radius:14px;
+      color:var(--muted);
+      text-align:center;
+    }
+
+    .check-row {
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      padding:10px 0;
+      border-bottom:1px solid var(--border);
+    }
+
+    .check-row:last-child { border-bottom:0; }
+    .check-row input { margin-top:5px; flex:0 0 auto; }
+    .check-row label { margin:0; font-weight:500; }
+
+    .progress-track {
+      height:10px;
+      overflow:hidden;
+      border-radius:999px;
+      background:#e3ebe7;
+    }
+
+    .progress-bar {
+      width:0;
+      height:100%;
+      background:var(--primary);
+      transition:width .25s ease;
+    }
+
+    .bias-card {
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius:14px;
+      background:white;
+    }
+
+    .bias-card h4 { margin:0 0 7px; }
+    .bias-card p { margin:0 0 9px; }
+
+    .footer {
+      padding:24px;
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+    }
+
+    .toast {
+      position:fixed;
+      right:18px;
+      bottom:calc(18px + env(safe-area-inset-bottom));
+      z-index:60;
+      max-width:calc(100vw - 36px);
+      padding:11px 14px;
+      border-radius:12px;
+      background:var(--text);
+      color:white;
+      opacity:0;
+      pointer-events:none;
+      transform:translateY(10px);
+      transition:.2s ease;
+    }
+
+    .toast.show { opacity:1; transform:translateY(0); }
+
+    .mt { margin-top:16px; }
+    .print-only { display:none; }
+
+    @media (max-width:900px) {
+      .topbar { padding-left:13px; padding-right:13px; }
+      .brand p { display:none; }
+      .top-actions .btn-text { display:none; }
+      .layout { display:block; padding:14px; }
+      .sidebar { display:none; }
+
+      .mobile-nav {
+        position:sticky;
+        top:calc(68px + env(safe-area-inset-top));
+        z-index:25;
+        display:flex;
+        gap:7px;
+        overflow-x:auto;
+        padding:9px 13px;
+        border-bottom:1px solid var(--border);
+        background:rgba(245,247,246,.97);
+        scrollbar-width:none;
+      }
+
+      .mobile-nav::-webkit-scrollbar { display:none; }
+
+      .mobile-nav .nav-btn {
+        width:auto;
+        min-width:max-content;
+        margin:0;
+        padding:8px 11px;
+        border:1px solid var(--border);
+        background:white;
+      }
+
+      .mobile-nav .nav-btn.active {
+        border-color:var(--primary);
+        background:var(--primary);
+      }
+
+      .grid-2,.grid-3 { grid-template-columns:1fr; }
+      .hero { padding:22px; }
+      .hero h2 { font-size:24px; }
+      .section-head { display:block; }
+      .section-head .btn { margin-top:10px; }
+    }
+
+    @media (max-width:430px) {
+      .brand h1 { max-width:170px; font-size:16px; }
+      .logo { width:39px; height:39px; }
+      .card { padding:16px; }
+      .item { display:block; }
+      .item .btn { margin-top:10px; }
+    }
+
+    @media print {
+      body { background:white; }
+      .topbar,.sidebar,.mobile-nav,.no-print,.footer { display:none!important; }
+      .layout { display:block; padding:0; }
+      .view { display:none!important; }
+      #summaryView { display:block!important; }
+      .card { box-shadow:none; break-inside:avoid; }
+      .print-only { display:block; }
+    }
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">✓</div>
+      <div>
+        <h1>Trato Justo</h1>
+        <p>Autoexigencia, perfeccionismo y crítica interna</p>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button class="btn small" id="exportBtn">↓ <span class="btn-text">Exportar</span></button>
+      <label class="btn small" for="importFile">↑ <span class="btn-text">Importar</span></label>
+      <input id="importFile" type="file" accept=".json,application/json" hidden>
+      <button class="btn small danger" id="resetBtn">↺ <span class="btn-text">Reiniciar</span></button>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" aria-label="Navegación móvil"></nav>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <button class="nav-btn active" data-view="homeView"><span class="nav-icon">⌂</span>Inicio</button>
+      <button class="nav-btn" data-view="pauseView"><span class="nav-icon">⏸</span>Pausa de autoexigencia</button>
+      <button class="nav-btn" data-view="criticView"><span class="nav-icon">💬</span>Crítica interna</button>
+      <button class="nav-btn" data-view="biasView"><span class="nav-icon">◫</span>Sesgos cognitivos</button>
+      <button class="nav-btn" data-view="goodEnoughView"><span class="nav-icon">✓</span>Suficientemente bien</button>
+      <button class="nav-btn" data-view="experimentView"><span class="nav-icon">⚗</span>Experimentos</button>
+      <button class="nav-btn" data-view="progressView"><span class="nav-icon">↗</span>Progreso</button>
+      <button class="nav-btn" data-view="summaryView"><span class="nav-icon">▤</span>Resumen para sesión</button>
+    </aside>
+
+    <main>
+      <section class="view active" id="homeView">
+        <div class="hero">
+          <span class="status-pill"><span class="status-dot"></span> Uso personal y privado</span>
+          <h2>No necesitas hacerlo perfecto para hacerlo bien</h2>
+          <p>Esta herramienta te ayuda a detectar cuándo aparece la autoexigencia, responder de manera más justa a tu crítica interna y practicar estándares flexibles, realistas y sostenibles.</p>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card">
+            <p>Autoexigencia reciente</p>
+            <div class="metric" id="homePressure">—</div>
+            <p>Escala de 0 a 10</p>
+          </div>
+          <div class="card">
+            <p>Registros realizados</p>
+            <div class="metric" id="homeEntries">0</div>
+            <p>Pausas y ejercicios</p>
+          </div>
+          <div class="card">
+            <p>Prácticas completadas</p>
+            <div class="metric" id="homePractice">0%</div>
+            <p>Esta semana</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2 mt">
+          <div class="card">
+            <h3>Foco de esta semana</h3>
+            <div class="field">
+              <label for="weeklyFocus">¿Qué patrón quieres flexibilizar?</label>
+              <textarea id="weeklyFocus" placeholder="Ejemplo: dejar de revisar varias veces una tarea, descansar sin culpa, aceptar errores menores..."></textarea>
+            </div>
+            <button class="btn primary" id="saveFocusBtn">Guardar foco</button>
+          </div>
+
+          <div class="card">
+            <h3>Regla de trato justo</h3>
+            <div class="callout">
+              No se trata de bajar tus valores ni de actuar con descuido. Se trata de aplicar estándares exigentes sin maltrato, rigidez ni castigo personal.
+            </div>
+            <div class="divider"></div>
+            <p><strong>Pregunta guía:</strong> ¿Le hablaría así a una persona competente que aprecio y que está haciendo un esfuerzo razonable?</p>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <h3>¿Qué necesitas ahora?</h3>
+          <div class="chips">
+            <button class="chip quick" data-go="pauseView">Detener la presión</button>
+            <button class="chip quick" data-go="criticView">Responder a mi crítica</button>
+            <button class="chip quick" data-go="biasView">Revisar un pensamiento</button>
+            <button class="chip quick" data-go="goodEnoughView">Definir cuándo basta</button>
+            <button class="chip quick" data-go="experimentView">Practicar flexibilidad</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="pauseView">
+        <div class="section-head">
+          <div>
+            <h2>Pausa de autoexigencia</h2>
+            <p>Un protocolo breve para detener la escalada de presión y elegir una respuesta útil.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="field">
+              <label for="pauseDate">Fecha</label>
+              <input type="date" id="pauseDate">
+            </div>
+
+            <div class="field">
+              <label for="pauseSituation">¿Qué está ocurriendo?</label>
+              <textarea id="pauseSituation" placeholder="Describe la tarea, error, demora o situación que activó la exigencia."></textarea>
+            </div>
+
+            <div class="field">
+              <label>Nivel de presión</label>
+              <div class="range-wrap">
+                <input type="range" id="pressureRange" min="0" max="10" value="5">
+                <div class="range-value" id="pressureValue">5</div>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="demandPhrase">Frase exigente que apareció</label>
+              <textarea id="demandPhrase" placeholder="Ejemplo: Debí hacerlo mejor; no puedo equivocarme; tengo que terminarlo todo hoy."></textarea>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Protocolo P.A.R.A.</h3>
+
+            <div class="callout">
+              <strong>P — Pausa:</strong> Detén la acción durante 30 segundos.<br>
+              <strong>A — Advierte:</strong> “La autoexigencia está activa; esto no es una orden objetiva”.<br>
+              <strong>R — Revisa:</strong> ¿Qué estándar es razonable en esta situación?<br>
+              <strong>A — Actúa:</strong> Elige una acción útil, limitada y concreta.
+            </div>
+
+            <div class="field mt">
+              <label for="reasonableStandard">Estándar razonable</label>
+              <textarea id="reasonableStandard" placeholder="¿Qué sería adecuado, suficiente y proporcional a esta situación?"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="nextAction">Siguiente acción concreta</label>
+              <textarea id="nextAction" placeholder="Ejemplo: trabajar 25 minutos, corregir solo los errores relevantes y luego detenerme."></textarea>
+            </div>
+
+            <button class="btn primary" id="savePauseBtn">Guardar pausa</button>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <h3>Pausas recientes</h3>
+          <div class="list" id="pauseList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="criticView">
+        <div class="section-head">
+          <div>
+            <h2>Responder a la crítica interna</h2>
+            <p>Transforma un ataque personal en una evaluación específica, útil y respetuosa.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="criticTrigger">Situación activadora</label>
+              <textarea id="criticTrigger" placeholder="¿Qué ocurrió?"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="criticMessage">Mensaje de la crítica interna</label>
+              <textarea id="criticMessage" placeholder="Escríbelo tal como apareció."></textarea>
+            </div>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="criticCost">¿Qué efecto produce esta forma de hablarme?</label>
+              <textarea id="criticCost" placeholder="Ansiedad, bloqueo, culpa, sobretrabajo, evitación, cansancio..."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="criticNeed">¿Qué intenta prevenir o proteger?</label>
+              <textarea id="criticNeed" placeholder="Fracaso, rechazo, crítica externa, pérdida de control, decepcionar a alguien..."></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="fairResponse">Respuesta justa y realista</label>
+            <textarea id="fairResponse" placeholder="Reconoce el problema sin insultarte. Ejemplo: Cometí un error concreto; puedo corregirlo sin concluir que soy incompetente."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="usefulCorrection">Corrección útil</label>
+            <textarea id="usefulCorrection" placeholder="¿Qué aprendizaje o acción concreta sí conviene realizar?"></textarea>
+          </div>
+
+          <button class="btn primary" id="saveCriticBtn">Guardar respuesta</button>
+        </div>
+
+        <div class="card mt">
+          <h3>Respuestas guardadas</h3>
+          <div class="list" id="criticList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="biasView">
+        <div class="section-head">
+          <div>
+            <h2>Sesgos cognitivos asociados</h2>
+            <p>Identifica la distorsión y formula una interpretación más equilibrada.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="bias-card"><h4>Todo o nada</h4><p>“Si no es excelente, es un fracaso”.</p><small>Busca grados, avances parciales y resultados suficientemente buenos.</small></div>
+          <div class="bias-card"><h4>Deberías rígidos</h4><p>“Tengo que hacerlo siempre bien”.</p><small>Cambia obligación absoluta por preferencia, objetivo o compromiso razonable.</small></div>
+          <div class="bias-card"><h4>Descalificar lo positivo</h4><p>“Cualquiera podría hacerlo”.</p><small>Registra evidencia de esfuerzo, capacidad y progreso sin minimizarla.</small></div>
+          <div class="bias-card"><h4>Catastrofización</h4><p>“Si me equivoco, todo saldrá mal”.</p><small>Distingue posibilidad, probabilidad e impacto real.</small></div>
+          <div class="bias-card"><h4>Lectura de mente</h4><p>“Seguro pensarán que soy incapaz”.</p><small>Separa evidencia observable de suposiciones.</small></div>
+          <div class="bias-card"><h4>Sobregeneralización</h4><p>“Me pasó una vez; siempre me pasa”.</p><small>Limita la conclusión al hecho específico y al momento actual.</small></div>
+        </div>
+
+        <div class="card mt">
+          <div class="field">
+            <label for="biasThought">Pensamiento automático</label>
+            <textarea id="biasThought" placeholder="Escribe el pensamiento exacto."></textarea>
+          </div>
+
+          <div class="field">
+            <label for="biasType">Sesgo principal</label>
+            <select id="biasType">
+              <option value="">Selecciona uno</option>
+              <option>Todo o nada</option>
+              <option>Deberías rígidos</option>
+              <option>Descalificar lo positivo</option>
+              <option>Catastrofización</option>
+              <option>Lectura de mente</option>
+              <option>Sobregeneralización</option>
+              <option>Personalización</option>
+              <option>Filtro negativo</option>
+              <option>Razonamiento emocional</option>
+            </select>
+          </div>
+
+          <div class="grid grid-2">
+            <div class="field">
+              <label for="biasEvidenceFor">Evidencia que parece apoyarlo</label>
+              <textarea id="biasEvidenceFor"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="biasEvidenceAgainst">Evidencia que lo cuestiona</label>
+              <textarea id="biasEvidenceAgainst"></textarea>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="balancedThought">Pensamiento alternativo equilibrado</label>
+            <textarea id="balancedThought" placeholder="Debe ser creíble, específico y útil; no una frase positiva vacía."></textarea>
+          </div>
+
+          <button class="btn primary" id="saveBiasBtn">Guardar revisión</button>
+        </div>
+
+        <div class="card mt">
+          <h3>Revisiones guardadas</h3>
+          <div class="list" id="biasList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="goodEnoughView">
+        <div class="section-head">
+          <div>
+            <h2>Suficientemente bien</h2>
+            <p>Define criterios de cierre antes de comenzar para evitar revisiones interminables.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <div class="field">
+              <label for="taskName">Tarea</label>
+              <input type="text" id="taskName" placeholder="Ejemplo: preparar informe, ordenar una habitación, responder un correo...">
+            </div>
+
+            <div class="field">
+              <label for="taskPurpose">Propósito real</label>
+              <textarea id="taskPurpose" placeholder="¿Para qué debe servir esta tarea?"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="minimumCriteria">Criterios mínimos de calidad</label>
+              <textarea id="minimumCriteria" placeholder="Enumera solo lo indispensable para que cumpla su función."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="timeLimit">Límite de tiempo</label>
+              <input type="text" id="timeLimit" placeholder="Ejemplo: 45 minutos o hasta las 6:00 p. m.">
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="field">
+              <label for="reviewLimit">Número máximo de revisiones</label>
+              <input type="number" id="reviewLimit" min="0" max="10" value="1">
+            </div>
+
+            <div class="field">
+              <label for="stopRule">Regla de cierre</label>
+              <textarea id="stopRule" placeholder="Ejemplo: cuando cumpla los tres criterios y haya realizado una revisión, la tarea termina."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="imperfectionAllowed">Imperfección aceptable</label>
+              <textarea id="imperfectionAllowed" placeholder="¿Qué detalle menor puedes dejar sin corregir porque no cambia el resultado?"></textarea>
+            </div>
+
+            <div class="callout">
+              Terminar una tarea no significa que sea perfecta. Significa que cumple su propósito dentro de límites razonables de tiempo, energía y contexto.
+            </div>
+
+            <button class="btn primary mt" id="saveTaskBtn">Guardar criterio de cierre</button>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <h3>Tareas definidas</h3>
+          <div class="list" id="taskList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="experimentView">
+        <div class="section-head">
+          <div>
+            <h2>Experimentos de flexibilidad</h2>
+            <p>Prueba conductualmente si las predicciones perfeccionistas realmente se cumplen.</p>
+          </div>
+          <button class="btn" id="newWeekBtn">Nueva semana</button>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>Prácticas semanales</h3>
+            <div id="practiceChecklist"></div>
+            <div class="divider"></div>
+            <div class="progress-track"><div class="progress-bar" id="practiceBar"></div></div>
+            <p class="help" id="practiceText">0% completado</p>
+          </div>
+
+          <div class="card">
+            <h3>Diseñar un experimento</h3>
+
+            <div class="field">
+              <label for="experimentAction">Acción flexible que probaré</label>
+              <textarea id="experimentAction" placeholder="Ejemplo: enviar un mensaje tras una sola revisión; descansar aunque quede una tarea menor pendiente."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="experimentPrediction">Predicción de la crítica interna</label>
+              <textarea id="experimentPrediction" placeholder="¿Qué teme que ocurra?"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="experimentResult">Resultado observado</label>
+              <textarea id="experimentResult" placeholder="Completa después de realizarlo."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="experimentLearning">Aprendizaje</label>
+              <textarea id="experimentLearning" placeholder="¿Qué aprendiste sobre el error, el control, la evaluación de otros o tu capacidad para tolerar incomodidad?"></textarea>
+            </div>
+
+            <button class="btn primary" id="saveExperimentBtn">Guardar experimento</button>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <h3>Experimentos guardados</h3>
+          <div class="list" id="experimentList"></div>
+        </div>
+      </section>
+
+      <section class="view" id="progressView">
+        <div class="section-head">
+          <div>
+            <h2>Progreso</h2>
+            <p>Evalúa cambios en flexibilidad, trato interno y capacidad de detenerte.</p>
+          </div>
+        </div>
+
+        <div class="grid grid-3">
+          <div class="card"><p>Presión promedio</p><div class="metric" id="avgPressure">—</div></div>
+          <div class="card"><p>Respuestas a la crítica</p><div class="metric" id="criticCount">0</div></div>
+          <div class="card"><p>Experimentos realizados</p><div class="metric" id="experimentCount">0</div></div>
+        </div>
+
+        <div class="card mt">
+          <h3>Indicadores de avance</h3>
+
+          <div class="check-row"><input type="checkbox" class="progress-check" id="p1"><label for="p1">Detecto con mayor rapidez cuándo aparece una exigencia rígida.</label></div>
+          <div class="check-row"><input type="checkbox" class="progress-check" id="p2"><label for="p2">Puedo corregir un error sin convertirlo en una descalificación personal.</label></div>
+          <div class="check-row"><input type="checkbox" class="progress-check" id="p3"><label for="p3">Termino algunas tareas cuando cumplen su propósito, aunque podrían mejorarse.</label></div>
+          <div class="check-row"><input type="checkbox" class="progress-check" id="p4"><label for="p4">Descanso o hago pausas con menos culpa.</label></div>
+          <div class="check-row"><input type="checkbox" class="progress-check" id="p5"><label for="p5">Reconozco logros y esfuerzos sin minimizarlos automáticamente.</label></div>
+          <div class="check-row"><input type="checkbox" class="progress-check" id="p6"><label for="p6">Tolero mejor errores menores, incertidumbre y pérdida parcial de control.</label></div>
+        </div>
+      </section>
+
+      <section class="view" id="summaryView">
+        <div class="print-only"><h1>Resumen terapéutico: autoexigencia y perfeccionismo</h1></div>
+
+        <div class="section-head no-print">
+          <div>
+            <h2>Resumen para sesión</h2>
+            <p>Síntesis de los principales registros y aprendizajes.</p>
+          </div>
+          <button class="btn primary" id="printBtn">Imprimir o guardar PDF</button>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="card">
+            <h3>Estado reciente</h3>
+            <div id="summaryState"></div>
+          </div>
+
+          <div class="card">
+            <h3>Foco semanal</h3>
+            <p id="summaryFocus">Sin registrar.</p>
+          </div>
+
+          <div class="card">
+            <h3>Frases exigentes frecuentes</h3>
+            <div id="summaryDemands"></div>
+          </div>
+
+          <div class="card">
+            <h3>Sesgos identificados</h3>
+            <div id="summaryBiases"></div>
+          </div>
+
+          <div class="card">
+            <h3>Aprendizajes de flexibilidad</h3>
+            <div id="summaryLearning"></div>
+          </div>
+
+          <div class="card">
+            <h3>Temas para conversar en sesión</h3>
+            <textarea id="sessionTopics" placeholder="Escribe aquí aquello que deseas revisar con tu psicólogo."></textarea>
+            <button class="btn no-print mt" id="saveTopicsBtn">Guardar</button>
+          </div>
+        </div>
+
+        <div class="card mt">
+          <div class="callout warning">
+            Esta aplicación es una herramienta de apoyo. No sustituye la evaluación clínica ni pretende eliminar toda exigencia. El objetivo es construir estándares flexibles, proporcionales y compatibles con el bienestar.
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        Herramienta de apoyo psicoterapéutico. La información se almacena únicamente en este navegador.
+      </footer>
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "trato_justo_app_v1";
+
+function today() {
+  return new Date().toISOString().slice(0,10);
+}
+
+const initialState = {
+  weeklyFocus:"",
+  pauses:[],
+  critics:[],
+  biases:[],
+  tasks:[],
+  experiments:[],
+  practice:{
+    weekStart:today(),
+    items:{
+      oneReview:false,
+      deliberatePause:false,
+      acceptMinorError:false,
+      acknowledgeAchievement:false,
+      askForHelp:false,
+      leaveSomethingIncomplete:false
+    }
+  },
+  progress:{p1:false,p2:false,p3:false,p4:false,p5:false,p6:false},
+  sessionTopics:""
+};
+
+let state = loadState();
+
+function clone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return clone(initialState);
+    const saved = JSON.parse(raw);
+    return {
+      ...clone(initialState),
+      ...saved,
+      practice:{
+        ...clone(initialState.practice),
+        ...(saved.practice || {}),
+        items:{
+          ...clone(initialState.practice.items),
+          ...((saved.practice || {}).items || {})
+        }
+      },
+      progress:{
+        ...clone(initialState.progress),
+        ...(saved.progress || {})
+      }
+    };
+  } catch {
+    return clone(initialState);
+  }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  renderAll();
+}
+
+function esc(value="") {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  })[char]);
+}
+
+function toast(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.classList.add("show");
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+}
+
+function average(items, key) {
+  if (!items.length) return null;
+  const total = items.reduce((sum,item) => sum + (Number(item[key]) || 0), 0);
+  return (total / items.length).toFixed(1);
+}
+
+document.getElementById("pauseDate").value = today();
+
+const originalNav = [...document.querySelectorAll(".sidebar .nav-btn")];
+const mobileNav = document.querySelector(".mobile-nav");
+originalNav.forEach(btn => mobileNav.appendChild(btn.cloneNode(true)));
+
+function goTo(viewId) {
+  document.querySelectorAll(".view").forEach(view => {
+    view.classList.toggle("active", view.id === viewId);
+  });
+
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.view === viewId);
+  });
+
+  if (viewId === "summaryView") renderSummary();
+
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+document.querySelectorAll(".nav-btn").forEach(btn => {
+  btn.addEventListener("click", () => goTo(btn.dataset.view));
+});
+
+document.querySelectorAll(".quick").forEach(btn => {
+  btn.addEventListener("click", () => goTo(btn.dataset.go));
+});
+
+const pressureRange = document.getElementById("pressureRange");
+const pressureValue = document.getElementById("pressureValue");
+pressureRange.addEventListener("input", () => {
+  pressureValue.textContent = pressureRange.value;
+});
+
+document.getElementById("saveFocusBtn").addEventListener("click", () => {
+  state.weeklyFocus = document.getElementById("weeklyFocus").value.trim();
+  saveState();
+  toast("Foco semanal guardado");
+});
+
+document.getElementById("savePauseBtn").addEventListener("click", () => {
+  const situation = document.getElementById("pauseSituation").value.trim();
+  if (!situation) {
+    toast("Describe primero la situación");
+    return;
+  }
+
+  state.pauses.unshift({
+    id:Date.now(),
+    date:document.getElementById("pauseDate").value || today(),
+    situation,
+    pressure:Number(pressureRange.value),
+    demand:document.getElementById("demandPhrase").value.trim(),
+    standard:document.getElementById("reasonableStandard").value.trim(),
+    action:document.getElementById("nextAction").value.trim()
+  });
+
+  ["pauseSituation","demandPhrase","reasonableStandard","nextAction"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+
+  saveState();
+  toast("Pausa guardada");
+});
+
+document.getElementById("saveCriticBtn").addEventListener("click", () => {
+  const message = document.getElementById("criticMessage").value.trim();
+  if (!message) {
+    toast("Escribe el mensaje de la crítica interna");
+    return;
+  }
+
+  state.critics.unshift({
+    id:Date.now(),
+    date:today(),
+    trigger:document.getElementById("criticTrigger").value.trim(),
+    message,
+    cost:document.getElementById("criticCost").value.trim(),
+    need:document.getElementById("criticNeed").value.trim(),
+    response:document.getElementById("fairResponse").value.trim(),
+    correction:document.getElementById("usefulCorrection").value.trim()
+  });
+
+  ["criticTrigger","criticMessage","criticCost","criticNeed","fairResponse","usefulCorrection"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+
+  saveState();
+  toast("Respuesta guardada");
+});
+
+document.getElementById("saveBiasBtn").addEventListener("click", () => {
+  const thought = document.getElementById("biasThought").value.trim();
+  if (!thought) {
+    toast("Escribe primero el pensamiento automático");
+    return;
+  }
+
+  state.biases.unshift({
+    id:Date.now(),
+    date:today(),
+    thought,
+    type:document.getElementById("biasType").value,
+    evidenceFor:document.getElementById("biasEvidenceFor").value.trim(),
+    evidenceAgainst:document.getElementById("biasEvidenceAgainst").value.trim(),
+    balanced:document.getElementById("balancedThought").value.trim()
+  });
+
+  ["biasThought","biasEvidenceFor","biasEvidenceAgainst","balancedThought"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("biasType").value = "";
+
+  saveState();
+  toast("Revisión guardada");
+});
+
+document.getElementById("saveTaskBtn").addEventListener("click", () => {
+  const name = document.getElementById("taskName").value.trim();
+  if (!name) {
+    toast("Escribe el nombre de la tarea");
+    return;
+  }
+
+  state.tasks.unshift({
+    id:Date.now(),
+    date:today(),
+    name,
+    purpose:document.getElementById("taskPurpose").value.trim(),
+    criteria:document.getElementById("minimumCriteria").value.trim(),
+    time:document.getElementById("timeLimit").value.trim(),
+    reviews:document.getElementById("reviewLimit").value,
+    stop:document.getElementById("stopRule").value.trim(),
+    imperfection:document.getElementById("imperfectionAllowed").value.trim()
+  });
+
+  ["taskName","taskPurpose","minimumCriteria","timeLimit","stopRule","imperfectionAllowed"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("reviewLimit").value = "1";
+
+  saveState();
+  toast("Criterio guardado");
+});
+
+document.getElementById("saveExperimentBtn").addEventListener("click", () => {
+  const action = document.getElementById("experimentAction").value.trim();
+  if (!action) {
+    toast("Describe primero el experimento");
+    return;
+  }
+
+  state.experiments.unshift({
+    id:Date.now(),
+    date:today(),
+    action,
+    prediction:document.getElementById("experimentPrediction").value.trim(),
+    result:document.getElementById("experimentResult").value.trim(),
+    learning:document.getElementById("experimentLearning").value.trim()
+  });
+
+  ["experimentAction","experimentPrediction","experimentResult","experimentLearning"].forEach(id => {
+    document.getElementById(id).value = "";
+  });
+
+  saveState();
+  toast("Experimento guardado");
+});
+
+const practiceItems = [
+  ["oneReview","Finalizar una tarea tras una sola revisión razonable"],
+  ["deliberatePause","Hacer una pausa aunque todavía quede algo pendiente"],
+  ["acceptMinorError","Dejar sin corregir un detalle menor que no cambia el resultado"],
+  ["acknowledgeAchievement","Reconocer un logro sin minimizarlo ni agregar un “pero”"],
+  ["askForHelp","Pedir ayuda o delegar una parte de una tarea"],
+  ["leaveSomethingIncomplete","Posponer conscientemente una tarea no prioritaria"]
+];
+
+function renderPracticeChecklist() {
+  const box = document.getElementById("practiceChecklist");
+
+  box.innerHTML = practiceItems.map(([key,label]) => `
+    <div class="check-row">
+      <input type="checkbox" id="practice_${key}" data-practice="${key}" ${state.practice.items[key] ? "checked" : ""}>
+      <label for="practice_${key}">${esc(label)}</label>
+    </div>
+  `).join("");
+
+  box.querySelectorAll("[data-practice]").forEach(cb => {
+    cb.addEventListener("change", () => {
+      state.practice.items[cb.dataset.practice] = cb.checked;
+      saveState();
+    });
+  });
+}
+
+document.getElementById("newWeekBtn").addEventListener("click", () => {
+  if (!confirm("¿Iniciar una nueva semana y desmarcar las prácticas actuales?")) return;
+
+  state.practice.weekStart = today();
+  Object.keys(state.practice.items).forEach(key => {
+    state.practice.items[key] = false;
+  });
+
+  saveState();
+  toast("Nueva semana iniciada");
+});
+
+document.querySelectorAll(".progress-check").forEach(cb => {
+  cb.addEventListener("change", () => {
+    state.progress[cb.id] = cb.checked;
+    saveState();
+  });
+});
+
+document.getElementById("saveTopicsBtn").addEventListener("click", () => {
+  state.sessionTopics = document.getElementById("sessionTopics").value.trim();
+  saveState();
+  toast("Temas guardados");
+});
+
+document.getElementById("printBtn").addEventListener("click", () => {
+  renderSummary();
+  window.print();
+});
+
+function removeEntry(type,id) {
+  state[type] = state[type].filter(item => item.id !== id);
+  saveState();
+  toast("Registro eliminado");
+}
+
+function attachDeleteEvents() {
+  document.querySelectorAll("[data-delete]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (!confirm("¿Eliminar este registro?")) return;
+      removeEntry(btn.dataset.delete, Number(btn.dataset.id));
+    });
+  });
+}
+
+function renderLists() {
+  document.getElementById("pauseList").innerHTML = state.pauses.length
+    ? state.pauses.slice(0,10).map(item => `
+      <div class="item">
+        <div>
+          <strong>${esc(item.date)} · Presión ${item.pressure}/10</strong>
+          <small>${esc(item.demand || item.situation)}</small>
+        </div>
+        <button class="btn small danger" data-delete="pauses" data-id="${item.id}">Eliminar</button>
+      </div>
+    `).join("")
+    : `<div class="empty">Aún no hay pausas registradas.</div>`;
+
+  document.getElementById("criticList").innerHTML = state.critics.length
+    ? state.critics.slice(0,10).map(item => `
+      <div class="item">
+        <div>
+          <strong>${esc(item.date)} · ${esc(item.message.slice(0,90))}${item.message.length > 90 ? "…" : ""}</strong>
+          <small>Respuesta: ${esc(item.response || "sin registrar")}</small>
+        </div>
+        <button class="btn small danger" data-delete="critics" data-id="${item.id}">Eliminar</button>
+      </div>
+    `).join("")
+    : `<div class="empty">Aún no hay respuestas registradas.</div>`;
+
+  document.getElementById("biasList").innerHTML = state.biases.length
+    ? state.biases.slice(0,10).map(item => `
+      <div class="item">
+        <div>
+          <strong>${esc(item.type || "Sesgo por revisar")} · ${esc(item.thought.slice(0,90))}${item.thought.length > 90 ? "…" : ""}</strong>
+          <small>Alternativa: ${esc(item.balanced || "sin registrar")}</small>
+        </div>
+        <button class="btn small danger" data-delete="biases" data-id="${item.id}">Eliminar</button>
+      </div>
+    `).join("")
+    : `<div class="empty">Aún no hay pensamientos revisados.</div>`;
+
+  document.getElementById("taskList").innerHTML = state.tasks.length
+    ? state.tasks.slice(0,10).map(item => `
+      <div class="item">
+        <div>
+          <strong>${esc(item.name)}</strong>
+          <small>Límite: ${esc(item.time || "sin definir")} · Revisiones: ${esc(item.reviews || "0")}</small>
+        </div>
+        <button class="btn small danger" data-delete="tasks" data-id="${item.id}">Eliminar</button>
+      </div>
+    `).join("")
+    : `<div class="empty">Aún no hay criterios de cierre guardados.</div>`;
+
+  document.getElementById("experimentList").innerHTML = state.experiments.length
+    ? state.experiments.slice(0,10).map(item => `
+      <div class="item">
+        <div>
+          <strong>${esc(item.date)} · ${esc(item.action.slice(0,100))}${item.action.length > 100 ? "…" : ""}</strong>
+          <small>Aprendizaje: ${esc(item.learning || "pendiente")}</small>
+        </div>
+        <button class="btn small danger" data-delete="experiments" data-id="${item.id}">Eliminar</button>
+      </div>
+    `).join("")
+    : `<div class="empty">Aún no hay experimentos guardados.</div>`;
+
+  attachDeleteEvents();
+}
+
+function renderMetrics() {
+  const lastPause = state.pauses[0];
+  const completed = Object.values(state.practice.items).filter(Boolean).length;
+  const total = Object.keys(state.practice.items).length;
+  const percent = Math.round((completed / total) * 100);
+
+  document.getElementById("homePressure").textContent = lastPause ? `${lastPause.pressure}/10` : "—";
+  document.getElementById("homeEntries").textContent =
+    state.pauses.length + state.critics.length + state.biases.length + state.tasks.length + state.experiments.length;
+  document.getElementById("homePractice").textContent = `${percent}%`;
+
+  document.getElementById("practiceBar").style.width = `${percent}%`;
+  document.getElementById("practiceText").textContent =
+    `${percent}% completado · semana iniciada ${state.practice.weekStart}`;
+
+  document.getElementById("avgPressure").textContent = average(state.pauses,"pressure") ?? "—";
+  document.getElementById("criticCount").textContent = state.critics.length;
+  document.getElementById("experimentCount").textContent = state.experiments.length;
+}
+
+function countBy(items,key) {
+  const counts = {};
+  items.forEach(item => {
+    const value = item[key];
+    if (!value) return;
+    counts[value] = (counts[value] || 0) + 1;
+  });
+  return Object.entries(counts).sort((a,b) => b[1]-a[1]);
+}
+
+function renderSummary() {
+  const recentPauses = state.pauses.slice(0,5);
+
+  document.getElementById("summaryState").innerHTML = recentPauses.length
+    ? `
+      <p><strong>Presión promedio reciente:</strong> ${average(recentPauses,"pressure")}/10</p>
+      <p><strong>Pausas registradas:</strong> ${state.pauses.length}</p>
+      <p><strong>Respuestas a la crítica:</strong> ${state.critics.length}</p>
+      <p><strong>Experimentos realizados:</strong> ${state.experiments.length}</p>
+    `
+    : `<p>Sin registros recientes.</p>`;
+
+  document.getElementById("summaryFocus").textContent = state.weeklyFocus || "Sin registrar.";
+
+  const demands = state.pauses.map(item => item.demand).filter(Boolean).slice(0,6);
+  document.getElementById("summaryDemands").innerHTML = demands.length
+    ? `<ul>${demands.map(item => `<li>${esc(item)}</li>`).join("")}</ul>`
+    : `<p>Sin frases registradas.</p>`;
+
+  const biases = countBy(state.biases,"type");
+  document.getElementById("summaryBiases").innerHTML = biases.length
+    ? `<ul>${biases.map(([type,count]) => `<li>${esc(type)}: ${count}</li>`).join("")}</ul>`
+    : `<p>Sin sesgos registrados.</p>`;
+
+  const learning = state.experiments.map(item => item.learning).filter(Boolean).slice(0,6);
+  document.getElementById("summaryLearning").innerHTML = learning.length
+    ? `<ul>${learning.map(item => `<li>${esc(item)}</li>`).join("")}</ul>`
+    : `<p>Sin aprendizajes registrados.</p>`;
+}
+
+function renderAll() {
+  document.getElementById("weeklyFocus").value = state.weeklyFocus || "";
+  document.getElementById("sessionTopics").value = state.sessionTopics || "";
+
+  Object.keys(state.progress).forEach(key => {
+    const cb = document.getElementById(key);
+    if (cb) cb.checked = Boolean(state.progress[key]);
+  });
+
+  renderPracticeChecklist();
+  renderLists();
+  renderMetrics();
+  renderSummary();
+}
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `trato_justo_respaldo_${today()}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  toast("Respaldo exportado");
+});
+
+document.getElementById("importFile").addEventListener("change", async event => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const saved = JSON.parse(await file.text());
+    state = {
+      ...clone(initialState),
+      ...saved,
+      practice:{
+        ...clone(initialState.practice),
+        ...(saved.practice || {}),
+        items:{
+          ...clone(initialState.practice.items),
+          ...((saved.practice || {}).items || {})
+        }
+      },
+      progress:{
+        ...clone(initialState.progress),
+        ...(saved.progress || {})
+      }
+    };
+    saveState();
+    toast("Respaldo importado");
+  } catch {
+    alert("El archivo seleccionado no corresponde a un respaldo válido.");
+  }
+
+  event.target.value = "";
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  if (!confirm("¿Eliminar todos los datos guardados en este dispositivo? Esta acción no se puede deshacer.")) return;
+  state = clone(initialState);
+  saveState();
+  toast("Datos reiniciados");
+});
+
+renderAll();
+</script>
+</body>
+</html>

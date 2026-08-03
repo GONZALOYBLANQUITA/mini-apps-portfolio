@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8fa8a0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mi Espacio Seguro">
+<title>Mi Espacio Seguro | Gretta</title>
+<style>
+:root{
+  --bg:#f8f5f3;--surface:#fff;--text:#35413d;--muted:#718079;--border:#dfddd8;
+  --primary:#78958a;--primary-dark:#607b71;--mint:#dcebe5;--lav:#e9e2f2;
+  --peach:#f6e2d7;--blue:#ddeaf3;--yellow:#f6edc9;--rose:#f3dde1;
+  --danger:#a7636b;--shadow:0 8px 24px rgba(63,78,71,.08);--radius:19px
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.5}
+button,input,textarea,select{font:inherit}button{cursor:pointer}input,textarea,select{font-size:16px}textarea{resize:vertical;min-height:94px}
+.app{max-width:1180px;margin:auto;min-height:100vh}
+.topbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:rgba(248,245,243,.96);border-bottom:1px solid var(--border);backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.logo{width:43px;height:43px;border-radius:14px;background:var(--primary);color:#fff;display:grid;place-items:center;font-size:21px;font-weight:800}
+.brand h1{margin:0;font-size:18px;line-height:1.2}.brand p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:20px;padding:20px}
+.sidebar{position:sticky;top:92px;height:max-content;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:11px;box-shadow:var(--shadow)}
+.mobile-nav{display:none}
+.nav-btn{width:100%;border:0;background:transparent;padding:11px 12px;border-radius:12px;text-align:left;color:var(--text);margin:2px 0}
+.nav-btn:hover{background:var(--mint)}.nav-btn.active{background:var(--primary);color:#fff}
+main{min-width:0}.view{display:none}.view.active{display:block}
+.hero{background:linear-gradient(135deg,#9cb7ac,#78958a);color:#fff;padding:27px;border-radius:24px;box-shadow:var(--shadow);margin-bottom:17px}
+.hero h2{font-size:28px;margin:8px 0}.hero p{margin:0;color:rgba(255,255,255,.92)}
+.grid{display:grid;gap:15px}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.mint{background:var(--mint)}.lav{background:var(--lav)}.peach{background:var(--peach)}.blue{background:var(--blue)}.yellow{background:var(--yellow)}.rose{background:var(--rose)}
+.card h3{margin:0 0 8px;font-size:18px}.card p{color:var(--muted)}.metric{font-size:30px;font-weight:800}
+.head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:13px}.head h2{margin:0;font-size:24px}.head p{margin:3px 0;color:var(--muted)}
+.field{margin-bottom:14px}label{display:block;font-weight:650;margin-bottom:6px}
+input[type=text],input[type=date],textarea,select{width:100%;padding:11px 12px;border:1px solid var(--border);border-radius:12px;background:#fff;color:var(--text);outline:none}
+input:focus,textarea:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--mint)}
+.btn{border:1px solid var(--border);background:#fff;color:var(--text);padding:9px 13px;border-radius:12px;font-weight:650}
+.btn:hover{background:var(--mint)}.btn.primary{background:var(--primary);border-color:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary-dark)}
+.btn.danger{color:var(--danger)}.btn.small{padding:7px 9px;font-size:13px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}.chip{border:1px solid var(--border);background:#fff;border-radius:999px;padding:8px 11px}
+.callout{border-left:5px solid var(--primary);background:var(--mint);padding:14px;border-radius:12px}.dangerbox{background:#f8e8ea;border-left-color:var(--danger)}
+.control-box{padding:14px;border-radius:15px;border:1px solid var(--border)}
+.traffic{display:grid;gap:10px}.step{display:grid;grid-template-columns:48px 1fr;gap:11px;padding:12px;border:1px solid var(--border);border-radius:15px;background:#fff}
+.light{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800}.red{background:#cb7d83}.amber{background:#d4aa63}.green{background:#7fa58c}
+.range{display:grid;grid-template-columns:1fr 50px;gap:10px;align-items:center}input[type=range]{width:100%;accent-color:var(--primary)}
+.range-value{background:var(--mint);border:1px solid var(--border);border-radius:10px;text-align:center;padding:6px;font-weight:800}
+.list{display:grid;gap:9px}.item{display:flex;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--border);border-radius:13px;background:#fff}
+.item small{display:block;color:var(--muted);margin-top:3px}.empty{text-align:center;color:var(--muted);padding:24px;border:1px dashed var(--border);border-radius:13px}
+.check{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--border)}.check:last-child{border-bottom:0}.check input{margin-top:5px;accent-color:var(--primary)}.check label{font-weight:500;margin:0}
+.progress{height:10px;background:#e5e7e2;border-radius:999px;overflow:hidden}.progress-bar{height:100%;width:0;background:var(--primary);transition:width .2s}
+.mt{margin-top:15px}.footer{text-align:center;color:var(--muted);font-size:12px;padding:25px}.credits{color:var(--text);font-weight:650;margin-top:6px}
+.toast{position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom));z-index:60;background:var(--text);color:#fff;padding:10px 13px;border-radius:12px;opacity:0;transform:translateY(8px);transition:.2s;pointer-events:none}.toast.show{opacity:1;transform:none}
+@media(max-width:880px){
+  .layout{display:block;padding:13px}.sidebar{display:none}.brand p,.btn-text{display:none}
+  .mobile-nav{display:flex;position:sticky;top:calc(68px + env(safe-area-inset-top));z-index:20;overflow-x:auto;gap:7px;padding:8px 12px;background:rgba(248,245,243,.97);border-bottom:1px solid var(--border)}
+  .mobile-nav .nav-btn{width:auto;min-width:max-content;background:#fff;border:1px solid var(--border);padding:8px 10px;margin:0}.mobile-nav .nav-btn.active{background:var(--primary)}
+  .g2,.g3{grid-template-columns:1fr}.hero{padding:21px}.hero h2{font-size:24px}.head{display:block}
+}
+@media(max-width:430px){.brand h1{font-size:16px;max-width:165px}.logo{width:39px;height:39px}.card{padding:15px}.item{display:block}.item .btn{margin-top:9px}}
+@media print{.topbar,.sidebar,.mobile-nav,.no-print,.footer{display:none!important}.layout{display:block;padding:0}.view{display:none!important}#summaryView{display:block!important}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand"><div class="logo">G</div><div><h1>Mi Espacio Seguro</h1><p>Distancia emocional y límites familiares</p></div></div>
+  <div class="actions">
+    <button class="btn small" id="exportBtn">↓ <span class="btn-text">Exportar</span></button>
+    <label class="btn small" for="importFile">↑ <span class="btn-text">Importar</span></label>
+    <input id="importFile" type="file" accept=".json,application/json" hidden>
+    <button class="btn small danger" id="resetBtn">↺</button>
+  </div>
+</header>
+
+<nav class="mobile-nav" id="mobileNav" aria-label="Navegación móvil"></nav>
+
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <button type="button" class="nav-btn active" data-view="homeView">⌂ Inicio</button>
+  <button type="button" class="nav-btn" data-view="controlView">◎ Círculos de control</button>
+  <button type="button" class="nav-btn" data-view="trafficView">🚦 Semáforo</button>
+  <button type="button" class="nav-btn" data-view="observerView">◉ Posición observadora</button>
+  <button type="button" class="nav-btn" data-view="distanceView">↔ Distanciamiento</button>
+  <button type="button" class="nav-btn" data-view="exitView">🚪 Retiro estratégico</button>
+  <button type="button" class="nav-btn" data-view="recordView">📝 Registro de conflictos</button>
+  <button type="button" class="nav-btn" data-view="progressView">↗ Progreso</button>
+  <button type="button" class="nav-btn" data-view="summaryView">▤ Resumen para sesión</button>
+</aside>
+
+<main>
+<section class="view active" id="homeView">
+  <div class="hero"><h2>No todo conflicto requiere tu intervención</h2><p>Aprende a diferenciar qué depende de ti, observar sin absorber y proteger tu bienestar frente a dinámicas familiares que no puedes controlar.</p></div>
+  <div class="grid g3">
+    <div class="card mint"><p>Activación reciente</p><div class="metric" id="homeActivation">—</div></div>
+    <div class="card lav"><p>Registros realizados</p><div class="metric" id="homeCount">0</div></div>
+    <div class="card peach"><p>Prácticas semanales</p><div class="metric" id="homePractice">0%</div></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="card"><h3>Foco semanal</h3><div class="field"><label for="weeklyFocus">¿Qué deseas practicar?</label><textarea id="weeklyFocus" placeholder="No intervenir, retirarme sin culpa o dejar de buscar explicaciones."></textarea></div><button type="button" class="btn primary" id="saveFocusBtn">Guardar foco</button></div>
+    <div class="card blue"><h3>Recordatorio terapéutico</h3><div class="callout">Comprender una conducta no te da control sobre ella. Tu responsabilidad es elegir tu respuesta y protegerte.</div><p><strong>Pregunta:</strong> ¿Esto requiere mi participación o solo está capturando mi atención?</p></div>
+  </div>
+  <div class="card mt"><h3>Acceso rápido</h3><div class="chips">
+    <button type="button" class="chip quick-btn" data-go="controlView">Separar responsabilidades</button>
+    <button type="button" class="chip quick-btn" data-go="trafficView">Decidir si intervengo</button>
+    <button type="button" class="chip quick-btn" data-go="observerView">Observar sin absorber</button>
+    <button type="button" class="chip quick-btn" data-go="distanceView">Tomar distancia mental</button>
+    <button type="button" class="chip quick-btn" data-go="exitView">Retirarme</button>
+  </div></div>
+</section>
+
+<section class="view" id="controlView">
+  <div class="head"><div><h2>Círculos de control</h2><p>Clasifica la situación antes de invertir energía emocional.</p></div></div>
+  <div class="card">
+    <div class="field"><label for="controlSituation">Situación familiar</label><textarea id="controlSituation"></textarea></div>
+    <div class="grid g3">
+      <div class="control-box mint"><h3>Depende de mí</h3><textarea id="controlMine" placeholder="Mi respuesta, límites, retirarme, pedir apoyo..."></textarea></div>
+      <div class="control-box yellow"><h3>Puedo influir</h3><textarea id="controlInfluence" placeholder="Pedir, proponer o conversar sin controlar el resultado."></textarea></div>
+      <div class="control-box rose"><h3>No depende de mí</h3><textarea id="controlOutside" placeholder="Impulsividad, decisiones o reacciones ajenas."></textarea></div>
+    </div>
+    <div class="field mt"><label for="controlDecision">Decisión de autocuidado</label><textarea id="controlDecision"></textarea></div>
+    <button type="button" class="btn primary" id="saveControlBtn">Guardar análisis</button>
+  </div>
+  <div class="card mt"><h3>Análisis guardados</h3><div class="list" id="controlList"></div></div>
+</section>
+
+<section class="view" id="trafficView">
+  <div class="head"><div><h2>Técnica del semáforo</h2><p>Detén la reacción automática antes de entrar en una discusión.</p></div></div>
+  <div class="grid g2">
+    <div class="card"><div class="traffic">
+      <div class="step"><div class="light red">1</div><div><h3>Rojo: detente</h3><p>No respondas inmediatamente.</p></div></div>
+      <div class="step"><div class="light amber">2</div><div><h3>Amarillo: evalúa</h3><p>Pregúntate si te corresponde intervenir y si existe riesgo.</p></div></div>
+      <div class="step"><div class="light green">3</div><div><h3>Verde: elige</h3><p>Intervén brevemente o retírate conscientemente.</p></div></div>
+    </div></div>
+    <div class="card yellow">
+      <div class="field"><label for="trafficConflict">Conflicto actual</label><textarea id="trafficConflict"></textarea></div>
+      <div class="field"><label for="trafficRisk">¿Existe riesgo físico o amenaza?</label><select id="trafficRisk"><option>No</option><option>Sí</option><option>No estoy segura</option></select></div>
+      <div class="field"><label for="trafficRole">¿Me corresponde intervenir?</label><select id="trafficRole"><option>No</option><option>Parcialmente</option><option>Sí</option></select></div>
+      <div class="field"><label for="trafficChoice">Elección consciente</label><textarea id="trafficChoice"></textarea></div>
+      <button type="button" class="btn primary" id="saveTrafficBtn">Guardar decisión</button>
+    </div>
+  </div>
+  <div class="card mt"><h3>Decisiones guardadas</h3><div class="list" id="trafficList"></div></div>
+</section>
+
+<section class="view" id="observerView">
+  <div class="head"><div><h2>Posición observadora</h2><p>Describe lo que ocurre sin convertirte automáticamente en mediadora.</p></div></div>
+  <div class="grid g2">
+    <div class="card lav"><div class="callout">“Estoy observando a personas adultas interactuar de la manera que actualmente saben hacerlo. Su conflicto no tiene que convertirse en mi conflicto.”</div>
+      <div class="field mt"><label for="observerFacts">Hechos observables</label><textarea id="observerFacts"></textarea></div>
+      <div class="field"><label for="observerStory">Historia que construye mi mente</label><textarea id="observerStory"></textarea></div>
+    </div>
+    <div class="card">
+      <div class="field"><label for="observerEmotion">Emoción propia</label><textarea id="observerEmotion"></textarea></div>
+      <div class="field"><label for="observerOthers">Emociones que pertenecen a otros</label><textarea id="observerOthers"></textarea></div>
+      <div class="field"><label for="observerPhrase">Frase observadora</label><textarea id="observerPhrase"></textarea></div>
+      <button type="button" class="btn primary" id="saveObserverBtn">Guardar observación</button>
+    </div>
+  </div>
+  <div class="card mt"><h3>Observaciones guardadas</h3><div class="list" id="observerList"></div></div>
+</section>
+
+<section class="view" id="distanceView">
+  <div class="head"><div><h2>Distanciamiento cognitivo</h2><p>Un pensamiento es una experiencia mental, no una orden.</p></div></div>
+  <div class="card">
+    <div class="field"><label for="distanceThought">Pensamiento que te atrapa</label><textarea id="distanceThought" placeholder="Tengo que lograr que entiendan..."></textarea></div>
+    <button type="button" class="btn" id="buildDistanceBtn">Construir frase</button>
+    <div class="callout mt" id="distanceResult">Escribe un pensamiento.</div>
+    <div class="field mt"><label for="distanceChoice">¿Qué elegirías hacer si no fuera una orden?</label><textarea id="distanceChoice"></textarea></div>
+    <button type="button" class="btn primary" id="saveDistanceBtn">Guardar ejercicio</button>
+  </div>
+  <div class="card mt"><h3>Ejercicios guardados</h3><div class="list" id="distanceList"></div></div>
+</section>
+
+<section class="view" id="exitView">
+  <div class="head"><div><h2>Retiro estratégico</h2><p>Salir puede ser una conducta deliberada de protección.</p></div></div>
+  <div class="grid g2">
+    <div class="card peach">
+      <div class="field"><label for="exitSignal">Señal para retirarme</label><textarea id="exitSignal" placeholder="Gritos, insultos, repetición o aumento de tensión."></textarea></div>
+      <div class="field"><label for="exitPhrase">Frase breve</label><textarea id="exitPhrase" placeholder="No continuaré mientras haya gritos."></textarea></div>
+      <div class="field"><label for="exitPlace">Lugar o actividad reguladora</label><textarea id="exitPlace"></textarea></div>
+    </div>
+    <div class="card">
+      <div class="check"><input type="checkbox" id="exitCheck1"><label for="exitCheck1">No intento convencer antes de retirarme.</label></div>
+      <div class="check"><input type="checkbox" id="exitCheck2"><label for="exitCheck2">Uso una frase corta.</label></div>
+      <div class="check"><input type="checkbox" id="exitCheck3"><label for="exitCheck3">Voy a un espacio seguro.</label></div>
+      <div class="check"><input type="checkbox" id="exitCheck4"><label for="exitCheck4">No regreso mientras continúe la escalada.</label></div>
+      <div class="field mt"><label for="exitReminder">Recordatorio personal</label><textarea id="exitReminder"></textarea></div>
+      <button type="button" class="btn primary" id="saveExitBtn">Guardar plan</button>
+    </div>
+  </div>
+  <div class="card mt"><h3>Planes guardados</h3><div class="list" id="exitList"></div></div>
+</section>
+
+<section class="view" id="recordView">
+  <div class="head"><div><h2>Registro de conflictos</h2><p>Transforma una experiencia difícil en información útil.</p></div></div>
+  <div class="card">
+    <div class="grid g2">
+      <div class="field"><label for="recordDate">Fecha</label><input type="date" id="recordDate"></div>
+      <div class="field"><label for="activationRange">Nivel de activación</label><div class="range"><input type="range" min="0" max="10" value="5" id="activationRange"><div class="range-value" id="activationValue">5</div></div></div>
+    </div>
+    <div class="field"><label for="recordFacts">¿Qué ocurrió objetivamente?</label><textarea id="recordFacts"></textarea></div>
+    <div class="field"><label for="recordControl">¿Qué intentaste controlar?</label><textarea id="recordControl"></textarea></div>
+    <div class="field"><label for="recordEmotion">¿Qué emoción experimentaste?</label><textarea id="recordEmotion"></textarea></div>
+    <div class="field"><label for="recordResponse">¿Qué hiciste?</label><textarea id="recordResponse"></textarea></div>
+    <div class="field"><label for="recordAlternative">Alternativa más saludable</label><textarea id="recordAlternative"></textarea></div>
+    <div class="field"><label for="recordLearning">¿Qué aprendiste?</label><textarea id="recordLearning"></textarea></div>
+    <button type="button" class="btn primary" id="saveRecordBtn">Guardar registro</button>
+  </div>
+  <div class="card mt"><h3>Conflictos registrados</h3><div class="list" id="recordList"></div></div>
+</section>
+
+<section class="view" id="progressView">
+  <div class="head"><div><h2>Progreso</h2><p>Observa cambios en límites y recuperación emocional.</p></div><button type="button" class="btn" id="newWeekBtn">Nueva semana</button></div>
+  <div class="grid g3">
+    <div class="card mint"><p>Activación promedio</p><div class="metric" id="averageActivation">—</div></div>
+    <div class="card lav"><p>Planes de retiro</p><div class="metric" id="exitCount">0</div></div>
+    <div class="card peach"><p>Círculos de control</p><div class="metric" id="controlCount">0</div></div>
+  </div>
+  <div class="card mt"><h3>Prácticas semanales</h3><div id="practiceList"></div><div class="progress mt"><div class="progress-bar" id="practiceBar"></div></div><p id="practiceText"></p></div>
+  <div class="card mt"><h3>Indicadores de avance</h3>
+    <div class="check"><input type="checkbox" class="progress-check" id="p1"><label for="p1">Distingo qué conflictos no me pertenecen.</label></div>
+    <div class="check"><input type="checkbox" class="progress-check" id="p2"><label for="p2">Puedo retirarme sin justificarme demasiado.</label></div>
+    <div class="check"><input type="checkbox" class="progress-check" id="p3"><label for="p3">Busco menos explicaciones interminables.</label></div>
+    <div class="check"><input type="checkbox" class="progress-check" id="p4"><label for="p4">Recupero mi calma en menos tiempo.</label></div>
+    <div class="check"><input type="checkbox" class="progress-check" id="p5"><label for="p5">Continúo con mis actividades aunque otros estén molestos.</label></div>
+    <div class="check"><input type="checkbox" class="progress-check" id="p6"><label for="p6">Mi bienestar depende menos de que otros cambien.</label></div>
+  </div>
+</section>
+
+<section class="view" id="summaryView">
+  <div class="head no-print"><div><h2>Resumen para sesión</h2><p>Síntesis de situaciones, decisiones y aprendizajes.</p></div><button type="button" class="btn primary" id="printBtn">Imprimir o guardar PDF</button></div>
+  <div class="grid g2">
+    <div class="card"><h3>Estado reciente</h3><div id="summaryState"></div></div>
+    <div class="card"><h3>Foco semanal</h3><p id="summaryFocus"></p></div>
+    <div class="card"><h3>Fuera de mi control</h3><div id="summaryOutside"></div></div>
+    <div class="card"><h3>Decisiones de autocuidado</h3><div id="summaryChoices"></div></div>
+    <div class="card"><h3>Aprendizajes</h3><div id="summaryLearning"></div></div>
+    <div class="card"><h3>Temas para la sesión</h3><textarea id="sessionTopics"></textarea><button type="button" class="btn mt no-print" id="saveTopicsBtn">Guardar</button></div>
+  </div>
+  <div class="card mt"><div class="callout dangerbox">Si existe violencia, amenaza, coerción o riesgo físico, la prioridad es protegerte y buscar apoyo seguro.</div></div>
+</section>
+
+<footer class="footer">Herramienta de apoyo psicoterapéutico. Los datos se almacenan únicamente en este navegador.<div class="credits">Gonzalo Buendía – Lic. Psicología · Blanquita – Co-Terapeuta</div></footer>
+</main>
+</div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(() => {
+  "use strict";
+
+  const STORAGE_KEY = "gretta_espacio_seguro_v2";
+  const $ = (id) => document.getElementById(id);
+  const today = () => new Date().toISOString().slice(0, 10);
+  const clone = (value) => JSON.parse(JSON.stringify(value));
+
+  const initialState = {
+    focus: "",
+    controls: [],
+    traffic: [],
+    observers: [],
+    distances: [],
+    exits: [],
+    records: [],
+    practice: {
+      week: today(),
+      items: {
+        pause: false,
+        classify: false,
+        observe: false,
+        strategicExit: false,
+        continueActivity: false,
+        stopRumination: false
+      }
+    },
+    progress: {p1:false,p2:false,p3:false,p4:false,p5:false,p6:false},
+    topics: ""
+  };
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return clone(initialState);
+      const saved = JSON.parse(raw);
+      return {
+        ...clone(initialState),
+        ...saved,
+        practice: {
+          ...clone(initialState.practice),
+          ...(saved.practice || {}),
+          items: {
+            ...clone(initialState.practice.items),
+            ...((saved.practice || {}).items || {})
+          }
+        },
+        progress: {
+          ...clone(initialState.progress),
+          ...(saved.progress || {})
+        }
+      };
+    } catch (error) {
+      return clone(initialState);
+    }
+  }
+
+  let state = loadState();
+
+  function persist() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    renderAll();
+  }
+
+  function escapeHtml(value = "") {
+    return String(value).replace(/[&<>"']/g, (char) => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    })[char]);
+  }
+
+  function showToast(message) {
+    const toast = $("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(window.__grettaToast);
+    window.__grettaToast = setTimeout(() => toast.classList.remove("show"), 2200);
+  }
+
+  function average(items, key) {
+    if (!items.length) return null;
+    return (items.reduce((sum, item) => sum + (Number(item[key]) || 0), 0) / items.length).toFixed(1);
+  }
+
+  function setupNavigation() {
+    const mobileNav = $("mobileNav");
+    const sidebarButtons = [...document.querySelectorAll("#sidebar .nav-btn")];
+
+    mobileNav.innerHTML = "";
+    sidebarButtons.forEach((button) => {
+      const copy = button.cloneNode(true);
+      mobileNav.appendChild(copy);
+    });
+
+    document.querySelectorAll(".nav-btn").forEach((button) => {
+      button.addEventListener("click", () => showView(button.dataset.view));
+    });
+
+    document.querySelectorAll(".quick-btn").forEach((button) => {
+      button.addEventListener("click", () => showView(button.dataset.go));
+    });
+  }
+
+  function showView(viewId) {
+    document.querySelectorAll(".view").forEach((view) => {
+      view.classList.toggle("active", view.id === viewId);
+    });
+
+    document.querySelectorAll(".nav-btn").forEach((button) => {
+      button.classList.toggle("active", button.dataset.view === viewId);
+    });
+
+    if (viewId === "summaryView") renderSummary();
+    window.scrollTo({top:0, behavior:"smooth"});
+  }
+
+  function clearFields(ids) {
+    ids.forEach((id) => {
+      const element = $(id);
+      if (element) element.value = "";
+    });
+  }
+
+  function deleteEntry(type, id) {
+    state[type] = state[type].filter((item) => item.id !== id);
+    persist();
+    showToast("Registro eliminado");
+  }
+
+  function renderList(elementId, items, type, formatter) {
+    const container = $(elementId);
+    if (!items.length) {
+      container.innerHTML = '<div class="empty">Aún no hay registros.</div>';
+      return;
+    }
+
+    container.innerHTML = items.slice(0, 10).map((item) => `
+      <div class="item">
+        <div>${formatter(item)}</div>
+        <button type="button" class="btn small danger delete-btn" data-type="${type}" data-id="${item.id}">Eliminar</button>
+      </div>
+    `).join("");
+
+    container.querySelectorAll(".delete-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        if (confirm("¿Eliminar este registro?")) {
+          deleteEntry(button.dataset.type, Number(button.dataset.id));
+        }
+      });
+    });
+  }
+
+  const practices = [
+    ["pause", "Hacer una pausa antes de intervenir"],
+    ["classify", "Clasificar la situación en los círculos de control"],
+    ["observe", "Usar una frase observadora"],
+    ["strategicExit", "Realizar un retiro estratégico"],
+    ["continueActivity", "Continuar con una actividad propia"],
+    ["stopRumination", "Interrumpir la búsqueda repetitiva de explicaciones"]
+  ];
+
+  function renderPracticeList() {
+    $("practiceList").innerHTML = practices.map(([key, label]) => `
+      <div class="check">
+        <input type="checkbox" id="practice_${key}" data-practice="${key}" ${state.practice.items[key] ? "checked" : ""}>
+        <label for="practice_${key}">${escapeHtml(label)}</label>
+      </div>
+    `).join("");
+
+    document.querySelectorAll("[data-practice]").forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        state.practice.items[checkbox.dataset.practice] = checkbox.checked;
+        persist();
+      });
+    });
+  }
+
+  function renderLists() {
+    renderList("controlList", state.controls, "controls", (item) =>
+      `<strong>${escapeHtml(item.date)} · ${escapeHtml(item.situation.slice(0,90))}</strong><small>Decisión: ${escapeHtml(item.decision || "sin registrar")}</small>`
+    );
+
+    renderList("trafficList", state.traffic, "traffic", (item) =>
+      `<strong>${escapeHtml(item.date)} · ${escapeHtml(item.conflict.slice(0,90))}</strong><small>Elección: ${escapeHtml(item.choice || "sin registrar")}</small>`
+    );
+
+    renderList("observerList", state.observers, "observers", (item) =>
+      `<strong>${escapeHtml(item.date)} · ${escapeHtml(item.facts.slice(0,90))}</strong><small>Frase: ${escapeHtml(item.phrase || "sin registrar")}</small>`
+    );
+
+    renderList("distanceList", state.distances, "distances", (item) =>
+      `<strong>${escapeHtml(item.date)} · ${escapeHtml(item.thought.slice(0,90))}</strong><small>Elección: ${escapeHtml(item.choice || "sin registrar")}</small>`
+    );
+
+    renderList("exitList", state.exits, "exits", (item) =>
+      `<strong>${escapeHtml(item.date)} · ${escapeHtml(item.signal.slice(0,90))}</strong><small>Frase: ${escapeHtml(item.phrase || "sin registrar")}</small>`
+    );
+
+    renderList("recordList", state.records, "records", (item) =>
+      `<strong>${escapeHtml(item.date)} · Activación ${item.activation}/10</strong><small>${escapeHtml(item.facts.slice(0,110))}</small>`
+    );
+  }
+
+  function renderMetrics() {
+    const latest = state.records[0];
+    const completed = Object.values(state.practice.items).filter(Boolean).length;
+    const percent = Math.round((completed / practices.length) * 100);
+
+    $("homeActivation").textContent = latest ? `${latest.activation}/10` : "—";
+    $("homeCount").textContent =
+      state.controls.length + state.traffic.length + state.observers.length +
+      state.distances.length + state.exits.length + state.records.length;
+    $("homePractice").textContent = `${percent}%`;
+
+    $("practiceBar").style.width = `${percent}%`;
+    $("practiceText").textContent = `${percent}% completado · semana iniciada ${state.practice.week}`;
+    $("averageActivation").textContent = average(state.records, "activation") ?? "—";
+    $("exitCount").textContent = state.exits.length;
+    $("controlCount").textContent = state.controls.length;
+  }
+
+  function renderSummary() {
+    const recent = state.records.slice(0, 5);
+    $("summaryState").innerHTML = recent.length
+      ? `<p><strong>Activación promedio:</strong> ${average(recent,"activation")}/10</p>
+         <p><strong>Conflictos registrados:</strong> ${state.records.length}</p>
+         <p><strong>Planes de retiro:</strong> ${state.exits.length}</p>
+         <p><strong>Ejercicios de distanciamiento:</strong> ${state.distances.length}</p>`
+      : "<p>Sin registros recientes.</p>";
+
+    $("summaryFocus").textContent = state.focus || "Sin registrar.";
+
+    const outside = state.controls.map((item) => item.outside).filter(Boolean).slice(0,6);
+    const choices = [
+      ...state.controls.map((item) => item.decision),
+      ...state.traffic.map((item) => item.choice),
+      ...state.distances.map((item) => item.choice)
+    ].filter(Boolean).slice(0,7);
+    const learning = state.records.map((item) => item.learning).filter(Boolean).slice(0,6);
+
+    $("summaryOutside").innerHTML = outside.length
+      ? `<ul>${outside.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+      : "<p>Sin registrar.</p>";
+
+    $("summaryChoices").innerHTML = choices.length
+      ? `<ul>${choices.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+      : "<p>Sin registrar.</p>";
+
+    $("summaryLearning").innerHTML = learning.length
+      ? `<ul>${learning.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
+      : "<p>Sin registrar.</p>";
+  }
+
+  function renderAll() {
+    $("weeklyFocus").value = state.focus || "";
+    $("sessionTopics").value = state.topics || "";
+
+    Object.keys(state.progress).forEach((key) => {
+      const checkbox = $(key);
+      if (checkbox) checkbox.checked = Boolean(state.progress[key]);
+    });
+
+    renderPracticeList();
+    renderLists();
+    renderMetrics();
+    renderSummary();
+  }
+
+  function setupEvents() {
+    $("recordDate").value = today();
+
+    $("activationRange").addEventListener("input", () => {
+      $("activationValue").textContent = $("activationRange").value;
+    });
+
+    $("saveFocusBtn").addEventListener("click", () => {
+      state.focus = $("weeklyFocus").value.trim();
+      persist();
+      showToast("Foco guardado");
+    });
+
+    $("saveControlBtn").addEventListener("click", () => {
+      const situation = $("controlSituation").value.trim();
+      if (!situation) return showToast("Describe primero la situación");
+
+      state.controls.unshift({
+        id: Date.now(), date: today(), situation,
+        mine: $("controlMine").value.trim(),
+        influence: $("controlInfluence").value.trim(),
+        outside: $("controlOutside").value.trim(),
+        decision: $("controlDecision").value.trim()
+      });
+      clearFields(["controlSituation","controlMine","controlInfluence","controlOutside","controlDecision"]);
+      persist();
+      showToast("Análisis guardado");
+    });
+
+    $("saveTrafficBtn").addEventListener("click", () => {
+      const conflict = $("trafficConflict").value.trim();
+      if (!conflict) return showToast("Describe primero el conflicto");
+
+      state.traffic.unshift({
+        id: Date.now(), date: today(), conflict,
+        risk: $("trafficRisk").value,
+        role: $("trafficRole").value,
+        choice: $("trafficChoice").value.trim()
+      });
+      clearFields(["trafficConflict","trafficChoice"]);
+      persist();
+      showToast("Decisión guardada");
+    });
+
+    $("saveObserverBtn").addEventListener("click", () => {
+      const facts = $("observerFacts").value.trim();
+      if (!facts) return showToast("Describe primero los hechos");
+
+      state.observers.unshift({
+        id: Date.now(), date: today(), facts,
+        story: $("observerStory").value.trim(),
+        emotion: $("observerEmotion").value.trim(),
+        others: $("observerOthers").value.trim(),
+        phrase: $("observerPhrase").value.trim()
+      });
+      clearFields(["observerFacts","observerStory","observerEmotion","observerOthers","observerPhrase"]);
+      persist();
+      showToast("Observación guardada");
+    });
+
+    $("buildDistanceBtn").addEventListener("click", () => {
+      const thought = $("distanceThought").value.trim();
+      $("distanceResult").textContent = thought
+        ? `Estoy teniendo el pensamiento de que ${thought.charAt(0).toLowerCase() + thought.slice(1)}. Es un pensamiento, no una orden.`
+        : "Escribe un pensamiento.";
+    });
+
+    $("saveDistanceBtn").addEventListener("click", () => {
+      const thought = $("distanceThought").value.trim();
+      if (!thought) return showToast("Escribe primero el pensamiento");
+
+      state.distances.unshift({
+        id: Date.now(), date: today(), thought,
+        defusion: $("distanceResult").textContent,
+        choice: $("distanceChoice").value.trim()
+      });
+      clearFields(["distanceThought","distanceChoice"]);
+      $("distanceResult").textContent = "Escribe un pensamiento.";
+      persist();
+      showToast("Ejercicio guardado");
+    });
+
+    $("saveExitBtn").addEventListener("click", () => {
+      const signal = $("exitSignal").value.trim();
+      if (!signal) return showToast("Describe primero la señal");
+
+      state.exits.unshift({
+        id: Date.now(), date: today(), signal,
+        phrase: $("exitPhrase").value.trim(),
+        place: $("exitPlace").value.trim(),
+        reminder: $("exitReminder").value.trim()
+      });
+      clearFields(["exitSignal","exitPhrase","exitPlace","exitReminder"]);
+      persist();
+      showToast("Plan guardado");
+    });
+
+    $("saveRecordBtn").addEventListener("click", () => {
+      const facts = $("recordFacts").value.trim();
+      if (!facts) return showToast("Describe primero lo ocurrido");
+
+      state.records.unshift({
+        id: Date.now(),
+        date: $("recordDate").value || today(),
+        activation: Number($("activationRange").value),
+        facts,
+        control: $("recordControl").value.trim(),
+        emotion: $("recordEmotion").value.trim(),
+        response: $("recordResponse").value.trim(),
+        alternative: $("recordAlternative").value.trim(),
+        learning: $("recordLearning").value.trim()
+      });
+      clearFields(["recordFacts","recordControl","recordEmotion","recordResponse","recordAlternative","recordLearning"]);
+      persist();
+      showToast("Registro guardado");
+    });
+
+    $("newWeekBtn").addEventListener("click", () => {
+      if (!confirm("¿Iniciar una nueva semana y desmarcar las prácticas?")) return;
+      state.practice.week = today();
+      Object.keys(state.practice.items).forEach((key) => state.practice.items[key] = false);
+      persist();
+      showToast("Nueva semana iniciada");
+    });
+
+    document.querySelectorAll(".progress-check").forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        state.progress[checkbox.id] = checkbox.checked;
+        persist();
+      });
+    });
+
+    $("saveTopicsBtn").addEventListener("click", () => {
+      state.topics = $("sessionTopics").value.trim();
+      persist();
+      showToast("Temas guardados");
+    });
+
+    $("printBtn").addEventListener("click", () => {
+      renderSummary();
+      window.print();
+    });
+
+    $("exportBtn").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify(state, null, 2)], {type:"application/json"});
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `gretta_espacio_seguro_${today()}.json`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(link.href);
+      showToast("Respaldo exportado");
+    });
+
+    $("importFile").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      try {
+        const saved = JSON.parse(await file.text());
+        state = {
+          ...clone(initialState),
+          ...saved,
+          practice: {
+            ...clone(initialState.practice),
+            ...(saved.practice || {}),
+            items: {
+              ...clone(initialState.practice.items),
+              ...((saved.practice || {}).items || {})
+            }
+          },
+          progress: {
+            ...clone(initialState.progress),
+            ...(saved.progress || {})
+          }
+        };
+        persist();
+        showToast("Respaldo importado");
+      } catch (error) {
+        alert("El archivo seleccionado no es un respaldo válido.");
+      }
+      event.target.value = "";
+    });
+
+    $("resetBtn").addEventListener("click", () => {
+      if (!confirm("¿Eliminar todos los datos guardados? Esta acción no se puede deshacer.")) return;
+      state = clone(initialState);
+      persist();
+      showToast("Datos reiniciados");
+    });
+  }
+
+  setupNavigation();
+  setupEvents();
+  renderAll();
+})();
+</script>
+</body>
+</html>

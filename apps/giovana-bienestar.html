@@ -1,0 +1,3063 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#526c63">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Mi bienestar">
+
+  <title>Mi Espacio de Bienestar | Giovana</title>
+
+  <style>
+    :root {
+      --fondo: #f4f7f5;
+      --superficie: #ffffff;
+      --superficie-secundaria: #edf3f0;
+      --texto: #25322e;
+      --texto-secundario: #68766f;
+      --borde: #d5dfda;
+      --primario: #526c63;
+      --primario-oscuro: #3f564e;
+      --primario-claro: #dfeae6;
+      --advertencia: #966b29;
+      --advertencia-fondo: #f8f0e3;
+      --peligro: #9d4b4b;
+      --peligro-fondo: #f8eaea;
+      --correcto: #46745b;
+      --radio: 18px;
+      --sombra: 0 8px 24px rgba(35, 56, 48, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      background: var(--fondo);
+      color: var(--texto);
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    input,
+    textarea,
+    select {
+      font-size: 16px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 96px;
+    }
+
+    .aplicacion {
+      width: 100%;
+      max-width: 1180px;
+      min-height: 100vh;
+      margin: 0 auto;
+    }
+
+    .barra-superior {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding:
+        calc(12px + env(safe-area-inset-top))
+        18px
+        12px;
+      background: rgba(244, 247, 245, 0.96);
+      border-bottom: 1px solid var(--borde);
+      backdrop-filter: blur(12px);
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .logotipo {
+      width: 43px;
+      height: 43px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      background: var(--primario);
+      color: white;
+      font-size: 21px;
+      font-weight: 750;
+    }
+
+    .marca h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .marca p {
+      margin: 2px 0 0;
+      color: var(--texto-secundario);
+      font-size: 13px;
+    }
+
+    .acciones-superiores {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .contenedor {
+      display: grid;
+      grid-template-columns: 230px minmax(0, 1fr);
+      gap: 22px;
+      padding: 22px;
+    }
+
+    .menu-lateral {
+      position: sticky;
+      top: 94px;
+      height: max-content;
+      padding: 12px;
+      background: var(--superficie);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+    }
+
+    .menu-movil {
+      display: none;
+    }
+
+    .boton-menu {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 3px 0;
+      padding: 11px 12px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--texto);
+      text-align: left;
+    }
+
+    .boton-menu:hover {
+      background: var(--superficie-secundaria);
+    }
+
+    .boton-menu.activo {
+      background: var(--primario);
+      color: white;
+    }
+
+    .icono-menu {
+      width: 25px;
+      text-align: center;
+      flex: 0 0 auto;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .vista {
+      display: none;
+    }
+
+    .vista.activa {
+      display: block;
+    }
+
+    .portada {
+      margin-bottom: 18px;
+      padding: 27px;
+      border-radius: 24px;
+      background:
+        linear-gradient(
+          135deg,
+          var(--primario),
+          var(--primario-oscuro)
+        );
+      color: white;
+      box-shadow: var(--sombra);
+    }
+
+    .portada h2 {
+      margin: 9px 0 7px;
+      font-size: 28px;
+    }
+
+    .portada p {
+      max-width: 790px;
+      margin: 0;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .etiqueta-estado {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.14);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .punto-estado {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #d8f0e2;
+    }
+
+    .cuadricula {
+      display: grid;
+      gap: 16px;
+    }
+
+    .dos-columnas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tres-columnas {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .tarjeta {
+      padding: 19px;
+      background: var(--superficie);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+    }
+
+    .tarjeta h2,
+    .tarjeta h3,
+    .tarjeta h4 {
+      margin-top: 0;
+    }
+
+    .tarjeta h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .tarjeta p {
+      color: var(--texto-secundario);
+    }
+
+    .metrica {
+      margin-top: 4px;
+      font-size: 30px;
+      font-weight: 750;
+    }
+
+    .encabezado-seccion {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .encabezado-seccion h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    .encabezado-seccion p {
+      margin: 3px 0 0;
+      color: var(--texto-secundario);
+    }
+
+    .campo {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 650;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      outline: none;
+      background: white;
+      color: var(--texto);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--primario);
+      box-shadow: 0 0 0 3px var(--primario-claro);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--primario);
+    }
+
+    input[type="checkbox"] {
+      accent-color: var(--primario);
+    }
+
+    .ayuda {
+      margin-top: 5px;
+      color: var(--texto-secundario);
+      font-size: 13px;
+    }
+
+    .boton {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 10px 14px;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      background: white;
+      color: var(--texto);
+      font-weight: 650;
+    }
+
+    .boton:hover {
+      background: var(--superficie-secundaria);
+    }
+
+    .boton.primario {
+      border-color: var(--primario);
+      background: var(--primario);
+      color: white;
+    }
+
+    .boton.primario:hover {
+      background: var(--primario-oscuro);
+    }
+
+    .boton.peligro {
+      border-color: #e2c1c1;
+      color: var(--peligro);
+    }
+
+    .boton.pequeno {
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    .rango {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 52px;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .valor-rango {
+      padding: 6px;
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      background: var(--superficie-secundaria);
+      text-align: center;
+      font-weight: 750;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 8px 11px;
+      border: 1px solid var(--borde);
+      border-radius: 999px;
+      background: white;
+      color: var(--texto);
+    }
+
+    .chip.seleccionado {
+      border-color: var(--primario);
+      background: var(--primario);
+      color: white;
+    }
+
+    .aviso {
+      padding: 14px 16px;
+      border-left: 5px solid var(--primario);
+      border-radius: 12px;
+      background: var(--primario-claro);
+    }
+
+    .aviso-advertencia {
+      border-left-color: var(--advertencia);
+      background: var(--advertencia-fondo);
+    }
+
+    .aviso-peligro {
+      border-left-color: var(--peligro);
+      background: var(--peligro-fondo);
+    }
+
+    .separador {
+      height: 1px;
+      margin: 18px 0;
+      background: var(--borde);
+    }
+
+    .lista {
+      display: grid;
+      gap: 10px;
+    }
+
+    .elemento-lista {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      background: white;
+    }
+
+    .elemento-lista strong {
+      display: block;
+    }
+
+    .elemento-lista small {
+      display: block;
+      margin-top: 3px;
+      color: var(--texto-secundario);
+    }
+
+    .sin-registros {
+      padding: 27px;
+      border: 1px dashed var(--borde);
+      border-radius: 14px;
+      color: var(--texto-secundario);
+      text-align: center;
+    }
+
+    .fila-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--borde);
+    }
+
+    .fila-check:last-child {
+      border-bottom: 0;
+    }
+
+    .fila-check input {
+      margin-top: 5px;
+      flex: 0 0 auto;
+    }
+
+    .fila-check label {
+      margin: 0;
+      font-weight: 500;
+    }
+
+    .barra-progreso {
+      height: 10px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e3ebe7;
+    }
+
+    .avance-progreso {
+      width: 0;
+      height: 100%;
+      background: var(--primario);
+      transition: width 0.25s ease;
+    }
+
+    .columna-decision {
+      padding: 14px;
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      background: white;
+    }
+
+    .columna-decision h4 {
+      margin: 0 0 10px;
+    }
+
+    .pie {
+      padding: 24px;
+      color: var(--texto-secundario);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .mensaje {
+      position: fixed;
+      right: 18px;
+      bottom: calc(18px + env(safe-area-inset-bottom));
+      z-index: 60;
+      max-width: calc(100vw - 36px);
+      padding: 11px 14px;
+      border-radius: 12px;
+      background: var(--texto);
+      color: white;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: 0.2s ease;
+    }
+
+    .mensaje.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .solo-impresion {
+      display: none;
+    }
+
+    .margen-superior {
+      margin-top: 16px;
+    }
+
+    ul {
+      padding-left: 22px;
+    }
+
+    @media (max-width: 900px) {
+      .barra-superior {
+        padding-left: 13px;
+        padding-right: 13px;
+      }
+
+      .marca p {
+        display: none;
+      }
+
+      .acciones-superiores .texto-boton {
+        display: none;
+      }
+
+      .contenedor {
+        display: block;
+        padding: 14px;
+      }
+
+      .menu-lateral {
+        display: none;
+      }
+
+      .menu-movil {
+        position: sticky;
+        top: calc(68px + env(safe-area-inset-top));
+        z-index: 25;
+        display: flex;
+        gap: 7px;
+        overflow-x: auto;
+        padding: 9px 13px;
+        border-bottom: 1px solid var(--borde);
+        background: rgba(244, 247, 245, 0.97);
+        scrollbar-width: none;
+      }
+
+      .menu-movil::-webkit-scrollbar {
+        display: none;
+      }
+
+      .menu-movil .boton-menu {
+        width: auto;
+        min-width: max-content;
+        margin: 0;
+        padding: 8px 11px;
+        border: 1px solid var(--borde);
+        background: white;
+      }
+
+      .menu-movil .boton-menu.activo {
+        border-color: var(--primario);
+        background: var(--primario);
+      }
+
+      .dos-columnas,
+      .tres-columnas {
+        grid-template-columns: 1fr;
+      }
+
+      .portada {
+        padding: 22px;
+      }
+
+      .portada h2 {
+        font-size: 24px;
+      }
+
+      .encabezado-seccion {
+        display: block;
+      }
+
+      .encabezado-seccion .boton {
+        margin-top: 10px;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .marca h1 {
+        max-width: 160px;
+        font-size: 16px;
+      }
+
+      .logotipo {
+        width: 39px;
+        height: 39px;
+      }
+
+      .tarjeta {
+        padding: 16px;
+      }
+
+      .elemento-lista {
+        display: block;
+      }
+
+      .elemento-lista .boton {
+        margin-top: 10px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .barra-superior,
+      .menu-lateral,
+      .menu-movil,
+      .no-imprimir,
+      .pie {
+        display: none !important;
+      }
+
+      .contenedor {
+        display: block;
+        padding: 0;
+      }
+
+      .vista {
+        display: none !important;
+      }
+
+      #vistaResumen {
+        display: block !important;
+      }
+
+      .tarjeta {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      .solo-impresion {
+        display: block;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="aplicacion">
+
+    <header class="barra-superior">
+
+      <div class="marca">
+        <div class="logotipo">G</div>
+
+        <div>
+          <h1>Mi Espacio de Bienestar</h1>
+          <p>Herramienta personal de Giovana</p>
+        </div>
+      </div>
+
+      <div class="acciones-superiores">
+
+        <button class="boton pequeno" id="botonExportar">
+          ↓
+          <span class="texto-boton">Exportar</span>
+        </button>
+
+        <label class="boton pequeno" for="archivoImportar">
+          ↑
+          <span class="texto-boton">Importar</span>
+        </label>
+
+        <input
+          type="file"
+          id="archivoImportar"
+          accept=".json,application/json"
+          hidden
+        >
+
+        <button class="boton pequeno peligro" id="botonReiniciar">
+          ↺
+          <span class="texto-boton">Reiniciar</span>
+        </button>
+
+      </div>
+    </header>
+
+    <nav class="menu-movil" aria-label="Navegación móvil"></nav>
+
+    <div class="contenedor">
+
+      <aside class="menu-lateral">
+
+        <button class="boton-menu activo" data-vista="vistaInicio">
+          <span class="icono-menu">⌂</span>
+          Inicio
+        </button>
+
+        <button class="boton-menu" data-vista="vistaCheckin">
+          <span class="icono-menu">◉</span>
+          Check-in diario
+        </button>
+
+        <button class="boton-menu" data-vista="vistaSituaciones">
+          <span class="icono-menu">📝</span>
+          Registro de situaciones
+        </button>
+
+        <button class="boton-menu" data-vista="vistaLimites">
+          <span class="icono-menu">♡</span>
+          Necesidades y límites
+        </button>
+
+        <button class="boton-menu" data-vista="vistaAutocuidado">
+          <span class="icono-menu">☀</span>
+          Autocuidado
+        </button>
+
+        <button class="boton-menu" data-vista="vistaDecisiones">
+          <span class="icono-menu">⚖</span>
+          Claridad de decisiones
+        </button>
+
+        <button class="boton-menu" data-vista="vistaProgreso">
+          <span class="icono-menu">↗</span>
+          Progreso
+        </button>
+
+        <button class="boton-menu" data-vista="vistaResumen">
+          <span class="icono-menu">▤</span>
+          Resumen para sesión
+        </button>
+
+      </aside>
+
+      <main>
+
+        <!-- INICIO -->
+
+        <section class="vista activa" id="vistaInicio">
+
+          <div class="portada">
+
+            <span class="etiqueta-estado">
+              <span class="punto-estado"></span>
+              Información almacenada en este dispositivo
+            </span>
+
+            <h2>Hola, Giovana</h2>
+
+            <p>
+              Este espacio no busca que tomes decisiones apresuradas.
+              Su propósito es ayudarte a observar lo que sientes,
+              recuperar energía, reconocer tus necesidades y actuar
+              con mayor claridad.
+            </p>
+
+          </div>
+
+          <div class="cuadricula tres-columnas">
+
+            <div class="tarjeta">
+              <p>Último bienestar</p>
+              <div class="metrica" id="inicioBienestar">—</div>
+              <p>Escala de 0 a 10</p>
+            </div>
+
+            <div class="tarjeta">
+              <p>Registros realizados</p>
+              <div class="metrica" id="inicioRegistros">0</div>
+              <p>Check-ins y situaciones</p>
+            </div>
+
+            <div class="tarjeta">
+              <p>Autocuidado semanal</p>
+              <div class="metrica" id="inicioAutocuidado">0%</div>
+              <p>Acciones completadas</p>
+            </div>
+
+          </div>
+
+          <div class="cuadricula dos-columnas margen-superior">
+
+            <div class="tarjeta">
+
+              <h3>Tu foco de esta semana</h3>
+
+              <div class="campo">
+
+                <label for="focoSemanal">
+                  ¿Qué necesitas cuidar especialmente?
+                </label>
+
+                <textarea
+                  id="focoSemanal"
+                  placeholder="Ejemplo: descansar sin sentir culpa, expresar una necesidad concreta o recuperar una actividad personal."
+                ></textarea>
+
+              </div>
+
+              <button class="boton primario" id="guardarFoco">
+                Guardar foco
+              </button>
+
+            </div>
+
+            <div class="tarjeta">
+
+              <h3>Recordatorio terapéutico</h3>
+
+              <div class="aviso">
+                La tranquilidad no depende de controlar todo. También
+                puede construirse identificando lo que necesitas,
+                estableciendo límites claros y aceptando qué aspectos
+                no están bajo tu responsabilidad.
+              </div>
+
+              <div class="separador"></div>
+
+              <p>
+                <strong>Pregunta guía:</strong>
+                ¿Estoy actuando desde mis valores o únicamente tratando
+                de evitar conflicto, culpa o incertidumbre?
+              </p>
+
+            </div>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Acceso rápido</h3>
+
+            <p>Selecciona lo que necesitas trabajar ahora.</p>
+
+            <div class="chips">
+
+              <button class="chip acceso-rapido" data-ir="vistaCheckin">
+                Registrar cómo me siento
+              </button>
+
+              <button class="chip acceso-rapido" data-ir="vistaSituaciones">
+                Analizar una situación
+              </button>
+
+              <button class="chip acceso-rapido" data-ir="vistaLimites">
+                Preparar un límite
+              </button>
+
+              <button class="chip acceso-rapido" data-ir="vistaAutocuidado">
+                Planificar autocuidado
+              </button>
+
+              <button class="chip acceso-rapido" data-ir="vistaResumen">
+                Preparar mi sesión
+              </button>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- CHECK-IN -->
+
+        <section class="vista" id="vistaCheckin">
+
+          <div class="encabezado-seccion">
+            <div>
+              <h2>Check-in diario</h2>
+              <p>
+                Un registro breve para observar tendencias sin juzgarte.
+              </p>
+            </div>
+          </div>
+
+          <div class="cuadricula dos-columnas">
+
+            <div class="tarjeta">
+
+              <div class="campo">
+
+                <label for="fechaCheckin">Fecha</label>
+
+                <input type="date" id="fechaCheckin">
+
+              </div>
+
+              <div class="campo">
+
+                <label for="rangoBienestar">
+                  Bienestar general
+                </label>
+
+                <div class="rango">
+
+                  <input
+                    type="range"
+                    id="rangoBienestar"
+                    min="0"
+                    max="10"
+                    value="5"
+                  >
+
+                  <div class="valor-rango" id="valorBienestar">5</div>
+
+                </div>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="rangoCansancio">
+                  Cansancio físico
+                </label>
+
+                <div class="rango">
+
+                  <input
+                    type="range"
+                    id="rangoCansancio"
+                    min="0"
+                    max="10"
+                    value="5"
+                  >
+
+                  <div class="valor-rango" id="valorCansancio">5</div>
+
+                </div>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="rangoTension">
+                  Tensión emocional
+                </label>
+
+                <div class="rango">
+
+                  <input
+                    type="range"
+                    id="rangoTension"
+                    min="0"
+                    max="10"
+                    value="5"
+                  >
+
+                  <div class="valor-rango" id="valorTension">5</div>
+
+                </div>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="rangoConexion">
+                  Conexión conmigo misma
+                </label>
+
+                <div class="rango">
+
+                  <input
+                    type="range"
+                    id="rangoConexion"
+                    min="0"
+                    max="10"
+                    value="5"
+                  >
+
+                  <div class="valor-rango" id="valorConexion">5</div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="tarjeta">
+
+              <div class="campo">
+
+                <label>Emociones principales</label>
+
+                <div class="chips" id="emociones">
+
+                  <button type="button" class="chip">Tristeza</button>
+                  <button type="button" class="chip">Cansancio</button>
+                  <button type="button" class="chip">Preocupación</button>
+                  <button type="button" class="chip">Calma</button>
+                  <button type="button" class="chip">Enojo</button>
+                  <button type="button" class="chip">Culpa</button>
+                  <button type="button" class="chip">Alivio</button>
+                  <button type="button" class="chip">Esperanza</button>
+                  <button type="button" class="chip">Soledad</button>
+                  <button type="button" class="chip">Confusión</button>
+
+                </div>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="necesidadHoy">
+                  ¿Qué necesito hoy?
+                </label>
+
+                <textarea
+                  id="necesidadHoy"
+                  placeholder="Descanso, apoyo, espacio, conversación, tranquilidad, claridad, atención médica..."
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="accionPequena">
+                  Una acción pequeña y realista
+                </label>
+
+                <textarea
+                  id="accionPequena"
+                  placeholder="Ejemplo: caminar 10 minutos, pedir una hora de tranquilidad, llamar a alguien o descansar."
+                ></textarea>
+
+              </div>
+
+              <button class="boton primario" id="guardarCheckin">
+                Guardar check-in
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Registros recientes</h3>
+
+            <div class="lista" id="listaCheckins"></div>
+
+          </div>
+
+        </section>
+
+        <!-- REGISTRO FUNCIONAL -->
+
+        <section class="vista" id="vistaSituaciones">
+
+          <div class="encabezado-seccion">
+            <div>
+              <h2>Registro de situaciones</h2>
+              <p>
+                Diferencia hechos, interpretaciones, emociones,
+                necesidades y respuestas.
+              </p>
+            </div>
+          </div>
+
+          <div class="aviso margen-superior">
+            Evitar una discusión puede aliviarte a corto plazo. Este
+            registro permite observar si esa respuesta también aumenta
+            la distancia, el agotamiento o la frustración a largo plazo.
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <div class="cuadricula dos-columnas">
+
+              <div class="campo">
+
+                <label for="fechaSituacion">Fecha</label>
+
+                <input type="date" id="fechaSituacion">
+
+              </div>
+
+              <div class="campo">
+
+                <label for="contextoSituacion">Contexto</label>
+
+                <input
+                  type="text"
+                  id="contextoSituacion"
+                  placeholder="Casa, conversación, fin de semana, trabajo..."
+                >
+
+              </div>
+
+            </div>
+
+            <div class="campo">
+
+              <label for="hechosSituacion">
+                1. Hechos observables
+              </label>
+
+              <textarea
+                id="hechosSituacion"
+                placeholder="Describe únicamente lo que una cámara podría registrar, sin interpretar intenciones."
+              ></textarea>
+
+            </div>
+
+            <div class="campo">
+
+              <label for="pensamientosSituacion">
+                2. Lo que pensé o interpreté
+              </label>
+
+              <textarea
+                id="pensamientosSituacion"
+                placeholder="Ejemplo: Otra vez todo depende de mí."
+              ></textarea>
+
+            </div>
+
+            <div class="campo">
+
+              <label for="emocionesSituacion">
+                3. Emociones y sensaciones
+              </label>
+
+              <textarea
+                id="emocionesSituacion"
+                placeholder="Emoción, intensidad de 0 a 10 y sensación corporal."
+              ></textarea>
+
+            </div>
+
+            <div class="campo">
+
+              <label for="necesidadSituacion">
+                4. Necesidad no atendida
+              </label>
+
+              <textarea
+                id="necesidadSituacion"
+                placeholder="Respeto, descanso, previsibilidad, afecto, cooperación, seguridad, espacio..."
+              ></textarea>
+
+            </div>
+
+            <div class="campo">
+
+              <label for="respuestaSituacion">
+                5. ¿Qué hice?
+              </label>
+
+              <textarea
+                id="respuestaSituacion"
+                placeholder="Me retiré, ordené, discutí, guardé silencio, pedí algo o busqué apoyo."
+              ></textarea>
+
+            </div>
+
+            <div class="cuadricula dos-columnas">
+
+              <div class="campo">
+
+                <label for="cortoPlazoSituacion">
+                  Efecto a corto plazo
+                </label>
+
+                <textarea
+                  id="cortoPlazoSituacion"
+                  placeholder="¿Qué alivió, evitó o disminuyó?"
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="largoPlazoSituacion">
+                  Efecto a largo plazo
+                </label>
+
+                <textarea
+                  id="largoPlazoSituacion"
+                  placeholder="¿Qué mantuvo, empeoró o hizo posible?"
+                ></textarea>
+
+              </div>
+
+            </div>
+
+            <div class="campo">
+
+              <label for="alternativaSituacion">
+                6. Respuesta alternativa posible
+              </label>
+
+              <textarea
+                id="alternativaSituacion"
+                placeholder="Una acción más coherente con mis valores, necesidades y límites."
+              ></textarea>
+
+            </div>
+
+            <button class="boton primario" id="guardarSituacion">
+              Guardar situación
+            </button>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Situaciones registradas</h3>
+
+            <div class="lista" id="listaSituaciones"></div>
+
+          </div>
+
+        </section>
+
+        <!-- LÍMITES -->
+
+        <section class="vista" id="vistaLimites">
+
+          <div class="encabezado-seccion">
+            <div>
+              <h2>Necesidades y límites</h2>
+              <p>
+                Claridad antes de conversar: qué necesito, qué pediré
+                y qué haré si la situación no cambia.
+              </p>
+            </div>
+          </div>
+
+          <div class="cuadricula dos-columnas">
+
+            <div class="tarjeta">
+
+              <h3>Preparar una conversación</h3>
+
+              <div class="campo">
+
+                <label for="situacionLimite">
+                  Situación concreta
+                </label>
+
+                <textarea
+                  id="situacionLimite"
+                  placeholder="¿Qué conducta o situación necesitas abordar?"
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="impactoLimite">
+                  Impacto en mí
+                </label>
+
+                <textarea
+                  id="impactoLimite"
+                  placeholder="¿Cómo afecta tu descanso, seguridad, salud o conexión emocional?"
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="necesidadLimite">
+                  Necesidad legítima
+                </label>
+
+                <textarea
+                  id="necesidadLimite"
+                  placeholder="Necesito tranquilidad, respeto, cooperación, previsibilidad..."
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="peticionLimite">
+                  Petición específica y observable
+                </label>
+
+                <textarea
+                  id="peticionLimite"
+                  placeholder="Una conducta concreta que la otra persona pueda realizar."
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="accionLimite">
+                  Mi límite: ¿qué haré para cuidarme?
+                </label>
+
+                <textarea
+                  id="accionLimite"
+                  placeholder="No es un castigo ni una amenaza. Debe ser una acción que dependa de ti."
+                ></textarea>
+
+              </div>
+
+              <button class="boton primario" id="construirMensaje">
+                Construir mensaje
+              </button>
+
+            </div>
+
+            <div class="tarjeta">
+
+              <h3>Guion asertivo</h3>
+
+              <div class="aviso" id="mensajeLimite">
+                Completa los campos para generar un mensaje.
+              </div>
+
+              <div class="separador"></div>
+
+              <p><strong>Verificación rápida</strong></p>
+
+              <div class="fila-check">
+                <input type="checkbox" id="verificacion1">
+                <label for="verificacion1">
+                  Describe una conducta concreta y no etiqueta a la persona.
+                </label>
+              </div>
+
+              <div class="fila-check">
+                <input type="checkbox" id="verificacion2">
+                <label for="verificacion2">
+                  Expresa el impacto sin exageraciones ni amenazas.
+                </label>
+              </div>
+
+              <div class="fila-check">
+                <input type="checkbox" id="verificacion3">
+                <label for="verificacion3">
+                  La petición es específica y observable.
+                </label>
+              </div>
+
+              <div class="fila-check">
+                <input type="checkbox" id="verificacion4">
+                <label for="verificacion4">
+                  El límite depende de una acción propia y protege mi bienestar.
+                </label>
+              </div>
+
+              <div class="fila-check">
+                <input type="checkbox" id="verificacion5">
+                <label for="verificacion5">
+                  Elegiré un momento seguro y adecuado para conversar.
+                </label>
+              </div>
+
+              <button
+                class="boton margen-superior"
+                id="guardarLimite"
+              >
+                Guardar preparación
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Preparaciones guardadas</h3>
+
+            <div class="lista" id="listaLimites"></div>
+
+          </div>
+
+        </section>
+
+        <!-- AUTOCUIDADO -->
+
+        <section class="vista" id="vistaAutocuidado">
+
+          <div class="encabezado-seccion">
+
+            <div>
+              <h2>Autocuidado realista</h2>
+              <p>
+                Recuperar energía y autonomía mediante acciones pequeñas
+                y sostenibles.
+              </p>
+            </div>
+
+            <button class="boton" id="nuevaSemana">
+              Nueva semana
+            </button>
+
+          </div>
+
+          <div class="cuadricula dos-columnas">
+
+            <div class="tarjeta">
+
+              <h3>Plan semanal</h3>
+
+              <div id="listaAutocuidado"></div>
+
+              <div class="separador"></div>
+
+              <div class="barra-progreso">
+                <div
+                  class="avance-progreso"
+                  id="barraAutocuidado"
+                ></div>
+              </div>
+
+              <p class="ayuda" id="textoAutocuidado">
+                0% completado
+              </p>
+
+            </div>
+
+            <div class="tarjeta">
+
+              <h3>Actividad personal significativa</h3>
+
+              <div class="campo">
+
+                <label for="actividadAutocuidado">
+                  ¿Qué actividad quieres recuperar o probar?
+                </label>
+
+                <input
+                  type="text"
+                  id="actividadAutocuidado"
+                  placeholder="Ejemplo: salir con una amiga, leer, nadar o visitar un lugar."
+                >
+
+              </div>
+
+              <div class="campo">
+
+                <label for="momentoAutocuidado">
+                  ¿Cuándo y durante cuánto tiempo?
+                </label>
+
+                <input
+                  type="text"
+                  id="momentoAutocuidado"
+                  placeholder="Ejemplo: sábado, durante 40 minutos."
+                >
+
+              </div>
+
+              <div class="campo">
+
+                <label for="obstaculoAutocuidado">
+                  Obstáculo probable
+                </label>
+
+                <textarea
+                  id="obstaculoAutocuidado"
+                  placeholder="Cansancio, culpa, trabajo, dolor o cambios en casa."
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="planAutocuidado">
+                  Plan de respuesta
+                </label>
+
+                <textarea
+                  id="planAutocuidado"
+                  placeholder="Si aparece el obstáculo, entonces haré..."
+                ></textarea>
+
+              </div>
+
+              <button
+                class="boton primario"
+                id="guardarPlanAutocuidado"
+              >
+                Guardar actividad
+              </button>
+
+              <div
+                class="aviso margen-superior"
+                id="planAutocuidadoGuardado"
+                style="display: none;"
+              ></div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- DECISIONES -->
+
+        <section class="vista" id="vistaDecisiones">
+
+          <div class="encabezado-seccion">
+            <div>
+              <h2>Claridad de decisiones</h2>
+              <p>
+                Analiza escenarios sin obligarte a decidir antes de
+                estar preparada.
+              </p>
+            </div>
+          </div>
+
+          <div class="aviso aviso-advertencia">
+            Esta herramienta no decide por ti. Su función es separar
+            valores, necesidades, temores, condiciones reales y
+            responsabilidades.
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <div class="campo">
+
+              <label for="preguntaDecision">
+                Pregunta que necesito aclarar
+              </label>
+
+              <input
+                type="text"
+                id="preguntaDecision"
+                placeholder="Ejemplo: ¿Qué condiciones necesitaría para continuar intentando reconstruir la relación?"
+              >
+
+            </div>
+
+            <div class="cuadricula tres-columnas">
+
+              <div class="columna-decision">
+
+                <h4>Escenario A: continuar igual</h4>
+
+                <textarea
+                  id="beneficiosA"
+                  placeholder="Posibles beneficios"
+                ></textarea>
+
+                <textarea
+                  id="costosA"
+                  placeholder="Costos o riesgos"
+                  class="margen-superior"
+                ></textarea>
+
+              </div>
+
+              <div class="columna-decision">
+
+                <h4>Escenario B: intentar cambios con condiciones</h4>
+
+                <textarea
+                  id="beneficiosB"
+                  placeholder="Posibles beneficios"
+                ></textarea>
+
+                <textarea
+                  id="costosB"
+                  placeholder="Costos o riesgos"
+                  class="margen-superior"
+                ></textarea>
+
+              </div>
+
+              <div class="columna-decision">
+
+                <h4>Escenario C: tomar distancia o separarme</h4>
+
+                <textarea
+                  id="beneficiosC"
+                  placeholder="Posibles beneficios"
+                ></textarea>
+
+                <textarea
+                  id="costosC"
+                  placeholder="Costos o riesgos"
+                  class="margen-superior"
+                ></textarea>
+
+              </div>
+
+            </div>
+
+            <div class="separador"></div>
+
+            <div class="cuadricula dos-columnas">
+
+              <div class="campo">
+
+                <label for="valoresDecision">
+                  Valores que quiero proteger
+                </label>
+
+                <textarea
+                  id="valoresDecision"
+                  placeholder="Salud, dignidad, tranquilidad, compromiso, familia, autonomía..."
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="condicionesDecision">
+                  Condiciones mínimas necesarias
+                </label>
+
+                <textarea
+                  id="condicionesDecision"
+                  placeholder="Cambios observables, seguridad, corresponsabilidad, tratamiento o acuerdos."
+                ></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="controlDecision">
+                  Lo que sí depende de mí
+                </label>
+
+                <textarea id="controlDecision"></textarea>
+
+              </div>
+
+              <div class="campo">
+
+                <label for="noControlDecision">
+                  Lo que no depende de mí
+                </label>
+
+                <textarea id="noControlDecision"></textarea>
+
+              </div>
+
+            </div>
+
+            <button class="boton primario" id="guardarDecision">
+              Guardar análisis
+            </button>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Análisis guardados</h3>
+
+            <div class="lista" id="listaDecisiones"></div>
+
+          </div>
+
+        </section>
+
+        <!-- PROGRESO -->
+
+        <section class="vista" id="vistaProgreso">
+
+          <div class="encabezado-seccion">
+            <div>
+              <h2>Progreso</h2>
+              <p>Observa tendencias, no perfección.</p>
+            </div>
+          </div>
+
+          <div class="cuadricula tres-columnas">
+
+            <div class="tarjeta">
+              <p>Promedio de bienestar</p>
+              <div class="metrica" id="promedioBienestar">—</div>
+            </div>
+
+            <div class="tarjeta">
+              <p>Promedio de tensión</p>
+              <div class="metrica" id="promedioTension">—</div>
+            </div>
+
+            <div class="tarjeta">
+              <p>Conexión personal promedio</p>
+              <div class="metrica" id="promedioConexion">—</div>
+            </div>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Tendencia de los últimos registros</h3>
+
+            <div class="lista" id="listaTendencias"></div>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Indicadores de avance</h3>
+
+            <div class="fila-check">
+              <input type="checkbox" class="indicador-progreso" id="progreso1">
+              <label for="progreso1">
+                Identifico con mayor rapidez lo que siento y necesito.
+              </label>
+            </div>
+
+            <div class="fila-check">
+              <input type="checkbox" class="indicador-progreso" id="progreso2">
+              <label for="progreso2">
+                Diferencio mi responsabilidad de la responsabilidad de otras personas.
+              </label>
+            </div>
+
+            <div class="fila-check">
+              <input type="checkbox" class="indicador-progreso" id="progreso3">
+              <label for="progreso3">
+                Realizo actividades personales sin depender del estado de ánimo o conducta de mi pareja.
+              </label>
+            </div>
+
+            <div class="fila-check">
+              <input type="checkbox" class="indicador-progreso" id="progreso4">
+              <label for="progreso4">
+                Expreso necesidades concretas con menos culpa o temor.
+              </label>
+            </div>
+
+            <div class="fila-check">
+              <input type="checkbox" class="indicador-progreso" id="progreso5">
+              <label for="progreso5">
+                Tolero cierto desorden o incertidumbre sin intentar controlarlo todo.
+              </label>
+            </div>
+
+            <div class="fila-check">
+              <input type="checkbox" class="indicador-progreso" id="progreso6">
+              <label for="progreso6">
+                Mis decisiones se orientan más por mis valores que por agotamiento, miedo o presión.
+              </label>
+            </div>
+
+          </div>
+
+        </section>
+
+        <!-- RESUMEN -->
+
+        <section class="vista" id="vistaResumen">
+
+          <div class="solo-impresion">
+            <h1>Resumen personal para sesión terapéutica</h1>
+          </div>
+
+          <div class="encabezado-seccion no-imprimir">
+
+            <div>
+              <h2>Resumen para sesión</h2>
+              <p>Una síntesis breve para revisar durante la consulta.</p>
+            </div>
+
+            <button class="boton primario" id="imprimirResumen">
+              Imprimir o guardar PDF
+            </button>
+
+          </div>
+
+          <div class="cuadricula dos-columnas">
+
+            <div class="tarjeta">
+              <h3>Estado reciente</h3>
+              <div id="resumenEstado"></div>
+            </div>
+
+            <div class="tarjeta">
+              <h3>Foco semanal</h3>
+              <p id="resumenFoco">Sin registrar.</p>
+            </div>
+
+            <div class="tarjeta">
+              <h3>Necesidades registradas</h3>
+              <div id="resumenNecesidades"></div>
+            </div>
+
+            <div class="tarjeta">
+              <h3>Patrones observados</h3>
+              <div id="resumenPatrones"></div>
+            </div>
+
+            <div class="tarjeta">
+              <h3>Acciones de autocuidado</h3>
+              <div id="resumenAutocuidado"></div>
+            </div>
+
+            <div class="tarjeta">
+
+              <h3>Temas para conversar en sesión</h3>
+
+              <textarea
+                id="temasSesion"
+                placeholder="Escribe aquí aquello que no quieres olvidar durante la sesión."
+              ></textarea>
+
+              <button
+                class="boton no-imprimir margen-superior"
+                id="guardarTemasSesion"
+              >
+                Guardar
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="tarjeta margen-superior">
+
+            <h3>Seguridad y atención prioritaria</h3>
+
+            <div class="aviso aviso-peligro">
+              Si una situación implica violencia, amenazas, coerción,
+              conducción bajo efectos del alcohol o riesgo físico,
+              prioriza tu seguridad y busca ayuda profesional o apoyo
+              de una persona de confianza. Esta miniapp no sustituye
+              servicios de emergencia.
+            </div>
+
+          </div>
+
+        </section>
+
+        <footer class="pie">
+          Herramienta de apoyo psicoterapéutico. No establece
+          diagnósticos ni sustituye la atención psicológica o médica.
+        </footer>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <div
+    class="mensaje"
+    id="mensajeTemporal"
+    role="status"
+    aria-live="polite"
+  ></div>
+
+  <script>
+    "use strict";
+
+    const CLAVE_ALMACENAMIENTO = "giovana_bienestar_version_1";
+
+    const estadoInicial = {
+      focoSemanal: "",
+      checkins: [],
+      situaciones: [],
+      limites: [],
+      autocuidado: {
+        inicioSemana: obtenerFechaActual(),
+        tareas: {
+          descanso: false,
+          pausa: false,
+          actividad: false,
+          apoyo: false,
+          salud: false,
+          movimiento: false
+        },
+        plan: null
+      },
+      decisiones: [],
+      progreso: {
+        progreso1: false,
+        progreso2: false,
+        progreso3: false,
+        progreso4: false,
+        progreso5: false,
+        progreso6: false
+      },
+      temasSesion: ""
+    };
+
+    let estado = cargarEstado();
+
+    function obtenerFechaActual() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function copiarObjeto(objeto) {
+      return JSON.parse(JSON.stringify(objeto));
+    }
+
+    function cargarEstado() {
+      try {
+        const contenido = localStorage.getItem(CLAVE_ALMACENAMIENTO);
+
+        if (!contenido) {
+          return copiarObjeto(estadoInicial);
+        }
+
+        const guardado = JSON.parse(contenido);
+
+        return {
+          ...copiarObjeto(estadoInicial),
+          ...guardado,
+          autocuidado: {
+            ...copiarObjeto(estadoInicial.autocuidado),
+            ...(guardado.autocuidado || {}),
+            tareas: {
+              ...copiarObjeto(estadoInicial.autocuidado.tareas),
+              ...((guardado.autocuidado || {}).tareas || {})
+            }
+          },
+          progreso: {
+            ...copiarObjeto(estadoInicial.progreso),
+            ...(guardado.progreso || {})
+          }
+        };
+      } catch (error) {
+        return copiarObjeto(estadoInicial);
+      }
+    }
+
+    function guardarEstado() {
+      localStorage.setItem(
+        CLAVE_ALMACENAMIENTO,
+        JSON.stringify(estado)
+      );
+
+      actualizarAplicacion();
+    }
+
+    function mostrarMensaje(texto) {
+      const mensaje = document.getElementById("mensajeTemporal");
+
+      mensaje.textContent = texto;
+      mensaje.classList.add("visible");
+
+      clearTimeout(window.temporizadorMensaje);
+
+      window.temporizadorMensaje = setTimeout(() => {
+        mensaje.classList.remove("visible");
+      }, 2200);
+    }
+
+    function escaparHTML(valor = "") {
+      return String(valor).replace(
+        /[&<>"']/g,
+        caracter => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#039;"
+        })[caracter]
+      );
+    }
+
+    function promedio(elementos, propiedad) {
+      if (!elementos.length) {
+        return null;
+      }
+
+      const suma = elementos.reduce(
+        (acumulado, elemento) =>
+          acumulado + (Number(elemento[propiedad]) || 0),
+        0
+      );
+
+      return (suma / elementos.length).toFixed(1);
+    }
+
+    function navegarA(idVista) {
+      document.querySelectorAll(".vista").forEach(vista => {
+        vista.classList.toggle("activa", vista.id === idVista);
+      });
+
+      document.querySelectorAll(".boton-menu").forEach(boton => {
+        boton.classList.toggle(
+          "activo",
+          boton.dataset.vista === idVista
+        );
+      });
+
+      if (idVista === "vistaResumen") {
+        actualizarResumen();
+      }
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    const botonesMenuOriginales = [
+      ...document.querySelectorAll(".menu-lateral .boton-menu")
+    ];
+
+    const menuMovil = document.querySelector(".menu-movil");
+
+    botonesMenuOriginales.forEach(boton => {
+      const copia = boton.cloneNode(true);
+      menuMovil.appendChild(copia);
+    });
+
+    document.querySelectorAll(".boton-menu").forEach(boton => {
+      boton.addEventListener("click", () => {
+        navegarA(boton.dataset.vista);
+      });
+    });
+
+    document.querySelectorAll(".acceso-rapido").forEach(boton => {
+      boton.addEventListener("click", () => {
+        navegarA(boton.dataset.ir);
+      });
+    });
+
+    document.getElementById("fechaCheckin").value =
+      obtenerFechaActual();
+
+    document.getElementById("fechaSituacion").value =
+      obtenerFechaActual();
+
+    const configuracionRangos = [
+      ["rangoBienestar", "valorBienestar"],
+      ["rangoCansancio", "valorCansancio"],
+      ["rangoTension", "valorTension"],
+      ["rangoConexion", "valorConexion"]
+    ];
+
+    configuracionRangos.forEach(([idRango, idValor]) => {
+      const rango = document.getElementById(idRango);
+      const valor = document.getElementById(idValor);
+
+      rango.addEventListener("input", () => {
+        valor.textContent = rango.value;
+      });
+    });
+
+    document.querySelectorAll("#emociones .chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        chip.classList.toggle("seleccionado");
+      });
+    });
+
+    document
+      .getElementById("guardarFoco")
+      .addEventListener("click", () => {
+        estado.focoSemanal =
+          document.getElementById("focoSemanal").value.trim();
+
+        guardarEstado();
+        mostrarMensaje("Foco semanal guardado");
+      });
+
+    document
+      .getElementById("guardarCheckin")
+      .addEventListener("click", () => {
+        const emociones = [
+          ...document.querySelectorAll(
+            "#emociones .chip.seleccionado"
+          )
+        ].map(elemento => elemento.textContent.trim());
+
+        const registro = {
+          id: Date.now(),
+          fecha:
+            document.getElementById("fechaCheckin").value ||
+            obtenerFechaActual(),
+          bienestar:
+            Number(
+              document.getElementById("rangoBienestar").value
+            ),
+          cansancio:
+            Number(
+              document.getElementById("rangoCansancio").value
+            ),
+          tension:
+            Number(
+              document.getElementById("rangoTension").value
+            ),
+          conexion:
+            Number(
+              document.getElementById("rangoConexion").value
+            ),
+          emociones,
+          necesidad:
+            document.getElementById("necesidadHoy").value.trim(),
+          accion:
+            document.getElementById("accionPequena").value.trim()
+        };
+
+        estado.checkins.unshift(registro);
+
+        document.getElementById("necesidadHoy").value = "";
+        document.getElementById("accionPequena").value = "";
+
+        document
+          .querySelectorAll("#emociones .chip.seleccionado")
+          .forEach(chip => {
+            chip.classList.remove("seleccionado");
+          });
+
+        guardarEstado();
+        mostrarMensaje("Check-in guardado");
+      });
+
+    document
+      .getElementById("guardarSituacion")
+      .addEventListener("click", () => {
+        const hechos =
+          document.getElementById("hechosSituacion").value.trim();
+
+        if (!hechos) {
+          mostrarMensaje(
+            "Describe al menos los hechos observables"
+          );
+          return;
+        }
+
+        const registro = {
+          id: Date.now(),
+          fecha:
+            document.getElementById("fechaSituacion").value ||
+            obtenerFechaActual(),
+          contexto:
+            document.getElementById("contextoSituacion").value.trim(),
+          hechos,
+          pensamientos:
+            document
+              .getElementById("pensamientosSituacion")
+              .value.trim(),
+          emociones:
+            document
+              .getElementById("emocionesSituacion")
+              .value.trim(),
+          necesidad:
+            document
+              .getElementById("necesidadSituacion")
+              .value.trim(),
+          respuesta:
+            document
+              .getElementById("respuestaSituacion")
+              .value.trim(),
+          cortoPlazo:
+            document
+              .getElementById("cortoPlazoSituacion")
+              .value.trim(),
+          largoPlazo:
+            document
+              .getElementById("largoPlazoSituacion")
+              .value.trim(),
+          alternativa:
+            document
+              .getElementById("alternativaSituacion")
+              .value.trim()
+        };
+
+        estado.situaciones.unshift(registro);
+
+        [
+          "contextoSituacion",
+          "hechosSituacion",
+          "pensamientosSituacion",
+          "emocionesSituacion",
+          "necesidadSituacion",
+          "respuestaSituacion",
+          "cortoPlazoSituacion",
+          "largoPlazoSituacion",
+          "alternativaSituacion"
+        ].forEach(id => {
+          document.getElementById(id).value = "";
+        });
+
+        guardarEstado();
+        mostrarMensaje("Situación guardada");
+      });
+
+    document
+      .getElementById("construirMensaje")
+      .addEventListener("click", () => {
+        const situacion =
+          document.getElementById("situacionLimite").value.trim();
+
+        const impacto =
+          document.getElementById("impactoLimite").value.trim();
+
+        const necesidad =
+          document.getElementById("necesidadLimite").value.trim();
+
+        const peticion =
+          document.getElementById("peticionLimite").value.trim();
+
+        const accion =
+          document.getElementById("accionLimite").value.trim();
+
+        const mensaje =
+          `Cuando ${situacion || "[ocurre la situación concreta]"}, ` +
+          `yo me siento afectada porque ` +
+          `${impacto || "[impacto en mí]"}. ` +
+          `Necesito ${necesidad || "[necesidad]"}. ` +
+          `Te pido específicamente ` +
+          `${peticion || "[petición concreta]"}. ` +
+          `Si esto no ocurre, para cuidarme voy a ` +
+          `${accion || "[acción bajo mi control]"}.`;
+
+        document.getElementById("mensajeLimite").textContent =
+          mensaje;
+      });
+
+    document
+      .getElementById("guardarLimite")
+      .addEventListener("click", () => {
+        const situacion =
+          document.getElementById("situacionLimite").value.trim();
+
+        if (!situacion) {
+          mostrarMensaje("Describe primero la situación");
+          return;
+        }
+
+        const registro = {
+          id: Date.now(),
+          fecha: obtenerFechaActual(),
+          situacion,
+          impacto:
+            document.getElementById("impactoLimite").value.trim(),
+          necesidad:
+            document.getElementById("necesidadLimite").value.trim(),
+          peticion:
+            document.getElementById("peticionLimite").value.trim(),
+          accion:
+            document.getElementById("accionLimite").value.trim(),
+          mensaje:
+            document.getElementById("mensajeLimite").textContent
+        };
+
+        estado.limites.unshift(registro);
+
+        guardarEstado();
+        mostrarMensaje("Preparación guardada");
+      });
+
+    const tareasAutocuidado = [
+      [
+        "descanso",
+        "Proteger un periodo de descanso o sueño"
+      ],
+      [
+        "pausa",
+        "Realizar una pausa sin tareas ni obligaciones"
+      ],
+      [
+        "actividad",
+        "Hacer una actividad agradable o significativa"
+      ],
+      [
+        "apoyo",
+        "Contactar con una persona de apoyo"
+      ],
+      [
+        "salud",
+        "Atender una necesidad médica, corporal o de dolor"
+      ],
+      [
+        "movimiento",
+        "Realizar movimiento adecuado a mi condición física"
+      ]
+    ];
+
+    function mostrarTareasAutocuidado() {
+      const contenedor =
+        document.getElementById("listaAutocuidado");
+
+      contenedor.innerHTML = tareasAutocuidado
+        .map(([clave, texto]) => {
+          const marcado =
+            estado.autocuidado.tareas[clave] ? "checked" : "";
+
+          return `
+            <div class="fila-check">
+              <input
+                type="checkbox"
+                id="autocuidado_${clave}"
+                data-autocuidado="${clave}"
+                ${marcado}
+              >
+              <label for="autocuidado_${clave}">
+                ${escaparHTML(texto)}
+              </label>
+            </div>
+          `;
+        })
+        .join("");
+
+      contenedor
+        .querySelectorAll("[data-autocuidado]")
+        .forEach(casilla => {
+          casilla.addEventListener("change", () => {
+            estado.autocuidado.tareas[
+              casilla.dataset.autocuidado
+            ] = casilla.checked;
+
+            guardarEstado();
+          });
+        });
+    }
+
+    document
+      .getElementById("nuevaSemana")
+      .addEventListener("click", () => {
+        const confirmacion = confirm(
+          "¿Deseas iniciar una nueva semana y desmarcar las actividades actuales?"
+        );
+
+        if (!confirmacion) {
+          return;
+        }
+
+        estado.autocuidado.inicioSemana =
+          obtenerFechaActual();
+
+        Object.keys(estado.autocuidado.tareas).forEach(clave => {
+          estado.autocuidado.tareas[clave] = false;
+        });
+
+        guardarEstado();
+        mostrarMensaje("Nueva semana iniciada");
+      });
+
+    document
+      .getElementById("guardarPlanAutocuidado")
+      .addEventListener("click", () => {
+        estado.autocuidado.plan = {
+          actividad:
+            document
+              .getElementById("actividadAutocuidado")
+              .value.trim(),
+          momento:
+            document
+              .getElementById("momentoAutocuidado")
+              .value.trim(),
+          obstaculo:
+            document
+              .getElementById("obstaculoAutocuidado")
+              .value.trim(),
+          respuesta:
+            document
+              .getElementById("planAutocuidado")
+              .value.trim()
+        };
+
+        guardarEstado();
+        mostrarMensaje("Actividad guardada");
+      });
+
+    document
+      .getElementById("guardarDecision")
+      .addEventListener("click", () => {
+        const pregunta =
+          document.getElementById("preguntaDecision").value.trim();
+
+        if (!pregunta) {
+          mostrarMensaje(
+            "Escribe primero la pregunta que deseas aclarar"
+          );
+          return;
+        }
+
+        const registro = {
+          id: Date.now(),
+          fecha: obtenerFechaActual(),
+          pregunta,
+          beneficiosA:
+            document.getElementById("beneficiosA").value.trim(),
+          costosA:
+            document.getElementById("costosA").value.trim(),
+          beneficiosB:
+            document.getElementById("beneficiosB").value.trim(),
+          costosB:
+            document.getElementById("costosB").value.trim(),
+          beneficiosC:
+            document.getElementById("beneficiosC").value.trim(),
+          costosC:
+            document.getElementById("costosC").value.trim(),
+          valores:
+            document.getElementById("valoresDecision").value.trim(),
+          condiciones:
+            document
+              .getElementById("condicionesDecision")
+              .value.trim(),
+          dependeDeMi:
+            document.getElementById("controlDecision").value.trim(),
+          noDependeDeMi:
+            document
+              .getElementById("noControlDecision")
+              .value.trim()
+        };
+
+        estado.decisiones.unshift(registro);
+
+        guardarEstado();
+        mostrarMensaje("Análisis guardado");
+      });
+
+    document
+      .querySelectorAll(".indicador-progreso")
+      .forEach(casilla => {
+        casilla.addEventListener("change", () => {
+          estado.progreso[casilla.id] = casilla.checked;
+          guardarEstado();
+        });
+      });
+
+    document
+      .getElementById("guardarTemasSesion")
+      .addEventListener("click", () => {
+        estado.temasSesion =
+          document.getElementById("temasSesion").value.trim();
+
+        guardarEstado();
+        mostrarMensaje("Temas para la sesión guardados");
+      });
+
+    document
+      .getElementById("imprimirResumen")
+      .addEventListener("click", () => {
+        actualizarResumen();
+        window.print();
+      });
+
+    function eliminarRegistro(tipo, id) {
+      estado[tipo] = estado[tipo].filter(
+        elemento => elemento.id !== id
+      );
+
+      guardarEstado();
+      mostrarMensaje("Registro eliminado");
+    }
+
+    function agregarEventosEliminar() {
+      document
+        .querySelectorAll("[data-eliminar]")
+        .forEach(boton => {
+          boton.addEventListener("click", () => {
+            const confirmacion = confirm(
+              "¿Deseas eliminar este registro?"
+            );
+
+            if (!confirmacion) {
+              return;
+            }
+
+            eliminarRegistro(
+              boton.dataset.eliminar,
+              Number(boton.dataset.id)
+            );
+          });
+        });
+    }
+
+    function actualizarListas() {
+      const listaCheckins =
+        document.getElementById("listaCheckins");
+
+      if (!estado.checkins.length) {
+        listaCheckins.innerHTML = `
+          <div class="sin-registros">
+            Aún no hay check-ins registrados.
+          </div>
+        `;
+      } else {
+        listaCheckins.innerHTML = estado.checkins
+          .slice(0, 10)
+          .map(registro => `
+            <div class="elemento-lista">
+              <div>
+                <strong>
+                  ${escaparHTML(registro.fecha)}
+                  · Bienestar ${registro.bienestar}/10
+                </strong>
+
+                <small>
+                  ${
+                    escaparHTML(
+                      registro.emociones.join(", ")
+                    ) || "Sin emociones seleccionadas"
+                  }
+                  ${
+                    registro.necesidad
+                      ? ` · Necesidad: ${escaparHTML(
+                          registro.necesidad
+                        )}`
+                      : ""
+                  }
+                </small>
+              </div>
+
+              <button
+                class="boton pequeno peligro"
+                data-eliminar="checkins"
+                data-id="${registro.id}"
+              >
+                Eliminar
+              </button>
+            </div>
+          `)
+          .join("");
+      }
+
+      const listaSituaciones =
+        document.getElementById("listaSituaciones");
+
+      if (!estado.situaciones.length) {
+        listaSituaciones.innerHTML = `
+          <div class="sin-registros">
+            Aún no hay situaciones registradas.
+          </div>
+        `;
+      } else {
+        listaSituaciones.innerHTML = estado.situaciones
+          .slice(0, 10)
+          .map(registro => `
+            <div class="elemento-lista">
+              <div>
+                <strong>
+                  ${escaparHTML(registro.fecha)}
+                  · ${escaparHTML(
+                    registro.contexto || "Situación"
+                  )}
+                </strong>
+
+                <small>
+                  ${escaparHTML(
+                    registro.hechos.slice(0, 150)
+                  )}
+                  ${registro.hechos.length > 150 ? "…" : ""}
+                </small>
+              </div>
+
+              <button
+                class="boton pequeno peligro"
+                data-eliminar="situaciones"
+                data-id="${registro.id}"
+              >
+                Eliminar
+              </button>
+            </div>
+          `)
+          .join("");
+      }
+
+      const listaLimites =
+        document.getElementById("listaLimites");
+
+      if (!estado.limites.length) {
+        listaLimites.innerHTML = `
+          <div class="sin-registros">
+            Aún no hay conversaciones preparadas.
+          </div>
+        `;
+      } else {
+        listaLimites.innerHTML = estado.limites
+          .slice(0, 8)
+          .map(registro => `
+            <div class="elemento-lista">
+              <div>
+                <strong>
+                  ${escaparHTML(registro.fecha)}
+                  · ${escaparHTML(registro.situacion)}
+                </strong>
+
+                <small>
+                  ${escaparHTML(
+                    registro.mensaje.slice(0, 170)
+                  )}
+                  ${registro.mensaje.length > 170 ? "…" : ""}
+                </small>
+              </div>
+
+              <button
+                class="boton pequeno peligro"
+                data-eliminar="limites"
+                data-id="${registro.id}"
+              >
+                Eliminar
+              </button>
+            </div>
+          `)
+          .join("");
+      }
+
+      const listaDecisiones =
+        document.getElementById("listaDecisiones");
+
+      if (!estado.decisiones.length) {
+        listaDecisiones.innerHTML = `
+          <div class="sin-registros">
+            Aún no hay análisis guardados.
+          </div>
+        `;
+      } else {
+        listaDecisiones.innerHTML = estado.decisiones
+          .slice(0, 8)
+          .map(registro => `
+            <div class="elemento-lista">
+              <div>
+                <strong>
+                  ${escaparHTML(registro.fecha)}
+                  · ${escaparHTML(registro.pregunta)}
+                </strong>
+
+                <small>
+                  Valores:
+                  ${escaparHTML(
+                    registro.valores || "sin registrar"
+                  )}
+                  · Condiciones:
+                  ${escaparHTML(
+                    registro.condiciones || "sin registrar"
+                  )}
+                </small>
+              </div>
+
+              <button
+                class="boton pequeno peligro"
+                data-eliminar="decisiones"
+                data-id="${registro.id}"
+              >
+                Eliminar
+              </button>
+            </div>
+          `)
+          .join("");
+      }
+
+      agregarEventosEliminar();
+    }
+
+    function actualizarMetricas() {
+      const ultimoCheckin = estado.checkins[0];
+
+      const tareasCompletadas = Object.values(
+        estado.autocuidado.tareas
+      ).filter(Boolean).length;
+
+      const totalTareas = Object.keys(
+        estado.autocuidado.tareas
+      ).length;
+
+      const porcentaje = Math.round(
+        (tareasCompletadas / totalTareas) * 100
+      );
+
+      document.getElementById("inicioBienestar").textContent =
+        ultimoCheckin
+          ? `${ultimoCheckin.bienestar}/10`
+          : "—";
+
+      document.getElementById("inicioRegistros").textContent =
+        estado.checkins.length + estado.situaciones.length;
+
+      document.getElementById("inicioAutocuidado").textContent =
+        `${porcentaje}%`;
+
+      document.getElementById("barraAutocuidado").style.width =
+        `${porcentaje}%`;
+
+      document.getElementById("textoAutocuidado").textContent =
+        `${porcentaje}% completado · semana iniciada ` +
+        `${estado.autocuidado.inicioSemana}`;
+
+      document.getElementById("promedioBienestar").textContent =
+        promedio(estado.checkins, "bienestar") ?? "—";
+
+      document.getElementById("promedioTension").textContent =
+        promedio(estado.checkins, "tension") ?? "—";
+
+      document.getElementById("promedioConexion").textContent =
+        promedio(estado.checkins, "conexion") ?? "—";
+
+      const listaTendencias =
+        document.getElementById("listaTendencias");
+
+      if (!estado.checkins.length) {
+        listaTendencias.innerHTML = `
+          <div class="sin-registros">
+            Realiza varios check-ins para observar una tendencia.
+          </div>
+        `;
+      } else {
+        listaTendencias.innerHTML = estado.checkins
+          .slice(0, 10)
+          .map(registro => `
+            <div class="elemento-lista">
+              <div>
+                <strong>${escaparHTML(registro.fecha)}</strong>
+
+                <small>
+                  Bienestar ${registro.bienestar}
+                  · Tensión ${registro.tension}
+                  · Cansancio ${registro.cansancio}
+                  · Conexión ${registro.conexion}
+                </small>
+              </div>
+            </div>
+          `)
+          .join("");
+      }
+    }
+
+    function actualizarPlanAutocuidado() {
+      const plan = estado.autocuidado.plan;
+
+      const aviso =
+        document.getElementById("planAutocuidadoGuardado");
+
+      if (!plan || !plan.actividad) {
+        aviso.style.display = "none";
+        return;
+      }
+
+      document.getElementById("actividadAutocuidado").value =
+        plan.actividad || "";
+
+      document.getElementById("momentoAutocuidado").value =
+        plan.momento || "";
+
+      document.getElementById("obstaculoAutocuidado").value =
+        plan.obstaculo || "";
+
+      document.getElementById("planAutocuidado").value =
+        plan.respuesta || "";
+
+      aviso.style.display = "block";
+
+      aviso.innerHTML = `
+        <strong>Actividad elegida:</strong>
+        ${escaparHTML(plan.actividad)}
+        <br>
+
+        <strong>Momento:</strong>
+        ${escaparHTML(plan.momento || "por definir")}
+        <br>
+
+        <strong>Plan ante obstáculos:</strong>
+        ${escaparHTML(plan.respuesta || "por definir")}
+      `;
+    }
+
+    function obtenerNecesidades() {
+      return [
+        ...estado.checkins.map(elemento => elemento.necesidad),
+        ...estado.situaciones.map(
+          elemento => elemento.necesidad
+        ),
+        ...estado.limites.map(elemento => elemento.necesidad)
+      ]
+        .filter(Boolean)
+        .slice(0, 8);
+    }
+
+    function actualizarResumen() {
+      const recientes = estado.checkins.slice(0, 5);
+
+      const resumenEstado =
+        document.getElementById("resumenEstado");
+
+      if (!recientes.length) {
+        resumenEstado.innerHTML =
+          "<p>Sin registros recientes.</p>";
+      } else {
+        resumenEstado.innerHTML = `
+          <p>
+            <strong>Bienestar reciente:</strong>
+            ${promedio(recientes, "bienestar")}/10
+          </p>
+
+          <p>
+            <strong>Tensión reciente:</strong>
+            ${promedio(recientes, "tension")}/10
+          </p>
+
+          <p>
+            <strong>Cansancio reciente:</strong>
+            ${promedio(recientes, "cansancio")}/10
+          </p>
+
+          <p>
+            <strong>Conexión personal reciente:</strong>
+            ${promedio(recientes, "conexion")}/10
+          </p>
+        `;
+      }
+
+      document.getElementById("resumenFoco").textContent =
+        estado.focoSemanal || "Sin registrar.";
+
+      const necesidades = obtenerNecesidades();
+
+      document.getElementById("resumenNecesidades").innerHTML =
+        necesidades.length
+          ? `
+            <ul>
+              ${necesidades
+                .map(
+                  necesidad =>
+                    `<li>${escaparHTML(necesidad)}</li>`
+                )
+                .join("")}
+            </ul>
+          `
+          : "<p>Sin necesidades registradas.</p>";
+
+      const patrones = [];
+
+      const respuestas = estado.situaciones
+        .map(
+          elemento =>
+            `${elemento.respuesta} ` +
+            `${elemento.cortoPlazo} ` +
+            `${elemento.largoPlazo}`
+        )
+        .join(" ");
+
+      if (
+        /evit|call|retir|orden|control/i.test(respuestas)
+      ) {
+        patrones.push(
+          "En algunos registros aparecen respuestas de evitación, retiro o control ambiental."
+        );
+      }
+
+      if (
+        recientes.length >= 3 &&
+        Number(promedio(recientes, "cansancio")) >= 7
+      ) {
+        patrones.push(
+          "El cansancio reciente se mantiene elevado."
+        );
+      }
+
+      if (
+        recientes.length >= 3 &&
+        Number(promedio(recientes, "conexion")) <= 4
+      ) {
+        patrones.push(
+          "La conexión personal reciente aparece disminuida."
+        );
+      }
+
+      if (!patrones.length) {
+        patrones.push(
+          "Todavía no hay suficiente información para identificar una tendencia clara."
+        );
+      }
+
+      document.getElementById("resumenPatrones").innerHTML = `
+        <ul>
+          ${patrones
+            .map(patron => `<li>${escaparHTML(patron)}</li>`)
+            .join("")}
+        </ul>
+      `;
+
+      const autocuidadosRealizados = tareasAutocuidado
+        .filter(
+          ([clave]) => estado.autocuidado.tareas[clave]
+        )
+        .map(([, texto]) => texto);
+
+      document.getElementById(
+        "resumenAutocuidado"
+      ).innerHTML = autocuidadosRealizados.length
+        ? `
+          <ul>
+            ${autocuidadosRealizados
+              .map(
+                actividad =>
+                  `<li>${escaparHTML(actividad)}</li>`
+              )
+              .join("")}
+          </ul>
+        `
+        : "<p>No se registraron acciones esta semana.</p>";
+    }
+
+    function actualizarAplicacion() {
+      document.getElementById("focoSemanal").value =
+        estado.focoSemanal || "";
+
+      document.getElementById("temasSesion").value =
+        estado.temasSesion || "";
+
+      Object.keys(estado.progreso).forEach(clave => {
+        const casilla = document.getElementById(clave);
+
+        if (casilla) {
+          casilla.checked = Boolean(estado.progreso[clave]);
+        }
+      });
+
+      mostrarTareasAutocuidado();
+      actualizarListas();
+      actualizarMetricas();
+      actualizarPlanAutocuidado();
+      actualizarResumen();
+    }
+
+    document
+      .getElementById("botonExportar")
+      .addEventListener("click", () => {
+        const contenido = JSON.stringify(estado, null, 2);
+
+        const archivo = new Blob(
+          [contenido],
+          { type: "application/json" }
+        );
+
+        const enlace = document.createElement("a");
+
+        enlace.href = URL.createObjectURL(archivo);
+
+        enlace.download =
+          `respaldo_giovana_${obtenerFechaActual()}.json`;
+
+        document.body.appendChild(enlace);
+        enlace.click();
+        enlace.remove();
+
+        URL.revokeObjectURL(enlace.href);
+
+        mostrarMensaje("Respaldo exportado");
+      });
+
+    document
+      .getElementById("archivoImportar")
+      .addEventListener("change", async evento => {
+        const archivo = evento.target.files[0];
+
+        if (!archivo) {
+          return;
+        }
+
+        try {
+          const contenido = await archivo.text();
+          const datos = JSON.parse(contenido);
+
+          estado = {
+            ...copiarObjeto(estadoInicial),
+            ...datos,
+            autocuidado: {
+              ...copiarObjeto(estadoInicial.autocuidado),
+              ...(datos.autocuidado || {}),
+              tareas: {
+                ...copiarObjeto(
+                  estadoInicial.autocuidado.tareas
+                ),
+                ...((datos.autocuidado || {}).tareas || {})
+              }
+            },
+            progreso: {
+              ...copiarObjeto(estadoInicial.progreso),
+              ...(datos.progreso || {})
+            }
+          };
+
+          guardarEstado();
+          mostrarMensaje("Respaldo importado");
+        } catch (error) {
+          alert(
+            "El archivo seleccionado no corresponde a un respaldo válido."
+          );
+        }
+
+        evento.target.value = "";
+      });
+
+    document
+      .getElementById("botonReiniciar")
+      .addEventListener("click", () => {
+        const confirmacion = confirm(
+          "¿Deseas eliminar todos los datos guardados en este dispositivo? Esta acción no se puede deshacer."
+        );
+
+        if (!confirmacion) {
+          return;
+        }
+
+        estado = copiarObjeto(estadoInicial);
+
+        guardarEstado();
+        mostrarMensaje("Datos reiniciados");
+      });
+
+    actualizarAplicacion();
+  </script>
+
+</body>
+</html>

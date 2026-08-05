@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#17324d" />
+  <meta
+    name="description"
+    content="Miniapp de autorregulación, organización y seguimiento para Rodrigo."
+  />
+
+  <title>Rodrigo en Marcha</title>
+
+  <style>
+    :root {
+      --navy: #17324d;
+      --navy-2: #234b6f;
+      --teal: #1f7a78;
+      --teal-soft: #dff1ef;
+      --gold: #c98b2e;
+      --bg: #f4f6f8;
+      --surface: #ffffff;
+      --surface-2: #edf1f5;
+      --text: #182431;
+      --muted: #617080;
+      --border: #d5dde5;
+      --danger: #a54141;
+      --success: #28704b;
+      --shadow: 0 12px 30px rgba(23, 50, 77, 0.09);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    :focus-visible {
+      outline: 3px solid rgba(31, 122, 120, 0.35);
+      outline-offset: 2px;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: linear-gradient(120deg, var(--navy), var(--navy-2));
+      color: white;
+      padding: 22px clamp(18px, 4vw, 54px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: 800;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.25rem, 3vw, 1.8rem);
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: #dce8f4;
+      font-size: 0.92rem;
+    }
+
+    .date-badge {
+      padding: 9px 13px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      font-size: 0.9rem;
+    }
+
+    .layout {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 24px clamp(14px, 3vw, 34px) 48px;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 16px;
+      align-self: start;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .nav-btn {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-align: left;
+      font-weight: 700;
+      min-height: 46px;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      background: var(--teal-soft);
+      color: var(--navy);
+    }
+
+    .nav-icon {
+      width: 22px;
+      text-align: center;
+    }
+
+    main {
+      min-width: 0;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+      animation: fade 0.22s ease;
+    }
+
+    @keyframes fade {
+      from {
+        opacity: 0.25;
+        transform: translateY(4px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .hero {
+      border-radius: 24px;
+      padding: clamp(22px, 4vw, 38px);
+      background: linear-gradient(135deg, #ffffff 5%, #e9f4f3 100%);
+      border: 1px solid #cfe3e1;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--teal);
+      font-weight: 800;
+      font-size: 0.76rem;
+    }
+
+    .hero h2 {
+      margin: 8px 0;
+      font-size: clamp(1.7rem, 4vw, 2.8rem);
+      line-height: 1.12;
+      color: var(--navy);
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 7px 20px rgba(23, 50, 77, 0.05);
+      min-width: 0;
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+      color: var(--navy);
+    }
+
+    .card p {
+      color: var(--muted);
+    }
+
+    .metric {
+      font-size: 2rem;
+      font-weight: 850;
+      color: var(--navy);
+    }
+
+    .metric-label {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .progress-track {
+      height: 10px;
+      background: var(--surface-2);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 12px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--teal), #4ca6a3);
+      transition: width 0.25s ease;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font-size: 0.9rem;
+      font-weight: 750;
+      color: var(--navy);
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 13px;
+      background: white;
+      color: var(--text);
+      min-height: 44px;
+    }
+
+    textarea {
+      min-height: 95px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px rgba(31, 122, 120, 0.11);
+      outline: 0;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 12px;
+      padding: 11px 16px;
+      min-height: 44px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--teal);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #176c69;
+    }
+
+    .btn-secondary {
+      background: var(--surface-2);
+      color: var(--navy);
+    }
+
+    .btn-outline {
+      background: white;
+      color: var(--navy);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: #f8e8e8;
+      color: var(--danger);
+    }
+
+    .task-list,
+    .steps-list,
+    .history-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .task-item,
+    .step-item,
+    .history-item {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 13px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+    }
+
+    .task-item.done {
+      background: #edf7f1;
+      border-color: #c9e4d4;
+    }
+
+    .task-item.done .task-title {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .task-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-title {
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .task-meta {
+      color: var(--muted);
+      font-size: 0.84rem;
+      margin-top: 2px;
+    }
+
+    .icon-btn {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 10px;
+      min-width: 42px;
+      min-height: 42px;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-2);
+      color: var(--danger);
+    }
+
+    .timer {
+      text-align: center;
+      padding: 26px 16px;
+      border: 1px solid #cfe3e1;
+      border-radius: 20px;
+      background: #f8fcfb;
+    }
+
+    .timer-display {
+      font-size: clamp(3.1rem, 12vw, 5.8rem);
+      font-weight: 850;
+      letter-spacing: -0.05em;
+      color: var(--navy);
+      line-height: 1;
+    }
+
+    .timer-status {
+      color: var(--muted);
+      margin: 10px 0 0;
+    }
+
+    .mood-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .mood-btn {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 12px;
+      min-height: 58px;
+      font-size: 1.35rem;
+    }
+
+    .mood-btn.selected {
+      border-color: var(--teal);
+      background: var(--teal-soft);
+    }
+
+    .cycle {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .cycle-step {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--surface-2);
+      border-left: 4px solid var(--teal);
+      font-size: 0.9rem;
+    }
+
+    .callout {
+      border-left: 4px solid var(--gold);
+      padding: 12px 14px;
+      background: #fff6e8;
+      border-radius: 10px;
+      color: #684b1f;
+    }
+
+    .empty {
+      padding: 18px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 0.86rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.82rem;
+      padding: 16px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+        display: flex;
+        overflow-x: auto;
+        gap: 6px;
+      }
+
+      .nav-btn {
+        width: auto;
+        white-space: nowrap;
+      }
+
+      .grid-3,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .topbar {
+        padding: 17px 14px;
+      }
+
+      .brand p {
+        display: none;
+      }
+
+      .layout {
+        padding: 14px 10px 34px;
+        gap: 14px;
+      }
+
+      .sidebar {
+        border-radius: 14px;
+        padding: 7px;
+      }
+
+      .nav-btn {
+        padding: 10px 11px;
+        font-size: 0.86rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .cycle {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .card {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell" id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">RM</div>
+
+        <div>
+          <h1>Rodrigo en Marcha</h1>
+          <p>Organización, constancia y autorregulación</p>
+        </div>
+      </div>
+
+      <div class="date-badge" id="todayLabel"></div>
+    </header>
+
+    <div class="layout">
+      <nav class="sidebar" aria-label="Navegación principal">
+        <button class="nav-btn active" data-view="inicio" type="button">
+          <span class="nav-icon">⌂</span>
+          Inicio
+        </button>
+
+        <button class="nav-btn" data-view="plan" type="button">
+          <span class="nav-icon">✓</span>
+          Mi plan
+        </button>
+
+        <button class="nav-btn" data-view="fragmentar" type="button">
+          <span class="nav-icon">▦</span>
+          Dividir tarea
+        </button>
+
+        <button class="nav-btn" data-view="enfoque" type="button">
+          <span class="nav-icon">◷</span>
+          Enfoque
+        </button>
+
+        <button class="nav-btn" data-view="registro" type="button">
+          <span class="nav-icon">≋</span>
+          Registro
+        </button>
+
+        <button class="nav-btn" data-view="revision" type="button">
+          <span class="nav-icon">↗</span>
+          Revisión
+        </button>
+      </nav>
+
+      <main>
+        <section class="view active" id="view-inicio">
+          <div class="hero">
+            <div class="eyebrow">Tu capacidad ya está presente</div>
+
+            <h2>
+              Hoy no necesitas hacerlo todo.<br />
+              Necesitas comenzar algo concreto.
+            </h2>
+
+            <p>
+              Esta herramienta te ayuda a convertir objetivos grandes en
+              acciones visibles, iniciar a una hora definida y registrar lo que
+              realmente ocurre.
+            </p>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" data-go="plan" type="button">
+                Crear mi plan de hoy
+              </button>
+
+              <button class="btn btn-outline" data-go="enfoque" type="button">
+                Iniciar bloque de enfoque
+              </button>
+            </div>
+          </div>
+
+          <div class="grid grid-3">
+            <article class="card">
+              <div class="metric" id="metricPending">0</div>
+              <div class="metric-label">acciones pendientes hoy</div>
+            </article>
+
+            <article class="card">
+              <div class="metric" id="metricDone">0</div>
+              <div class="metric-label">acciones completadas</div>
+            </article>
+
+            <article class="card">
+              <div class="metric" id="metricFocus">0 min</div>
+              <div class="metric-label">enfoque acumulado</div>
+            </article>
+          </div>
+
+          <div class="grid grid-2" style="margin-top: 18px">
+            <article class="card">
+              <h3>Tu ciclo habitual</h3>
+
+              <div class="cycle">
+                <div class="cycle-step">1. Motivación inicial</div>
+                <div class="cycle-step">2. Baja el interés</div>
+                <div class="cycle-step">3. Postergación</div>
+                <div class="cycle-step">4. Culpa y reinicio</div>
+              </div>
+
+              <p class="small">
+                La aplicación interviene antes de la postergación: define una
+                acción, una hora de inicio y un bloque breve.
+              </p>
+            </article>
+
+            <article class="card">
+              <h3>Idea principal</h3>
+
+              <div class="callout">
+                No necesitas esperar a sentir motivación. Puedes comenzar con
+                una acción breve, definida y observable.
+              </div>
+
+              <p class="small">
+                La constancia no depende de hacer mucho un solo día, sino de
+                repetir conductas pequeñas durante varios días.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-plan">
+          <div class="hero">
+            <div class="eyebrow">Planificación conductual</div>
+            <h2>Convierte la intención en una acción.</h2>
+
+            <p>
+              Evita escribir objetivos generales como “estudiar” u
+              “organizarme”. Describe exactamente qué harás y cuándo
+              comenzarás.
+            </p>
+          </div>
+
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>Nueva acción para hoy</h3>
+
+              <form id="taskForm">
+                <label>
+                  Acción concreta
+
+                  <input
+                    id="taskTitle"
+                    type="text"
+                    maxlength="120"
+                    required
+                    placeholder="Ejemplo: leer cinco páginas y escribir tres ideas"
+                  />
+                </label>
+
+                <div class="form-row" style="margin-top: 14px">
+                  <label>
+                    Hora de inicio
+
+                    <input id="taskTime" type="time" required />
+                  </label>
+
+                  <label>
+                    Duración inicial
+
+                    <select id="taskDuration">
+                      <option value="10">10 minutos</option>
+                      <option value="15">15 minutos</option>
+                      <option value="25" selected>25 minutos</option>
+                      <option value="40">40 minutos</option>
+                      <option value="60">60 minutos</option>
+                    </select>
+                  </label>
+                </div>
+
+                <label style="margin-top: 14px">
+                  Área
+
+                  <select id="taskArea">
+                    <option value="Estudio">Estudio</option>
+                    <option value="Trabajo">Trabajo</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Salud">Salud</option>
+                    <option value="Hogar">Hogar</option>
+                    <option value="Trámite">Trámite</option>
+                  </select>
+                </label>
+
+                <div class="btn-row">
+                  <button class="btn btn-primary" type="submit">
+                    Agregar al plan
+                  </button>
+                </div>
+              </form>
+            </article>
+
+            <article class="card">
+              <h3>Avance de hoy</h3>
+
+              <div class="metric" id="taskProgressText">
+                0 de 0 completadas
+              </div>
+
+              <div class="progress-track">
+                <div class="progress-bar" id="taskProgressBar"></div>
+              </div>
+
+              <p class="small">
+                Marca cada acción al terminarla. Completar una acción pequeña
+                vale más que mantener una intención grande sin comenzar.
+              </p>
+            </article>
+          </div>
+
+          <article class="card" style="margin-top: 18px">
+            <h3>Mi plan</h3>
+            <div class="task-list" id="taskList"></div>
+          </article>
+        </section>
+
+        <section class="view" id="view-fragmentar">
+          <div class="hero">
+            <div class="eyebrow">Reducción de carga</div>
+            <h2>Una tarea grande no se comienza completa.</h2>
+
+            <p>
+              Define el resultado mínimo útil. La aplicación generará una
+              secuencia inicial para reducir la sensación de dificultad.
+            </p>
+          </div>
+
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>Describe la tarea</h3>
+
+              <form id="breakdownForm">
+                <label>
+                  Tarea o proyecto
+
+                  <textarea
+                    id="bigTask"
+                    required
+                    placeholder="Ejemplo: preparar la exposición del curso"
+                  ></textarea>
+                </label>
+
+                <label style="margin-top: 14px">
+                  Resultado mínimo útil
+
+                  <input
+                    id="minimumResult"
+                    type="text"
+                    maxlength="160"
+                    required
+                    placeholder="Ejemplo: terminar las primeras tres diapositivas"
+                  />
+                </label>
+
+                <div class="btn-row">
+                  <button class="btn btn-primary" type="submit">
+                    Dividir la tarea
+                  </button>
+                </div>
+              </form>
+            </article>
+
+            <article class="card">
+              <h3>Secuencia de inicio</h3>
+
+              <div class="empty" id="stepsOutput">
+                Escribe una tarea para generar los primeros pasos.
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-enfoque">
+          <div class="hero">
+            <div class="eyebrow">Acción antes que motivación</div>
+            <h2>Trabaja durante un bloque breve.</h2>
+
+            <p>
+              Escoge una acción concreta. Durante el bloque, evita cambiar de
+              actividad, abrir nuevas pestañas o ampliar el objetivo.
+            </p>
+          </div>
+
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>Configurar bloque</h3>
+
+              <label>
+                ¿Qué harás durante este bloque?
+
+                <input
+                  id="focusTask"
+                  type="text"
+                  maxlength="140"
+                  placeholder="Ejemplo: revisar y resumir dos páginas"
+                />
+              </label>
+
+              <label style="margin-top: 14px">
+                Duración
+
+                <select id="focusMinutes">
+                  <option value="10">10 minutos</option>
+                  <option value="15">15 minutos</option>
+                  <option value="25" selected>25 minutos</option>
+                  <option value="40">40 minutos</option>
+                </select>
+              </label>
+
+              <div class="callout" style="margin-top: 18px">
+                Regla del bloque: solo tienes que permanecer en la actividad
+                elegida. No necesitas terminarla completa.
+              </div>
+            </article>
+
+            <article class="card">
+              <div class="timer">
+                <div
+                  class="timer-display"
+                  id="timerDisplay"
+                  aria-live="polite"
+                >
+                  25:00
+                </div>
+
+                <div class="timer-status" id="timerStatus">
+                  Listo para comenzar
+                </div>
+
+                <div class="btn-row" style="justify-content: center">
+                  <button
+                    class="btn btn-primary"
+                    id="startTimer"
+                    type="button"
+                  >
+                    Comenzar
+                  </button>
+
+                  <button
+                    class="btn btn-secondary"
+                    id="pauseTimer"
+                    type="button"
+                  >
+                    Pausar
+                  </button>
+
+                  <button
+                    class="btn btn-outline"
+                    id="resetTimer"
+                    type="button"
+                  >
+                    Reiniciar
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-registro">
+          <div class="hero">
+            <div class="eyebrow">Observación funcional</div>
+            <h2>Registra lo ocurrido, no te juzgues.</h2>
+
+            <p>
+              El objetivo es identificar diferencias entre lo programado y lo
+              realizado, así como los obstáculos concretos que aparecieron.
+            </p>
+          </div>
+
+          <div class="grid grid-2">
+            <article class="card">
+              <h3>Nuevo registro</h3>
+
+              <form id="logForm">
+                <label>
+                  Actividad
+
+                  <input
+                    id="logTask"
+                    type="text"
+                    maxlength="140"
+                    required
+                    placeholder="¿Qué actividad habías programado?"
+                  />
+                </label>
+
+                <div class="form-row" style="margin-top: 14px">
+                  <label>
+                    Hora prevista
+
+                    <input id="plannedTime" type="time" required />
+                  </label>
+
+                  <label>
+                    Hora real de inicio
+
+                    <input id="actualTime" type="time" required />
+                  </label>
+                </div>
+
+                <label style="margin-top: 14px">
+                  Resultado
+
+                  <select id="logResult">
+                    <option value="Completada">Completada</option>
+                    <option value="Parcialmente completada">
+                      Parcialmente completada
+                    </option>
+                    <option value="Iniciada, pero interrumpida">
+                      Iniciada, pero interrumpida
+                    </option>
+                    <option value="No iniciada">No iniciada</option>
+                  </select>
+                </label>
+
+                <label style="margin-top: 14px">
+                  Principal dificultad
+
+                  <textarea
+                    id="obstacle"
+                    placeholder="Ejemplo: celular, cansancio, tarea demasiado amplia o no saber por dónde empezar"
+                  ></textarea>
+                </label>
+
+                <label style="margin-top: 14px">
+                  Próximo ajuste
+
+                  <input
+                    id="nextAction"
+                    type="text"
+                    maxlength="180"
+                    placeholder="Ejemplo: comenzar con diez minutos y dejar el celular fuera"
+                  />
+                </label>
+
+                <div class="btn-row">
+                  <button class="btn btn-primary" type="submit">
+                    Guardar registro
+                  </button>
+                </div>
+              </form>
+            </article>
+
+            <article class="card">
+              <h3>Registros recientes</h3>
+              <div class="history-list" id="historyList"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-revision">
+          <div class="hero">
+            <div class="eyebrow">Aprendizaje semanal</div>
+            <h2>La meta es comprender tu patrón.</h2>
+
+            <p>
+              Revisa tus resultados para descubrir qué condiciones favorecen
+              que comiences, continúes y termines una actividad.
+            </p>
+          </div>
+
+          <div class="grid grid-3">
+            <article class="card">
+              <div class="metric" id="reviewCompletion">0%</div>
+              <div class="metric-label">cumplimiento de hoy</div>
+            </article>
+
+            <article class="card">
+              <div class="metric" id="reviewLogs">0</div>
+              <div class="metric-label">registros acumulados</div>
+            </article>
+
+            <article class="card">
+              <div class="metric" id="reviewStreak">0</div>
+              <div class="metric-label">días con actividad registrada</div>
+            </article>
+          </div>
+
+          <div class="grid grid-2" style="margin-top: 18px">
+            <article class="card">
+              <h3>¿Cómo fue actuar hoy?</h3>
+
+              <div class="mood-grid">
+                <button
+                  class="mood-btn"
+                  data-value="1"
+                  type="button"
+                  aria-label="Muy difícil"
+                  title="Muy difícil"
+                >
+                  1
+                </button>
+
+                <button
+                  class="mood-btn"
+                  data-value="2"
+                  type="button"
+                  aria-label="Difícil"
+                  title="Difícil"
+                >
+                  2
+                </button>
+
+                <button
+                  class="mood-btn"
+                  data-value="3"
+                  type="button"
+                  aria-label="Intermedio"
+                  title="Intermedio"
+                >
+                  3
+                </button>
+
+                <button
+                  class="mood-btn"
+                  data-value="4"
+                  type="button"
+                  aria-label="Bien"
+                  title="Bien"
+                >
+                  4
+                </button>
+
+                <button
+                  class="mood-btn"
+                  data-value="5"
+                  type="button"
+                  aria-label="Muy bien"
+                  title="Muy bien"
+                >
+                  5
+                </button>
+              </div>
+
+              <p id="moodFeedback" class="small">
+                Selecciona una opción.
+              </p>
+            </article>
+
+            <article class="card">
+              <h3>Privacidad y respaldo</h3>
+
+              <p>
+                La información se guarda únicamente en este navegador. No se
+                envía a servidores externos.
+              </p>
+
+              <div class="btn-row">
+                <button
+                  class="btn btn-outline"
+                  id="exportData"
+                  type="button"
+                >
+                  Exportar mis datos
+                </button>
+
+                <button
+                  class="btn btn-danger"
+                  id="clearData"
+                  type="button"
+                >
+                  Borrar todos los datos
+                </button>
+              </div>
+            </article>
+          </div>
+
+          <article class="card" style="margin-top: 18px">
+            <h3>Principios de trabajo</h3>
+
+            <div class="steps-list">
+              <div class="step-item">
+                <strong>1.</strong>
+                <div>Una sola herramienta de organización.</div>
+              </div>
+
+              <div class="step-item">
+                <strong>2.</strong>
+                <div>Acciones concretas en lugar de intenciones generales.</div>
+              </div>
+
+              <div class="step-item">
+                <strong>3.</strong>
+                <div>Bloques breves, repetibles y medibles.</div>
+              </div>
+
+              <div class="step-item">
+                <strong>4.</strong>
+                <div>Registro sin culpa: observar, aprender y ajustar.</div>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <footer>
+          Herramienta de apoyo terapéutico. No sustituye la atención psicológica
+          ni una evaluación clínica profesional.
+          <br />
+          Desarrollo: Gonzalo Buendía — Psicólogo, C.Ps.P. 8029
+        </footer>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const STORAGE_KEY = "rodrigoEnMarcha_v1";
+
+      const defaultState = {
+        tasks: [],
+        logs: [],
+        focusMinutes: 0,
+        mood: null,
+        activityDates: []
+      };
+
+      let state = loadState();
+      let timerSeconds = 25 * 60;
+      let timerId = null;
+      let running = false;
+
+      const $ = (id) => document.getElementById(id);
+
+      const todayKey = () => {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+      };
+
+      const createId = () => {
+        if (
+          window.crypto &&
+          typeof window.crypto.randomUUID === "function"
+        ) {
+          return window.crypto.randomUUID();
+        }
+
+        return `${Date.now()}-${Math.random()
+          .toString(16)
+          .slice(2)}`;
+      };
+
+      const escapeHtml = (value = "") => {
+        return String(value).replace(
+          /[&<>'"]/g,
+          (character) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              "'": "&#39;",
+              '"': "&quot;"
+            })[character]
+        );
+      };
+
+      function loadState() {
+        try {
+          const parsed = JSON.parse(
+            localStorage.getItem(STORAGE_KEY)
+          );
+
+          if (parsed && typeof parsed === "object") {
+            return {
+              ...defaultState,
+              ...parsed,
+              tasks: Array.isArray(parsed.tasks)
+                ? parsed.tasks
+                : [],
+              logs: Array.isArray(parsed.logs)
+                ? parsed.logs
+                : [],
+              activityDates: Array.isArray(parsed.activityDates)
+                ? parsed.activityDates
+                : []
+            };
+          }
+
+          return { ...defaultState };
+        } catch (error) {
+          console.error("No se pudieron cargar los datos:", error);
+          return { ...defaultState };
+        }
+      }
+
+      function saveState() {
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(state)
+          );
+        } catch (error) {
+          console.error("No se pudieron guardar los datos:", error);
+        }
+
+        renderAll();
+      }
+
+      function markActivity() {
+        const key = todayKey();
+
+        if (!state.activityDates.includes(key)) {
+          state.activityDates.push(key);
+        }
+      }
+
+      function showView(name) {
+        document.querySelectorAll(".view").forEach((view) => {
+          view.classList.toggle(
+            "active",
+            view.id === `view-${name}`
+          );
+        });
+
+        document.querySelectorAll(".nav-btn").forEach((button) => {
+          button.classList.toggle(
+            "active",
+            button.dataset.view === name
+          );
+        });
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      }
+
+      document.querySelectorAll(".nav-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          showView(button.dataset.view);
+        });
+      });
+
+      document.querySelectorAll("[data-go]").forEach((button) => {
+        button.addEventListener("click", () => {
+          showView(button.dataset.go);
+        });
+      });
+
+      $("todayLabel").textContent =
+        new Intl.DateTimeFormat("es-PE", {
+          weekday: "long",
+          day: "numeric",
+          month: "long"
+        }).format(new Date());
+
+      $("taskForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const title = $("taskTitle").value.trim();
+        const time = $("taskTime").value;
+        const duration = Number($("taskDuration").value);
+        const area = $("taskArea").value;
+
+        if (!title || !time) {
+          return;
+        }
+
+        state.tasks.push({
+          id: createId(),
+          title,
+          time,
+          duration,
+          area,
+          done: false,
+          date: todayKey()
+        });
+
+        markActivity();
+        saveState();
+
+        event.target.reset();
+        $("taskDuration").value = "25";
+      });
+
+      function renderTasks() {
+        const todayTasks = state.tasks.filter(
+          (task) => task.date === todayKey()
+        );
+
+        const list = $("taskList");
+
+        if (!todayTasks.length) {
+          list.innerHTML = `
+            <div class="empty">
+              Aún no hay acciones. Agrega una conducta concreta para hoy.
+            </div>
+          `;
+        } else {
+          const orderedTasks = [...todayTasks].sort((a, b) =>
+            a.time.localeCompare(b.time)
+          );
+
+          list.innerHTML = orderedTasks
+            .map(
+              (task) => `
+                <div class="task-item ${task.done ? "done" : ""}">
+                  <input
+                    type="checkbox"
+                    aria-label="Marcar tarea"
+                    data-check="${escapeHtml(task.id)}"
+                    ${task.done ? "checked" : ""}
+                  />
+
+                  <div class="task-main">
+                    <div class="task-title">
+                      ${escapeHtml(task.title)}
+                    </div>
+
+                    <div class="task-meta">
+                      ${escapeHtml(task.area)} ·
+                      ${escapeHtml(task.time)} ·
+                      ${Number(task.duration)} min
+                    </div>
+                  </div>
+
+                  <button
+                    class="icon-btn"
+                    type="button"
+                    data-delete="${escapeHtml(task.id)}"
+                    aria-label="Eliminar tarea"
+                  >
+                    ✕
+                  </button>
+                </div>
+              `
+            )
+            .join("");
+        }
+
+        list
+          .querySelectorAll("[data-check]")
+          .forEach((checkbox) => {
+            checkbox.addEventListener("change", () => {
+              const task = state.tasks.find(
+                (item) => item.id === checkbox.dataset.check
+              );
+
+              if (task) {
+                task.done = checkbox.checked;
+                markActivity();
+                saveState();
+              }
+            });
+          });
+
+        list
+          .querySelectorAll("[data-delete]")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              state.tasks = state.tasks.filter(
+                (task) => task.id !== button.dataset.delete
+              );
+
+              saveState();
+            });
+          });
+
+        const completed = todayTasks.filter(
+          (task) => task.done
+        ).length;
+
+        const total = todayTasks.length;
+
+        $("taskProgressText").textContent =
+          `${completed} de ${total} completadas`;
+
+        $("taskProgressBar").style.width = total
+          ? `${Math.round((completed / total) * 100)}%`
+          : "0%";
+      }
+
+      $("breakdownForm").addEventListener(
+        "submit",
+        (event) => {
+          event.preventDefault();
+
+          const task = $("bigTask").value.trim();
+          const minimum = $("minimumResult").value.trim();
+
+          if (!task || !minimum) {
+            return;
+          }
+
+          const steps = [
+            `Abrir o preparar únicamente lo necesario para: ${task}`,
+            "Definir un bloque inicial de 10 minutos.",
+            "Realizar la primera acción visible, sin intentar terminar todo.",
+            `Comprobar si ya se alcanzó este mínimo: ${minimum}`,
+            "Registrar qué facilitó o interrumpió el avance."
+          ];
+
+          $("stepsOutput").className = "steps-list";
+
+          $("stepsOutput").innerHTML = steps
+            .map(
+              (step, index) => `
+                <div class="step-item">
+                  <strong>${index + 1}.</strong>
+                  <div>${escapeHtml(step)}</div>
+                </div>
+              `
+            )
+            .join("");
+        }
+      );
+
+      function updateTimerDisplay() {
+        const minutes = Math.floor(timerSeconds / 60)
+          .toString()
+          .padStart(2, "0");
+
+        const seconds = (timerSeconds % 60)
+          .toString()
+          .padStart(2, "0");
+
+        $("timerDisplay").textContent =
+          `${minutes}:${seconds}`;
+      }
+
+      function stopTimer() {
+        clearInterval(timerId);
+        timerId = null;
+        running = false;
+      }
+
+      $("focusMinutes").addEventListener("change", () => {
+        if (!running) {
+          timerSeconds =
+            Number($("focusMinutes").value) * 60;
+
+          updateTimerDisplay();
+        }
+      });
+
+      $("startTimer").addEventListener("click", () => {
+        if (running) {
+          return;
+        }
+
+        const task = $("focusTask").value.trim();
+
+        if (!task) {
+          $("timerStatus").textContent =
+            "Escribe primero una tarea concreta.";
+
+          $("focusTask").focus();
+          return;
+        }
+
+        running = true;
+
+        $("timerStatus").textContent =
+          `Enfoque: ${task}`;
+
+        timerId = window.setInterval(() => {
+          timerSeconds -= 1;
+          updateTimerDisplay();
+
+          if (timerSeconds <= 0) {
+            stopTimer();
+
+            const completedMinutes =
+              Number($("focusMinutes").value);
+
+            state.focusMinutes += completedMinutes;
+
+            markActivity();
+            saveState();
+
+            $("timerStatus").textContent =
+              "Bloque completado. Registra el resultado.";
+
+            timerSeconds = completedMinutes * 60;
+            updateTimerDisplay();
+          }
+        }, 1000);
+      });
+
+      $("pauseTimer").addEventListener("click", () => {
+        if (running) {
+          stopTimer();
+
+          $("timerStatus").textContent =
+            "Pausa. Decide cuándo retomar.";
+        }
+      });
+
+      $("resetTimer").addEventListener("click", () => {
+        stopTimer();
+
+        timerSeconds =
+          Number($("focusMinutes").value) * 60;
+
+        updateTimerDisplay();
+
+        $("timerStatus").textContent =
+          "Listo para comenzar";
+      });
+
+      $("logForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const entry = {
+          id: createId(),
+          date: new Date().toISOString(),
+          task: $("logTask").value.trim(),
+          result: $("logResult").value,
+          planned: $("plannedTime").value,
+          actual: $("actualTime").value,
+          obstacle: $("obstacle").value.trim(),
+          next: $("nextAction").value.trim()
+        };
+
+        if (
+          !entry.task ||
+          !entry.planned ||
+          !entry.actual
+        ) {
+          return;
+        }
+
+        state.logs.unshift(entry);
+        state.logs = state.logs.slice(0, 50);
+
+        markActivity();
+        saveState();
+
+        event.target.reset();
+      });
+
+      function renderHistory() {
+        const list = $("historyList");
+
+        if (!state.logs.length) {
+          list.innerHTML = `
+            <div class="empty">
+              Todavía no hay registros.
+            </div>
+          `;
+
+          return;
+        }
+
+        list.innerHTML = state.logs
+          .slice(0, 10)
+          .map(
+            (log) => `
+              <div class="history-item">
+                <div class="task-main">
+                  <div class="task-title">
+                    ${escapeHtml(log.task)}
+                  </div>
+
+                  <div class="task-meta">
+                    ${escapeHtml(log.result)} ·
+                    prevista ${escapeHtml(log.planned)} ·
+                    real ${escapeHtml(log.actual)}
+                  </div>
+
+                  ${
+                    log.obstacle
+                      ? `
+                        <div class="small muted">
+                          Dificultad:
+                          ${escapeHtml(log.obstacle)}
+                        </div>
+                      `
+                      : ""
+                  }
+
+                  ${
+                    log.next
+                      ? `
+                        <div class="small">
+                          Próximo ajuste:
+                          ${escapeHtml(log.next)}
+                        </div>
+                      `
+                      : ""
+                  }
+                </div>
+
+                <button
+                  class="icon-btn"
+                  type="button"
+                  data-log-delete="${escapeHtml(log.id)}"
+                  aria-label="Eliminar registro"
+                >
+                  ✕
+                </button>
+              </div>
+            `
+          )
+          .join("");
+
+        list
+          .querySelectorAll("[data-log-delete]")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              state.logs = state.logs.filter(
+                (log) =>
+                  log.id !== button.dataset.logDelete
+              );
+
+              saveState();
+            });
+          });
+      }
+
+      document
+        .querySelectorAll(".mood-btn")
+        .forEach((button) => {
+          button.addEventListener("click", () => {
+            state.mood = Number(button.dataset.value);
+
+            markActivity();
+            saveState();
+          });
+        });
+
+      function renderMood() {
+        document
+          .querySelectorAll(".mood-btn")
+          .forEach((button) => {
+            button.classList.toggle(
+              "selected",
+              Number(button.dataset.value) ===
+                state.mood
+            );
+          });
+
+        const messages = {
+          1: "Hoy fue muy difícil. Reduce mañana el primer paso.",
+          2: "Hubo dificultad. Identifica una interrupción concreta.",
+          3: "Avance intermedio. Conserva lo que sí funcionó.",
+          4: "Buen nivel de acción. Repite la estructura.",
+          5: "Excelente. La constancia se construye con repeticiones como esta."
+        };
+
+        $("moodFeedback").textContent = state.mood
+          ? messages[state.mood]
+          : "Selecciona una opción.";
+      }
+
+      $("exportData").addEventListener("click", () => {
+        const blob = new Blob(
+          [JSON.stringify(state, null, 2)],
+          {
+            type: "application/json"
+          }
+        );
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download =
+          `rodrigo-en-marcha-${todayKey()}.json`;
+
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+
+        URL.revokeObjectURL(url);
+      });
+
+      $("clearData").addEventListener("click", () => {
+        const confirmed = window.confirm(
+          "¿Seguro que deseas borrar todas las tareas y registros guardados en este navegador?"
+        );
+
+        if (confirmed) {
+          stopTimer();
+
+          state = {
+            tasks: [],
+            logs: [],
+            focusMinutes: 0,
+            mood: null,
+            activityDates: []
+          };
+
+          localStorage.removeItem(STORAGE_KEY);
+
+          timerSeconds =
+            Number($("focusMinutes").value) * 60;
+
+          updateTimerDisplay();
+          renderAll();
+        }
+      });
+
+      function renderMetrics() {
+        const todayTasks = state.tasks.filter(
+          (task) => task.date === todayKey()
+        );
+
+        const completed = todayTasks.filter(
+          (task) => task.done
+        ).length;
+
+        $("metricPending").textContent =
+          todayTasks.length - completed;
+
+        $("metricDone").textContent = completed;
+
+        $("metricFocus").textContent =
+          `${state.focusMinutes} min`;
+
+        $("reviewCompletion").textContent =
+          todayTasks.length
+            ? `${Math.round(
+                (completed / todayTasks.length) * 100
+              )}%`
+            : "0%";
+
+        $("reviewLogs").textContent =
+          state.logs.length;
+
+        $("reviewStreak").textContent =
+          new Set(state.activityDates).size;
+      }
+
+      function renderAll() {
+        renderTasks();
+        renderHistory();
+        renderMood();
+        renderMetrics();
+      }
+
+      updateTimerDisplay();
+      renderAll();
+    })();
+  </script>
+</body>
+</html>

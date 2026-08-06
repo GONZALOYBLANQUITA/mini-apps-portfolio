@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#3157d5">
+
+  <title>Leonardo | Entrena tu autocontrol</title>
+
+  <style>
+    :root {
+      --fondo: #f4f7fc;
+      --tarjeta: #ffffff;
+      --texto: #172033;
+      --secundario: #667085;
+      --azul: #3157d5;
+      --violeta: #7357d9;
+      --verde: #159a74;
+      --amarillo: #d98b18;
+      --rojo: #d64545;
+      --borde: #e4e9f2;
+      --sombra: 0 12px 35px rgba(33, 49, 82, 0.09);
+      --radio: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--texto);
+      background:
+        linear-gradient(180deg, #eaf0ff 0, #f7f9fd 340px);
+      font-family: Inter, Arial, Helvetica, sans-serif;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      width: min(1200px, 100%);
+      min-height: 100vh;
+      margin: auto;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    /* MENÚ LATERAL */
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 24px 18px;
+      background: rgba(255, 255, 255, 0.9);
+      border-right: 1px solid var(--borde);
+      backdrop-filter: blur(14px);
+    }
+
+    .marca {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+
+    .logo {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 21px;
+      font-weight: 900;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--azul), var(--violeta));
+      box-shadow: 0 10px 25px rgba(49, 87, 213, 0.28);
+    }
+
+    .marca h1 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .marca p {
+      margin: 4px 0 0;
+      color: var(--secundario);
+      font-size: 12px;
+    }
+
+    nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      width: 100%;
+      padding: 12px 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      border-radius: 13px;
+      color: #475467;
+      background: transparent;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .nav-btn:hover {
+      color: var(--azul);
+      background: #f0f4ff;
+    }
+
+    .nav-btn.active {
+      color: var(--azul);
+      background: #e9efff;
+    }
+
+    .panel-lateral {
+      margin-top: 22px;
+      padding: 17px;
+      color: white;
+      border-radius: 17px;
+      background: linear-gradient(135deg, #17213d, #30427c);
+    }
+
+    .panel-lateral small {
+      opacity: 0.75;
+    }
+
+    .panel-lateral strong {
+      display: block;
+      margin: 8px 0;
+      font-size: 28px;
+    }
+
+    .panel-lateral p {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: 0.86;
+    }
+
+    /* CONTENIDO */
+
+    main {
+      padding: 28px;
+    }
+
+    .encabezado {
+      margin-bottom: 22px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .encabezado h2 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .encabezado p {
+      margin: 6px 0 0;
+      color: var(--secundario);
+    }
+
+    .etiqueta {
+      padding: 9px 13px;
+      color: #475467;
+      background: white;
+      border: 1px solid var(--borde);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .vista {
+      display: none;
+    }
+
+    .vista.active {
+      display: block;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .tarjeta {
+      padding: 20px;
+      background: var(--tarjeta);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      box-shadow: var(--sombra);
+    }
+
+    .tarjeta h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .tarjeta p {
+      color: var(--secundario);
+      line-height: 1.55;
+    }
+
+    .hero {
+      padding: 28px;
+      color: white;
+      border-radius: 27px;
+      background:
+        radial-gradient(
+          circle at top right,
+          rgba(255, 255, 255, 0.25),
+          transparent 35%
+        ),
+        linear-gradient(135deg, var(--azul), var(--violeta));
+      box-shadow: 0 18px 45px rgba(49, 87, 213, 0.27);
+    }
+
+    .hero h3 {
+      max-width: 820px;
+      margin: 13px 0 10px;
+      font-size: 29px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.55;
+    }
+
+    .hero-acciones {
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      padding: 7px 11px;
+      color: white;
+      background: rgba(255, 255, 255, 0.17);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .boton {
+      padding: 11px 15px;
+      border: 0;
+      border-radius: 12px;
+      font-weight: 800;
+    }
+
+    .boton-primario {
+      color: white;
+      background: var(--azul);
+    }
+
+    .boton-secundario {
+      color: var(--azul);
+      background: #eaf0ff;
+    }
+
+    .boton-claro {
+      color: #3153ac;
+      background: white;
+    }
+
+    .boton-borde {
+      color: #475467;
+      background: transparent;
+      border: 1px solid var(--borde);
+    }
+
+    .boton-rojo {
+      color: #ad2929;
+      background: #feeaea;
+    }
+
+    /* INDICADORES */
+
+    .metrica {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .metrica span {
+      color: var(--secundario);
+      font-size: 13px;
+    }
+
+    .metrica strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 31px;
+    }
+
+    .icono-metrica {
+      width: 47px;
+      height: 47px;
+      display: grid;
+      place-items: center;
+      background: #edf2ff;
+      border-radius: 14px;
+      font-size: 23px;
+    }
+
+    .barra {
+      height: 10px;
+      margin-top: 13px;
+      overflow: hidden;
+      background: #edf0f5;
+      border-radius: 999px;
+    }
+
+    .barra div {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--azul), #19ac98);
+      transition: width 0.35s;
+    }
+
+    /* CHECKLIST */
+
+    .checklist {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .check {
+      padding: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #fafbfd;
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      line-height: 1.45;
+    }
+
+    .check input {
+      margin-top: 3px;
+      transform: scale(1.16);
+    }
+
+    .aviso {
+      padding: 14px 16px;
+      color: #734900;
+      background: #fff9e8;
+      border-left: 4px solid var(--amarillo);
+      border-radius: 12px;
+      line-height: 1.55;
+    }
+
+    /* FORMULARIOS */
+
+    .campo-label {
+      display: block;
+      margin: 15px 0 7px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    textarea,
+    select,
+    input[type="text"] {
+      width: 100%;
+      padding: 11px 12px;
+      color: var(--texto);
+      background: white;
+      border: 1px solid #d5dce8;
+      border-radius: 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    textarea:focus,
+    select:focus,
+    input[type="text"]:focus {
+      border-color: var(--azul);
+      box-shadow: 0 0 0 3px rgba(49, 87, 213, 0.12);
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--azul);
+    }
+
+    .escala {
+      margin: 18px 0;
+    }
+
+    .escala-cabecera {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 800;
+    }
+
+    .escala-textos {
+      display: flex;
+      justify-content: space-between;
+      color: var(--secundario);
+      font-size: 11px;
+    }
+
+    /* SEMÁFORO */
+
+    .semaforo {
+      margin-top: 15px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 11px;
+    }
+
+    .semaforo button {
+      padding: 16px 8px;
+      background: #f8fafc;
+      border: 2px solid transparent;
+      border-radius: 16px;
+      font-weight: 900;
+    }
+
+    .semaforo button.active {
+      border-color: currentColor;
+      transform: translateY(-2px);
+    }
+
+    .verde {
+      color: #167a45;
+      background: #eafaf1 !important;
+    }
+
+    .amarillo {
+      color: #aa6500;
+      background: #fff8e5 !important;
+    }
+
+    .rojo {
+      color: #b42e2e;
+      background: #fff0f0 !important;
+    }
+
+    .resultado {
+      margin-top: 15px;
+      padding: 15px;
+      min-height: 72px;
+      background: #f8fafc;
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+      line-height: 1.55;
+    }
+
+    /* TEMPORIZADOR */
+
+    .temporizador {
+      margin: 20px 0;
+      font-size: 58px;
+      font-weight: 950;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .controles-tiempo {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    /* REGISTROS */
+
+    .registro {
+      margin-top: 11px;
+      padding: 14px;
+      background: #fbfcfe;
+      border: 1px solid var(--borde);
+      border-radius: 14px;
+    }
+
+    .registro-cabecera {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .registro small {
+      color: var(--secundario);
+    }
+
+    .registro p {
+      margin: 9px 0;
+      color: #475467;
+    }
+
+    /* GRÁFICO */
+
+    .grafico {
+      margin-top: 16px;
+      display: grid;
+      gap: 11px;
+    }
+
+    .fila-grafico {
+      display: grid;
+      grid-template-columns: 75px 1fr 35px;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .barra-grafico {
+      height: 12px;
+      overflow: hidden;
+      background: #edf0f5;
+      border-radius: 999px;
+    }
+
+    .barra-grafico div {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--azul), var(--violeta));
+    }
+
+    footer {
+      padding: 25px 0 8px;
+      color: var(--secundario);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 100;
+      padding: 12px 16px;
+      color: white;
+      background: #101828;
+      border-radius: 12px;
+      box-shadow: var(--sombra);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: 0.25s;
+    }
+
+    .toast.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        z-index: 20;
+        height: auto;
+        padding: 11px;
+        border-right: 0;
+        border-bottom: 1px solid var(--borde);
+      }
+
+      .marca,
+      .panel-lateral {
+        display: none;
+      }
+
+      nav {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+      }
+
+      .nav-btn {
+        width: auto;
+        min-width: max-content;
+        padding: 10px 12px;
+      }
+
+      main {
+        padding: 18px;
+      }
+
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .semaforo {
+        grid-template-columns: 1fr;
+      }
+
+      .encabezado h2 {
+        font-size: 24px;
+      }
+
+      .etiqueta {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- MENÚ LATERAL -->
+
+    <aside>
+
+      <div class="marca">
+        <div class="logo">L</div>
+
+        <div>
+          <h1>Leonardo</h1>
+          <p>Entrena tu autocontrol</p>
+        </div>
+      </div>
+
+      <nav>
+        <button class="nav-btn active" data-vista="inicio">
+          🏠 Inicio
+        </button>
+
+        <button class="nav-btn" data-vista="semaforo">
+          🚦 Semáforo emocional
+        </button>
+
+        <button class="nav-btn" data-vista="pausa">
+          ⏱️ Pausa 30
+        </button>
+
+        <button class="nav-btn" data-vista="registro">
+          🧠 Registro
+        </button>
+
+        <button class="nav-btn" data-vista="colegio">
+          🎒 Plan para el colegio
+        </button>
+
+        <button class="nav-btn" data-vista="progreso">
+          📊 Mi progreso
+        </button>
+      </nav>
+
+      <div class="panel-lateral">
+        <small>Objetivo diario</small>
+        <strong id="porcentajeLateral">0%</strong>
+
+        <p>
+          No necesitas controlar todo lo que sientes.
+          Necesitas elegir lo que haces con eso.
+        </p>
+      </div>
+
+    </aside>
+
+    <!-- CONTENIDO PRINCIPAL -->
+
+    <main>
+
+      <header class="encabezado">
+
+        <div>
+          <h2 id="tituloPagina">Buenas noches, Leonardo</h2>
+          <p id="fechaActual"></p>
+        </div>
+
+        <div class="etiqueta">
+          16 años · Plan personal
+        </div>
+
+      </header>
+
+      <!-- INICIO -->
+
+      <section id="inicio" class="vista active">
+
+        <div class="hero">
+
+          <span class="badge">
+            Misión: actuar con respeto
+          </span>
+
+          <h3>
+            Tu emoción puede ser intensa.
+            Tu conducta sigue siendo una elección.
+          </h3>
+
+          <p>
+            Esta herramienta te ayudará a manejar celos, frenar impulsos,
+            respetar límites y atravesar una ruptura sin insultar,
+            presionar ni perder el control.
+          </p>
+
+          <div class="hero-acciones">
+
+            <button
+              class="boton boton-claro"
+              onclick="cambiarVista('semaforo')"
+            >
+              Revisar cómo estoy
+            </button>
+
+            <button
+              class="boton boton-claro"
+              onclick="cambiarVista('pausa')"
+            >
+              Activar Pausa 30
+            </button>
+
+          </div>
+        </div>
+
+        <div class="grid grid-3" style="margin-top: 18px;">
+
+          <div class="tarjeta">
+
+            <div class="metrica">
+              <div>
+                <span>Puntaje de autocontrol</span>
+                <strong id="puntajeControl">0</strong>
+              </div>
+
+              <div class="icono-metrica">🛡️</div>
+            </div>
+
+            <div class="barra">
+              <div id="barraControl"></div>
+            </div>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <div class="metrica">
+              <div>
+                <span>Días registrados</span>
+                <strong id="diasRegistrados">0</strong>
+              </div>
+
+              <div class="icono-metrica">📅</div>
+            </div>
+
+            <div class="barra">
+              <div id="barraDias"></div>
+            </div>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <div class="metrica">
+              <div>
+                <span>Pausas completadas</span>
+                <strong id="pausasCompletadas">0</strong>
+              </div>
+
+              <div class="icono-metrica">⏳</div>
+            </div>
+
+            <div class="barra">
+              <div id="barraPausas"></div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="grid grid-2" style="margin-top: 18px;">
+
+          <div class="tarjeta">
+
+            <h3>Checklist de respeto de hoy</h3>
+
+            <p>
+              Marca solamente las conductas que realmente cumpliste.
+            </p>
+
+            <div id="checklistDiario" class="checklist">
+
+              <div class="check">
+                <input
+                  type="checkbox"
+                  data-clave="sinInsultos"
+                >
+
+                <label>
+                  No insulté, amenacé ni escribí reproches.
+                </label>
+              </div>
+
+              <div class="check">
+                <input
+                  type="checkbox"
+                  data-clave="sinVigilancia"
+                >
+
+                <label>
+                  No revisé ni monitoreé sus redes, amistades o actividades.
+                </label>
+              </div>
+
+              <div class="check">
+                <input
+                  type="checkbox"
+                  data-clave="sinPresion"
+                >
+
+                <label>
+                  No insistí después de una negativa.
+                </label>
+              </div>
+
+              <div class="check">
+                <input
+                  type="checkbox"
+                  data-clave="actividad"
+                >
+
+                <label>
+                  Realicé una actividad saludable fuera de la relación.
+                </label>
+              </div>
+
+              <div class="check">
+                <input
+                  type="checkbox"
+                  data-clave="apoyo"
+                >
+
+                <label>
+                  Pedí apoyo si sentí que podía perder el control.
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="tarjeta">
+
+            <h3>Regla central</h3>
+
+            <div class="aviso">
+              Pedir disculpas puede ser correcto. Sin embargo, una disculpa
+              no obliga a la otra persona a responder, perdonar, explicar sus
+              decisiones o retomar la relación.
+            </div>
+
+            <h3 style="margin-top: 20px;">
+              Tres límites no negociables
+            </h3>
+
+            <div class="checklist">
+
+              <div class="check">
+                1️⃣ No actuar cuando mi intensidad emocional está elevada.
+              </div>
+
+              <div class="check">
+                2️⃣ No convertir los celos en vigilancia, presión o control.
+              </div>
+
+              <div class="check">
+                3️⃣ Respetar cualquier “no” sin discutirlo ni insistir.
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- SEMÁFORO -->
+
+      <section id="semaforo" class="vista">
+
+        <div class="grid grid-2">
+
+          <div class="tarjeta">
+
+            <h3>¿En qué nivel estás ahora?</h3>
+
+            <p>
+              Selecciona el color que mejor representa tu activación emocional.
+            </p>
+
+            <div class="semaforo">
+
+              <button
+                class="verde"
+                data-nivel="verde"
+              >
+                🟢 VERDE
+                <br>
+                <small>0 a 3</small>
+              </button>
+
+              <button
+                class="amarillo"
+                data-nivel="amarillo"
+              >
+                🟡 AMARILLO
+                <br>
+                <small>4 a 6</small>
+              </button>
+
+              <button
+                class="rojo"
+                data-nivel="rojo"
+              >
+                🔴 ROJO
+                <br>
+                <small>7 a 10</small>
+              </button>
+
+            </div>
+
+            <div class="escala">
+
+              <div class="escala-cabecera">
+                <span>Celos</span>
+                <span id="valorCelos">0/10</span>
+              </div>
+
+              <input
+                id="celos"
+                type="range"
+                min="0"
+                max="10"
+                value="0"
+              >
+
+              <div class="escala-textos">
+                <span>Calmado</span>
+                <span>Muy intenso</span>
+              </div>
+
+            </div>
+
+            <div class="escala">
+
+              <div class="escala-cabecera">
+                <span>Ganas de escribirle</span>
+                <span id="valorUrgencia">0/10</span>
+              </div>
+
+              <input
+                id="urgencia"
+                type="range"
+                min="0"
+                max="10"
+                value="0"
+              >
+
+              <div class="escala-textos">
+                <span>Sin urgencia</span>
+                <span>Urgencia máxima</span>
+              </div>
+
+            </div>
+
+            <div class="escala">
+
+              <div class="escala-cabecera">
+                <span>Tristeza</span>
+                <span id="valorTristeza">0/10</span>
+              </div>
+
+              <input
+                id="tristeza"
+                type="range"
+                min="0"
+                max="10"
+                value="0"
+              >
+
+              <div class="escala-textos">
+                <span>Leve</span>
+                <span>Muy intensa</span>
+              </div>
+
+            </div>
+
+            <button
+              class="boton boton-primario"
+              onclick="guardarChequeo()"
+            >
+              Guardar evaluación
+            </button>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <h3>Tu acción recomendada</h3>
+
+            <div id="resultadoSemaforo" class="resultado">
+              Selecciona un color o mueve las escalas.
+            </div>
+
+            <div class="aviso" style="margin-top: 16px;">
+              Cuando estés en rojo, no envíes mensajes, no tomes decisiones
+              sobre la relación y busca el apoyo de un adulto.
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- PAUSA 30 -->
+
+      <section id="pausa" class="vista">
+
+        <div class="grid grid-2">
+
+          <div class="tarjeta">
+
+            <h3>Pausa 30</h3>
+
+            <p>
+              Antes de responder o actuar, espera 30 minutos.
+              La finalidad es permitir que la intensidad emocional disminuya.
+            </p>
+
+            <div id="pantallaTemporizador" class="temporizador">
+              30:00
+            </div>
+
+            <div class="controles-tiempo">
+
+              <button
+                id="iniciarTemporizador"
+                class="boton boton-primario"
+              >
+                Iniciar
+              </button>
+
+              <button
+                id="pausarTemporizador"
+                class="boton boton-secundario"
+              >
+                Pausar
+              </button>
+
+              <button
+                id="reiniciarTemporizador"
+                class="boton boton-borde"
+              >
+                Reiniciar
+              </button>
+
+              <button
+                id="completarPausa"
+                class="boton boton-rojo"
+              >
+                Marcar completada
+              </button>
+
+            </div>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <h3>Durante la pausa</h3>
+
+            <div class="checklist">
+
+              <div class="check">
+                🚶 Camina o realiza movimiento físico durante unos minutos.
+              </div>
+
+              <div class="check">
+                💧 Toma agua y realiza respiraciones lentas.
+              </div>
+
+              <div class="check">
+                📝 Escribe lo que quisieras decir, pero no lo envíes.
+              </div>
+
+              <div class="check">
+                🧑‍🧑‍🧒 Habla con un adulto si la intensidad continúa en 7 o más.
+              </div>
+
+            </div>
+
+            <label class="campo-label" for="fraseFreno">
+              Mi frase de freno
+            </label>
+
+            <textarea
+              id="fraseFreno"
+              placeholder="Ejemplo: Estoy molesto, pero no necesito resolver esto ahora."
+            ></textarea>
+
+            <button
+              class="boton boton-secundario"
+              onclick="guardarFrase()"
+            >
+              Guardar frase
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- REGISTRO -->
+
+      <section id="registro" class="vista">
+
+        <div class="grid grid-2">
+
+          <div class="tarjeta">
+
+            <h3>Registro de situación</h3>
+
+            <p>
+              Separa lo que realmente ocurrió de lo que pensaste o imaginaste.
+            </p>
+
+            <label class="campo-label" for="hecho">
+              ¿Qué pasó objetivamente?
+            </label>
+
+            <textarea
+              id="hecho"
+              placeholder="Describe hechos concretos, sin adjetivos ni suposiciones."
+            ></textarea>
+
+            <label class="campo-label" for="pensamiento">
+              ¿Qué pensé?
+            </label>
+
+            <textarea
+              id="pensamiento"
+              placeholder="Ejemplo: Me está reemplazando o ya no le importo."
+            ></textarea>
+
+            <label class="campo-label" for="emocion">
+              ¿Qué sentí principalmente?
+            </label>
+
+            <select id="emocion">
+              <option value="Celos">Celos</option>
+              <option value="Tristeza">Tristeza</option>
+              <option value="Enojo">Enojo</option>
+              <option value="Miedo">Miedo</option>
+              <option value="Vergüenza">Vergüenza</option>
+              <option value="Culpa">Culpa</option>
+            </select>
+
+            <label class="campo-label">
+              Intensidad:
+              <span id="valorIntensidad">5/10</span>
+            </label>
+
+            <input
+              id="intensidad"
+              type="range"
+              min="0"
+              max="10"
+              value="5"
+            >
+
+            <label class="campo-label" for="eleccion">
+              ¿Qué conducta respetuosa elijo?
+            </label>
+
+            <textarea
+              id="eleccion"
+              placeholder="Ejemplo: No escribir, hablar con mi mamá, caminar o jugar fútbol."
+            ></textarea>
+
+            <button
+              class="boton boton-primario"
+              onclick="guardarRegistro()"
+            >
+              Guardar registro
+            </button>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <h3>Mis últimos registros</h3>
+
+            <div id="listaRegistros">
+              <p>Aún no existen registros.</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- COLEGIO -->
+
+      <section id="colegio" class="vista">
+
+        <div class="grid grid-2">
+
+          <div class="tarjeta">
+
+            <h3>Plan para verla en el colegio</h3>
+
+            <p>
+              La meta es mantener un trato neutral, breve y respetuoso.
+            </p>
+
+            <div class="checklist">
+
+              <div class="check">
+                <input type="checkbox" class="check-colegio">
+
+                <label>
+                  Saludar brevemente, solo cuando corresponda.
+                </label>
+              </div>
+
+              <div class="check">
+                <input type="checkbox" class="check-colegio">
+
+                <label>
+                  No hablar de la relación dentro del colegio.
+                </label>
+              </div>
+
+              <div class="check">
+                <input type="checkbox" class="check-colegio">
+
+                <label>
+                  No pedir explicaciones por sus amistades.
+                </label>
+              </div>
+
+              <div class="check">
+                <input type="checkbox" class="check-colegio">
+
+                <label>
+                  No utilizar amigos como intermediarios.
+                </label>
+              </div>
+
+              <div class="check">
+                <input type="checkbox" class="check-colegio">
+
+                <label>
+                  Retirarme si mi activación llega a 7/10.
+                </label>
+              </div>
+
+            </div>
+
+            <button
+              class="boton boton-primario"
+              onclick="guardarPlanColegio()"
+            >
+              Guardar plan
+            </button>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <h3>Respuesta preparada</h3>
+
+            <p>
+              Una respuesta breve evita explicaciones interminables y discusiones.
+            </p>
+
+            <div
+              class="resultado"
+              style="font-size: 18px; font-weight: 800;"
+            >
+              “Entiendo. Voy a respetar tu decisión y mantener distancia.”
+            </div>
+
+            <label class="campo-label" for="adultoApoyo">
+              Mi adulto de apoyo
+            </label>
+
+            <input
+              id="adultoApoyo"
+              type="text"
+              placeholder="Nombre de la persona"
+            >
+
+            <label class="campo-label" for="actividadSalida">
+              Actividad que usaré para regularme
+            </label>
+
+            <input
+              id="actividadSalida"
+              type="text"
+              placeholder="Ejemplo: fútbol, caminar, música"
+            >
+
+            <button
+              class="boton boton-secundario"
+              onclick="guardarPlanApoyo()"
+            >
+              Guardar apoyo
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- PROGRESO -->
+
+      <section id="progreso" class="vista">
+
+        <div class="grid grid-3">
+
+          <div class="tarjeta">
+
+            <div class="metrica">
+              <div>
+                <span>Promedio de celos</span>
+                <strong id="promedioCelos">0.0</strong>
+              </div>
+
+              <div class="icono-metrica">🟡</div>
+            </div>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <div class="metrica">
+              <div>
+                <span>Promedio de tristeza</span>
+                <strong id="promedioTristeza">0.0</strong>
+              </div>
+
+              <div class="icono-metrica">🌙</div>
+            </div>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <div class="metrica">
+              <div>
+                <span>Registros completados</span>
+                <strong id="cantidadRegistros">0</strong>
+              </div>
+
+              <div class="icono-metrica">📝</div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="grid grid-2" style="margin-top: 18px;">
+
+          <div class="tarjeta">
+
+            <h3>Últimos siete chequeos</h3>
+
+            <p>
+              Las barras representan la intensidad de los celos.
+            </p>
+
+            <div id="graficoChequeos" class="grafico"></div>
+
+          </div>
+
+          <div class="tarjeta">
+
+            <h3>Meta semanal</h3>
+
+            <p>
+              Objetivo: cumplir al menos cinco días de conductas respetuosas
+              y completar tres registros de situación.
+            </p>
+
+            <div class="barra">
+              <div id="barraSemanal"></div>
+            </div>
+
+            <p>
+              <strong id="textoSemanal">0%</strong>
+              completado
+            </p>
+
+            <button
+              class="boton boton-rojo"
+              onclick="borrarDatos()"
+            >
+              Borrar mis datos
+            </button>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <footer>
+        Herramienta de apoyo terapéutico para Leonardo ·
+        Gonzalo Buendía, Psicólogo
+      </footer>
+
+    </main>
+
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script>
+    /* =========================================================
+       CONFIGURACIÓN DE ALMACENAMIENTO
+       ========================================================= */
+
+    const CLAVES = {
+      diario: "leonardo_diario",
+      chequeos: "leonardo_chequeos",
+      registros: "leonardo_registros",
+      pausas: "leonardo_pausas",
+      frase: "leonardo_frase",
+      colegio: "leonardo_colegio",
+      apoyo: "leonardo_apoyo"
+    };
+
+    const seleccionar = selector =>
+      document.querySelector(selector);
+
+    const seleccionarTodos = selector =>
+      document.querySelectorAll(selector);
+
+    const fechaClave =
+      new Date().toISOString().slice(0, 10);
+
+    function obtenerDatos(clave, valorInicial) {
+      try {
+        const contenido = localStorage.getItem(clave);
+
+        if (contenido === null) {
+          return valorInicial;
+        }
+
+        return JSON.parse(contenido);
+      } catch (error) {
+        console.error("No se pudo leer el almacenamiento:", error);
+        return valorInicial;
+      }
+    }
+
+    function guardarDatos(clave, valor) {
+      try {
+        localStorage.setItem(
+          clave,
+          JSON.stringify(valor)
+        );
+      } catch (error) {
+        console.error("No se pudo guardar:", error);
+      }
+    }
+
+    function mostrarToast(mensaje) {
+      const toast = seleccionar("#toast");
+
+      toast.textContent = mensaje;
+      toast.classList.add("visible");
+
+      setTimeout(() => {
+        toast.classList.remove("visible");
+      }, 2200);
+    }
+
+    /* =========================================================
+       NAVEGACIÓN
+       ========================================================= */
+
+    const titulos = {
+      inicio: "Buenas noches, Leonardo",
+      semaforo: "Semáforo emocional",
+      pausa: "Pausa 30",
+      registro: "Registro de situación",
+      colegio: "Plan para el colegio",
+      progreso: "Mi progreso"
+    };
+
+    function cambiarVista(nombreVista) {
+      seleccionarTodos(".vista").forEach(vista => {
+        vista.classList.remove("active");
+      });
+
+      seleccionarTodos(".nav-btn").forEach(boton => {
+        boton.classList.toggle(
+          "active",
+          boton.dataset.vista === nombreVista
+        );
+      });
+
+      seleccionar("#" + nombreVista)
+        .classList.add("active");
+
+      seleccionar("#tituloPagina")
+        .textContent = titulos[nombreVista];
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+
+      if (nombreVista === "progreso") {
+        actualizarProgreso();
+      }
+    }
+
+    seleccionarTodos(".nav-btn").forEach(boton => {
+      boton.addEventListener("click", () => {
+        cambiarVista(boton.dataset.vista);
+      });
+    });
+
+    const formatoFecha = new Intl.DateTimeFormat(
+      "es-PE",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      }
+    );
+
+    seleccionar("#fechaActual").textContent =
+      formatoFecha.format(new Date());
+
+    /* =========================================================
+       CHECKLIST DIARIO
+       ========================================================= */
+
+    function iniciarChecklistDiario() {
+      const datos = obtenerDatos(CLAVES.diario, {});
+      const datosHoy = datos[fechaClave] || {};
+
+      seleccionarTodos(
+        "#checklistDiario input"
+      ).forEach(check => {
+
+        check.checked =
+          Boolean(datosHoy[check.dataset.clave]);
+
+        check.addEventListener("change", () => {
+          const todosLosDias =
+            obtenerDatos(CLAVES.diario, {});
+
+          if (!todosLosDias[fechaClave]) {
+            todosLosDias[fechaClave] = {};
+          }
+
+          todosLosDias[fechaClave][
+            check.dataset.clave
+          ] = check.checked;
+
+          guardarDatos(
+            CLAVES.diario,
+            todosLosDias
+          );
+
+          actualizarPanel();
+        });
+      });
+    }
+
+    function calcularPorcentajeDiario() {
+      const datos =
+        obtenerDatos(CLAVES.diario, {});
+
+      const datosHoy =
+        datos[fechaClave] || {};
+
+      const claves = [
+        "sinInsultos",
+        "sinVigilancia",
+        "sinPresion",
+        "actividad",
+        "apoyo"
+      ];
+
+      const cumplidas = claves.filter(clave =>
+        Boolean(datosHoy[clave])
+      ).length;
+
+      return Math.round(
+        cumplidas / claves.length * 100
+      );
+    }
+
+    /* =========================================================
+       PANEL PRINCIPAL
+       ========================================================= */
+
+    function actualizarPanel() {
+      const chequeos =
+        obtenerDatos(CLAVES.chequeos, []);
+
+      const pausas =
+        obtenerDatos(CLAVES.pausas, 0);
+
+      const porcentajeDiario =
+        calcularPorcentajeDiario();
+
+      const puntajeControl = Math.round(
+        (
+          porcentajeDiario +
+          Math.min(pausas * 10, 100) +
+          Math.min(chequeos.length * 8, 100)
+        ) / 3
+      );
+
+      seleccionar("#porcentajeLateral")
+        .textContent = porcentajeDiario + "%";
+
+      seleccionar("#puntajeControl")
+        .textContent = puntajeControl;
+
+      seleccionar("#barraControl")
+        .style.width = puntajeControl + "%";
+
+      const diasUnicos = new Set(
+        chequeos.map(chequeo =>
+          chequeo.fecha.slice(0, 10)
+        )
+      ).size;
+
+      seleccionar("#diasRegistrados")
+        .textContent = diasUnicos;
+
+      seleccionar("#barraDias")
+        .style.width =
+          Math.min(diasUnicos * 14, 100) + "%";
+
+      seleccionar("#pausasCompletadas")
+        .textContent = pausas;
+
+      seleccionar("#barraPausas")
+        .style.width =
+          Math.min(pausas * 10, 100) + "%";
+    }
+
+    /* =========================================================
+       ESCALAS
+       ========================================================= */
+
+    const escalas = [
+      {
+        entrada: "#celos",
+        salida: "#valorCelos"
+      },
+      {
+        entrada: "#urgencia",
+        salida: "#valorUrgencia"
+      },
+      {
+        entrada: "#tristeza",
+        salida: "#valorTristeza"
+      },
+      {
+        entrada: "#intensidad",
+        salida: "#valorIntensidad"
+      }
+    ];
+
+    escalas.forEach(escala => {
+      const entrada = seleccionar(escala.entrada);
+      const salida = seleccionar(escala.salida);
+
+      entrada.addEventListener("input", () => {
+        salida.textContent =
+          entrada.value + "/10";
+      });
+    });
+
+    /* =========================================================
+       SEMÁFORO EMOCIONAL
+       ========================================================= */
+
+    let nivelSeleccionado = "";
+
+    seleccionarTodos(
+      ".semaforo button"
+    ).forEach(boton => {
+
+      boton.addEventListener("click", () => {
+        seleccionarTodos(
+          ".semaforo button"
+        ).forEach(otroBoton => {
+          otroBoton.classList.remove("active");
+        });
+
+        boton.classList.add("active");
+
+        nivelSeleccionado =
+          boton.dataset.nivel;
+
+        actualizarRecomendacion();
+      });
+    });
+
+    ["#celos", "#urgencia", "#tristeza"]
+      .forEach(selector => {
+        seleccionar(selector)
+          .addEventListener(
+            "input",
+            actualizarRecomendacion
+          );
+      });
+
+    function actualizarRecomendacion() {
+      const celos =
+        Number(seleccionar("#celos").value);
+
+      const urgencia =
+        Number(seleccionar("#urgencia").value);
+
+      const tristeza =
+        Number(seleccionar("#tristeza").value);
+
+      const maximaIntensidad =
+        Math.max(celos, urgencia, tristeza);
+
+      let nivel = nivelSeleccionado;
+
+      if (!nivel) {
+        if (maximaIntensidad >= 7) {
+          nivel = "rojo";
+        } else if (maximaIntensidad >= 4) {
+          nivel = "amarillo";
+        } else {
+          nivel = "verde";
+        }
+      }
+
+      const recomendaciones = {
+        verde:
+          "🟢 Puedes continuar con tu rutina. Mantén una distancia respetuosa y realiza actividades propias.",
+
+        amarillo:
+          "🟡 No tomes decisiones rápidas. Espera 30 minutos, registra lo que estás pensando y evita escribirle.",
+
+        rojo:
+          "🔴 Detente. No envíes mensajes ni busques contacto. Aléjate de la situación y habla con un adulto de confianza."
+      };
+
+      seleccionar("#resultadoSemaforo")
+        .textContent = recomendaciones[nivel];
+    }
+
+    function guardarChequeo() {
+      const chequeos =
+        obtenerDatos(CLAVES.chequeos, []);
+
+      chequeos.push({
+        fecha: new Date().toISOString(),
+        nivel: nivelSeleccionado || "automático",
+        celos: Number(
+          seleccionar("#celos").value
+        ),
+        urgencia: Number(
+          seleccionar("#urgencia").value
+        ),
+        tristeza: Number(
+          seleccionar("#tristeza").value
+        )
+      });
+
+      guardarDatos(
+        CLAVES.chequeos,
+        chequeos
+      );
+
+      mostrarToast(
+        "Evaluación emocional guardada"
+      );
+
+      actualizarPanel();
+    }
+
+    /* =========================================================
+       TEMPORIZADOR
+       ========================================================= */
+
+    let segundosRestantes = 1800;
+    let intervaloTemporizador = null;
+
+    function mostrarTiempo() {
+      const minutos = String(
+        Math.floor(segundosRestantes / 60)
+      ).padStart(2, "0");
+
+      const segundos = String(
+        segundosRestantes % 60
+      ).padStart(2, "0");
+
+      seleccionar("#pantallaTemporizador")
+        .textContent =
+          minutos + ":" + segundos;
+    }
+
+    seleccionar("#iniciarTemporizador")
+      .addEventListener("click", () => {
+
+        if (intervaloTemporizador) {
+          return;
+        }
+
+        intervaloTemporizador =
+          setInterval(() => {
+
+            if (segundosRestantes > 0) {
+              segundosRestantes--;
+              mostrarTiempo();
+            } else {
+              clearInterval(
+                intervaloTemporizador
+              );
+
+              intervaloTemporizador = null;
+
+              registrarPausaCompletada(true);
+            }
+
+          }, 1000);
+      });
+
+    seleccionar("#pausarTemporizador")
+      .addEventListener("click", () => {
+
+        clearInterval(intervaloTemporizador);
+        intervaloTemporizador = null;
+
+      });
+
+    seleccionar("#reiniciarTemporizador")
+      .addEventListener("click", () => {
+
+        clearInterval(intervaloTemporizador);
+
+        intervaloTemporizador = null;
+        segundosRestantes = 1800;
+
+        mostrarTiempo();
+      });
+
+    seleccionar("#completarPausa")
+      .addEventListener("click", () => {
+        registrarPausaCompletada(false);
+      });
+
+    function registrarPausaCompletada(
+      finalizadaAutomaticamente
+    ) {
+      clearInterval(intervaloTemporizador);
+      intervaloTemporizador = null;
+
+      const cantidadActual =
+        obtenerDatos(CLAVES.pausas, 0);
+
+      guardarDatos(
+        CLAVES.pausas,
+        cantidadActual + 1
+      );
+
+      segundosRestantes = 1800;
+      mostrarTiempo();
+      actualizarPanel();
+
+      mostrarToast(
+        finalizadaAutomaticamente
+          ? "Pausa de 30 minutos completada"
+          : "Pausa registrada"
+      );
+    }
+
+    function guardarFrase() {
+      const frase =
+        seleccionar("#fraseFreno")
+          .value.trim();
+
+      guardarDatos(CLAVES.frase, frase);
+
+      mostrarToast(
+        "Frase de freno guardada"
+      );
+    }
+
+    /* =========================================================
+       REGISTRO DE SITUACIÓN
+       ========================================================= */
+
+    function guardarRegistro() {
+      const hecho =
+        seleccionar("#hecho").value.trim();
+
+      const pensamiento =
+        seleccionar("#pensamiento").value.trim();
+
+      const eleccion =
+        seleccionar("#eleccion").value.trim();
+
+      if (
+        !hecho ||
+        !pensamiento ||
+        !eleccion
+      ) {
+        mostrarToast(
+          "Completa los campos principales"
+        );
+
+        return;
+      }
+
+      const registros =
+        obtenerDatos(CLAVES.registros, []);
+
+      registros.unshift({
+        id: Date.now(),
+        fecha: new Date().toISOString(),
+        hecho: hecho,
+        pensamiento: pensamiento,
+        emocion:
+          seleccionar("#emocion").value,
+        intensidad: Number(
+          seleccionar("#intensidad").value
+        ),
+        eleccion: eleccion
+      });
+
+      guardarDatos(
+        CLAVES.registros,
+        registros
+      );
+
+      seleccionar("#hecho").value = "";
+      seleccionar("#pensamiento").value = "";
+      seleccionar("#eleccion").value = "";
+
+      mostrarRegistros();
+      actualizarPanel();
+
+      mostrarToast("Registro guardado");
+    }
+
+    function limpiarTexto(texto) {
+      return texto.replace(
+        /[&<>"']/g,
+        caracter => {
+          const equivalencias = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+          };
+
+          return equivalencias[caracter];
+        }
+      );
+    }
+
+    function mostrarRegistros() {
+      const registros =
+        obtenerDatos(CLAVES.registros, []);
+
+      const contenedor =
+        seleccionar("#listaRegistros");
+
+      if (!registros.length) {
+        contenedor.innerHTML =
+          "<p>Aún no existen registros.</p>";
+
+        return;
+      }
+
+      contenedor.innerHTML =
+        registros
+          .slice(0, 8)
+          .map(registro => {
+
+            const fecha =
+              new Date(
+                registro.fecha
+              ).toLocaleDateString("es-PE");
+
+            return `
+              <div class="registro">
+
+                <div class="registro-cabecera">
+                  <strong>
+                    ${registro.emocion}
+                    ·
+                    ${registro.intensidad}/10
+                  </strong>
+
+                  <small>${fecha}</small>
+                </div>
+
+                <p>
+                  <b>Hecho:</b>
+                  ${limpiarTexto(registro.hecho)}
+                </p>
+
+                <p>
+                  <b>Pensamiento:</b>
+                  ${limpiarTexto(
+                    registro.pensamiento
+                  )}
+                </p>
+
+                <p>
+                  <b>Elección:</b>
+                  ${limpiarTexto(
+                    registro.eleccion
+                  )}
+                </p>
+
+              </div>
+            `;
+          })
+          .join("");
+    }
+
+    /* =========================================================
+       PLAN PARA EL COLEGIO
+       ========================================================= */
+
+    function guardarPlanColegio() {
+      const valores = Array.from(
+        seleccionarTodos(".check-colegio")
+      ).map(check => check.checked);
+
+      guardarDatos(
+        CLAVES.colegio,
+        valores
+      );
+
+      mostrarToast(
+        "Plan para el colegio guardado"
+      );
+    }
+
+    function guardarPlanApoyo() {
+      const datos = {
+        adulto:
+          seleccionar("#adultoApoyo")
+            .value.trim(),
+
+        actividad:
+          seleccionar("#actividadSalida")
+            .value.trim()
+      };
+
+      guardarDatos(
+        CLAVES.apoyo,
+        datos
+      );
+
+      mostrarToast(
+        "Plan de apoyo guardado"
+      );
+    }
+
+    /* =========================================================
+       PROGRESO
+       ========================================================= */
+
+    function calcularPromedio(
+      lista,
+      propiedad
+    ) {
+      if (!lista.length) {
+        return "0.0";
+      }
+
+      const suma = lista.reduce(
+        (acumulado, elemento) =>
+          acumulado +
+          Number(elemento[propiedad] || 0),
+        0
+      );
+
+      return (
+        suma / lista.length
+      ).toFixed(1);
+    }
+
+    function actualizarProgreso() {
+      const chequeos =
+        obtenerDatos(CLAVES.chequeos, []);
+
+      const registros =
+        obtenerDatos(CLAVES.registros, []);
+
+      seleccionar("#promedioCelos")
+        .textContent =
+          calcularPromedio(
+            chequeos,
+            "celos"
+          );
+
+      seleccionar("#promedioTristeza")
+        .textContent =
+          calcularPromedio(
+            chequeos,
+            "tristeza"
+          );
+
+      seleccionar("#cantidadRegistros")
+        .textContent = registros.length;
+
+      mostrarGrafico(chequeos);
+
+      const datosDiarios =
+        obtenerDatos(CLAVES.diario, {});
+
+      const diasCumplidos =
+        Object.values(datosDiarios)
+          .filter(dia => {
+
+            const cantidad =
+              Object.values(dia)
+                .filter(Boolean)
+                .length;
+
+            return cantidad >= 3;
+          })
+          .length;
+
+      const avanceDias =
+        Math.min(diasCumplidos, 5) / 5;
+
+      const avanceRegistros =
+        Math.min(registros.length, 3) / 3;
+
+      const porcentaje = Math.min(
+        100,
+        Math.round(
+          (
+            avanceDias * 0.6 +
+            avanceRegistros * 0.4
+          ) * 100
+        )
+      );
+
+      seleccionar("#barraSemanal")
+        .style.width = porcentaje + "%";
+
+      seleccionar("#textoSemanal")
+        .textContent = porcentaje + "%";
+    }
+
+    function mostrarGrafico(chequeos) {
+      const contenedor =
+        seleccionar("#graficoChequeos");
+
+      const ultimos =
+        chequeos.slice(-7).reverse();
+
+      if (!ultimos.length) {
+        contenedor.innerHTML =
+          "<p>Aún no existen chequeos emocionales.</p>";
+
+        return;
+      }
+
+      contenedor.innerHTML =
+        ultimos.map(chequeo => {
+
+          const fecha =
+            new Date(
+              chequeo.fecha
+            ).toLocaleDateString(
+              "es-PE",
+              {
+                day: "2-digit",
+                month: "2-digit"
+              }
+            );
+
+          const porcentaje =
+            chequeo.celos * 10;
+
+          return `
+            <div class="fila-grafico">
+
+              <span>${fecha}</span>
+
+              <div class="barra-grafico">
+                <div
+                  style="width: ${porcentaje}%"
+                ></div>
+              </div>
+
+              <strong>
+                ${chequeo.celos}
+              </strong>
+
+            </div>
+          `;
+        }).join("");
+    }
+
+    function borrarDatos() {
+      const confirmar = confirm(
+        "¿Seguro que deseas borrar todos los datos guardados en este dispositivo?"
+      );
+
+      if (!confirmar) {
+        return;
+      }
+
+      Object.values(CLAVES)
+        .forEach(clave => {
+          localStorage.removeItem(clave);
+        });
+
+      location.reload();
+    }
+
+    /* =========================================================
+       RECUPERACIÓN DE DATOS
+       ========================================================= */
+
+    function restaurarDatos() {
+      iniciarChecklistDiario();
+      mostrarRegistros();
+
+      const frase =
+        obtenerDatos(CLAVES.frase, "");
+
+      seleccionar("#fraseFreno")
+        .value = frase;
+
+      const colegio =
+        obtenerDatos(CLAVES.colegio, []);
+
+      seleccionarTodos(
+        ".check-colegio"
+      ).forEach((check, indice) => {
+        check.checked =
+          Boolean(colegio[indice]);
+      });
+
+      const apoyo =
+        obtenerDatos(CLAVES.apoyo, {});
+
+      seleccionar("#adultoApoyo")
+        .value = apoyo.adulto || "";
+
+      seleccionar("#actividadSalida")
+        .value = apoyo.actividad || "";
+
+      mostrarTiempo();
+      actualizarRecomendacion();
+      actualizarPanel();
+      actualizarProgreso();
+    }
+
+    restaurarDatos();
+  </script>
+
+</body>
+</html>
